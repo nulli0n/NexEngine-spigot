@@ -1,0 +1,8 @@
+name: NexEngine_CustomEffects
+main: su.nexmedia.engine.effects.NexCustomEffects
+version: '${project.version}'
+description: NEX Custom Effects Lib
+author: NEX-Media
+depend: [ NexEngine ]
+api-version: 1.16
+load: STARTUP
