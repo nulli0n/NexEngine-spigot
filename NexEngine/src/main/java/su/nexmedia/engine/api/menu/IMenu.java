@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -122,6 +123,10 @@ public interface IMenu extends ICleanable {
         return false;
     }
 
+    default boolean cancelClick(@NotNull InventoryDragEvent e) {
+        return false;
+    }
+
     void onPrepare(@NotNull Player player, @NotNull Inventory inventory);
 
     void onReady(@NotNull Player player, @NotNull Inventory inventory);
@@ -158,8 +163,7 @@ public interface IMenu extends ICleanable {
         int page = this.getPage(player);
         int pages = this.getPageMax(player);
 
-        List<IMenuItem> items = new ArrayList<>();
-        items.addAll(this.getItemsMap().values());
+        List<IMenuItem> items = new ArrayList<>(this.getItemsMap().values());
         items = new ArrayList<>(items.stream().sorted((i1, i2) -> {
             Enum<?> t1 = i1.getType();
             Enum<?> t2 = i2.getType();
@@ -169,6 +173,7 @@ public interface IMenu extends ICleanable {
         }).toList());
         items.addAll(this.getUserItems(player));
 
+        this.onItemSet(player, items);
 
         for (IMenuItem menuItem : items) {
 
@@ -197,6 +202,10 @@ public interface IMenu extends ICleanable {
                 inventory.setItem(slot, item);
             }
         }
+    }
+
+    default void onItemSet(@NotNull Player player, @NotNull List<IMenuItem> items) {
+
     }
 
     @Nullable

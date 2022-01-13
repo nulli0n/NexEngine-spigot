@@ -51,8 +51,8 @@ public abstract class ConfigTemplate {
                 String sType = cfg.getString(path + "Type", StorageType.SQLITE.name()).toUpperCase();
                 StorageType storageType = CollectionsUtil.getEnum(sType, StorageType.class);
                 this.dataStorage = storageType == null ? StorageType.SQLITE : storageType;
-                this.dataSaveInterval = cfg.getInt("Auto_Save_Interval", 20);
-                this.dataSaveInstant = cfg.getBoolean("Instant_Save");
+                this.dataSaveInterval = cfg.getInt(path + "Auto_Save_Interval", 20);
+                this.dataSaveInstant = cfg.getBoolean(path + "Instant_Save");
 
                 if (this.dataStorage == StorageType.MYSQL) {
                     this.mysqlLogin = cfg.getString(path + "MySQL.Username");

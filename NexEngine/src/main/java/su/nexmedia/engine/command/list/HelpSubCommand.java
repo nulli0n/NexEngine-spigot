@@ -30,7 +30,7 @@ public class HelpSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> {
 
     @Override
     protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
-        if (args.length > 0) return;
+        //if (args.length > 0) return;
 
         for (String line : plugin.lang().Core_Command_Help_List.asList()) {
             if (line.contains(AbstractCommand.PLACEHOLDER_LABEL)) {

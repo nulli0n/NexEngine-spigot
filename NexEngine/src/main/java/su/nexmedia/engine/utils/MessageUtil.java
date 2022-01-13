@@ -124,7 +124,7 @@ public class MessageUtil {
                             case "hint" -> clickWord.hint(argValue.split("\\|"));
                             case "chat-type" -> clickWord.execCmd(argValue);
                             case "chat-suggest" -> clickWord.suggCmd(argValue);
-                            case "url" -> clickWord.url(argValue);
+                            case "url" -> clickWord.url(StringUtil.colorOff(argValue));
                         }
                     }
                 }

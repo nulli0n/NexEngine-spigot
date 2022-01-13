@@ -19,7 +19,7 @@ public class Action_CommandConsole extends AbstractActionExecutor {
 
     @Override
     public boolean mustHaveTarget() {
-        return true;
+        return false;
     }
 
     @Override

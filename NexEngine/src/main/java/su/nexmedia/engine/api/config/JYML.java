@@ -257,7 +257,7 @@ public class JYML extends YamlConfiguration {
         if (!path.isEmpty() && !path.endsWith(".")) path = path + ".";
 
         Material material = Material.getMaterial(this.getString(path + "material", "").toUpperCase());
-        if (material == null || material == Material.AIR) return new ItemStack(Material.AIR);
+        if (material == null || material == Material.AIR) return this.getItemNew(path);
 
         ItemStack item = new ItemStack(material);
         item.setAmount(this.getInt(path + "amount", 1));

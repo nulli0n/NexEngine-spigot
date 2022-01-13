@@ -33,7 +33,7 @@ public class ModuleManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         this.externalCache = new ArrayList<>();
 
         // Prepare external module instances from .jar files.
-        this.plugin.getConfigManager().extractFullPath(plugin.getDataFolder() + CoreConfig.MODULES_PATH_INTERNAL, "jar");
+        //this.plugin.getConfigManager().extractFullPath(plugin.getDataFolder() + CoreConfig.MODULES_PATH_INTERNAL, "jar");
         FileUtil.getFiles(plugin.getDataFolder() + CoreConfig.MODULES_PATH_INTERNAL, false).forEach(file -> {
             AbstractExternalModule<P> module = this.loadFromFile(file);
             if (module != null) {
