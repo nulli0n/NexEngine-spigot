@@ -36,7 +36,8 @@ public class Reflex {
     private static Class<?> getClass(@NotNull String path) {
         try {
             return Class.forName(path);
-        } catch (ClassNotFoundException e) {
+        }
+        catch (ClassNotFoundException e) {
             ENGINE.error("[Reflex] Class not found: " + path);
             e.printStackTrace();
             return null;
@@ -46,26 +47,29 @@ public class Reflex {
     @Nullable
     public static Constructor<?> getConstructor(@NotNull Class<?> clazz, Class<?>... types) {
         try {
-            Constructor<?> con = clazz.getDeclaredConstructor(types);
-            con.setAccessible(true);
-            return con;
-        } catch (ReflectiveOperationException e) {
+            Constructor<?> constructor = clazz.getDeclaredConstructor(types);
+            constructor.setAccessible(true);
+            return constructor;
+        }
+        catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
         return null;
     }
 
     @Nullable
-    public static Object invokeConstructor(@NotNull Constructor<?> con, Object... obj) {
+    public static Object invokeConstructor(@NotNull Constructor<?> constructor, Object... obj) {
         try {
-            return con.newInstance(obj);
-        } catch (ReflectiveOperationException e) {
+            return constructor.newInstance(obj);
+        }
+        catch (ReflectiveOperationException e) {
             e.printStackTrace();
         }
         return obj;
     }
 
     @Nullable
+    @Deprecated
     public static Class<?> getNMSClass(@NotNull String name) {
         return getClass("net.minecraft.server." + Version.CURRENT.name().toLowerCase(), name);
     }
@@ -92,12 +96,10 @@ public class Reflex {
     public static Field getField(@NotNull Class<?> clazz, @NotNull String fieldName) {
         try {
             return clazz.getDeclaredField(fieldName);
-        } catch (NoSuchFieldException e) {
+        }
+        catch (NoSuchFieldException e) {
             Class<?> superClass = clazz.getSuperclass();
-            if (superClass == null) {
-                return null;
-            }
-            return getField(superClass, fieldName);
+            return superClass == null ? null : getField(superClass, fieldName);
         }
     }
 
@@ -106,15 +108,14 @@ public class Reflex {
         try {
             Class<?> clazz = from instanceof Class<?> ? (Class<?>) from : from.getClass();
             Field field = getField(clazz, fieldName);
-            if (field == null)
-                return null;
+            if (field == null) return null;
 
             field.setAccessible(true);
             return field.get(from);
-        } catch (IllegalAccessException e) {
+        }
+        catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -124,13 +125,13 @@ public class Reflex {
             Class<?> clazz = isStatic ? (Class<?>) of : of.getClass();
 
             Field field = getField(clazz, fieldName);
-            if (field == null)
-                return false;
+            if (field == null) return false;
 
             field.setAccessible(true);
             field.set(isStatic ? null : of, value);
             return true;
-        } catch (IllegalAccessException e) {
+        }
+        catch (IllegalAccessException e) {
             e.printStackTrace();
         }
         return false;
@@ -140,25 +141,20 @@ public class Reflex {
     public static Method getMethod(@NotNull Class<?> clazz, @NotNull String fieldName, @NotNull Class<?>... o) {
         try {
             return clazz.getDeclaredMethod(fieldName, o);
-        } catch (NoSuchMethodException e) {
+        }
+        catch (NoSuchMethodException e) {
             Class<?> superClass = clazz.getSuperclass();
-            if (superClass == null) {
-                return null;
-            }
-            return getMethod(superClass, fieldName);
+            return superClass == null ? null : getMethod(superClass, fieldName);
         }
     }
 
     @Nullable
-    public static Object invokeMethod(@NotNull Method m, @Nullable Object by, @Nullable Object... param) {
-        m.setAccessible(true);
+    public static Object invokeMethod(@NotNull Method method, @Nullable Object by, @Nullable Object... param) {
+        method.setAccessible(true);
         try {
-            return m.invoke(by, param);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+            return method.invoke(by, param);
+        }
+        catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
         }
         return null;

@@ -17,7 +17,8 @@ public enum Version {
 
         try {
             CURRENT = Version.valueOf(versionRaw.toUpperCase());
-        } catch (IllegalArgumentException e) {
+        }
+        catch (IllegalArgumentException e) {
             e.printStackTrace();
             throw e;
         }

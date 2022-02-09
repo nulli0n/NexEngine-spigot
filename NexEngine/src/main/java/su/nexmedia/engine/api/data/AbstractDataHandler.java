@@ -30,7 +30,7 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
         this.lastLive = System.currentTimeMillis();
         this.dataType = plugin.cfg().dataStorage;
         if (this.dataType == StorageType.MYSQL) {
-            this.url = "jdbc:mysql://" + plugin.cfg().mysqlHost + "/" + plugin.cfg().mysqlBase + "?allowPublicKeyRetrieval=true&useSSL=false";
+            this.url = "jdbc:mysql://" + plugin.cfg().mysqlHost + "/" + plugin.cfg().mysqlBase + "?allowPublicKeyRetrieval=true&useSSL=false&autoReconnect=true";
             this.user = plugin.cfg().mysqlLogin;
             this.password = plugin.cfg().mysqlPassword;
         }

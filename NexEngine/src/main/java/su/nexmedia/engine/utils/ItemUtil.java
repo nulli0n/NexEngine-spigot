@@ -262,44 +262,41 @@ public class ItemUtil {
         replace(item, str -> StringUtil.color(PlaceholderAPI.setPlaceholders(player, str)));
     }
 
-    public static void replace(@NotNull ItemStack item, @NotNull UnaryOperator<String> cs) {
+    public static void replace(@NotNull ItemStack item, @NotNull UnaryOperator<String> replacer) {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
 
-        String name = cs.apply(meta.hasDisplayName() ? meta.getDisplayName() : "");
+        String name = replacer.apply(meta.hasDisplayName() ? meta.getDisplayName() : "");
         meta.setDisplayName(name);
 
-        List<String> lore = meta.getLore();
-        List<String> lore2 = new ArrayList<>();
-        if (lore != null) {
-            lore.replaceAll(cs);
-            lore.forEach(line -> lore2.addAll(Arrays.asList(line.split("\\n"))));
-            meta.setLore(lore2);
+        List<String> loreHas = meta.getLore();
+        List<String> loreReplaced = new ArrayList<>();
+        if (loreHas != null) {
+            loreHas.replaceAll(replacer);
+            loreHas.forEach(line -> loreReplaced.addAll(Arrays.asList(line.split("\\n"))));
+            meta.setLore(StringUtil.stripEmpty(loreReplaced));
         }
         item.setItemMeta(meta);
     }
 
     public static void replaceLore(@NotNull ItemStack item, @NotNull String placeholder, @NotNull List<String> replacer) {
         ItemMeta meta = item.getItemMeta();
-        if (meta == null)
-            return;
+        if (meta == null) return;
 
-        List<String> lore = meta.getLore();
-        if (lore == null)
-            return;
+        List<String> loreHas = meta.getLore();
+        if (loreHas == null) return;
 
-        List<String> lore2 = new ArrayList<>();
-        for (String line : lore) {
-            if (line.contains(placeholder)) {
+        List<String> loreReplaced = new ArrayList<>();
+        for (String lineHas : loreHas) {
+            if (lineHas.contains(placeholder)) {
                 replacer.forEach(lineRep -> {
-                    lore2.add(line.replace(placeholder, lineRep));
+                    loreReplaced.add(lineHas.replace(placeholder, lineRep));
                 });
                 continue;
             }
-            lore2.add(line);
+            loreReplaced.add(lineHas);
         }
-        meta.setLore(lore2);
-
+        meta.setLore(StringUtil.stripEmpty(loreReplaced));
         item.setItemMeta(meta);
     }
 
@@ -341,6 +338,14 @@ public class ItemUtil {
 
     public static boolean isHoe(@NotNull ItemStack item) {
         return ENGINE.getNMS().isHoe(item);
+    }
+
+    public static boolean isElytra(@NotNull ItemStack item) {
+        return item.getType() == Material.ELYTRA;
+    }
+
+    public static boolean isFishingRod(@NotNull ItemStack item) {
+        return item.getType() == Material.FISHING_ROD;
     }
 
     public static boolean isHelmet(@NotNull ItemStack item) {
@@ -393,6 +398,11 @@ public class ItemUtil {
         return ENGINE.getNMS().toJSON(item);
     }
 
+    @NotNull
+    public static String getNBTTag(@NotNull ItemStack item) {
+        return ENGINE.getNMS().getNBTTag(item);
+    }
+
     @Nullable
     public static String toBase64(@NotNull ItemStack item) {
         return ENGINE.getNMS().toBase64(item);
@@ -405,7 +415,7 @@ public class ItemUtil {
 
     @NotNull
     public static List<String> toBase64(@NotNull List<ItemStack> items) {
-        return items.stream().map(ItemUtil::toBase64).filter(Objects::nonNull).toList();
+        return new ArrayList<>(items.stream().map(ItemUtil::toBase64).filter(Objects::nonNull).toList());
     }
 
     @Nullable

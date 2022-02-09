@@ -31,6 +31,7 @@ public class Action_MessageTitles extends AbstractActionExecutor {
     protected void execute(@NotNull Entity executor, @NotNull Set<Entity> targets, @NotNull ParameterResult result) {
         String title = (String) result.getValue(ParameterId.TITLES_TITLE);
         String subtitle = (String) result.getValue(ParameterId.TITLES_SUBTITLE);
+        if (title == null && subtitle == null) return;
 
         ParameterValueNumber numberIn = (ParameterValueNumber) result.getValue(ParameterId.TITLES_FADE_IN);
         ParameterValueNumber numberStay = (ParameterValueNumber) result.getValue(ParameterId.TITLES_STAY);
@@ -45,7 +46,15 @@ public class Action_MessageTitles extends AbstractActionExecutor {
 
         for (Entity target : targets) {
             if (!(target instanceof Player player)) continue;
-            player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
+
+            String title2 = title == null ? "" : title
+                .replace(PLACEHOLDER_EXECUTOR_NAME, executor.getName())
+                .replace(PLACEHOLDER_TARGET_NAME, target.getName());
+            String subtitle2 = subtitle == null ? "" : subtitle
+                .replace(PLACEHOLDER_EXECUTOR_NAME, executor.getName())
+                .replace(PLACEHOLDER_TARGET_NAME, target.getName());
+
+            player.sendTitle(title2, subtitle2, fadeIn, stay, fadeOut);
         }
     }
 }

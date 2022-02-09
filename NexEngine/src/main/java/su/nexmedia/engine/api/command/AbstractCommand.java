@@ -50,7 +50,7 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
         this.plugin = plugin;
         this.aliases = Stream.of(aliases).map(String::toLowerCase).toArray(String[]::new);
         this.permission = permission;
-        this.childrens = new HashMap<>();
+        this.childrens = new TreeMap<>();
     }
 
     @Nullable

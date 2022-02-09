@@ -1,6 +1,6 @@
 name: NexEngine
 main: su.nexmedia.engine.NexEngine
-version: 2.1.0
+version: '${project.version} build-${buildNumber}'
 description: NEX Plugin Engine
 author: NEX-Media
 softdepend: [ Vault, WorldGuard, MythicMobs ]

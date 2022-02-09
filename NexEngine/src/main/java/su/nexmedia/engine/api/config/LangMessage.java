@@ -1,6 +1,5 @@
 package su.nexmedia.engine.api.config;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -9,49 +8,47 @@ import su.nexmedia.engine.utils.MessageUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nexmedia.engine.utils.regex.RegexUtil;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class LangMessage {
 
-    private static final Pattern   PATTERN_MESSAGE   = Pattern.compile("(\\{message:)+(.)+?(\\})+(.*?)(\\})?");
-    private static final String[]  MESSAGE_ARGUMENTS = new String[]{"type", "prefix", "fadeIn", "stay", "fadeOut"};
-    private static final Pattern[] PATTERN_ARGUMENTS = new Pattern[MESSAGE_ARGUMENTS.length];
+    private static final Pattern              PATTERN_MESSAGE_FULL   = Pattern.compile("((\\{message:)+(.+?)\\}+(.*?))");
+    private static final Map<String, Pattern> PATTERN_MESSAGE_PARAMS = new HashMap<>();
 
     static {
-        for (int i = 0; i < MESSAGE_ARGUMENTS.length; i++) {
-            PATTERN_ARGUMENTS[i] = Pattern.compile("(~)+(" + MESSAGE_ARGUMENTS[i] + ")+?(:)+(.*?)(;)");
+        for (String parameter : new String[]{"type", "prefix", "fadeIn", "stay", "fadeOut"}) {
+            PATTERN_MESSAGE_PARAMS.put(parameter, Pattern.compile("~+(" + parameter + ")+?:+(.*?);"));
         }
     }
 
     private final LangTemplate template;
-    private final String       msgDefault;
-    private       String       msgColor;
-    private       String       path;
+    private final String msgDefault;
+    private       String msgLocalized;
+    private       String path;
 
-    private OutputType out         = OutputType.CHAT;
-    private boolean    isPrefix    = true;
-    private int[]      titlesTimes = new int[3];
+    private OutputType type = OutputType.CHAT;
+    private boolean hasPrefix  = true;
+    private int[]   titleTimes = new int[3];
 
     public LangMessage(@NotNull LangTemplate template, @NotNull String message) {
         this.template = template;
         this.msgDefault = message;
-        this.setMsg(message);
+        this.setLocalized(message);
     }
 
     LangMessage(@NotNull LangMessage from) {
         this.template = from.template;
-        this.msgDefault = from.getDefaultMsg();
-        this.msgColor = from.getMsg();
+        this.msgDefault = from.getDefault();
+        this.msgLocalized = from.getLocalized();
         this.path = from.getPath();
-        this.out = from.out;
-        this.isPrefix = from.isPrefix;
-        this.titlesTimes = from.titlesTimes;
+        this.type = from.type;
+        this.hasPrefix = from.hasPrefix;
+        this.titleTimes = Arrays.copyOf(from.titleTimes, from.titleTimes.length);
     }
 
     @NotNull
@@ -63,66 +60,77 @@ public class LangMessage {
         this.path = path.replace("_", ".");
     }
 
-    boolean setArguments(@NotNull String msg) {
-        Matcher mArgs = PATTERN_MESSAGE.matcher(msg);
-        if (!mArgs.find()) return false;
+    void setArguments(@NotNull String msg) {
+        Matcher matcher = RegexUtil.getMatcher(PATTERN_MESSAGE_FULL, msg);
+        if (matcher == null || !matcher.find()) return;
 
         // String with only args
-        String extract = mArgs.group(0);
-        String arguments = extract.replace("{message:", "").replace("}", "").trim();
-        this.msgColor = msg.replace(extract, "");
+        String msgRaw = matcher.group(0);
+        String msgParams = matcher.group(3).trim();
+        this.msgLocalized = msg.replace(msgRaw, "");
 
-        for (int i = 0; i < MESSAGE_ARGUMENTS.length; i++) {
-            // Search for flag of this parameter
-            String argType = MESSAGE_ARGUMENTS[i];
-            Pattern pArgVal = PATTERN_ARGUMENTS[i];
-            Matcher mArgVal = RegexUtil.getMatcher(pArgVal, arguments);//pArgVal.matcher(arguments);
-            if (mArgVal == null) continue;
+        for (Map.Entry<String, Pattern> entryParams : PATTERN_MESSAGE_PARAMS.entrySet()) {
+            Matcher matcherParam = RegexUtil.getMatcher(entryParams.getValue(), msgParams);
+            if (matcherParam == null || !matcherParam.find()) {
+                continue;
+            }
 
-            // Get the flag value
-            if (mArgVal.find()) {
-                // Extract only value from all flag string
-                String argValue = mArgVal.group(4).trim();
-                switch (argType) {
-                    case "type" -> this.out = CollectionsUtil.getEnum(argValue, OutputType.class);
-                    case "prefix" -> this.isPrefix = Boolean.parseBoolean(argValue);
-                    case "fadeIn" -> this.titlesTimes[0] = StringUtil.getInteger(argValue, -1);
-                    case "stay" -> {
-                        this.titlesTimes[1] = StringUtil.getInteger(argValue, -1);
-                        if (this.titlesTimes[1] < 0) this.titlesTimes[1] = 10000;
-                    }
-                    case "fadeOut" -> this.titlesTimes[2] = StringUtil.getInteger(argValue, -1);
+            String paramName = entryParams.getKey();
+            String paramValue = matcherParam.group(2).stripLeading();
+            switch (paramName) {
+                case "type" -> this.type = CollectionsUtil.getEnum(paramValue, OutputType.class);
+                case "prefix" -> this.hasPrefix = Boolean.parseBoolean(paramValue);
+                case "fadeIn" -> this.titleTimes[0] = StringUtil.getInteger(paramValue, -1);
+                case "stay" -> {
+                    this.titleTimes[1] = StringUtil.getInteger(paramValue, -1);
+                    if (this.titleTimes[1] < 0) this.titleTimes[1] = Short.MAX_VALUE;
                 }
+                case "fadeOut" -> this.titleTimes[2] = StringUtil.getInteger(paramValue, -1);
             }
         }
-        return true;
     }
 
     @NotNull
+    @Deprecated
     public String getDefaultMsg() {
+        return this.getDefault();
+    }
+
+    @NotNull
+    public String getDefault() {
         return this.msgDefault;
     }
 
     @NotNull
+    @Deprecated
     public String getMsgReady() {
-        return this.replaceDefaults().apply(this.msgColor);
+        return this.getFinal();
     }
 
     @NotNull
-    public String getMsg() {
-        return this.msgColor;
+    public String getFinal() {
+        return this.replaceDefaults().apply(this.msgLocalized);
     }
 
-    public void setMsg(@NotNull String msg) {
-        // When TRUE, then 'msgColor' is already set by this 'msg' value.
-        if (!this.setArguments(msg)) {
-            this.msgColor = msg;
-        }
+    @NotNull
+    @Deprecated
+    public String getMsg() {
+        return this.getLocalized();
+    }
 
-        // Do not replace colors for JSON message, otherwise it will be broken.
-        if (!MessageUtil.isJSON(msg)) {
-            this.msgColor = StringUtil.color(this.msgColor);
-        }
+    @NotNull
+    public String getLocalized() {
+        return this.msgLocalized;
+    }
+
+    @Deprecated
+    public void setMsg(@NotNull String msg) {
+        this.setLocalized(msg);
+    }
+
+    public void setLocalized(@NotNull String msgLocalized) {
+        this.msgLocalized = StringUtil.color(msgLocalized);
+        this.setArguments(this.getLocalized());
     }
 
     @SuppressWarnings("unchecked")
@@ -136,16 +144,7 @@ public class LangMessage {
     @NotNull
     public LangMessage replace(@NotNull String var, @NotNull List<Object> replacer) {
         if (this.isEmpty()) return this;
-
-        StringBuilder builder = new StringBuilder();
-        replacer.forEach(rep -> {
-            if (builder.length() > 0) {
-                builder.append("\\n");
-            }
-            builder.append(rep.toString());
-        });
-
-        return this.replace(str -> str.replace(var, builder.toString()));
+        return this.replace(str -> str.replace(var, String.join("\\n", replacer.stream().map(Object::toString).toList())));
     }
 
     @NotNull
@@ -153,75 +152,56 @@ public class LangMessage {
         if (this.isEmpty()) return this;
 
         LangMessage msgCopy = new LangMessage(this);
-        msgCopy.msgColor = StringUtil.color(replacer.apply(msgCopy.getMsg()));
+        msgCopy.setLocalized(replacer.apply(msgCopy.getLocalized()));
         return msgCopy;
     }
 
     public boolean isEmpty() {
-        return (this.out == LangMessage.OutputType.NONE || this.getMsg().isEmpty());
+        return (this.type == LangMessage.OutputType.NONE || this.getLocalized().isEmpty());
     }
 
     public void broadcast() {
         if (this.isEmpty()) return;
 
-        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-            this.send(player);
-        }
-        this.send(Bukkit.getServer().getConsoleSender());
+        this.template.plugin.getServer().getOnlinePlayers().forEach(this::send);
+        this.send(this.template.plugin.getServer().getConsoleSender());
     }
 
     public void send(@NotNull CommandSender sender) {
         if (this.isEmpty()) return;
 
-        if (this.out == LangMessage.OutputType.CHAT) {
-            String prefix = isPrefix ? template.getPrefix() : "";
-
-            this.asList().forEach(line -> {
-                MessageUtil.sendWithJSON(sender, prefix + line);
-            });
+        if (this.type == LangMessage.OutputType.CHAT) {
+            String prefix = hasPrefix ? template.getPrefix() : "";
+            this.asList().forEach(line -> MessageUtil.sendWithJSON(sender, prefix + line));
+            return;
         }
-        else if (sender instanceof Player player) {
-            if (this.out == LangMessage.OutputType.ACTION_BAR) {
-                MessageUtil.sendActionBar(player, this.getMsgReady());
-            }
-            else if (this.out == LangMessage.OutputType.TITLES) {
-                List<String> list = this.asList();
-                if (list.isEmpty()) return;
 
-                String title = list.get(0);
+        if (sender instanceof Player player) {
+            if (this.type == LangMessage.OutputType.ACTION_BAR) {
+                MessageUtil.sendActionBar(player, this.getFinal());
+            }
+            else if (this.type == LangMessage.OutputType.TITLES) {
+                List<String> list = this.asList();
+                String title = list.size() > 0 ? list.get(0) : "";
                 String subtitle = list.size() > 1 ? list.get(1) : "";
-                player.sendTitle(title, subtitle, this.titlesTimes[0], this.titlesTimes[1], this.titlesTimes[2]);
+                player.sendTitle(title, subtitle, this.titleTimes[0], this.titleTimes[1], this.titleTimes[2]);
             }
         }
     }
 
     @NotNull
     public List<String> asList() {
-        String msg = this.getMsgReady();
-        if (msg.isEmpty()) return Collections.emptyList();
-
-        List<String> list = new ArrayList<>();
-        for (String line : msg.split("\\\\n")) {
-            list.add(line.trim());
-        }
-        return list;
+        return this.isEmpty() ? Collections.emptyList() : Stream.of(this.getFinal().split("\\\\n"))
+            .filter(Predicate.not(String::isEmpty)).toList();
     }
 
     /**
      * Replaces a raw '\n' new line splitter with a system one.
-     *
      * @return A string with a system new line splitters.
      */
     @NotNull
     public String normalizeLines() {
-        StringBuilder text = new StringBuilder();
-        for (String line : this.asList()) {
-            if (text.length() > 0) {
-                text.append("\n");
-            }
-            text.append(line);
-        }
-        return text.toString();
+        return String.join("\n", this.asList());
     }
 
     @NotNull

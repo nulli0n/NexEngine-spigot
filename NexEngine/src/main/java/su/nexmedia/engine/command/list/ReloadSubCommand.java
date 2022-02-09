@@ -8,7 +8,7 @@ import su.nexmedia.engine.api.command.AbstractCommand;
 public class ReloadSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> {
 
     public ReloadSubCommand(@NotNull P plugin) {
-        super(plugin, new String[]{"reload"}, plugin.getNameRaw() + ".admin");
+        super(plugin, new String[]{"reload"}, plugin.getNameRaw() + ".reload");
     }
 
     @Override
@@ -20,7 +20,7 @@ public class ReloadSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P>
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Core_Command_Reload_Desc.getMsg();
+        return plugin.lang().Core_Command_Reload_Desc.getLocalized();
     }
 
     @Override

@@ -2,40 +2,42 @@ package su.nexmedia.engine.utils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 
 public class NumberUtil {
 
+    @Deprecated
     public static final  NumberFormat  FORMAT_GROUP;
-    private static final DecimalFormat FORMAT_DECIMAL_ROUND;
-    private static final NumberFormat  FORMAT_DECIMAL_ROUND_GROUP;
+    @Deprecated
+    private static final DecimalFormat FORMAT_ROUND_SIMPLE;
+    private static final DecimalFormat FORMAT_ROUND_HUMAN;
 
     static {
-        FORMAT_DECIMAL_ROUND = new DecimalFormat("#.##"); // #.00 for 3.00 values
-
-        FORMAT_DECIMAL_ROUND_GROUP = DecimalFormat.getInstance(Locale.ENGLISH);
-        FORMAT_DECIMAL_ROUND_GROUP.setMinimumFractionDigits(0);
-        FORMAT_DECIMAL_ROUND_GROUP.setMaximumFractionDigits(2);
-        FORMAT_DECIMAL_ROUND_GROUP.setGroupingUsed(true);
+        FORMAT_ROUND_SIMPLE = new DecimalFormat("#.##", new DecimalFormatSymbols(Locale.ENGLISH));
+        FORMAT_ROUND_HUMAN = new DecimalFormat("#,###.##", new DecimalFormatSymbols(Locale.ENGLISH));
 
         FORMAT_GROUP = NumberFormat.getInstance();
         FORMAT_GROUP.setGroupingUsed(true);
     }
 
     @NotNull
-    public static String format(double d) {
-        return FORMAT_DECIMAL_ROUND.format(d).replace(",", ".");
+    public static String format(double value) {
+        return FORMAT_ROUND_HUMAN.format(value);
     }
 
     @NotNull
+    @Deprecated
     public static String formatGroup(double value) {
-        return FORMAT_DECIMAL_ROUND_GROUP.format(value);//.replace(",", ".");
+        return format(value);
     }
 
-    public static double round(double d) {
-        return Double.parseDouble(format(d));
+    public static double round(double value) {
+        return new BigDecimal(value).setScale(2, RoundingMode.HALF_UP).doubleValue();
     }
 
     @NotNull

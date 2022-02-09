@@ -1,5 +1,6 @@
 package su.nexmedia.engine.api.data.event;
 
+import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
@@ -11,6 +12,7 @@ public abstract class EngineUserEvent<P extends NexPlugin<P>, U extends Abstract
     private final U            user;
 
     public EngineUserEvent(@NotNull P plugin, @NotNull U user) {
+        super(!Bukkit.isPrimaryThread());
         this.plugin = plugin;
         this.user = user;
     }

@@ -9,6 +9,8 @@ import su.nexmedia.engine.utils.random.Rnd;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class StringUtil {
 
@@ -208,6 +210,24 @@ public class StringUtil {
         return original.substring(0, 1).toUpperCase() + original.substring(1);
     }
 
+    /**
+     * @param original List to remove empty lines from.
+     * @return A list with no multiple empty lines in a row.
+     */
+    @NotNull
+    public static List<String> stripEmpty(@NotNull List<String> original) {
+        List<String> stripped = new ArrayList<>();
+        for (int index = 0; index < original.size(); index++) {
+            String line = original.get(index);
+            if (line.isEmpty()) {
+                String last = stripped.isEmpty() ? null : stripped.get(stripped.size() - 1);
+                if (last == null || last.isEmpty() || index == (original.size() - 1)) continue;
+            }
+            stripped.add(line);
+        }
+        return stripped;
+    }
+
     @NotNull
     public static List<String> getByFirstLetters(@NotNull String arg, @NotNull List<String> source) {
         List<String> ret = new ArrayList<>();
@@ -230,27 +250,15 @@ public class StringUtil {
     }
 
     public static boolean isCustomBoolean(@NotNull String str) {
-        if (str.equalsIgnoreCase("0") || str.equalsIgnoreCase("off")) {
-            return true;
-        }
-        if (str.equalsIgnoreCase("1") || str.equalsIgnoreCase("on")) {
-            return true;
-        }
-        if (str.equalsIgnoreCase("true") || str.equalsIgnoreCase("false")) {
-            return true;
-        }
-        if (str.equalsIgnoreCase("yes") || str.equalsIgnoreCase("no")) {
-            return true;
-        }
-
-        return false;
+        String[] customs = new String[]{"0","1","on","off","true","false","yes","no"};
+        return Stream.of(customs).collect(Collectors.toSet()).contains(str.toLowerCase());
     }
 
     public static boolean parseCustomBoolean(@NotNull String str) {
-        if (str.equalsIgnoreCase("0") || str.equalsIgnoreCase("off") || str.equals("no")) {
+        if (str.equalsIgnoreCase("0") || str.equalsIgnoreCase("off") || str.equalsIgnoreCase("no")) {
             return false;
         }
-        if (str.equalsIgnoreCase("1") || str.equalsIgnoreCase("on") || str.equals("yes")) {
+        if (str.equalsIgnoreCase("1") || str.equalsIgnoreCase("on") || str.equalsIgnoreCase("yes")) {
             return true;
         }
         return Boolean.parseBoolean(str);

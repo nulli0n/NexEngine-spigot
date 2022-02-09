@@ -21,12 +21,12 @@ public class HookManager extends AbstractManager<NexEngine> {
     }
 
     @Override
-    public void onLoad() {
+    protected void onLoad() {
         this.hooks = new HashMap<>();
     }
 
     @Override
-    public void onShutdown() {
+    protected void onShutdown() {
         this.plugin.getChildPlugins().forEach(this::shutdown);
     }
 

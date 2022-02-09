@@ -9,9 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-/**
- * @author Fogus® Multimedia
- */
+@Deprecated
 public class ClickText {
 
     private String                 text;

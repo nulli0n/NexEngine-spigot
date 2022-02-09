@@ -13,6 +13,8 @@ public interface NMS {
 
     @NotNull String toJSON(@NotNull ItemStack item);
 
+    @NotNull String getNBTTag(@NotNull ItemStack item);
+
     @Nullable String toBase64(@NotNull ItemStack item);
 
     @Nullable ItemStack fromBase64(@NotNull String data);
@@ -24,6 +26,20 @@ public interface NMS {
     void sendAttackPacket(@NotNull Player player, int i);
 
     boolean breakBlock(@NotNull Player player, @NotNull Block block);
+
+    /**
+     * Defines how long it takes to mine that block.
+     * @param block Block object
+     * @return the block strength value.
+     */
+    float getBlockStrength(@NotNull Block block);
+
+    /**
+     * Defines how much the block is protected from explosions.
+     * @param block Block object
+     * @return the block durability value.
+     */
+    float getBlockDurability(@NotNull Block block);
 
     @NotNull List<ItemStack> getBlockDrops(@NotNull Block block, @NotNull Player player, @NotNull ItemStack item);
 

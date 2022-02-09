@@ -90,14 +90,6 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         this.plugin.runTask(c -> this.dataHolder.getData().saveUser(user), async);
     }
 
-    /*@Nullable
-    public U getOrLoadUser(@NotNull Player player) {
-        if (Hooks.isNPC(player)) {
-            throw new IllegalStateException("Could not load user data from an NPC!");
-        }
-        return this.getOrLoadUser(player.getUniqueId().toString(), true);
-    }*/
-
     @NotNull
     public final U getOrLoadUser(@NotNull Player player) {
         if (Hooks.isCitizensNPC(player)) {
@@ -129,22 +121,22 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     }
 
     @Nullable
-    public final U getOrLoadUser(@NotNull String uuid, boolean isId) {
+    public final U getOrLoadUser(@NotNull String nameOrUuid, boolean isUuid) {
         Player playerHolder;
-        if (isId) playerHolder = plugin.getServer().getPlayer(UUID.fromString(uuid));
-        else playerHolder = plugin.getServer().getPlayer(uuid);
+        if (isUuid) playerHolder = plugin.getServer().getPlayer(UUID.fromString(nameOrUuid));
+        else playerHolder = plugin.getServer().getPlayer(nameOrUuid);
         if (playerHolder != null) return this.getOrLoadUser(playerHolder);
 
         // Check by user name.
         for (U userOff : this.getActiveUsers()) {
-            if (userOff.getName().equalsIgnoreCase(uuid)) {
+            if (userOff.getName().equalsIgnoreCase(nameOrUuid)) {
                 return userOff;
             }
         }
 
         // Check if user is loaded.
-        U user = this.activeUsers.get(uuid);
-        if (user == null) user = this.dataHolder.getData().getUser(uuid, isId);
+        U user = this.activeUsers.get(nameOrUuid);
+        if (user == null) user = this.dataHolder.getData().getUser(nameOrUuid, isUuid);
         if (user != null) {
             this.lateJoin(user);
             return user;
@@ -157,32 +149,34 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         this.activeUsers.put(user.getUUID().toString(), user);
 
         // Игрок уже успел войти полностью на сервер (пройти JoinEvent)
-        // поэтому кастомный ивент в JoinEvent вызван не будет, а значит
-        // вызываем его здесь в основном потоке.
+        // поэтому кастомный ивент в JoinEvent вызван не будет, а значит вызываем его здесь.
         if (this.isPassJoin.remove(user.getUUID())) {
-            this.plugin.getServer().getScheduler().runTask(plugin, () -> {
-                user.setLastOnline(System.currentTimeMillis());
+            user.setLastOnline(System.currentTimeMillis());
 
-                EngineUserLoadEvent<P, U> event = new EngineUserLoadEvent<>(plugin, user);
-                plugin.getPluginManager().callEvent(event);
-            });
+            EngineUserLoadEvent<P, U> event = new EngineUserLoadEvent<>(plugin, user);
+            plugin.getPluginManager().callEvent(event);
         }
     }
 
     public final void unloadUser(@NotNull Player player) {
-        this.unloadUser(player.getUniqueId().toString());
-    }
-
-    public final void unloadUser(@NotNull String uuid) {
-        U user = this.activeUsers.get(uuid);
+        U user = this.activeUsers.remove(player.getUniqueId().toString());
         if (user == null) return;
 
+        user.setLastOnline(System.currentTimeMillis());
+        this.unloadUser(user);
+    }
+
+    public final void unloadUser(@NotNull UUID uuid) {
+        U user = this.activeUsers.remove(uuid.toString());
+        if (user == null) return;
+
+        this.unloadUser(user);
+    }
+
+    private void unloadUser(@NotNull U user) {
         EngineUserUnloadEvent<P, U> event = new EngineUserUnloadEvent<>(plugin, user);
         plugin.getPluginManager().callEvent(event);
-
-        user.setLastOnline(System.currentTimeMillis());
         this.save(user, true);
-        this.activeUsers.remove(uuid);
     }
 
     @NotNull
@@ -238,7 +232,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
             U user = getOrLoadUser(player);
             //if (user == null) return;
 
-            user.setLastOnline(System.currentTimeMillis());
+            //user.setLastOnline(System.currentTimeMillis());
 
             // Call custom UserLoad event.
             EngineUserLoadEvent<P, U> event = new EngineUserLoadEvent<>(plugin, user);

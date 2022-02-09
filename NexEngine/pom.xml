@@ -5,7 +5,7 @@
     <parent>
         <artifactId>NexEnginePlugin</artifactId>
         <groupId>su.nexmedia</groupId>
-        <version>2.1.0</version>
+        <version>2.1.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -17,14 +17,6 @@
     </properties>
 
     <repositories>
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
         <repository>
             <id>nexus</id>
             <name>Lumine Releases</name>
@@ -42,10 +34,6 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
-        <repository>
-            <id>maven</id>
-            <url>https://repo1.maven.org/maven2/</url>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -55,9 +43,9 @@
             <version>1.18.1-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>19.0.0</version>
+            <groupId>com.mojang</groupId>
+            <artifactId>authlib</artifactId>
+            <version>3.2.38</version>
         </dependency>
         <dependency>
             <groupId>io.netty</groupId>
@@ -103,27 +91,54 @@
         <dependency>
             <groupId>su.nexmedia</groupId>
             <artifactId>NMS</artifactId>
-            <version>2.1.0</version>
+            <version>2.1.1</version>
         </dependency>
         <dependency>
             <groupId>su.nexmedia</groupId>
             <artifactId>NexEngineCompat_V1_16_R3</artifactId>
-            <version>2.1.0</version>
+            <version>2.1.1</version>
         </dependency>
         <dependency>
             <groupId>su.nexmedia</groupId>
             <artifactId>NexEngineCompat_V1_17_R1</artifactId>
-            <version>2.1.0</version>
+            <version>2.1.1</version>
         </dependency>
         <dependency>
             <groupId>su.nexmedia</groupId>
             <artifactId>NexEngineCompat_V1_18_R1</artifactId>
-            <version>2.1.0</version>
+            <version>2.1.1</version>
         </dependency>
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory> <!-- (your resources folder location) -->
+                <filtering>true</filtering> <!-- this is the important part, it's what replaces, filters, all placeholders in the resources folder (such as ${project.version} in plugin.yml) -->
+            </resource>
+        </resources>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <configuration>
+                    <revisionOnScmFailure>no.scm.config.in.pom</revisionOnScmFailure>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>create-timestamp-id</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create-timestamp</goal>
+                        </goals>
+                        <configuration>
+                            <timestampFormat>dd/MM/yyyy</timestampFormat>
+                            <timestampPropertyName>buildNumber</timestampPropertyName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>

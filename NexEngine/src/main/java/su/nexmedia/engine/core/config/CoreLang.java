@@ -125,6 +125,6 @@ public class CoreLang extends LangTemplate {
 
     @NotNull
     public String getBoolean(boolean b) {
-        return (b ? this.Other_Yes : this.Other_No).getMsg();
+        return (b ? this.Other_Yes : this.Other_No).getLocalized();
     }
 }

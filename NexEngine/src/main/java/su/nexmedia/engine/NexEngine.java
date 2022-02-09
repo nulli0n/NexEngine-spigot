@@ -19,6 +19,7 @@ import su.nexmedia.engine.hooks.external.VaultHook;
 import su.nexmedia.engine.hooks.external.WorldGuardHook;
 import su.nexmedia.engine.hooks.external.citizens.CitizensHook;
 import su.nexmedia.engine.manager.packet.PacketManager;
+import su.nexmedia.engine.manager.player.PlayerBlockTracker;
 import su.nexmedia.engine.manager.player.PlayerManager;
 import su.nexmedia.engine.nms.NMS;
 import su.nexmedia.engine.utils.Reflex;
@@ -56,6 +57,11 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
     @NotNull
     public static NexEngine get() {
         return instance;
+    }
+
+    @Override
+    public boolean useNewConfigFields() {
+        return true;
     }
 
     final boolean loadCore() {
@@ -114,7 +120,6 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
 
     @Override
     public void disable() {
-        // Unregister Custom Actions Engine
         if (this.actionsManager != null) {
             this.actionsManager.shutdown();
             this.actionsManager = null;
@@ -133,6 +138,8 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
             this.craftManager.shutdown();
             this.craftManager = null;
         }
+
+        PlayerBlockTracker.shutdown();
     }
 
     @Override

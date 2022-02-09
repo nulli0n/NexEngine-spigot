@@ -57,8 +57,9 @@ public class CitizensHook extends AbstractHook<NexEngine> {
     }
 
     public void unregisterListeners(@NotNull NexPlugin<?> plugin) {
-        this.listeners.remove(plugin);
-        plugin.info("[Citizens Hook] Unregistered listeners");
+        if (this.listeners.remove(plugin) != null) {
+            plugin.info("[Citizens Hook] Unregistered listeners");
+        }
     }
 
     public void registerTrait(@NotNull NexPlugin<?> plugin, @NotNull Class<? extends Trait> trait) {

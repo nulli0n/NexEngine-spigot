@@ -16,17 +16,25 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
     protected       String name;
     protected       long   lastOnline;
 
+    private boolean isRecent;
+
     // Create new user data
     public AbstractUser(@NotNull P plugin, @NotNull Player player) {
         this(plugin, player.getUniqueId(), player.getName(), System.currentTimeMillis());
+        this.isRecent = true;
     }
 
     // Load existent user data
     public AbstractUser(@NotNull P plugin, @NotNull UUID uuid, @NotNull String name, long lastOnline) {
         this.plugin = plugin;
         this.uuid = uuid;
+        this.isRecent = false;
         this.setName(name);
         this.setLastOnline(lastOnline);
+    }
+
+    public boolean isRecentlyCreated() {
+        return isRecent;
     }
 
     @NotNull

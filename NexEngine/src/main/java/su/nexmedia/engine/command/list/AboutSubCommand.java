@@ -25,7 +25,7 @@ public class AboutSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Core_Command_About_Desc.getMsg();
+        return plugin.lang().Core_Command_About_Desc.getLocalized();
     }
 
     @Override
@@ -35,8 +35,22 @@ public class AboutSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> 
 
     @Override
     public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
-        List<String> info = StringUtil.color(Arrays.asList("&7", "&e" + plugin.getName() + " &6v" + plugin.getDescription().getVersion() + " &ecreated by &6" + plugin.getAuthor(), "&eType &6/" + plugin.getLabel() + " help&e to list plugin commands.", "&7", "&2Powered by &a&l" + NexEngine.get().getName() + "&2, © 2019-2020 &a" + NexPlugin.TM));
+        List<String> info = StringUtil.color(Arrays.asList(
+            "&7",
+            "&e" + plugin.getName() + " &6v" + plugin.getDescription().getVersion() + " &ecreated by &6" + plugin.getAuthor(),
+            "&eType &6/" + plugin.getLabel() + " help&e to list plugin commands.",
+            "&7",
+            "&2Powered by &a&l" + NexEngine.get().getName() + "&2, © 2019-2022 &a" + NexPlugin.TM));
 
         info.forEach(sender::sendMessage);
+
+        /*Player player = (Player) sender;
+        ItemStack item = player.getInventory().getItemInMainHand();
+
+        ClickText clickText = new ClickText("&b&lSome example &5[&d&lButton &b1&d] &e&nfor the ClickText &7[Click Me] &6&owell &2 yeah&c [Send Nudes] &3&kblabla &1sucx");
+        clickText.addComponent("[&d&lButton &b1&d]").showText("Zhopa!", "Yay!", "#ccc888Hey");
+        clickText.addComponent("&7[Click Me]").showText("Piska!");
+        clickText.addComponent("[Send Nudes]").showItem(item);
+        clickText.send(sender);*/
     }
 }

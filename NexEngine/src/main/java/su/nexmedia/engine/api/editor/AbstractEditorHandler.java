@@ -11,9 +11,9 @@ import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.manager.AbstractManager;
 import su.nexmedia.engine.api.manager.IListener;
 import su.nexmedia.engine.api.menu.IMenu;
-import su.nexmedia.engine.utils.ClickText;
 import su.nexmedia.engine.utils.Constants;
 import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.json.text.ClickText;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -82,8 +82,9 @@ public abstract class AbstractEditorHandler<P extends NexPlugin<P>, C extends En
             EDITOR_CACHE_MENU.put(player, new AbstractMap.SimpleEntry<>(menu, menu.getPage(player)));
         }
 
-        ClickText text = new ClickText(plugin.lang().Core_Editor_Tips_Exit_Name.getMsg());
-        text.createFullPlaceholder().execCmd("/" + Constants.EXIT).hint(plugin.lang().Core_Editor_Tips_Exit_Hint.getMsg());
+        String s = plugin.lang().Core_Editor_Tips_Exit_Name.getLocalized();
+        ClickText text = new ClickText(s);
+        text.addComponent(s).runCommand("/" + Constants.EXIT).showText(plugin.lang().Core_Editor_Tips_Exit_Hint.getLocalized());
         text.send(player);
     }
 
@@ -101,7 +102,7 @@ public abstract class AbstractEditorHandler<P extends NexPlugin<P>, C extends En
             });
         }
 
-        player.sendTitle(plugin.lang().Core_Editor_Display_Done_Title.getMsg(), "", 10, 40, 10);
+        player.sendTitle(plugin.lang().Core_Editor_Display_Done_Title.getLocalized(), "", 10, 40, 10);
     }
 
     @SuppressWarnings("unchecked")

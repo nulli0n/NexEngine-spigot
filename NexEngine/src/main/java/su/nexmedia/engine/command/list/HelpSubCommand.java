@@ -20,7 +20,7 @@ public class HelpSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> {
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Core_Command_Help_Desc.getMsg();
+        return plugin.lang().Core_Command_Help_Desc.getLocalized();
     }
 
     @Override

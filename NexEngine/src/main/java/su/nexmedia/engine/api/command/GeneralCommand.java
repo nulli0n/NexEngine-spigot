@@ -104,16 +104,16 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
             return StringUtil.getByFirstLetters(args[args.length - 1], list);
         }
 
-        int parents = 0;
+        /*int parents = 0;
         AbstractCommand<P> parent = command.getParent();
         while (parent != null) {
             parents++;
             parent = parent.getParent();
         }
 
-        int index = command.equals(this) ? (args.length) : (args.length - parents);
+        int index = command.equals(this) ? (args.length) : (args.length - parents);*/
 
-        List<String> list = command.getTab(player, index, args);
+        List<String> list = command.getTab(player, args.length, args);
         return StringUtil.getByFirstLetters(args[args.length - 1], list);
     }
 }

@@ -29,12 +29,12 @@ public abstract class LangTemplate {
 
     public void setup() {
         this.load();
-        this.config.saveChanges();
 
         for (String place : this.config.getSection("custom-placeholders")) {
             this.customPlaceholders.put("%" + place + "%", this.config.getString("custom-placeholders." + place));
         }
         this.customPlaceholders.values().removeIf(Objects::isNull);
+        this.config.saveChanges();
     }
 
     protected void setupEnum(@NotNull Class<? extends Enum<?>> clazz) {
@@ -61,7 +61,7 @@ public abstract class LangTemplate {
 
     @NotNull
     public String getPrefix() {
-        return this.plugin.lang().Prefix.getMsgReady();
+        return this.plugin.lang().Prefix.getFinal();
     }
 
     @Nullable
@@ -96,38 +96,24 @@ public abstract class LangTemplate {
             if (!field.getDeclaringClass().equals(this.getClass())) {
                 LangMessage superField = (LangMessage) Reflex.getFieldValue(this.parent, field.getName());
                 if (superField != null) {
-                    langMessage.setMsg(superField.getMsg());
+                    langMessage.setLocalized(superField.getLocalized());
                     continue;
                 }
             }
 
             String path = langMessage.getPath();
-            JYML cfg = this.config;
 
             // Add missing lang node in config.
-            if (!cfg.contains(path)) {
-                String msg = langMessage.getDefaultMsg();
+            if (!config.contains(path)) {
+                String msg = langMessage.getDefault();
                 String[] split = msg.split("\n");
-                cfg.set(path, split.length > 1 ? Arrays.asList(split) : msg);
+                config.set(path, split.length > 1 ? Arrays.asList(split) : msg);
             }
 
-            // Load message text from lang config
-            String msgLoad;
-            List<String> cList = cfg.getStringList(path);
-            if (!cList.isEmpty()) {
-                StringBuilder builder = new StringBuilder();
-                cList.forEach(line -> {
-                    if (builder.length() > 0) {
-                        builder.append("\\n");
-                    }
-                    builder.append(line);
-                });
-                msgLoad = builder.toString();
-            }
-            else {
-                msgLoad = cfg.getString(path, "");
-            }
-            langMessage.setMsg(msgLoad);
+            // Load message text from the language config.
+            List<String> cList = config.getStringList(path);
+            String msgLoad = !cList.isEmpty() ? String.join("\\n", cList) : config.getString(path, "");
+            langMessage.setLocalized(msgLoad);
         }
         this.config.saveChanges();
     }

@@ -4,9 +4,9 @@ import org.jetbrains.annotations.NotNull;
 
 public class TimedCharSequence implements CharSequence {
 
-    private CharSequence chars;
-    private long         timeout;
-    private long         maxTime;
+    private final CharSequence chars;
+    private final long timeout;
+    private final long maxTime;
 
     public TimedCharSequence(@NotNull CharSequence chars, long timeout) {
         this.chars = chars;

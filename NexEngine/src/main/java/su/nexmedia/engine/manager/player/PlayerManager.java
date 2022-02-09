@@ -3,11 +3,9 @@ package su.nexmedia.engine.manager.player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.api.manager.AbstractManager;
-import su.nexmedia.engine.manager.player.listener.PlayerBlockPlacedListener;
 
+@Deprecated
 public class PlayerManager extends AbstractManager<NexEngine> {
-
-    private boolean isUserBlockPlaceListening;
 
     public PlayerManager(@NotNull NexEngine plugin) {
         super(plugin);
@@ -20,18 +18,11 @@ public class PlayerManager extends AbstractManager<NexEngine> {
 
     @Override
     protected void onShutdown() {
-
+        PlayerBlockTracker.shutdown();
     }
 
+    @Deprecated
     public void enableUserBlockListening() {
-        if (this.isUserBlockPlaceListening()) return;
-
-        this.isUserBlockPlaceListening = true;
-        this.addListener(new PlayerBlockPlacedListener(this.plugin));
-        this.plugin.info("Enabled listener for player placed blocks.");
-    }
-
-    public boolean isUserBlockPlaceListening() {
-        return isUserBlockPlaceListening;
+        PlayerBlockTracker.initialize();
     }
 }

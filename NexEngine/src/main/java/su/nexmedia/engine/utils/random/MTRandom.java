@@ -4,7 +4,6 @@ import java.util.Random;
 
 public class MTRandom extends Random {
 
-    private static final long    serialVersionUID = -515082678588212038L;
     private static final int     UPPER_MASK       = Integer.MIN_VALUE;
     private static final int     LOWER_MASK       = Integer.MAX_VALUE;
     private static final int     N                = 624;
@@ -110,7 +109,7 @@ public class MTRandom extends Random {
         }
         int i = 1;
         int j = 0;
-        int k = (N > length) ? N : length;
+        int k = Math.max(N, length);
         this.setSeed(MAGIC_SEED);
         while (k > 0) {
             this.mt[i] = (this.mt[i] ^ (this.mt[i - 1] ^ this.mt[i - 1] >>> 30) * MAGIC_FACTOR2) + buf[j] + j;

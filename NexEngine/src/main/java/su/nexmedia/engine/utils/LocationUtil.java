@@ -6,6 +6,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
+import org.bukkit.generator.WorldInfo;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,32 +16,41 @@ import su.nexmedia.engine.core.config.CoreConfig;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 public class LocationUtil {
 
     @Nullable
     public static String serialize(@NotNull Location loc) {
         World world = loc.getWorld();
-        if (world == null)
-            return null;
+        if (world == null) return null;
 
-        StringBuilder raw = new StringBuilder().append(loc.getX()).append(",").append(loc.getY()).append(",").append(loc.getZ()).append(",").append(loc.getPitch()).append(",").append(loc.getYaw()).append(",").append(world.getName());
+        StringBuilder raw = new StringBuilder()
+            .append(loc.getX()).append(",")
+            .append(loc.getY()).append(",")
+            .append(loc.getZ()).append(",")
+            .append(loc.getPitch()).append(",")
+            .append(loc.getYaw()).append(",")
+            .append(world.getName());
 
         return raw.toString();
     }
 
     @NotNull
     public static List<String> serialize(@NotNull Collection<Location> list) {
-        List<String> raw = list.stream().map(loc -> serialize(loc)).collect(Collectors.toList());
-        return raw;
+        return new ArrayList<>(list.stream().map(LocationUtil::serialize).filter(Objects::nonNull).toList());
+    }
+
+    @NotNull
+    @Deprecated
+    public static List<String> serialize(@NotNull List<Location> list) {
+        return serialize((Collection<Location>) list);
     }
 
     @Nullable
     public static Location deserialize(@NotNull String raw) {
         String[] split = raw.split(",");
-        if (split.length != 6)
-            return null;
+        if (split.length != 6) return null;
 
         World world = Bukkit.getWorld(split[5]);
         if (world == null) {
@@ -58,15 +68,14 @@ public class LocationUtil {
     }
 
     @NotNull
+    public static List<Location> deserialize(@NotNull Collection<String> list) {
+        return new ArrayList<>(list.stream().map(LocationUtil::deserialize).filter(Objects::nonNull).toList());
+    }
+
+    @NotNull
+    @Deprecated
     public static List<Location> deserialize(@NotNull List<String> list) {
-        List<Location> locations = new ArrayList<>();
-        list.forEach(raw -> {
-            Location loc = deserialize(raw);
-            if (loc != null) {
-                locations.add(loc);
-            }
-        });
-        return locations;
+        return deserialize((Collection<String>) list);
     }
 
     @NotNull
@@ -78,6 +87,11 @@ public class LocationUtil {
     @NotNull
     public static String getWorldName(@NotNull World world) {
         return CoreConfig.getWorldName(world.getName());
+    }
+
+    @NotNull
+    public static List<String> getWorldNames() {
+        return Bukkit.getWorlds().stream().map(WorldInfo::getName).toList();
     }
 
     @NotNull
@@ -97,20 +111,23 @@ public class LocationUtil {
     }
 
     @NotNull
-    public static Location getCenter(@NotNull Location loc, boolean vert) {
-        float yaw = loc.getYaw();
-        float pitch = loc.getPitch();
-
-        loc = new Location(loc.getWorld(), getRelativeCoord(loc.getBlockX()), vert ? getRelativeCoord(loc.getBlockY()) : loc.getBlockY(), getRelativeCoord(loc.getBlockZ()));
-
-        loc.setYaw(yaw);
-        loc.setPitch(pitch);
-        return loc;
+    public static Location getCenter(@NotNull Location location) {
+        return getCenter(location, true);
     }
 
     @NotNull
-    public static Location getCenter(@NotNull Location loc) {
-        return getCenter(loc, true);
+    public static Location getCenter(@NotNull Location location, boolean doVertical) {
+        float yaw = location.getYaw();
+        float pitch = location.getPitch();
+
+        double x = getRelativeCoord(location.getBlockX());
+        double y = doVertical ? getRelativeCoord(location.getBlockY()) : location.getBlockY();
+        double z = getRelativeCoord(location.getBlockZ());
+
+        location = new Location(location.getWorld(), x, y, z);
+        location.setYaw(yaw);
+        location.setPitch(pitch);
+        return location;
     }
 
     private static double getRelativeCoord(double cord) {
@@ -118,30 +135,29 @@ public class LocationUtil {
     }
 
     @NotNull
-    public static Location getPointOnCircle(@NotNull Location loc, boolean b, double n, double n2, double n3) {
-        return (b ? loc.clone() : loc).add(Math.cos(n) * n2, n3, Math.sin(n) * n2);
-    }
-
-    @NotNull
     public static Location getPointOnCircle(@NotNull Location loc, double n, double n2, double n3) {
         return getPointOnCircle(loc, true, n, n2, n3);
     }
 
+    @NotNull
+    public static Location getPointOnCircle(@NotNull Location loc, boolean doCopy, double n, double n2, double n3) {
+        return (doCopy ? loc.clone() : loc).add(Math.cos(n) * n2, n3, Math.sin(n) * n2);
+    }
+
     @Nullable
-    public static BlockFace getDirection(@NotNull Entity e) {
-        float n = e.getLocation().getYaw();
-        n = Float.valueOf(n / 90.0F);
-        n = Float.valueOf(Math.round(n));
-        if ((n == -4.0F) || (n == 0.0F) || (n == 4.0F)) {
+    public static BlockFace getDirection(@NotNull Entity entity) {
+        float yaw = Math.round(entity.getLocation().getYaw() / 90F);
+
+        if ((yaw == -4.0F) || (yaw == 0.0F) || (yaw == 4.0F)) {
             return BlockFace.SOUTH;
         }
-        if ((n == -1.0F) || (n == 3.0F)) {
+        if ((yaw == -1.0F) || (yaw == 3.0F)) {
             return BlockFace.EAST;
         }
-        if ((n == -2.0F) || (n == 2.0F)) {
+        if ((yaw == -2.0F) || (yaw == 2.0F)) {
             return BlockFace.NORTH;
         }
-        if ((n == -3.0F) || (n == 1.0F)) {
+        if ((yaw == -3.0F) || (yaw == 1.0F)) {
             return BlockFace.WEST;
         }
         return null;
@@ -152,14 +168,7 @@ public class LocationUtil {
         Location origin = from.clone();
         Vector target = to.clone().toVector();
         origin.setDirection(target.subtract(origin.toVector()));
-        Vector vector = origin.getDirection();
 
-        return vector;
-    }
-
-    @NotNull
-    public static List<String> getWorldNames() {
-        List<String> list = Bukkit.getWorlds().stream().map(world -> world.getName()).collect(Collectors.toList());
-        return list;
+        return origin.getDirection();
     }
 }

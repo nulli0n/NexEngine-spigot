@@ -4,6 +4,7 @@ import com.google.common.collect.Multimap;
 import io.netty.channel.Channel;
 import net.minecraft.server.v1_16_R3.*;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_16_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_16_R3.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_16_R3.util.CraftChatMessage;
@@ -47,6 +48,20 @@ public class V1_16_R3 implements NMS {
     }
 
     @Override
+    public float getBlockStrength(@NotNull Block block) {
+        BlockPosition pos = new BlockPosition(block.getX(), block.getY(), block.getZ());
+        BlockBase.BlockData blockData = ((CraftWorld)block.getWorld()).getHandle().getType(pos);
+        return blockData.strength;
+    }
+
+    @Override
+    public float getBlockDurability(@NotNull Block block) {
+        BlockPosition pos = new BlockPosition(block.getX(), block.getY(), block.getZ());
+        BlockBase.BlockData blockData = ((CraftWorld)block.getWorld()).getHandle().getType(pos);
+        return blockData.getBlock().getDurability();
+    }
+
+    @Override
     @NotNull
     public List<ItemStack> getBlockDrops(@NotNull Block block, @NotNull Player player, @NotNull ItemStack tool) {
         BlockPosition position = new BlockPosition(block.getX(), block.getY(), block.getZ());
@@ -76,6 +91,14 @@ public class V1_16_R3 implements NMS {
         }
 
         return js;
+    }
+
+    @Override
+    @NotNull
+    public String getNBTTag(@NotNull ItemStack item) {
+        net.minecraft.server.v1_16_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        NBTTagCompound compound = nmsItem.getTag();
+        return compound == null ? "null" : compound.toString();
     }
 
     @Override

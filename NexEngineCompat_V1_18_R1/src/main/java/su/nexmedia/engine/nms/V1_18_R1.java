@@ -2,24 +2,24 @@ package su.nexmedia.engine.nms;
 
 import com.google.common.collect.Multimap;
 import io.netty.channel.Channel;
-import net.minecraft.core.BlockPosition;
-import net.minecraft.nbt.NBTCompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.chat.IChatBaseComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.PacketPlayOutAnimation;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.server.level.PlayerInteractManager;
+import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EnumItemSlot;
-import net.minecraft.world.entity.ai.attributes.AttributeBase;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.GenericAttributes;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.World;
-import net.minecraft.world.level.block.entity.TileEntity;
-import net.minecraft.world.level.block.state.IBlockData;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
@@ -41,43 +41,57 @@ public class V1_18_R1 implements NMS {
     @Override
     @NotNull
     public Channel getChannel(@NotNull Player player) {
-        return ((CraftPlayer) player).getHandle().b.a().k;
+        return ((CraftPlayer) player).getHandle().connection.getConnection().channel;
     }
 
     @Override
     public void sendPacket(@NotNull Player player, @NotNull Object packet) {
-        ((CraftPlayer) player).getHandle().b.a((Packet<?>) packet);
+        ((CraftPlayer) player).getHandle().connection.send((Packet<?>) packet);
     }
 
     @Override
     public void sendAttackPacket(@NotNull Player p, int id) {
         CraftPlayer player = (CraftPlayer) p;
         Entity entity = player.getHandle();
-        PacketPlayOutAnimation packet = new PacketPlayOutAnimation(entity, id);
-        player.getHandle().b.a(packet);
+        ClientboundAnimatePacket packet = new ClientboundAnimatePacket(entity, id);
+        player.getHandle().connection.send(packet);
     }
 
     @Override
     public boolean breakBlock(@NotNull Player player, @NotNull Block block) {
-        BlockPosition position = new BlockPosition(block.getX(), block.getY(), block.getZ());
-        EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
-        PlayerInteractManager manager = entityPlayer.d;
-        return manager.a(position);
+        BlockPos position = new BlockPos(block.getX(), block.getY(), block.getZ());
+        ServerPlayer entityPlayer = ((CraftPlayer) player).getHandle();
+        ServerPlayerGameMode manager = entityPlayer.gameMode;
+        return manager.destroyBlock(position);
+    }
+
+    @Override
+    public float getBlockDurability(@NotNull Block block) {
+        BlockPos pos = new BlockPos(block.getX(), block.getY(), block.getZ());
+        BlockBehaviour.BlockStateBase blockData = ((CraftWorld)block.getWorld()).getHandle().getBlockState(pos);
+        return blockData.getBlock().getExplosionResistance();
+    }
+
+    @Override
+    public float getBlockStrength(@NotNull Block block) {
+        BlockPos pos = new BlockPos(block.getX(), block.getY(), block.getZ());
+        BlockBehaviour.BlockStateBase blockData = ((CraftWorld)block.getWorld()).getHandle().getBlockState(pos);
+        return blockData.destroySpeed;
     }
 
     @Override
     @NotNull
     public List<ItemStack> getBlockDrops(@NotNull Block block, @NotNull Player player, @NotNull ItemStack tool) {
-        BlockPosition position = new BlockPosition(block.getX(), block.getY(), block.getZ());
+        BlockPos position = new BlockPos(block.getX(), block.getY(), block.getZ());
 
-        World nmsWorld = ((CraftWorld)player.getWorld()).getHandle();
-        IBlockData nmsData = nmsWorld.a_(position);
-        TileEntity nmsTile = nmsWorld.c_(position);
+        ServerLevel nmsWorld = ((CraftWorld)player.getWorld()).getHandle();
+        BlockState nmsData = nmsWorld.getBlockState(position);
+        BlockEntity nmsTile = nmsWorld.getBlockEntity(position);
         net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(tool);
 
-        EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
+        ServerPlayer entityPlayer = ((CraftPlayer) player).getHandle();
 
-        return net.minecraft.world.level.block.Block.a(
+        return net.minecraft.world.level.block.Block.getDrops(
             nmsData, nmsWorld.getMinecraftWorld(), position, nmsTile, entityPlayer, nmsItem)
             .stream().map(CraftItemStack::asBukkitCopy).toList();
     }
@@ -85,16 +99,21 @@ public class V1_18_R1 implements NMS {
     @Override
     @NotNull
     public String toJSON(@NotNull ItemStack item) {
-        NBTTagCompound c = new NBTTagCompound();
         net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
-        c = nmsItem.b(c);
-        String js = c.toString();
-        if (js.length() > 32767) {
+        String json = nmsItem.save(new CompoundTag()).toString();
+        if (json.length() > Short.MAX_VALUE) {
             ItemStack item2 = new ItemStack(item.getType());
             return toJSON(item2);
         }
+        return json;
+    }
 
-        return js;
+    @Override
+    @NotNull
+    public String getNBTTag(@NotNull ItemStack item) {
+        net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
+        CompoundTag compound = nmsItem.getTag();
+        return compound == null ? "null" : compound.toString();
     }
 
     @Override
@@ -102,23 +121,18 @@ public class V1_18_R1 implements NMS {
     public String toBase64(@NotNull ItemStack item) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         DataOutputStream dataOutput = new DataOutputStream(outputStream);
-
-        NBTTagList nbtTagListItems = new NBTTagList();
-        NBTTagCompound nbtTagCompoundItem = new NBTTagCompound();
+        CompoundTag nbtTagCompoundItem = new CompoundTag();
 
         net.minecraft.world.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
-
-        nmsItem.b(nbtTagCompoundItem);
-
-        nbtTagListItems.add(nbtTagCompoundItem);
+        nmsItem.save(nbtTagCompoundItem);
 
         try {
-            NBTCompressedStreamTools.a(nbtTagCompoundItem, (DataOutput) dataOutput);
-        } catch (IOException e) {
+            NbtIo.write(nbtTagCompoundItem, dataOutput);
+        }
+        catch (IOException e) {
             e.printStackTrace();
             return null;
         }
-
         return new BigInteger(1, outputStream.toByteArray()).toString(32);
     }
 
@@ -127,18 +141,16 @@ public class V1_18_R1 implements NMS {
     public ItemStack fromBase64(@NotNull String data) {
         ByteArrayInputStream inputStream = new ByteArrayInputStream(new BigInteger(data, 32).toByteArray());
 
-        NBTTagCompound nbtTagCompoundRoot;
+        CompoundTag nbtTagCompoundRoot;
         try {
-            nbtTagCompoundRoot = NBTCompressedStreamTools.a((DataInput) new DataInputStream(inputStream));
+            nbtTagCompoundRoot = NbtIo.read(new DataInputStream(inputStream));
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
 
-        net.minecraft.world.item.ItemStack nmsItem = net.minecraft.world.item.ItemStack.a(nbtTagCompoundRoot); // .createStack(nbtTagCompoundRoot);
-        ItemStack item = CraftItemStack.asBukkitCopy(nmsItem);
-
-        return item;
+        net.minecraft.world.item.ItemStack nmsItem = net.minecraft.world.item.ItemStack.of(nbtTagCompoundRoot);
+        return CraftItemStack.asBukkitCopy(nmsItem);
     }
 
     @Override
@@ -147,8 +159,8 @@ public class V1_18_R1 implements NMS {
         // CraftItemStack craftItem = (CraftItemStack) item;
         net.minecraft.world.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(item);
 
-        EntityPlayer nmsPlayer = player != null ? ((CraftPlayer) player).getHandle() : null;
-        nmsStack.a(amount, new Random(), nmsPlayer);
+        ServerPlayer nmsPlayer = player != null ? ((CraftPlayer) player).getHandle() : null;
+        nmsStack.hurt(amount, new Random(), nmsPlayer);
 
         return CraftItemStack.asBukkitCopy(nmsStack);
     }
@@ -159,44 +171,38 @@ public class V1_18_R1 implements NMS {
     public String fixColors(@NotNull String str) {
         str = str.replace("\n", "%n%"); // CraftChatMessage wipes all lines out.
 
-        IChatBaseComponent baseComponent = CraftChatMessage.fromStringOrNull(str);
+        Component baseComponent = CraftChatMessage.fromStringOrNull(str);
         String singleColor = CraftChatMessage.fromComponent(baseComponent);
         return singleColor.replace("%n%", "\n");
     }
 
     @Nullable
-    private Multimap<AttributeBase, AttributeModifier> getAttributes(@NotNull ItemStack itemStack) {
-        Item item = CraftItemStack.asNMSCopy(itemStack).c();
-        Multimap<AttributeBase, AttributeModifier> attMap = null;
+    private Multimap<Attribute, AttributeModifier> getAttributes(@NotNull ItemStack itemStack) {
+        Item item = CraftItemStack.asNMSCopy(itemStack).getItem();
+        Multimap<Attribute, AttributeModifier> attMap = null;
 
-        if (item instanceof ItemArmor) {
-            ItemArmor tool = (ItemArmor) item;
-            attMap = tool.a(tool.b());
+        if (item instanceof ArmorItem armorItem) {
+            attMap = armorItem.getDefaultAttributeModifiers(armorItem.getSlot());
         }
-        else if (item instanceof ItemTool) {
-            ItemTool tool = (ItemTool) item;
-            attMap = tool.a(EnumItemSlot.a);
+        else if (item instanceof DiggerItem diggerItem) {
+            attMap = diggerItem.getDefaultAttributeModifiers(EquipmentSlot.MAINHAND);
         }
-        else if (item instanceof ItemSword) {
-            ItemSword tool = (ItemSword) item;
-            attMap = tool.a(EnumItemSlot.a);
+        else if (item instanceof SwordItem swordItem) {
+            attMap = swordItem.getDefaultAttributeModifiers(EquipmentSlot.MAINHAND);
         }
-        else if (item instanceof ItemTrident) {
-            ItemTrident tool = (ItemTrident) item;
-            attMap = tool.a(EnumItemSlot.a);
+        else if (item instanceof TridentItem tridentItem) {
+            attMap = tridentItem.getDefaultAttributeModifiers(EquipmentSlot.MAINHAND);
         }
 
         return attMap;
     }
 
-    private double getAttributeValue(@NotNull ItemStack item, @NotNull AttributeBase base) {
-        Multimap<AttributeBase, AttributeModifier> attMap = this.getAttributes(item);
+    private double getAttributeValue(@NotNull ItemStack item, @NotNull Attribute base) {
+        Multimap<Attribute, AttributeModifier> attMap = this.getAttributes(item);
         if (attMap == null) return 0D;
 
         Collection<AttributeModifier> att = attMap.get(base);
-        double damage = att.isEmpty() ? 0 : att.stream().findFirst().get().d();
-
-        return damage;// + 1;
+        return att.isEmpty() ? 0 : att.stream().findFirst().get().getAmount();
     }
 
     @Override
@@ -206,97 +212,97 @@ public class V1_18_R1 implements NMS {
 
     @Override
     public boolean isSword(@NotNull ItemStack itemStack) {
-        Item item = CraftItemStack.asNMSCopy(itemStack).c();
-        return item instanceof ItemSword;
+        Item item = CraftItemStack.asNMSCopy(itemStack).getItem();
+        return item instanceof SwordItem;
     }
 
     @Override
     public boolean isAxe(@NotNull ItemStack itemStack) {
-        Item item = CraftItemStack.asNMSCopy(itemStack).c();
-        return item instanceof ItemAxe;
+        Item item = CraftItemStack.asNMSCopy(itemStack).getItem();
+        return item instanceof AxeItem;
     }
 
     @Override
     public boolean isTrident(@NotNull ItemStack itemStack) {
-        Item item = CraftItemStack.asNMSCopy(itemStack).c();
-        return item instanceof ItemTrident;
+        Item item = CraftItemStack.asNMSCopy(itemStack).getItem();
+        return item instanceof TridentItem;
     }
 
     @Override
     public boolean isPickaxe(@NotNull ItemStack itemStack) {
-        Item item = CraftItemStack.asNMSCopy(itemStack).c();
-        return item instanceof ItemPickaxe;
+        Item item = CraftItemStack.asNMSCopy(itemStack).getItem();
+        return item instanceof PickaxeItem;
     }
 
     @Override
     public boolean isShovel(@NotNull ItemStack itemStack) {
-        Item item = CraftItemStack.asNMSCopy(itemStack).c();
-        return item instanceof ItemSpade;
+        Item item = CraftItemStack.asNMSCopy(itemStack).getItem();
+        return item instanceof ShovelItem;
     }
 
     @Override
     public boolean isHoe(@NotNull ItemStack itemStack) {
-        Item item = CraftItemStack.asNMSCopy(itemStack).c();
-        return item instanceof ItemHoe;
+        Item item = CraftItemStack.asNMSCopy(itemStack).getItem();
+        return item instanceof HoeItem;
     }
 
     @Override
     public boolean isTool(@NotNull ItemStack itemStack) {
-        Item item = CraftItemStack.asNMSCopy(itemStack).c();
-        return item instanceof ItemTool;
+        Item item = CraftItemStack.asNMSCopy(itemStack).getItem();
+        return item instanceof DiggerItem;
     }
 
     @Override
     public boolean isArmor(@NotNull ItemStack itemStack) {
-        Item item = CraftItemStack.asNMSCopy(itemStack).c();
-        return item instanceof ItemArmor;
+        Item item = CraftItemStack.asNMSCopy(itemStack).getItem();
+        return item instanceof ArmorItem;
     }
 
-    private boolean isArmorSlot(@NotNull ItemStack itemStack, @NotNull EnumItemSlot slot) {
-        Item item = CraftItemStack.asNMSCopy(itemStack).c();
-        if (item instanceof ItemArmor armor) {
-            return armor.b() == slot;
+    private boolean isArmorSlot(@NotNull ItemStack itemStack, @NotNull EquipmentSlot slot) {
+        Item item = CraftItemStack.asNMSCopy(itemStack).getItem();
+        if (item instanceof ArmorItem armor) {
+            return armor.getSlot() == slot;
         }
         return false;
     }
 
     @Override
     public boolean isHelmet(@NotNull ItemStack itemStack) {
-        return this.isArmorSlot(itemStack, EnumItemSlot.f);
+        return this.isArmorSlot(itemStack, EquipmentSlot.HEAD);
     }
 
     @Override
     public boolean isChestplate(@NotNull ItemStack itemStack) {
-        return this.isArmorSlot(itemStack, EnumItemSlot.e);
+        return this.isArmorSlot(itemStack, EquipmentSlot.CHEST);
     }
 
     @Override
     public boolean isLeggings(@NotNull ItemStack itemStack) {
-        return this.isArmorSlot(itemStack, EnumItemSlot.d);
+        return this.isArmorSlot(itemStack, EquipmentSlot.LEGS);
     }
 
     @Override
     public boolean isBoots(@NotNull ItemStack itemStack) {
-        return this.isArmorSlot(itemStack, EnumItemSlot.c);
+        return this.isArmorSlot(itemStack, EquipmentSlot.FEET);
     }
 
     @Override
     public double getDefaultDamage(@NotNull ItemStack itemStack) {
-        return this.getAttributeValue(itemStack, GenericAttributes.f);
+        return this.getAttributeValue(itemStack, Attributes.ATTACK_DAMAGE);
     }
 
     @Override
     public double getDefaultSpeed(@NotNull ItemStack itemStack) {
-        return this.getAttributeValue(itemStack, GenericAttributes.h);
+        return this.getAttributeValue(itemStack, Attributes.MOVEMENT_SPEED);
     }
 
     @Override
     public double getDefaultArmor(@NotNull ItemStack itemStack) {
-        return this.getAttributeValue(itemStack, GenericAttributes.i);
+        return this.getAttributeValue(itemStack, Attributes.ARMOR);
     }
 
     @Override
     public double getDefaultToughness(@NotNull ItemStack itemStack) {
-        return this.getAttributeValue(itemStack, GenericAttributes.j);
+        return this.getAttributeValue(itemStack, Attributes.ARMOR_TOUGHNESS);
     }
 }

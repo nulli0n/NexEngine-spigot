@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class JYML extends YamlConfiguration {
 
@@ -194,15 +195,7 @@ public class JYML extends YamlConfiguration {
             this.set(path, null);
             return;
         }
-
-        StringBuilder str = new StringBuilder();
-        for (int num : arr) {
-            if (str.length() > 0) {
-                str.append(",");
-            }
-            str.append(num);
-        }
-        this.set(path, str.toString());
+        this.set(path, String.join(",", IntStream.of(arr).boxed().map(String::valueOf).toList()));
     }
 
     @Nullable
@@ -566,7 +559,7 @@ public class JYML extends YamlConfiguration {
         }
         this.set(path + "Color", colorRaw);
 
-        List<String> itemFlags = meta.getItemFlags().stream().map(ItemFlag::name).toList();
+        List<String> itemFlags = new ArrayList<>(meta.getItemFlags().stream().map(ItemFlag::name).toList());
         this.set(path + "Item_Flags", itemFlags);
         this.set(path + "Unbreakable", meta.isUnbreakable());
     }
@@ -596,7 +589,7 @@ public class JYML extends YamlConfiguration {
     }
 
     public void setItemList64(@NotNull String path, @NotNull List<ItemStack> item) {
-        List<String> code = ItemUtil.toBase64(item);
+        List<String> code = new ArrayList<>(ItemUtil.toBase64(item));
         this.set(path, code);
     }
 

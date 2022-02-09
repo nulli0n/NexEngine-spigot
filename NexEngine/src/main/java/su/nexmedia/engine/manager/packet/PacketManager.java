@@ -27,7 +27,7 @@ public class PacketManager extends AbstractManager<NexEngine> {
     }
 
     @Override
-    public final void onLoad() {
+    protected final void onLoad() {
         this.addListener(new Listener(plugin));
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             this.injectPlayer(player);
@@ -35,7 +35,7 @@ public class PacketManager extends AbstractManager<NexEngine> {
     }
 
     @Override
-    public final void onShutdown() {
+    protected final void onShutdown() {
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             this.removePlayer(player);
         }
@@ -63,7 +63,7 @@ public class PacketManager extends AbstractManager<NexEngine> {
         this.plugin.getNMS().sendPacket(player, packet);
     }
 
-    private final void removePlayer(@NotNull Player player) {
+    private void removePlayer(@NotNull Player player) {
         Channel channel = this.getChannel(player);
         if (channel.pipeline().get(INJECTOR_ID) != null) {
             channel.pipeline().remove(INJECTOR_ID);
@@ -74,7 +74,7 @@ public class PacketManager extends AbstractManager<NexEngine> {
          */
     }
 
-    private final void injectPlayer(@NotNull Player player) {
+    private void injectPlayer(@NotNull Player player) {
         ChannelPipeline pipe = this.getChannel(player).pipeline();
         if (pipe.get(INJECTOR_ID) != null) return;
 

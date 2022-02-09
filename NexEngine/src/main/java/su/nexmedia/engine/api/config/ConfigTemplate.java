@@ -19,7 +19,7 @@ public abstract class ConfigTemplate {
     public String   lang;
 
     public int         dataSaveInterval;
-    public boolean     dataSaveInstant = false;
+    public boolean     dataSaveInstant;
     public StorageType dataStorage;
 
     public String      mysqlLogin;
@@ -36,16 +36,26 @@ public abstract class ConfigTemplate {
 
     public final void setup() {
         this.cfg = plugin.getConfigManager().configMain;
-        //this.cfg.addMissing("core.command-aliases", plugin.getName().toLowerCase());
-        //this.cfg.addMissing("core.lang", "en");
-        //this.cfg.addMissing("core.prefix", plugin.getName());
 
         if (plugin.useNewConfigFields()) {
+            this.cfg.addMissing("Plugin.Prefix", plugin.getName());
+            this.cfg.addMissing("Plugin.Command_Aliases", plugin.getNameRaw());
+            this.cfg.addMissing("Plugin.Language", "en");
+
             this.pluginName = StringUtil.color(cfg.getString("Plugin.Prefix", plugin.getName()));
             this.cmds = cfg.getString("Plugin.Command_Aliases", "").split(",");
             this.lang = cfg.getString("Plugin.Language", "en").toLowerCase();
 
             if (this.plugin instanceof UserDataHolder) {
+                this.cfg.addMissing("Database.Auto_Save_Interval", 20);
+                this.cfg.addMissing("Database.Instant_Save", false);
+                this.cfg.addMissing("Database.Type", StorageType.SQLITE.name());
+                this.cfg.addMissing("Database.MySQL.Username", "root");
+                this.cfg.addMissing("Database.MySQL.Password", "root");
+                this.cfg.addMissing("Database.MySQL.Host", "localhost");
+                this.cfg.addMissing("Database.MySQL.Database", "minecraft");
+                this.cfg.addMissing("Database.Purge.Enabled", false);
+                this.cfg.addMissing("Database.Purge.For_Inactive_Days", 60);
 
                 String path = "Database.";
                 String sType = cfg.getString(path + "Type", StorageType.SQLITE.name()).toUpperCase();
@@ -72,15 +82,6 @@ public abstract class ConfigTemplate {
             this.lang = cfg.getString("core.lang", "en").toLowerCase();
 
             if (this.plugin instanceof UserDataHolder) {
-            /*this.cfg.addMissing("data.auto-save", 20);
-            this.cfg.addMissing("data.instant-save", false);
-            this.cfg.addMissing("data.storage.type", "sqlite");
-            this.cfg.addMissing("data.storage.username", "username");
-            this.cfg.addMissing("data.storage.password", "password");
-            this.cfg.addMissing("data.storage.host", "localhost");
-            this.cfg.addMissing("data.storage.database", "none");
-            this.cfg.addMissing("data.purge.enabled", false);
-            this.cfg.addMissing("data.purge.days", 60);*/
 
                 String path = "data.storage.";
                 String sType = cfg.getString(path + "type", "sqlite").toUpperCase();

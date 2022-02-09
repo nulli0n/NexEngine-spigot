@@ -13,6 +13,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class PlayerUtil {
 
@@ -134,12 +135,7 @@ public class PlayerUtil {
     }
 
     public static boolean hasEmptyInventory(@NotNull Player player) {
-        for (ItemStack item : player.getInventory().getContents()) {
-            if (item == null || item.getType().isAir()) {
-                return false;
-            }
-        }
-        return true;
+        return Stream.of(player.getInventory().getContents()).allMatch(item -> item == null || item.getType().isAir());
     }
 
     public static int countItemSpace(@NotNull Player player, @NotNull ItemStack item) {
@@ -176,7 +172,29 @@ public class PlayerUtil {
         return countItem(player, itemHas -> itemHas.getType() == material);
     }
 
+    public static boolean takeItem(@NotNull Player player, @NotNull ItemStack item) {
+        return takeItem(player, itemHas -> itemHas.isSimilar(item), countItem(player, item));
+    }
+
+    public static boolean takeItem(@NotNull Player player, @NotNull ItemStack item, int amount) {
+        return takeItem(player, itemHas -> itemHas.isSimilar(item), amount);
+    }
+
+    public static boolean takeItem(@NotNull Player player, @NotNull Material material) {
+        return takeItem(player, itemHas -> itemHas.getType() == material, countItem(player, material));
+    }
+
+    public static boolean takeItem(@NotNull Player player, @NotNull Material material, int amount) {
+        return takeItem(player, itemHas -> itemHas.getType() == material, amount);
+    }
+
+    public static boolean takeItem(@NotNull Player player, @NotNull Predicate<ItemStack> predicate) {
+        return takeItem(player, predicate, countItem(player, predicate));
+    }
+
     public static boolean takeItem(@NotNull Player player, @NotNull Predicate<ItemStack> predicate, int amount) {
+        if (countItem(player, predicate) < amount) return false;
+
         int takenAmount = 0;
 
         Inventory inventory = player.getInventory();
@@ -187,35 +205,33 @@ public class PlayerUtil {
             if (takenAmount + hasAmount > amount) {
                 int diff = (takenAmount + hasAmount) - amount;
                 itemHas.setAmount(diff);
-                return true;
+                break;
             }
 
-            itemHas.setAmount(0); // Take item
+            itemHas.setAmount(0);
             if ((takenAmount += hasAmount) == amount) {
-                return true;
+                break;
             }
         }
-        return takenAmount > 0;
-    }
-
-    public static boolean takeItem(@NotNull Player player, @NotNull ItemStack item, int amount) {
-        return takeItem(player, itemHas -> itemHas.isSimilar(item), amount);
-    }
-
-    public static boolean takeItem(@NotNull Player player, @NotNull Material material, int amount) {
-        return takeItem(player, itemHas -> itemHas.getType() == material, amount);
+        return true;
     }
 
     public static void addItem(@NotNull Player player, @NotNull ItemStack... items) {
         Inventory inventory = player.getInventory();
         World world = player.getWorld();
 
-        for (ItemStack item : items) {
+        for (ItemStack item2 : items) {
+            ItemStack item = new ItemStack(item2);
             if (item.getType().isAir()) continue;
-            if (inventory.firstEmpty() == -1) {
-                world.dropItem(player.getLocation(), item);
+
+            int space = countItemSpace(player, item);
+            if (space < item.getAmount()) {
+                ItemStack drop = new ItemStack(item);
+                drop.setAmount(item.getAmount() - space);
+                item.setAmount(space);
+                world.dropItem(player.getLocation(), drop);
             }
-            else {
+            if (item.getAmount() > 0) {
                 inventory.addItem(item);
             }
         }

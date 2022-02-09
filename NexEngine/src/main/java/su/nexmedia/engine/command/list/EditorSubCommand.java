@@ -23,7 +23,7 @@ public class EditorSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P>
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Core_Command_Editor_Desc.getMsg();
+        return plugin.lang().Core_Command_Editor_Desc.getLocalized();
     }
 
     @Override

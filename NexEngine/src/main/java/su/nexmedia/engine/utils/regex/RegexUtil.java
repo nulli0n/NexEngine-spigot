@@ -39,12 +39,13 @@ public class RegexUtil {
 
     @Nullable
     public static Matcher getMatcher(@NotNull Pattern pattern, @NotNull String msg) {
-        Matcher m = pattern.matcher(new TimedCharSequence(msg, 200));
+        Matcher matcher = pattern.matcher(new TimedCharSequence(msg, 200));
         try {
-            if (m.find()) {
+            if (matcher.find()) {
                 return pattern.matcher(new TimedCharSequence(msg, 200)); // Copy of matcher because of .find();
             }
-        } catch (RuntimeMatchException ex) {
+        }
+        catch (RuntimeMatchException ex) {
             NexEngine.get().error("Matcher timeout error! Pattern: '" + pattern.pattern() + "' String: '" + msg + "'");
         }
         return null;

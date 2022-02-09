@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class CollectionsUtil {
 
@@ -15,66 +17,48 @@ public class CollectionsUtil {
         List<List<T>> lists = new ArrayList<>();
         if (targetSize <= 0) return lists;
 
-        for (int i = 0; i < list.size(); i += targetSize) {
-            lists.add(list.subList(i, Math.min(i + targetSize, list.size())));
+        for (int index = 0; index < list.size(); index += targetSize) {
+            lists.add(list.subList(index, Math.min(index + targetSize, list.size())));
         }
         return lists;
     }
 
-    @SuppressWarnings("null")
     @NotNull
     @Deprecated
     public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(@NotNull Map<K, V> map) {
-        List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
-        list.sort((Map.Entry.comparingByValue()));
-
-        Map<K, V> result = new LinkedHashMap<>();
-        for (Map.Entry<K, V> entry : list) {
-            result.put(entry.getKey(), entry.getValue());
-        }
-
-        return result;
+        return sortAscent(map);
     }
 
     @NotNull
     @Deprecated
     public static <K, V extends Comparable<? super V>> Map<K, V> sortByValueUpDown(@NotNull Map<K, V> map) {
-        List<Map.Entry<K, V>> list = new LinkedList<>(map.entrySet());
-        list.sort(Collections.reverseOrder(Map.Entry.comparingByValue()));
+        return sortDescent(map);
+    }
 
-        Map<K, V> result = new LinkedHashMap<>();
-        for (Map.Entry<K, V> entry : list) {
-            result.put(entry.getKey(), entry.getValue());
-        }
+    @NotNull
+    public static <K, V extends Comparable<? super V>> Map<K, V> sortAscent(@NotNull Map<K, V> map) {
+        return sort(map, Map.Entry.comparingByValue());
+    }
 
-        return result;
+    @NotNull
+    public static <K, V extends Comparable<? super V>> Map<K, V> sortDescent(@NotNull Map<K, V> map) {
+        return sort(map, Collections.reverseOrder(Map.Entry.comparingByValue()));
+    }
+
+    @NotNull
+    public static <K, V extends Comparable<? super V>> Map<K, V> sort(@NotNull Map<K, V> map, @NotNull Comparator<Map.Entry<K, V>> comparator) {
+        return new LinkedList<>(map.entrySet()).stream().sorted(comparator)
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (old, nev) -> nev, LinkedHashMap::new));
     }
 
     @NotNull
     public static String getEnums(@NotNull Class<?> clazz) {
-        StringBuilder str = new StringBuilder();
-        for (String enumName : getEnumsList(clazz)) {
-            if (enumName == null) continue;
-            if (str.length() > 0) {
-                str.append(ChatColor.GRAY);
-                str.append(",");
-            }
-            str.append(ChatColor.WHITE);
-            str.append(enumName);
-        }
-        return str.toString();
+        return String.join(ChatColor.GRAY + ", " + ChatColor.WHITE, getEnumsList(clazz));
     }
 
     @NotNull
     public static List<String> getEnumsList(@NotNull Class<?> clazz) {
-        List<String> list = new ArrayList<>();
-        if (!clazz.isEnum()) return list;
-
-        for (Object enumName : clazz.getEnumConstants()) {
-            if (enumName == null) continue;
-            list.add(enumName.toString());
-        }
-        return list;
+        return new ArrayList<>(Stream.of(clazz.getEnumConstants()).filter(Objects::nonNull).map(Object::toString).toList());
     }
 
     @NotNull

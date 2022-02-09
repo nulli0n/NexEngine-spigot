@@ -45,51 +45,41 @@ public class VaultHook extends AbstractHook<NexEngine> {
     }
 
     private void setPermission() {
-        RegisteredServiceProvider<Permission> pp = plugin.getServer().getServicesManager().getRegistration(Permission.class);
-        if (pp == null)
-            return;
+        RegisteredServiceProvider<Permission> rsp = plugin.getServer().getServicesManager().getRegistration(Permission.class);
+        if (rsp == null) return;
 
-        this.permission = pp.getProvider();
+        this.permission = rsp.getProvider();
         this.plugin.info("Successfully hooked with " + permission.getName() + " permissions");
     }
 
     private void setEconomy() {
-        RegisteredServiceProvider<Economy> pp = plugin.getServer().getServicesManager().getRegistration(Economy.class);
-        if (pp == null)
-            return;
+        RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) return;
 
-        this.economy = pp.getProvider();
+        this.economy = rsp.getProvider();
         this.plugin.info("Successfully hooked with " + economy.getName() + " economy");
     }
 
     private void setChat() {
-        RegisteredServiceProvider<Chat> ch = plugin.getServer().getServicesManager().getRegistration(Chat.class);
-        if (ch == null)
-            return;
+        RegisteredServiceProvider<Chat> rsp = plugin.getServer().getServicesManager().getRegistration(Chat.class);
+        if (rsp == null) return;
 
-        this.chat = ch.getProvider();
+        this.chat = rsp.getProvider();
         this.plugin.info("Successfully hooked with " + chat.getName() + " chat");
     }
 
-    // Some plugins loads too late, so we need to listen to them to be able to hook
-    // into.
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onEconomyFix(ServiceRegisterEvent e) {
+    public void onServiceRegisterEvent(ServiceRegisterEvent e) {
         Object provider = e.getProvider().getProvider();
 
-        if (!this.hasEconomy() && provider instanceof Economy) {
+        if (provider instanceof Economy) {
             this.setEconomy();
-            return;
         }
-
-        if (!this.hasPermissions() && provider instanceof Permission) {
+        else if (provider instanceof Permission) {
             this.setPermission();
-            return;
         }
-
-        if (!this.hasChat() && provider instanceof Chat) {
+        else if (provider instanceof Chat) {
             this.setChat();
-            return;
         }
     }
 
@@ -127,8 +117,7 @@ public class VaultHook extends AbstractHook<NexEngine> {
 
     @NotNull
     public String getPlayerGroup(@NotNull Player player) {
-        if (!this.hasPermissions() || !this.permission.hasGroupSupport())
-            return "";
+        if (!this.hasPermissions() || !this.permission.hasGroupSupport()) return "";
 
         String group = this.permission.getPrimaryGroup(player);
         return group == null ? "" : group;
@@ -136,15 +125,12 @@ public class VaultHook extends AbstractHook<NexEngine> {
 
     @NotNull
     public Set<String> getPlayerGroups(@NotNull Player player) {
-        if (!this.hasPermissions() || !this.permission.hasGroupSupport())
-            return Collections.emptySet();
+        if (!this.hasPermissions() || !this.permission.hasGroupSupport()) return Collections.emptySet();
 
         String[] groups = this.permission.getPlayerGroups(player);
-        if (groups == null)
-            return Collections.emptySet();
+        if (groups == null) groups = new String[] {this.getPlayerGroup(player)};
 
-        Set<String> set = Stream.of(groups).map(String::toLowerCase).collect(Collectors.toSet());
-        return set;
+        return Stream.of(groups).map(String::toLowerCase).collect(Collectors.toSet());
     }
 
     @NotNull
@@ -165,19 +151,39 @@ public class VaultHook extends AbstractHook<NexEngine> {
         return this.economy.getBalance(player);
     }
 
+    @Deprecated
     public void give(@NotNull Player player, double amount) {
-        this.economy.depositPlayer(player, amount);
+        addMoney(player, amount);
     }
 
+    @Deprecated
     public void give(@NotNull OfflinePlayer player, double amount) {
         this.economy.depositPlayer(player, amount);
     }
 
+    public boolean addMoney(@NotNull Player player, double amount) {
+        return this.addMoney((OfflinePlayer) player, amount);
+    }
+
+    public boolean addMoney(@NotNull OfflinePlayer player, double amount) {
+        return this.economy.depositPlayer(player, amount).transactionSuccess();
+    }
+
+    @Deprecated
     public void take(@NotNull Player player, double amount) {
         this.economy.withdrawPlayer(player, Math.min(Math.abs(amount), this.getBalance(player)));
     }
 
+    @Deprecated
     public void take(@NotNull OfflinePlayer player, double amount) {
         this.economy.withdrawPlayer(player, Math.min(Math.abs(amount), this.getBalance(player)));
+    }
+
+    public boolean takeMoney(@NotNull Player player, double amount) {
+        return this.takeMoney((OfflinePlayer) player, amount);
+    }
+
+    public boolean takeMoney(@NotNull OfflinePlayer player, double amount) {
+        return this.economy.withdrawPlayer(player, Math.abs(amount)).transactionSuccess();
     }
 }
