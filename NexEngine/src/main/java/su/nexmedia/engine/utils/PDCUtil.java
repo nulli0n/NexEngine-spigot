@@ -45,6 +45,9 @@ public class PDCUtil {
         else if (value instanceof Integer i) {
             container.set(key, PersistentDataType.INTEGER, i);
         }
+        else if (value instanceof Long i) {
+            container.set(key, PersistentDataType.LONG, i);
+        }
         else if (value instanceof String[] i) {
             container.set(key, STRING_ARRAY, i);
         }
@@ -89,6 +92,11 @@ public class PDCUtil {
 
     public static int getIntData(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key) {
         Integer value = getData(holder, PersistentDataType.INTEGER, key);
+        return value == null ? 0 : value;
+    }
+
+    public static long getLongData(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key) {
+        Long value = getData(holder, PersistentDataType.LONG, key);
         return value == null ? 0 : value;
     }
 
@@ -140,6 +148,10 @@ public class PDCUtil {
     public static int getIntData(@NotNull ItemStack item, @NotNull NamespacedKey key) {
         ItemMeta meta = item.getItemMeta();
         return meta == null ? 0 : getIntData(meta, key);
+    }
+    public static long getLongData(@NotNull ItemStack item, @NotNull NamespacedKey key) {
+        ItemMeta meta = item.getItemMeta();
+        return meta == null ? 0 : getLongData(meta, key);
     }
 
     @Nullable

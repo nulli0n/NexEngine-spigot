@@ -107,6 +107,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         }
 
         U user2 = this.createData(player);
+        user2.setRecentlyCreated(true);
 
         EngineUserCreatedEvent<P, U> event = new EngineUserCreatedEvent<>(plugin, user2);
         this.plugin.getPluginManager().callEvent(event);

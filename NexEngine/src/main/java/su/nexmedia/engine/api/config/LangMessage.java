@@ -1,5 +1,6 @@
 package su.nexmedia.engine.api.config;
 
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +22,7 @@ public class LangMessage {
     private static final Map<String, Pattern> PATTERN_MESSAGE_PARAMS = new HashMap<>();
 
     static {
-        for (String parameter : new String[]{"type", "prefix", "fadeIn", "stay", "fadeOut"}) {
+        for (String parameter : new String[]{"type", "prefix", "sound", "fadeIn", "stay", "fadeOut"}) {
             PATTERN_MESSAGE_PARAMS.put(parameter, Pattern.compile("~+(" + parameter + ")+?:+(.*?);"));
         }
     }
@@ -33,6 +34,7 @@ public class LangMessage {
 
     private OutputType type = OutputType.CHAT;
     private boolean hasPrefix  = true;
+    private Sound sound;
     private int[]   titleTimes = new int[3];
 
     public LangMessage(@NotNull LangTemplate template, @NotNull String message) {
@@ -48,6 +50,7 @@ public class LangMessage {
         this.path = from.getPath();
         this.type = from.type;
         this.hasPrefix = from.hasPrefix;
+        this.sound = from.sound;
         this.titleTimes = Arrays.copyOf(from.titleTimes, from.titleTimes.length);
     }
 
@@ -80,6 +83,7 @@ public class LangMessage {
             switch (paramName) {
                 case "type" -> this.type = CollectionsUtil.getEnum(paramValue, OutputType.class);
                 case "prefix" -> this.hasPrefix = Boolean.parseBoolean(paramValue);
+                case "sound" -> this.sound = CollectionsUtil.getEnum(paramValue, Sound.class);
                 case "fadeIn" -> this.titleTimes[0] = StringUtil.getInteger(paramValue, -1);
                 case "stay" -> {
                     this.titleTimes[1] = StringUtil.getInteger(paramValue, -1);
@@ -169,6 +173,10 @@ public class LangMessage {
 
     public void send(@NotNull CommandSender sender) {
         if (this.isEmpty()) return;
+
+        if (this.sound != null && sender instanceof Player player) {
+            MessageUtil.sound(player, this.sound);
+        }
 
         if (this.type == LangMessage.OutputType.CHAT) {
             String prefix = hasPrefix ? template.getPrefix() : "";

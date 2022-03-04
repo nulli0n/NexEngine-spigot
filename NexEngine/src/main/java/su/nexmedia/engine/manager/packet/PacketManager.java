@@ -42,12 +42,12 @@ public class PacketManager extends AbstractManager<NexEngine> {
         PACKET_HANDLERS.clear();
     }
 
-    public void registerHandler(@NotNull IPacketHandler ipr) {
-        PACKET_HANDLERS.add(ipr);
+    public void registerHandler(@NotNull IPacketHandler packetHandler) {
+        PACKET_HANDLERS.add(packetHandler);
     }
 
-    public void unregisterHandler(@NotNull IPacketHandler ipr) {
-        PACKET_HANDLERS.remove(ipr);
+    public void unregisterHandler(@NotNull IPacketHandler packetHandler) {
+        PACKET_HANDLERS.remove(packetHandler);
     }
 
     @NotNull

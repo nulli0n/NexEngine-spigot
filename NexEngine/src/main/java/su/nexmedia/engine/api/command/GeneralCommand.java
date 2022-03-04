@@ -113,7 +113,7 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
 
         int index = command.equals(this) ? (args.length) : (args.length - parents);*/
 
-        List<String> list = command.getTab(player, args.length, args);
+        List<String> list = command.getTab(player, command.equals(this) ? (args.length) : (args.length - 1), args);
         return StringUtil.getByFirstLetters(args[args.length - 1], list);
     }
 }

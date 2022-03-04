@@ -80,6 +80,26 @@ public class ArrayUtil {
         return -1;
     }
 
+    public static int indexOf(char[] array, char valueToFind) {
+        return indexOf(array, valueToFind, 0);
+    }
+
+    public static int indexOf(char[] array, char valueToFind, int startIndex) {
+        if (array != null) {
+            if (startIndex < 0) {
+                startIndex = 0;
+            }
+
+            for (int i = startIndex; i < array.length; ++i) {
+                if (valueToFind == array[i]) {
+                    return i;
+                }
+            }
+
+        }
+        return -1;
+    }
+
     public static boolean contains(int[] array, int valueToFind) {
         return indexOf(array, valueToFind) != -1;
     }
