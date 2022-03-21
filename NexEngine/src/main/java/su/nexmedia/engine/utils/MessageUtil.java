@@ -82,7 +82,7 @@ public class MessageUtil {
     }
 
     public static void sendWithJSON(@NotNull CommandSender sender, @NotNull String message) {
-        message = StringUtil.color(message);
+        message = StringUtil.color(message.replace("\n", " "));
 
         Matcher matcher = RegexUtil.getMatcher(PATTERN_MESSAGE_JSON_FULL, message);
         if (matcher == null) {

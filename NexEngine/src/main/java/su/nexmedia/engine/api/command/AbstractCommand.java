@@ -131,8 +131,8 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
         StringBuilder labels = new StringBuilder();
         AbstractCommand<P> parent = this.getParent();
         while (parent != null) {
-            labels.append(" ");
-            labels.insert(0, parent.getAliases()[0]);
+            //labels.append(" ");
+            labels.insert(0, parent.getAliases()[0] + " ");
             parent = parent.getParent();
         }
         labels.append(this.getAliases()[0]);

@@ -61,13 +61,18 @@ public class ClickText {
             if (clickWord != null && builder.getCursor() != 0 || (!isFirst && !colorCurrent.getName().equalsIgnoreCase(colorLast.getName()))) {
                 //System.out.println("do reset");
                 TextComponent component = (TextComponent) builder.getCurrentComponent();
-                //System.out.println("last comp: " + component.toString());
+                //System.out.println("current comp: " + component.toString());
 
                 // Remove the recently added component to reset the text formatting.
-                // For components with a text or extra elemets, or strings with only color, remove the latest one.
+                // For components with a text or extra elements, or strings with only color, remove the latest one.
                 if (StringUtil.colorOff(word).isEmpty() || (!component.getText().isEmpty() || component.getExtra() != null)) {
-                    builder.getParts().remove(builder.getParts().size() - 1);
-                    builder.setCursor(builder.getCursor() - 1);
+                    // Because a multicolor word is being spliited into multiple components by TextComponent.fromLegacyText
+                    // we have to get that array here and remove all of them.
+                    BaseComponent[] componentWord = TextComponent.fromLegacyText(word);
+                    for (BaseComponent baseComponent : componentWord) {
+                        builder.getParts().remove(builder.getParts().size() - 1);
+                        builder.setCursor(builder.getCursor() - 1);
+                    }
                 }
                 // If there is 'empty' components containing only colors, remove all of them until the first text is found.
                 // This happens for strings with a color on the end, like: '&aText&2', where '&2' will be an empty component
@@ -79,7 +84,7 @@ public class ClickText {
                         builder.setCursor(builder.getCursor() - 1);
                     }
                 }
-                builder.bold(false).italic(false).underlined(false).strikethrough(false).obfuscated(false);
+                this.cleanUp(builder);
                 //builder.append(component);
 
                 this.append(builder, word, clickWord);
@@ -95,8 +100,22 @@ public class ClickText {
             builder.append(clickWord.build());
         }
         else {
-            builder.append(TextComponent.fromLegacyText(word), ComponentBuilder.FormatRetention.FORMATTING);
+            BaseComponent[] componentWord = TextComponent.fromLegacyText(word);
+            ChatColor colorFirst = null;
+
+            for (BaseComponent baseComponent : componentWord) {
+                builder.append(baseComponent, ComponentBuilder.FormatRetention.FORMATTING);
+                if (colorFirst != null && !colorFirst.getName().equalsIgnoreCase(baseComponent.getColor().getName())) {
+                    this.cleanUp(builder);
+                }
+                colorFirst = baseComponent.getColor();
+            }
+            //builder.append(TextComponent.fromLegacyText(word), ComponentBuilder.FormatRetention.FORMATTING);
         }
+    }
+
+    private void cleanUp(@NotNull ComponentBuilder builder) {
+        builder.bold(false).italic(false).underlined(false).strikethrough(false).obfuscated(false);
     }
 
     public void send(@NotNull CommandSender sender) {

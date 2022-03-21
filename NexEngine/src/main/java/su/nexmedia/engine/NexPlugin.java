@@ -14,6 +14,7 @@ import su.nexmedia.engine.api.config.ConfigTemplate;
 import su.nexmedia.engine.api.data.UserDataHolder;
 import su.nexmedia.engine.api.manager.ILogger;
 import su.nexmedia.engine.api.menu.IMenu;
+import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.manager.packet.PacketManager;
 import su.nexmedia.engine.command.CommandManager;
 import su.nexmedia.engine.command.PluginMainCommand;
@@ -52,8 +53,9 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         return this.isEngine;
     }
 
+    @Deprecated
     public boolean useNewConfigFields() {
-        return false;
+        return true;
     }
 
     @Override
@@ -147,7 +149,7 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         // Setup ConfigManager before any other managers.
         this.configManager = new ConfigManager<>((P) this);
         this.configManager.setup();
-        if (this.cfg().cmds == null || this.cfg().cmds.length == 0) {
+        if (this.cfg().commandAliases == null || this.cfg().commandAliases.length == 0) {
             this.error("Could not register plugin commands!");
             this.getPluginManager().disablePlugin(this);
             return;
@@ -195,16 +197,15 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         }
 
         // Unregister all plugin traits and NPC listeners.
-        CitizensHook citizensHook = this.getCitizens();
-        if (citizensHook != null) {
-            citizensHook.unregisterTraits(this);
-            citizensHook.unregisterListeners(this);
+        if (Hooks.hasCitizens()) {
+            CitizensHook.unregisterTraits(this);
+            CitizensHook.unregisterListeners(this);
         }
 
         // Unregister all plugin hooks.
-        if (!this.isEngine()) {
+        //if (!this.isEngine()) {
             this.getHooks().shutdown(this);
-        }
+        //}
 
         // Unregister ALL plugin listeners.
         this.unregisterListeners();
@@ -234,7 +235,7 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
 
     @NotNull
     public final String[] getLabels() {
-        return this.cfg().cmds;
+        return this.cfg().commandAliases;
     }
 
     @NotNull
@@ -304,21 +305,25 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
     }
 
     @Nullable
+    @Deprecated
     public final VaultHook getVault() {
         return getEngine().hookVault;
     }
 
     @Nullable
+    @Deprecated
     public final CitizensHook getCitizens() {
         return getEngine().hookCitizens;
     }
 
     @Nullable
+    @Deprecated
     public final WorldGuardHook getWorldGuard() {
         return getEngine().hookWorldGuard;
     }
 
     @Nullable
+    @Deprecated
     public final MythicMobsHook getMythicMobs() {
         return getEngine().hookMythicMobs;
     }

@@ -18,9 +18,12 @@
 
     <repositories>
         <repository>
-            <id>nexus</id>
-            <name>Lumine Releases</name>
+            <id>lumine-repo</id>
             <url>https://mvn.lumine.io/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>lumine-snapshot</id>
+            <url>http://mvn.lumine.io/repository/maven-snapshots/</url>
         </repository>
         <repository>
             <id>sk89q-repo</id>
@@ -64,9 +67,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>io.lumine.xikage</groupId>
-            <artifactId>MythicMobs</artifactId>
-            <version>4.9.1</version>
+            <groupId>io.lumine</groupId>
+            <artifactId>Mythic-Dist</artifactId>
+            <version>5.0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

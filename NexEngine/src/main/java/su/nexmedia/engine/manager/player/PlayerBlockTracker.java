@@ -85,8 +85,12 @@ public final class PlayerBlockTracker extends AbstractListener<NexEngine> {
 
     public static void addTracked(@NotNull Block block) {
         if (BLOCK_FILTERS.stream().anyMatch(filter -> filter.test(block))) {
-            BLOCK_LIST.add(block);
+            addTrackedForce(block);
         }
+    }
+
+    public static void addTrackedForce(@NotNull Block block) {
+        BLOCK_LIST.add(block);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -130,7 +134,7 @@ public final class PlayerBlockTracker extends AbstractListener<NexEngine> {
     private void onGlitchBlockPistonEvent(@NotNull BlockFace direction, @NotNull List<Block> blocks) {
         Set<Block> userBlocks = blocks.stream().filter(PlayerBlockTracker::isTracked).collect(Collectors.toSet());
         BLOCK_LIST.removeAll(userBlocks);
-        userBlocks.stream().map(b -> b.getRelative(direction)).toList().forEach(PlayerBlockTracker::addTracked);
+        userBlocks.stream().map(b -> b.getRelative(direction)).toList().forEach(PlayerBlockTracker::addTrackedForce);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -149,6 +153,7 @@ public final class PlayerBlockTracker extends AbstractListener<NexEngine> {
     public void onGlitchBlockFallingLand(EntityChangeBlockEvent e) {
         Entity entity = e.getEntity();
         if (!entity.hasMetadata(META_TRACK_FALLING_BLOCK)) return;
-        addTracked(e.getBlock());
+
+        addTrackedForce(e.getBlock());
     }
 }

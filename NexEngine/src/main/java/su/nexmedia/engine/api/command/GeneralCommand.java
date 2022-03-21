@@ -35,9 +35,9 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
         super(plugin, aliases, permission);
     }
 
-    public void addDefaultCommand(@NotNull AbstractCommand<P> cmd) {
-        this.addChildren(cmd);
-        this.defaultCommand = cmd;
+    public void addDefaultCommand(@NotNull AbstractCommand<P> command) {
+        this.addChildren(command);
+        this.defaultCommand = command;
     }
 
     @NotNull
@@ -53,11 +53,25 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
         return command;
     }
 
+    private int countChildren(@NotNull String[] args) {
+        AbstractCommand<P> command = this;//.defaultCommand;
+        int childCount = 0;
+        while (args.length > childCount) {
+            AbstractCommand<P> child = command.getChildren(args[childCount]);
+            if (child == null) break;
+
+            command = child;
+            childCount++;
+        }
+        return childCount;
+    }
+
     @Override
     public final boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd,
                                    @NotNull String label, String[] args) {
 
-        if (this.getChildrens().isEmpty() || (args.length == 0 && this.defaultCommand == null)) {
+        int childAmount = this.countChildren(args);
+        if (this.getChildrens().isEmpty() || (args.length - childAmount == 0 && this.defaultCommand == null)) {
             this.execute(sender, label, args);
             return true;
         }
@@ -70,11 +84,11 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
 
             command = child;
         }*/
-        if (command.equals(this)) {
-            if (this.defaultCommand == null) {
+        if (command instanceof GeneralCommand<P> generalCommand) {
+            if (generalCommand.defaultCommand == null) {
                 return false;
             }
-            command = this.defaultCommand;
+            command = generalCommand.defaultCommand;
         }
 
         command.execute(sender, label, args);

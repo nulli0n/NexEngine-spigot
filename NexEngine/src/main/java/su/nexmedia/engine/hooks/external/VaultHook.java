@@ -21,9 +21,9 @@ import java.util.stream.Stream;
 
 public class VaultHook extends AbstractHook<NexEngine> {
 
-    private Economy    economy;
-    private Permission permission;
-    private Chat       chat;
+    private static Economy    economy;
+    private static Permission permission;
+    private static Chat       chat;
 
     public VaultHook(@NotNull NexEngine plugin, @NotNull String pluginName) {
         super(plugin, pluginName);
@@ -83,72 +83,84 @@ public class VaultHook extends AbstractHook<NexEngine> {
         }
     }
 
-    public boolean hasPermissions() {
-        return this.getPermissions() != null;
+    public static boolean hasPermissions() {
+        return getPermissions() != null;
     }
 
     @Nullable
-    public Permission getPermissions() {
-        return this.permission;
+    public static Permission getPermissions() {
+        return permission;
     }
 
-    public boolean hasChat() {
-        return this.getChat() != null;
-    }
-
-    @Nullable
-    public Chat getChat() {
-        return this.chat;
-    }
-
-    public boolean hasEconomy() {
-        return this.getEconomy() != null;
+    public static boolean hasChat() {
+        return getChat() != null;
     }
 
     @Nullable
-    public Economy getEconomy() {
-        return this.economy;
+    public static Chat getChat() {
+        return chat;
+    }
+
+    public static boolean hasEconomy() {
+        return getEconomy() != null;
+    }
+
+    @Nullable
+    public static Economy getEconomy() {
+        return economy;
     }
 
     @NotNull
-    public String getEconomyName() {
-        return this.hasEconomy() ? this.economy.getName() : "null";
+    public static String getEconomyName() {
+        return hasEconomy() ? economy.getName() : "null";
     }
 
     @NotNull
-    public String getPlayerGroup(@NotNull Player player) {
-        if (!this.hasPermissions() || !this.permission.hasGroupSupport()) return "";
-
-        String group = this.permission.getPrimaryGroup(player);
-        return group == null ? "" : group;
+    @Deprecated
+    public static String getPlayerGroup(@NotNull Player player) {
+        return getPermissionGroup(player);
     }
 
     @NotNull
-    public Set<String> getPlayerGroups(@NotNull Player player) {
-        if (!this.hasPermissions() || !this.permission.hasGroupSupport()) return Collections.emptySet();
+    public static String getPermissionGroup(@NotNull Player player) {
+        if (!hasPermissions() || !permission.hasGroupSupport()) return "";
 
-        String[] groups = this.permission.getPlayerGroups(player);
-        if (groups == null) groups = new String[] {this.getPlayerGroup(player)};
+        String group = permission.getPrimaryGroup(player);
+        return group == null ? "" : group.toLowerCase();
+    }
+
+    @NotNull
+    @Deprecated
+    public static Set<String> getPlayerGroups(@NotNull Player player) {
+        return getPermissionGroups(player);
+    }
+
+    @NotNull
+    public static Set<String> getPermissionGroups(@NotNull Player player) {
+        if (!hasPermissions() || !permission.hasGroupSupport()) return Collections.emptySet();
+
+        String[] groups = permission.getPlayerGroups(player);
+        if (groups == null) groups = new String[] {getPermissionGroup(player)};
 
         return Stream.of(groups).map(String::toLowerCase).collect(Collectors.toSet());
     }
 
     @NotNull
-    public String getPrefix(@NotNull Player player) {
-        return this.hasChat() ? this.chat.getPlayerPrefix(player) : "";
+    public static String getPrefix(@NotNull Player player) {
+        return hasChat() ? chat.getPlayerPrefix(player) : "";
     }
 
     @NotNull
-    public String getSuffix(@NotNull Player player) {
-        return this.hasChat() ? this.chat.getPlayerSuffix(player) : "";
+    public static String getSuffix(@NotNull Player player) {
+        return hasChat() ? chat.getPlayerSuffix(player) : "";
     }
 
-    public double getBalance(@NotNull Player player) {
-        return this.economy.getBalance(player);
+    public static double getBalance(@NotNull Player player) {
+        return economy.getBalance(player);
     }
 
-    public double getBalance(@NotNull OfflinePlayer player) {
-        return this.economy.getBalance(player);
+    public static double getBalance(@NotNull OfflinePlayer player) {
+        return economy.getBalance(player);
     }
 
     @Deprecated
@@ -161,12 +173,12 @@ public class VaultHook extends AbstractHook<NexEngine> {
         this.economy.depositPlayer(player, amount);
     }
 
-    public boolean addMoney(@NotNull Player player, double amount) {
-        return this.addMoney((OfflinePlayer) player, amount);
+    public static boolean addMoney(@NotNull Player player, double amount) {
+        return addMoney((OfflinePlayer) player, amount);
     }
 
-    public boolean addMoney(@NotNull OfflinePlayer player, double amount) {
-        return this.economy.depositPlayer(player, amount).transactionSuccess();
+    public static boolean addMoney(@NotNull OfflinePlayer player, double amount) {
+        return economy.depositPlayer(player, amount).transactionSuccess();
     }
 
     @Deprecated
@@ -179,11 +191,11 @@ public class VaultHook extends AbstractHook<NexEngine> {
         this.economy.withdrawPlayer(player, Math.min(Math.abs(amount), this.getBalance(player)));
     }
 
-    public boolean takeMoney(@NotNull Player player, double amount) {
-        return this.takeMoney((OfflinePlayer) player, amount);
+    public static boolean takeMoney(@NotNull Player player, double amount) {
+        return takeMoney((OfflinePlayer) player, amount);
     }
 
-    public boolean takeMoney(@NotNull OfflinePlayer player, double amount) {
-        return this.economy.withdrawPlayer(player, Math.abs(amount)).transactionSuccess();
+    public static boolean takeMoney(@NotNull OfflinePlayer player, double amount) {
+        return economy.withdrawPlayer(player, Math.abs(amount)).transactionSuccess();
     }
 }

@@ -365,6 +365,7 @@ public class ItemUtil {
     }
 
     @NotNull
+    @Deprecated
     public static EquipmentSlot[] getItemSlots(@NotNull ItemStack item) {
         if (isArmor(item)) {
             return new EquipmentSlot[]{getEquipmentSlotByItemType(item)};
@@ -373,6 +374,7 @@ public class ItemUtil {
     }
 
     @NotNull
+    @Deprecated
     public static EquipmentSlot getEquipmentSlotByItemType(@NotNull ItemStack item) {
         String raw = item.getType().name();
         if (raw.contains("HELMET") || raw.contains("SKULL") || raw.contains("HEAD")) {

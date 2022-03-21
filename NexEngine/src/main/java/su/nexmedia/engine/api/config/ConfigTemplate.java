@@ -15,20 +15,19 @@ public abstract class ConfigTemplate {
     protected JYML         cfg;
 
     public String   pluginName;
-    public String[] cmds;
-    public String   lang;
+    public String[] commandAliases;
+    public String   languageCode;
 
     public int         dataSaveInterval;
     public boolean     dataSaveInstant;
     public StorageType dataStorage;
+    public boolean     dataPurgeEnabled;
+    public int         dataPurgeDays;
 
     public String      mysqlLogin;
     public String      mysqlPassword;
     public String      mysqlHost;
     public String      mysqlBase;
-
-    public boolean     dataPurgeEnabled;
-    public int         dataPurgeDays;
 
     public ConfigTemplate(@NotNull NexPlugin<?> plugin) {
         this.plugin = plugin;
@@ -43,8 +42,8 @@ public abstract class ConfigTemplate {
             this.cfg.addMissing("Plugin.Language", "en");
 
             this.pluginName = StringUtil.color(cfg.getString("Plugin.Prefix", plugin.getName()));
-            this.cmds = cfg.getString("Plugin.Command_Aliases", "").split(",");
-            this.lang = cfg.getString("Plugin.Language", "en").toLowerCase();
+            this.commandAliases = cfg.getString("Plugin.Command_Aliases", "").split(",");
+            this.languageCode = cfg.getString("Plugin.Language", "en").toLowerCase();
 
             if (this.plugin instanceof UserDataHolder) {
                 this.cfg.addMissing("Database.Auto_Save_Interval", 20);
@@ -58,9 +57,7 @@ public abstract class ConfigTemplate {
                 this.cfg.addMissing("Database.Purge.For_Inactive_Days", 60);
 
                 String path = "Database.";
-                String sType = cfg.getString(path + "Type", StorageType.SQLITE.name()).toUpperCase();
-                StorageType storageType = CollectionsUtil.getEnum(sType, StorageType.class);
-                this.dataStorage = storageType == null ? StorageType.SQLITE : storageType;
+                this.dataStorage = cfg.getEnum(path + "Type", StorageType.class, StorageType.SQLITE);
                 this.dataSaveInterval = cfg.getInt(path + "Auto_Save_Interval", 20);
                 this.dataSaveInstant = cfg.getBoolean(path + "Instant_Save");
 
@@ -78,8 +75,8 @@ public abstract class ConfigTemplate {
         }
         else {
             this.pluginName = StringUtil.color(cfg.getString("core.prefix", plugin.getName()));
-            this.cmds = cfg.getString("core.command-aliases", "").split(",");
-            this.lang = cfg.getString("core.lang", "en").toLowerCase();
+            this.commandAliases = cfg.getString("core.command-aliases", "").split(",");
+            this.languageCode = cfg.getString("core.lang", "en").toLowerCase();
 
             if (this.plugin instanceof UserDataHolder) {
 

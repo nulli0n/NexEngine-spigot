@@ -44,9 +44,13 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
     private HookManager   hookManager;
     private PlayerManager playerManager;
 
+    @Deprecated
     VaultHook      hookVault;
+    @Deprecated
     CitizensHook   hookCitizens;
+    @Deprecated
     WorldGuardHook hookWorldGuard;
+    @Deprecated
     MythicMobsHook hookMythicMobs;
 
     public NexEngine() {

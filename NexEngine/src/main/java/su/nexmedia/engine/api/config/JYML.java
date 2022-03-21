@@ -239,14 +239,33 @@ public class JYML extends YamlConfiguration {
     }
 
     @NotNull
-    @Deprecated
     public ItemStack getItem(@NotNull String path) {
-        return this.getItem(path, false);
+        return this.getItem(path, null);
+    }
+
+    @NotNull
+    public ItemStack getItem(@NotNull String path, @Nullable String id) {
+        ItemStack item = this.getItemOld(path, false);
+
+        if (path.endsWith(".")) path = path.substring(0, path.length() - 1);
+        if (this.contains(path + ".material")) {
+            this.remove(path);
+            this.setItem(path, item);
+            this.saveChanges();
+        }
+
+        return this.getItemNew(path, id);
     }
 
     @NotNull
     @Deprecated
-    public ItemStack getItem(@NotNull String path, boolean id) {
+    public ItemStack getItemOld(@NotNull String path) {
+        return this.getItem(path, null);
+    }
+
+    @NotNull
+    @Deprecated
+    public ItemStack getItemOld(@NotNull String path, boolean id) {
         if (!path.isEmpty() && !path.endsWith(".")) path = path + ".";
 
         Material material = Material.getMaterial(this.getString(path + "material", "").toUpperCase());
@@ -328,11 +347,13 @@ public class JYML extends YamlConfiguration {
     }
 
     @NotNull
+    @Deprecated
     public ItemStack getItemNew(@NotNull String path) {
         return this.getItemNew(path, null);
     }
 
     @NotNull
+    @Deprecated
     public ItemStack getItemNew(@NotNull String path, @Nullable String id) {
         if (!path.isEmpty() && !path.endsWith(".")) path = path + ".";
 
@@ -422,7 +443,7 @@ public class JYML extends YamlConfiguration {
             String path2 = path + "Display." + displayId + ".";
             int dPriority = this.getInt(path2 + "Priority");
             ItemStack dItem = this.getItem(path2 + "Item");
-            if (dItem.getType().isAir()) dItem = this.getItemNew(path2 + "Item");
+            if (dItem.getType().isAir()) dItem = this.getItem(path2 + "Item");
 
             List<String> dConditions = this.getStringList(path2 + "Conditions");
 
@@ -449,8 +470,64 @@ public class JYML extends YamlConfiguration {
             animationInterval, animationFrames, animationIgnoreUnvailableFrames, animationRandomOrder);
     }
 
-    @Deprecated
     public void setItem(@NotNull String path, @Nullable ItemStack item) {
+        if (item == null) {
+            this.set(path, null);
+            return;
+        }
+
+        if (!path.endsWith(".")) path = path + ".";
+        this.set(path.substring(0, path.length() - 1), null);
+
+        Material material = item.getType();
+        this.set(path + "Material", material.name());
+        this.set(path + "Amount", item.getAmount());
+        this.set(path + "Head_Texture", ItemUtil.getSkullTexture(item));
+
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return;
+
+        if (meta instanceof Damageable damageable) {
+            int durability = damageable.getDamage();
+            this.set(path + "Durability", durability);
+        }
+
+        if (meta.hasDisplayName()) {
+            this.set(path + "Name", StringUtil.colorRaw(meta.getDisplayName()));
+        }
+
+        List<String> lore = meta.getLore();
+        if (lore != null) {
+            List<String> loreRaw = new ArrayList<>();
+            lore.forEach(line -> loreRaw.add(StringUtil.colorRaw(line)));
+            this.set(path + "Lore", loreRaw);
+        }
+
+        for (Map.Entry<Enchantment, Integer> entry : meta.getEnchants().entrySet()) {
+            this.set(path + "Enchants." + entry.getKey().getKey().getKey(), entry.getValue());
+        }
+        this.set(path + "Custom_Model_Data", meta.hasCustomModelData() ? meta.getCustomModelData() : null);
+
+        Color color = null;
+        String colorRaw = null;
+        if (meta instanceof PotionMeta potionMeta) {
+            color = potionMeta.getColor();
+        }
+        else if (meta instanceof LeatherArmorMeta armorMeta) {
+            color = armorMeta.getColor();
+        }
+        if (color != null) {
+            colorRaw = color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ",";
+        }
+        this.set(path + "Color", colorRaw);
+
+        List<String> itemFlags = new ArrayList<>(meta.getItemFlags().stream().map(ItemFlag::name).toList());
+        this.set(path + "Item_Flags", itemFlags);
+        this.set(path + "Unbreakable", meta.isUnbreakable());
+    }
+
+    @Deprecated
+    public void setItemOld(@NotNull String path, @Nullable ItemStack item) {
         if (item == null) {
             this.set(path, null);
             return;
@@ -508,71 +585,31 @@ public class JYML extends YamlConfiguration {
         this.set(path + "unbreakable", meta.isUnbreakable());
     }
 
+    @Deprecated
     public void setItemNew(@NotNull String path, @Nullable ItemStack item) {
-        if (item == null) {
-            this.set(path, null);
-            return;
-        }
-
-        if (!path.endsWith(".")) path = path + ".";
-        this.set(path.substring(0, path.length() - 1), null);
-
-        Material material = item.getType();
-        this.set(path + "Material", material.name());
-        this.set(path + "Amount", item.getAmount());
-        this.set(path + "Head_Texture", ItemUtil.getSkullTexture(item));
-
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return;
-
-        if (meta instanceof Damageable damageable) {
-            int durability = damageable.getDamage();
-            this.set(path + "Durability", durability);
-        }
-
-        if (meta.hasDisplayName()) {
-            this.set(path + "Name", StringUtil.colorRaw(meta.getDisplayName()));
-        }
-
-        List<String> lore = meta.getLore();
-        if (lore != null) {
-            List<String> loreRaw = new ArrayList<>();
-            lore.forEach(line -> loreRaw.add(StringUtil.colorRaw(line)));
-            this.set(path + "Lore", loreRaw);
-        }
-
-        for (Map.Entry<Enchantment, Integer> entry : meta.getEnchants().entrySet()) {
-            this.set(path + "Enchants." + entry.getKey().getKey().getKey(), entry.getValue());
-        }
-        this.set(path + "Custom_Model_Data", meta.hasCustomModelData() ? meta.getCustomModelData() : null);
-
-        Color color = null;
-        String colorRaw = null;
-        if (meta instanceof PotionMeta potionMeta) {
-            color = potionMeta.getColor();
-        }
-        else if (meta instanceof LeatherArmorMeta armorMeta) {
-            color = armorMeta.getColor();
-        }
-        if (color != null) {
-            colorRaw = color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ",";
-        }
-        this.set(path + "Color", colorRaw);
-
-        List<String> itemFlags = new ArrayList<>(meta.getItemFlags().stream().map(ItemFlag::name).toList());
-        this.set(path + "Item_Flags", itemFlags);
-        this.set(path + "Unbreakable", meta.isUnbreakable());
+        this.setItem(path, item);
     }
 
     @Nullable
+    @Deprecated
     public ItemStack getItem64(@NotNull String path) {
+        return this.getItemEncoded(path);
+    }
+
+    @Nullable
+    public ItemStack getItemEncoded(@NotNull String path) {
         String code = this.getString(path);
         if (code == null) return null;
 
         return ItemUtil.fromBase64(code);
     }
 
+    @Deprecated
     public void setItem64(@NotNull String path, @Nullable ItemStack item) {
+        this.setItemEncoded(path, item);
+    }
+
+    public void setItemEncoded(@NotNull String path, @Nullable ItemStack item) {
         if (item == null) {
             this.set(path, null);
         }
@@ -583,12 +620,22 @@ public class JYML extends YamlConfiguration {
     }
 
     @NotNull
+    @Deprecated
     public ItemStack[] getItemList64(@NotNull String path) {
-        List<String> list = this.getStringList(path);
-        return ItemUtil.fromBase64(list);
+        return this.getItemsEncoded(path);
     }
 
+    @NotNull
+    public ItemStack[] getItemsEncoded(@NotNull String path) {
+        return ItemUtil.fromBase64(this.getStringList(path));
+    }
+
+    @Deprecated
     public void setItemList64(@NotNull String path, @NotNull List<ItemStack> item) {
+        this.setItemsEncoded(path, item);
+    }
+
+    public void setItemsEncoded(@NotNull String path, @NotNull List<ItemStack> item) {
         List<String> code = new ArrayList<>(ItemUtil.toBase64(item));
         this.set(path, code);
     }
@@ -603,7 +650,7 @@ public class JYML extends YamlConfiguration {
         if (this.isConfigurationSection(path + "Result")) {
             result = this.getItem(path + "Result");
         }
-        else result = this.getItem64(path + "Result");
+        else result = this.getItemEncoded(path + "Result");
         if (result == null) return null;
 
         CraftRecipe recipe = new CraftRecipe(plugin, id, result, shape);
@@ -615,7 +662,7 @@ public class JYML extends YamlConfiguration {
             if (this.isConfigurationSection(path2)) {
                 ingredient = this.getItem(path2);
             }
-            else ingredient = this.getItem64(path2);
+            else ingredient = this.getItemEncoded(path2);
             if (ingredient == null) continue;
 
             recipe.addIngredient(ingCount++, ingredient);
@@ -634,12 +681,12 @@ public class JYML extends YamlConfiguration {
         }
 
         this.set(path + "Shaped", recipe.isShaped());
-        this.setItem64(path + "Result", recipe.getResult());
+        this.setItemEncoded(path + "Result", recipe.getResult());
 
         char[] ingName = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'};
         ItemStack[] ingredients = recipe.getIngredients();
         for (int index = 0; index < ingredients.length; index++) {
-            this.setItem64(path + "Ingredients." + ingName[index], ingredients[index]);
+            this.setItemEncoded(path + "Ingredients." + ingName[index], ingredients[index]);
         }
     }
 
@@ -649,15 +696,15 @@ public class JYML extends YamlConfiguration {
 
         ItemStack input;
         if (this.isConfigurationSection(path + "Input")) {
-            input = this.getItemNew(path + "Input");
+            input = this.getItem(path + "Input");
         }
-        else input = this.getItem64(path + "Input");
+        else input = this.getItemEncoded(path + "Input");
 
         ItemStack result;
         if (this.isConfigurationSection(path + "Result")) {
-            result = this.getItemNew(path + "Result");
+            result = this.getItem(path + "Result");
         }
-        else result = this.getItem64(path + "Result");
+        else result = this.getItemEncoded(path + "Result");
 
         if (result == null || input == null) {
             return null;
@@ -680,8 +727,8 @@ public class JYML extends YamlConfiguration {
             return;
         }
 
-        this.setItem64(path + "Input", recipe.getInput());
-        this.setItem64(path + "Result", recipe.getResult());
+        this.setItemEncoded(path + "Input", recipe.getInput());
+        this.setItemEncoded(path + "Result", recipe.getResult());
         this.set(path + "Exp", recipe.getExp());
         this.set(path + "Time", recipe.getTime() / 20D); // Turn to decimal seconds
     }
