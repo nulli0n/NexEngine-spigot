@@ -16,6 +16,7 @@ import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.config.ConfigManager;
 import su.nexmedia.engine.hooks.Hooks;
 
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.UnaryOperator;
 
@@ -234,6 +235,11 @@ public class ItemUtil {
         GameProfile profile = new GameProfile(uuid, null);
         profile.getProperties().put("textures", new Property("textures", value));
         Reflex.setFieldValue(meta, "profile", profile);
+
+        Method method = Reflex.getMethod(meta.getClass(), "setProfile", GameProfile.class);
+        if (method != null) {
+            Reflex.invokeMethod(method, meta, profile);
+        }
 
         item.setItemMeta(meta);
     }

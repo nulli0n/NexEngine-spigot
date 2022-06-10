@@ -20,7 +20,6 @@ import su.nexmedia.engine.hooks.external.WorldGuardHook;
 import su.nexmedia.engine.hooks.external.citizens.CitizensHook;
 import su.nexmedia.engine.manager.packet.PacketManager;
 import su.nexmedia.engine.manager.player.PlayerBlockTracker;
-import su.nexmedia.engine.manager.player.PlayerManager;
 import su.nexmedia.engine.nms.NMS;
 import su.nexmedia.engine.utils.Reflex;
 
@@ -42,16 +41,6 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
     ActionsManager actionsManager;
     CraftManager   craftManager;
     private HookManager   hookManager;
-    private PlayerManager playerManager;
-
-    @Deprecated
-    VaultHook      hookVault;
-    @Deprecated
-    CitizensHook   hookCitizens;
-    @Deprecated
-    WorldGuardHook hookWorldGuard;
-    @Deprecated
-    MythicMobsHook hookMythicMobs;
 
     public NexEngine() {
         instance = this;
@@ -61,11 +50,6 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
     @NotNull
     public static NexEngine get() {
         return instance;
-    }
-
-    @Override
-    public boolean useNewConfigFields() {
-        return true;
     }
 
     final boolean loadCore() {
@@ -87,14 +71,8 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
         this.actionsManager = new ActionsManager(this);
         this.actionsManager.setup();
 
-        this.actionsManager = new su.nexmedia.engine.actions.ActionsManager(this);
-        this.actionsManager.setup();
-
         this.craftManager = new CraftManager(this);
         this.craftManager.setup();
-
-        this.playerManager = new PlayerManager(this);
-        this.playerManager.setup();
 
         return true;
     }
@@ -128,10 +106,6 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
             this.actionsManager.shutdown();
             this.actionsManager = null;
         }
-        if (this.playerManager != null) {
-            this.playerManager.shutdown();
-            this.playerManager = null;
-        }
         if (this.packetManager != null) {
             this.packetManager.shutdown();
         }
@@ -144,11 +118,12 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
         }
 
         PlayerBlockTracker.shutdown();
+        su.nexmedia.engine.manager.player.blocktracker.PlayerBlockTracker.shutdown();
     }
 
     @Override
     public void registerHooks() {
-        this.hookVault = this.registerHook(Hooks.VAULT, VaultHook.class);
+        this.registerHook(Hooks.VAULT, VaultHook.class);
     }
 
     @Override
@@ -182,11 +157,6 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
         return this.hookManager;
     }
 
-    @NotNull
-    public PlayerManager getPlayerManager() {
-        return playerManager;
-    }
-
     void hookChild(@NotNull NexPlugin<?> child) {
         this.plugins.add(child);
     }
@@ -199,17 +169,14 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onHookLate(PluginEnableEvent e) {
         String name = e.getPlugin().getName();
-        if (this.hookMythicMobs == null && name.equalsIgnoreCase(Hooks.MYTHIC_MOBS)) {
-            this.hookMythicMobs = this.registerHook(Hooks.MYTHIC_MOBS, MythicMobsHook.class);
-            return;
+        if (name.equalsIgnoreCase(Hooks.MYTHIC_MOBS)) {
+            this.registerHook(Hooks.MYTHIC_MOBS, MythicMobsHook.class);
         }
-        if (this.hookWorldGuard == null && name.equalsIgnoreCase(Hooks.WORLD_GUARD)) {
-            this.hookWorldGuard = this.registerHook(Hooks.WORLD_GUARD, WorldGuardHook.class);
-            return;
+        else if (name.equalsIgnoreCase(Hooks.WORLD_GUARD)) {
+            this.registerHook(Hooks.WORLD_GUARD, WorldGuardHook.class);
         }
-        if (this.hookCitizens == null && name.equalsIgnoreCase(Hooks.CITIZENS)) {
-            this.hookCitizens = this.registerHook(Hooks.CITIZENS, CitizensHook.class);
-            return;
+        else if (name.equalsIgnoreCase(Hooks.CITIZENS)) {
+            this.registerHook(Hooks.CITIZENS, CitizensHook.class);
         }
     }
 }

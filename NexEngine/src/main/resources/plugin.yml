@@ -3,6 +3,7 @@ main: su.nexmedia.engine.NexEngine
 version: '${project.version} build-${buildNumber}'
 description: NEX Plugin Engine
 author: NEX-Media
-softdepend: [ Vault, WorldGuard, MythicMobs ]
+softdepend: [ Vault ]
+loadbefore: [ WorldGuard, MythicMobs, Citizens ]
 api-version: 1.16
 load: STARTUP

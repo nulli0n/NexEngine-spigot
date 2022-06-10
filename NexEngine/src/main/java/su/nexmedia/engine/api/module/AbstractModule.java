@@ -6,14 +6,25 @@ import su.nexmedia.engine.api.manager.AbstractManager;
 import su.nexmedia.engine.api.manager.ILogger;
 import su.nexmedia.engine.core.config.CoreConfig;
 
+import java.util.UUID;
+
 public abstract class AbstractModule<P extends NexPlugin<P>> extends AbstractManager<P> implements ILogger {
 
-    private String  name;
+    private final String id;
+    private final String name;
+
     private boolean isFailed;
     private boolean isLoaded;
 
+    @Deprecated
     public AbstractModule(@NotNull P plugin) {
+        this(plugin, UUID.randomUUID().toString());
+    }
+
+    public AbstractModule(@NotNull P plugin, @NotNull String id) {
         super(plugin);
+        this.id = id.toLowerCase();
+        this.name = plugin.cfg().getModuleName(this);
         this.isLoaded = false;
         this.isFailed = false;
     }
@@ -53,18 +64,20 @@ public abstract class AbstractModule<P extends NexPlugin<P>> extends AbstractMan
     }
 
     @NotNull
-    public abstract String getId();
+    public String getId() {
+        return this.id;
+    }
 
     @NotNull
     public final String getName() {
-        if (this.name == null) {
-            this.name = plugin.cfg().getModuleName(this);
-        }
         return this.name;
     }
 
     @NotNull
-    public abstract String getVersion();
+    @Deprecated
+    public String getVersion() {
+        return "1.0";
+    }
 
     /**
      * @return Local sub-path to the module folder, like /modules/MODULE_ID/

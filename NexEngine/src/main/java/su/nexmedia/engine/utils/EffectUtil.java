@@ -53,7 +53,7 @@ public class EffectUtil {
         Particle particle = CollectionsUtil.getEnum(nameRaw, Particle.class);
         if (particle == null || particle.name().equalsIgnoreCase("VIBRATION")) return;
 
-        playEffect(world, location, particle, dataRaw, xOffset, yOffset, zOffset, speed, amount);
+        playEffect(location, particle, dataRaw, xOffset, yOffset, zOffset, speed, amount);
     }
 
     public static void playEffect(@NotNull Player player, @NotNull Location location, @NotNull String nameRaw, @NotNull String dataRaw,
@@ -65,8 +65,9 @@ public class EffectUtil {
         playEffect(player, location, particle, dataRaw, xOffset, yOffset, zOffset, speed, amount);
     }
 
-    public static void playEffect(@NotNull Player player, @NotNull Location location, @NotNull Particle particle, @NotNull String dataRaw,
+    public static void playEffect(@NotNull Player player, @NotNull Location location, @Nullable Particle particle, @NotNull String dataRaw,
                                   double xOffset, double yOffset, double zOffset, double speed, int amount) {
+        if (particle == null) return;
 
         Object data = getParticleData(particle, dataRaw);
         if ((particle == Particle.SPELL_MOB || particle == Particle.SPELL_MOB_AMBIENT) && data instanceof Particle.DustOptions dustOptions) {
@@ -96,8 +97,9 @@ public class EffectUtil {
         playEffect(location, particle, dataRaw, xOffset, yOffset, zOffset, speed, amount);
     }
 
-    public static void playEffect(@NotNull Location location, @NotNull Particle particle, @NotNull String dataRaw,
+    public static void playEffect(@NotNull Location location, @Nullable Particle particle, @NotNull String dataRaw,
                                   double xOffset, double yOffset, double zOffset, double speed, int amount) {
+        if (particle == null) return;
 
         World world = location.getWorld();
         if (world == null) return;

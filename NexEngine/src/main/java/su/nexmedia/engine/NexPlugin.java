@@ -12,21 +12,18 @@ import su.nexmedia.engine.actions.parameter.AbstractParametized;
 import su.nexmedia.engine.api.command.GeneralCommand;
 import su.nexmedia.engine.api.config.ConfigTemplate;
 import su.nexmedia.engine.api.data.UserDataHolder;
+import su.nexmedia.engine.api.hook.AbstractHook;
 import su.nexmedia.engine.api.manager.ILogger;
 import su.nexmedia.engine.api.menu.IMenu;
-import su.nexmedia.engine.hooks.Hooks;
-import su.nexmedia.engine.manager.packet.PacketManager;
 import su.nexmedia.engine.command.CommandManager;
 import su.nexmedia.engine.command.PluginMainCommand;
 import su.nexmedia.engine.config.ConfigManager;
 import su.nexmedia.engine.core.config.CoreLang;
 import su.nexmedia.engine.craft.CraftManager;
 import su.nexmedia.engine.hooks.HookManager;
-import su.nexmedia.engine.api.hook.AbstractHook;
-import su.nexmedia.engine.hooks.external.MythicMobsHook;
-import su.nexmedia.engine.hooks.external.VaultHook;
-import su.nexmedia.engine.hooks.external.WorldGuardHook;
+import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.hooks.external.citizens.CitizensHook;
+import su.nexmedia.engine.manager.packet.PacketManager;
 import su.nexmedia.engine.module.ModuleManager;
 import su.nexmedia.engine.nms.NMS;
 
@@ -149,11 +146,6 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         // Setup ConfigManager before any other managers.
         this.configManager = new ConfigManager<>((P) this);
         this.configManager.setup();
-        if (this.cfg().commandAliases == null || this.cfg().commandAliases.length == 0) {
-            this.error("Could not register plugin commands!");
-            this.getPluginManager().disablePlugin(this);
-            return;
-        }
 
         // Connect to the database if present.
         UserDataHolder<?, ?> dataHolder = null;
@@ -302,30 +294,6 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
     @Nullable
     public final AbstractHook<? extends NexPlugin<?>> getHook(@NotNull String name) {
         return this.getHooks().getHook(this, name);
-    }
-
-    @Nullable
-    @Deprecated
-    public final VaultHook getVault() {
-        return getEngine().hookVault;
-    }
-
-    @Nullable
-    @Deprecated
-    public final CitizensHook getCitizens() {
-        return getEngine().hookCitizens;
-    }
-
-    @Nullable
-    @Deprecated
-    public final WorldGuardHook getWorldGuard() {
-        return getEngine().hookWorldGuard;
-    }
-
-    @Nullable
-    @Deprecated
-    public final MythicMobsHook getMythicMobs() {
-        return getEngine().hookMythicMobs;
     }
 
     public ClassLoader getClazzLoader() {

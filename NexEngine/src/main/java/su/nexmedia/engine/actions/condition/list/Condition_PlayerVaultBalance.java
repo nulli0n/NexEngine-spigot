@@ -30,8 +30,7 @@ public class Condition_PlayerVaultBalance extends AbstractConditionValidator {
     @Nullable
     protected Predicate<Entity> validate(@NotNull Entity executor, @NotNull Set<Entity> targets,
                                          @NotNull ParameterResult result) {
-        VaultHook vault = ENGINE.getVault();
-        if (vault == null || !vault.hasEconomy()) return null;
+        if (!VaultHook.hasEconomy()) return null;
 
         ParameterValueNumber amount = (ParameterValueNumber) result.getValue(ParameterId.AMOUNT);
         if (amount == null) return null;
@@ -43,7 +42,7 @@ public class Condition_PlayerVaultBalance extends AbstractConditionValidator {
 
         return target -> {
             if (target instanceof Player player) {
-                double moneyBalance = vault.getBalance(player);
+                double moneyBalance = VaultHook.getBalance(player);
                 return operator.compare(moneyBalance, moneyRequired);
             }
             return false;

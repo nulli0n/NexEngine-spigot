@@ -85,10 +85,9 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
             command = child;
         }*/
         if (command instanceof GeneralCommand<P> generalCommand) {
-            if (generalCommand.defaultCommand == null) {
-                return false;
+            if (generalCommand.defaultCommand != null) {
+                command = generalCommand.defaultCommand;
             }
-            command = generalCommand.defaultCommand;
         }
 
         command.execute(sender, label, args);

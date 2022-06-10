@@ -16,15 +16,12 @@ import su.nexmedia.engine.utils.StringUtil;
 public class CoreLang extends LangTemplate {
 
     public CoreLang(@NotNull NexPlugin<?> plugin) {
-        super(plugin, plugin.getConfigManager().configLang, plugin.isEngine() ? null : NexEngine.get().lang());
-    }
-    public CoreLang(@NotNull NexPlugin<?> plugin, @Nullable LangTemplate parent) {
-        super(plugin, plugin.getConfigManager().configLang, parent);
+        this(plugin, plugin.isEngine() ? null : NexEngine.get().lang());
     }
 
-    @Override
-    public void setup() {
-        super.setup();
+    public CoreLang(@NotNull NexPlugin<?> plugin, @Nullable LangTemplate parent) {
+        super(plugin, plugin.getConfigManager().configLang, parent);
+
         if (!this.plugin.isEngine()) return;
 
         this.setupEnum(EntityType.class);
@@ -40,6 +37,7 @@ public class CoreLang extends LangTemplate {
         }
     }
 
+    @Deprecated
     public LangMessage Prefix = new LangMessage(this, "&7(&6%plugin%&7) &7");
 
     public LangMessage Core_Command_Usage       = new LangMessage(this, "&cUsage: &e/%command_label% &6%command_usage%");
@@ -57,30 +55,37 @@ public class CoreLang extends LangTemplate {
     public LangMessage Core_Command_Reload_Desc = new LangMessage(this, "Reload the plugin.");
     public LangMessage Core_Command_Reload_Done = new LangMessage(this, "Reloaded!");
 
-    public LangMessage Core_Editor_Tips_Commands = new LangMessage(this, """
-        {message: ~prefix: false;}&7
-        &b&lCommand Tips:
+    public LangMessage Editor_Help_Commands  = new LangMessage(this, """
+        {message: ~prefix: false;}
         &7
+        &b&lCommand Syntax:
         &2• &a'[CONSOLE] <command>' &2- Execute as Console.
         &2• (no prefix) &a'<command>' &2- Execute as a Player.
-        &2• &a%player% &2- Player name placeholder.
+        &7
+        &b&lCommand Placeholders:
+        &2• &a%player% &2- For player name.
+        &7
+        &b&lCommand Examples:
+        &2▸ &a[CONSOLE] eco give %player% 250
+        &2▸ &abroadcast Hello!
         &7""");
-    public LangMessage Core_Editor_Tips_Header = new LangMessage(this, """
-        {message: ~prefix: false;}&7
-        &e&lSUGGESTED (ALLOWED) VALUES:
+    public LangMessage Editor_Help_Values    = new LangMessage(this, """
+        {message: ~prefix: false;}
+        &7
+        &b&lSuggested/Allowed Values:
         """);
-    public LangMessage Core_Editor_Tips_Hint   = new LangMessage(this, "&b&nClick to select!");
+    public LangMessage Core_Editor_Tips_Hint = new LangMessage(this, "&b&nClick to select!");
     public LangMessage Core_Editor_Tips_Exit_Name                   = new LangMessage(this, "&b<Click this message to &dExit &bthe &dEdit Mode&b>");
     public LangMessage Core_Editor_Tips_Exit_Hint                   = new LangMessage(this, "&7Click to exit edit mode.");
-    public LangMessage Core_Editor_Display_Edit_Format              = new LangMessage(this, "{message: ~type: TITLES; ~fadeIn: 10; ~stay: -1; ~fadeOut: 10;}" + "%title%" + "\n" + "&7%message%");
-    public LangMessage Core_Editor_Display_Done_Title               = new LangMessage(this, "&a&lDone!");
-    public LangMessage Core_Editor_Display_Edit_Title               = new LangMessage(this, "&a&lEditing...");
-    public LangMessage Core_Editor_Display_Error_Title              = new LangMessage(this, "&c&lError!");
-    public LangMessage Core_Editor_Display_Error_Number_Invalid     = new LangMessage(this, "&c&lInvalid number!");
-    public LangMessage Core_Editor_Display_Error_Number_MustDecimal = new LangMessage(this, "&7Must be &cInteger &7or &cDecimal");
-    public LangMessage Core_Editor_Display_Error_Number_MustInteger = new LangMessage(this, "&7Must be &cInteger");
-    public LangMessage Core_Editor_Display_Error_Type_Title         = new LangMessage(this, "&c&lInvalid Type!");
-    public LangMessage Core_Editor_Display_Error_Type_Values        = new LangMessage(this, "&7See allowed values in chat.");
+    @Deprecated public LangMessage Core_Editor_Display_Edit_Format              = new LangMessage(this, "{message: ~type: TITLES; ~fadeIn: 10; ~stay: -1; ~fadeOut: 10;}" + "%title%" + "\n" + "&7%message%");
+    @Deprecated public LangMessage Core_Editor_Display_Done_Title               = new LangMessage(this, "&a&lDone!");
+    @Deprecated public LangMessage Core_Editor_Display_Edit_Title               = new LangMessage(this, "&a&lEditing...");
+    @Deprecated public LangMessage Core_Editor_Display_Error_Title              = new LangMessage(this, "&c&lError!");
+    @Deprecated public LangMessage Core_Editor_Display_Error_Number_Invalid     = new LangMessage(this, "&c&lInvalid number!");
+    @Deprecated public LangMessage Core_Editor_Display_Error_Number_MustDecimal = new LangMessage(this, "&7Must be &cInteger &7or &cDecimal");
+    @Deprecated public LangMessage Core_Editor_Display_Error_Number_MustInteger = new LangMessage(this, "&7Must be &cInteger");
+    @Deprecated public LangMessage Core_Editor_Display_Error_Type_Title         = new LangMessage(this, "&c&lInvalid Type!");
+    @Deprecated  public LangMessage Core_Editor_Display_Error_Type_Values        = new LangMessage(this, "&7See allowed values in chat.");
 
     public LangMessage Time_Day  = new LangMessage(this, "%s%d.");
     public LangMessage Time_Hour = new LangMessage(this, "%s%h.");
@@ -91,6 +96,7 @@ public class CoreLang extends LangTemplate {
     public LangMessage Other_No   = new LangMessage(this, "&cNo");
     public LangMessage Other_Any  = new LangMessage(this, "Any");
     public LangMessage Other_None = new LangMessage(this, "None");
+    public LangMessage Other_Never = new LangMessage(this, "Never");
     public LangMessage Other_OneTimed = new LangMessage(this, "One-Timed");
     public LangMessage Other_Unlimited = new LangMessage(this, "Unlimited");
     public LangMessage Other_Infinity = new LangMessage(this, "∞");

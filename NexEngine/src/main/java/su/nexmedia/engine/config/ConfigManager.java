@@ -42,7 +42,7 @@ public class ConfigManager<P extends NexPlugin<P>> {
     public void setup() {
         this.extract("lang");
         this.configMain = JYML.loadOrExtract(plugin, "config.yml");
-        this.configLang = JYML.loadOrExtract(plugin, "/lang/messages_" + configMain.getString("core.lang", "en").toLowerCase() + ".yml");
+        this.configLang = JYML.loadOrExtract(plugin, "/lang/messages_" + configMain.getString("Plugin.Language", "en").toLowerCase() + ".yml");
 
         // Load plugin config.
         this.plugin.setConfig();

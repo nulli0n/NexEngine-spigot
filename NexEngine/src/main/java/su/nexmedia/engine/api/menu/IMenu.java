@@ -117,7 +117,9 @@ public interface IMenu extends ICleanable {
     }
 
     @Deprecated
-    boolean cancelClick(@NotNull SlotType slotType, int slot);
+    default boolean cancelClick(@NotNull SlotType slotType, int slot) {
+        return false;
+    }
 
     default boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
         return false;

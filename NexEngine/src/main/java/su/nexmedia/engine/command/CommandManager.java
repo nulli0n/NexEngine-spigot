@@ -25,6 +25,10 @@ public class CommandManager<P extends NexPlugin<P>> extends AbstractManager<P> {
     @Override
     public void onLoad() {
         this.commands = new HashSet<>();
+        if (this.plugin.cfg().commandAliases == null || this.plugin.cfg().commandAliases.length == 0) {
+            this.plugin.error("Could not register plugin commands!");
+            return;
+        }
 
         // Create main plugin command and attach help sub-command as a default executor.
         this.mainCommand = new PluginMainCommand<>(this.plugin);

@@ -48,7 +48,7 @@ public class VaultHook extends AbstractHook<NexEngine> {
         RegisteredServiceProvider<Permission> rsp = plugin.getServer().getServicesManager().getRegistration(Permission.class);
         if (rsp == null) return;
 
-        this.permission = rsp.getProvider();
+        permission = rsp.getProvider();
         this.plugin.info("Successfully hooked with " + permission.getName() + " permissions");
     }
 
@@ -56,7 +56,7 @@ public class VaultHook extends AbstractHook<NexEngine> {
         RegisteredServiceProvider<Economy> rsp = plugin.getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) return;
 
-        this.economy = rsp.getProvider();
+        economy = rsp.getProvider();
         this.plugin.info("Successfully hooked with " + economy.getName() + " economy");
     }
 
@@ -64,7 +64,7 @@ public class VaultHook extends AbstractHook<NexEngine> {
         RegisteredServiceProvider<Chat> rsp = plugin.getServer().getServicesManager().getRegistration(Chat.class);
         if (rsp == null) return;
 
-        this.chat = rsp.getProvider();
+        chat = rsp.getProvider();
         this.plugin.info("Successfully hooked with " + chat.getName() + " chat");
     }
 
@@ -170,7 +170,7 @@ public class VaultHook extends AbstractHook<NexEngine> {
 
     @Deprecated
     public void give(@NotNull OfflinePlayer player, double amount) {
-        this.economy.depositPlayer(player, amount);
+        economy.depositPlayer(player, amount);
     }
 
     public static boolean addMoney(@NotNull Player player, double amount) {
@@ -183,12 +183,12 @@ public class VaultHook extends AbstractHook<NexEngine> {
 
     @Deprecated
     public void take(@NotNull Player player, double amount) {
-        this.economy.withdrawPlayer(player, Math.min(Math.abs(amount), this.getBalance(player)));
+        economy.withdrawPlayer(player, Math.min(Math.abs(amount), getBalance(player)));
     }
 
     @Deprecated
     public void take(@NotNull OfflinePlayer player, double amount) {
-        this.economy.withdrawPlayer(player, Math.min(Math.abs(amount), this.getBalance(player)));
+        economy.withdrawPlayer(player, Math.min(Math.abs(amount), getBalance(player)));
     }
 
     public static boolean takeMoney(@NotNull Player player, double amount) {

@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.utils.json.text.ClickWord;
 import su.nexmedia.engine.utils.regex.RegexUtil;
 
@@ -40,31 +41,29 @@ public class MessageUtil {
 
     @Deprecated
     public static void sound(@NotNull Player player, @NotNull String sound) {
-        Sound sound1 = CollectionsUtil.getEnum(sound, Sound.class);
-        if (sound1 == null) return;
-        sound(player, sound1);
+        sound(player, CollectionsUtil.getEnum(sound, Sound.class));
     }
 
-    public static void sound(@NotNull Player player, @NotNull Sound sound) {
+    public static void sound(@NotNull Player player, @Nullable Sound sound) {
+        if (sound == null) return;
         player.playSound(player.getLocation(), sound, 0.9f, 0.9f);
-    }
-
-    public static void sound(@NotNull Location location, @NotNull Sound sound) {
-        World world = location.getWorld();
-        if (world == null) return;
-
-        world.playSound(location, sound, 0.9f, 0.9f);
     }
 
     @Deprecated
     public static void sound(@NotNull Location location, @NotNull String sound) {
-        Sound sound1 = CollectionsUtil.getEnum(sound, Sound.class);
-        if (sound1 == null) return;
-        sound(location, sound1);
+        sound(location, CollectionsUtil.getEnum(sound, Sound.class));
+    }
+
+    public static void sound(@NotNull Location location, @Nullable Sound sound) {
+        World world = location.getWorld();
+        if (world == null || sound == null) return;
+
+        world.playSound(location, sound, 0.9f, 0.9f);
     }
 
     public static boolean isJSON(@NotNull String str) {
-        return str.contains("json:");
+        Matcher matcher = RegexUtil.getMatcher(PATTERN_MESSAGE_JSON_FULL, str);
+        return matcher != null;
     }
 
     @NotNull

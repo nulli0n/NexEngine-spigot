@@ -221,7 +221,8 @@ public class PlayerUtil {
         World world = player.getWorld();
 
         for (ItemStack item2 : items) {
-            ItemStack item = new ItemStack(item2);
+            addItem(player, item2, item2.getAmount());
+            /*ItemStack item = new ItemStack(item2);
             if (item.getType().isAir()) continue;
 
             int space = countItemSpace(player, item);
@@ -233,7 +234,28 @@ public class PlayerUtil {
             }
             if (item.getAmount() > 0) {
                 inventory.addItem(item);
-            }
+            }*/
+        }
+    }
+
+    public static void addItem(@NotNull Player player, @NotNull ItemStack item2, int amount) {
+        if (amount <= 0 || item2.getType().isAir()) return;
+
+        Inventory inventory = player.getInventory();
+        World world = player.getWorld();
+
+        ItemStack item = new ItemStack(item2);
+        item.setAmount(1);
+
+        int space = countItemSpace(player, item);
+        int toAdd = Math.min(space, amount);
+        int toDrop = amount - toAdd;
+
+        for (int count = 0; count < toAdd; count++) {
+            inventory.addItem(item);
+        }
+        for (int count = 0; count < toDrop; count++) {
+            world.dropItem(player.getLocation(), item);
         }
     }
 }

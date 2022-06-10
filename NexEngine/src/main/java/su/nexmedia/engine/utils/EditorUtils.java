@@ -3,64 +3,65 @@ package su.nexmedia.engine.utils;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexEngine;
+import su.nexmedia.engine.utils.json.text.ClickWord;
+import su.nexmedia.engine.utils.json.text.ClickText;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class EditorUtils {
 
+    @Deprecated
     public static final int TUNE_DISABLED = 0;
+    @Deprecated
     public static final int TUNE_ENABLED  = 1;
+    @Deprecated
     public static final int TUNE_WARNING  = 2;
+
     private static final NexEngine ENGINE = NexEngine.get();
 
     public static void sendClickableTips(@NotNull Player player, @NotNull Collection<String> items2) {
         if (items2.size() >= 100) {
-            List<List<String>> split = CollectionsUtil.split(items2.stream().collect(Collectors.toList()), 50);
-            split.stream().forEach(items3 -> sendClickableTips(player, items3));
+            List<List<String>> split = CollectionsUtil.split(new ArrayList<>(items2), 50);
+            split.forEach(items3 -> sendClickableTips(player, items3));
             return;
         }
 
-        List<String> items = items2.stream().sorted((s1, s2) -> s1.compareTo(s2)).collect(Collectors.toList());
-
-        String full = items.stream().map(str -> "%" + str + "%").collect(Collectors.joining(" &7| "));
-
-        ClickText text = new ClickText(full);
-        items.forEach(pz -> {
-            ClickText.ClickWord word = text.createPlaceholder("%" + pz + "%", "&a" + pz);
-            word.hint(ENGINE.lang().Core_Editor_Tips_Hint.getMsg());
-            word.execCmd(pz);
+        List<String> items = items2.stream().sorted(String::compareTo).map(str -> StringUtil.color("&a" + str)).collect(Collectors.toList());
+        ClickText text = new ClickText(String.join(" &8-- ", items));
+        items.forEach(item -> {
+            ClickWord word = text.addComponent(item);
+            word.showText(ENGINE.lang().Core_Editor_Tips_Hint.getLocalized());
+            word.runCommand(StringUtil.colorOff(item));
         });
 
-        ENGINE.lang().Core_Editor_Tips_Header.send(player);
+        ENGINE.lang().Editor_Help_Values.send(player);
         text.send(player);
     }
 
     public static void sendSuggestTips(@NotNull Player player, @NotNull Collection<String> items2) {
         if (items2.size() >= 100) {
-            List<List<String>> split = CollectionsUtil.split(items2.stream().collect(Collectors.toList()), 50);
-            split.stream().forEach(items3 -> sendSuggestTips(player, items3));
+            List<List<String>> split = CollectionsUtil.split(new ArrayList<>(items2), 50);
+            split.forEach(items3 -> sendSuggestTips(player, items3));
             return;
         }
 
-        List<String> items = items2.stream().sorted((s1, s2) -> s1.compareTo(s2)).collect(Collectors.toList());
-
-        String full = items.stream().map(str -> "%" + str + "%").collect(Collectors.joining(" &7| "));
-
-        ClickText text = new ClickText(full);
-        items.forEach(pz -> {
-            ClickText.ClickWord word = text.createPlaceholder("%" + pz + "%", "&a" + pz);
-            word.hint(ENGINE.lang().Core_Editor_Tips_Hint.getMsg());
-            word.suggCmd(pz);
+        List<String> items = items2.stream().sorted(String::compareTo).map(str -> StringUtil.color("&a" + str)).collect(Collectors.toList());
+        ClickText text = new ClickText(String.join(" &8-- ", items));
+        items.forEach(item -> {
+            ClickWord word = text.addComponent(item);
+            word.showText(ENGINE.lang().Core_Editor_Tips_Hint.getLocalized());
+            word.suggestCommand(StringUtil.colorOff(item));
         });
 
-        ENGINE.lang().Core_Editor_Tips_Header.send(player);
+        ENGINE.lang().Editor_Help_Values.send(player);
         text.send(player);
     }
 
     public static void sendCommandTips(@NotNull Player player) {
-        ENGINE.lang().Core_Editor_Tips_Commands.send(player);
+        ENGINE.lang().Editor_Help_Commands.send(player);
     }
 
     public static void tip(@NotNull Player player, @NotNull String title, @NotNull String sub) {

@@ -13,6 +13,7 @@ import su.nexmedia.engine.utils.StringUtil;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
@@ -34,7 +35,7 @@ public class ClickText {
         String placeholder = "%" + this.components.size() + "%";
 
         this.components.put(placeholder, clickWord);
-        this.text = this.text.replace(StringUtil.color(text), placeholder);
+        this.text = this.text.replaceAll("(?=\\W+|^)"+Pattern.quote(text)+"(?=\\W+|$)", placeholder);
         return clickWord;
     }
 

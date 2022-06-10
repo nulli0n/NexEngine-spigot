@@ -3,6 +3,7 @@ package su.nexmedia.engine.hooks.external;
 
 import io.lumine.mythic.api.exceptions.InvalidMobTypeException;
 import io.lumine.mythic.api.mobs.MythicMob;
+import io.lumine.mythic.api.skills.placeholders.PlaceholderString;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.core.mobs.ActiveMob;
 import org.bukkit.Location;
@@ -74,7 +75,8 @@ public class MythicMobsHook extends AbstractHook<NexEngine> {
     @NotNull
     public static String getMobDisplayName(@NotNull String mobId) {
         MythicMob mythicMob = getMobConfig(mobId);
-        return mythicMob != null ? mythicMob.getDisplayName().get() : mobId;
+        PlaceholderString string = mythicMob != null ? mythicMob.getDisplayName() : null;
+        return string != null ? string.get() : mobId;
     }
 
     @Deprecated

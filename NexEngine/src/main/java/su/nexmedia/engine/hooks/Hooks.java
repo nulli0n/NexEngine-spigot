@@ -30,17 +30,13 @@ public class Hooks {
     private static final NexEngine ENGINE = NexEngine.get();
 
     @NotNull
-    @Deprecated
     public static String getPermissionGroup(@NotNull Player player) {
-        VaultHook vault = ENGINE.getVault();
-        return vault != null ? vault.getPlayerGroup(player).toLowerCase() : "";
+        return hasVault() ? VaultHook.getPermissionGroup(player).toLowerCase() : "";
     }
 
     @NotNull
-    @Deprecated
     public static Set<String> getPermissionGroups(@NotNull Player player) {
-        VaultHook vault = ENGINE.getVault();
-        return vault != null ? vault.getPlayerGroups(player) : Collections.emptySet();
+        return hasVault() ? VaultHook.getPermissionGroups(player) : Collections.emptySet();
     }
 
     public static long getGroupValueLong(@NotNull Player player, @NotNull Map<String, Long> rankMap, boolean isNegaBetter) {
@@ -54,7 +50,7 @@ public class Hooks {
     }
 
     public static double getGroupValueDouble(@NotNull Player player, @NotNull Map<String, Double> map, boolean isNegaBetter) {
-        Set<String> groups = VaultHook.getPermissionGroups(player);
+        Set<String> groups = getPermissionGroups(player);
         // System.out.println("[0] groups of '" + player.getName() + "': " + groups);
         // System.out.println("[1] map to compare: " + map);
 
@@ -73,27 +69,21 @@ public class Hooks {
     }
 
     @NotNull
-    @Deprecated
     public static String getPrefix(@NotNull Player player) {
-        VaultHook vault = ENGINE.getVault();
-        return vault != null ? vault.getPrefix(player) : "";
+        return hasVault() ? VaultHook.getPrefix(player) : "";
     }
 
     @NotNull
-    @Deprecated
     public static String getSuffix(@NotNull Player player) {
-        VaultHook vault = ENGINE.getVault();
-        return vault != null ? vault.getSuffix(player) : "";
+        return hasVault() ? VaultHook.getSuffix(player) : "";
     }
 
     public static boolean isCitizensNPC(@NotNull Entity entity) {
         return hasPlugin(CITIZENS) && CitizensAPI.getNPCRegistry().isNPC(entity);
     }
 
-    @Deprecated
     public static boolean isMythicMob(@NotNull Entity entity) {
-        MythicMobsHook mobsHK = ENGINE.getMythicMobs();
-        return mobsHK != null && mobsHK.isMythicMob(entity);
+        return hasMythicMobs() && MythicMobsHook.isMythicMob(entity);
     }
 
     public static boolean hasPlugin(@NotNull String pluginName) {
@@ -103,6 +93,10 @@ public class Hooks {
 
     public static boolean hasPlaceholderAPI() {
         return hasPlugin(PLACEHOLDER_API);
+    }
+
+    public static boolean hasVault() {
+        return hasPlugin(VAULT);
     }
 
     public static boolean hasCitizens() {
@@ -133,11 +127,8 @@ public class Hooks {
             }*/
         }
 
-        WorldGuardHook worldGuard = ENGINE.getWorldGuard();
-        if (worldGuard != null) {
-            if (!worldGuard.canFights(attacker, victim)) {
-                return false;
-            }
+        if (hasWorldGuard() && !WorldGuardHook.canFights(attacker, victim)) {
+            return false;
         }
 
         return true;
