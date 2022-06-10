@@ -16,6 +16,7 @@
         <module>NMS</module>
         <module>NexEngine_CustomEffects</module>
         <module>NexEngineCompat_V1_18_R2</module>
+        <module>NexEngineCompat_V1_19_R1</module>
     </modules>
 
     <properties>
