@@ -163,7 +163,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <outputFile>${project.basedir}\${project.artifactId}-${project.version}.jar</outputFile>
+                            <outputFile>${project.basedir}\target\${project.artifactId}-${project.version}.jar</outputFile>
                             <artifactSet>
                                 <includes>
                                     <include>su.nexmedia:*</include>

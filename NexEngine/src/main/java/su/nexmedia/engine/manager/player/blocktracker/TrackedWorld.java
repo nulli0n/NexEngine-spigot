@@ -6,6 +6,7 @@ import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class TrackedWorld {
 
@@ -16,15 +17,22 @@ public class TrackedWorld {
     }
 
     protected boolean isTracked(@NotNull Block block) {
-        return this.getChunkOf(block).isTracked(block);
+        TrackedChunk trackedChunk = this.getChunkOf(block);
+        return trackedChunk != null && trackedChunk.isTracked(block);
     }
 
     protected void add(@NotNull Block block) {
-        this.getChunkOf(block).add(block);
+        TrackedChunk trackedChunk = this.getChunkOf(block);
+        if (trackedChunk == null) return;
+
+        trackedChunk.add(block);
     }
 
     protected void remove(@NotNull Block block) {
-        this.getChunkOf(block).remove(block);
+        TrackedChunk trackedChunk = this.getChunkOf(block);
+        if (trackedChunk == null) return;
+
+        trackedChunk.remove(block);
     }
 
     protected void initChunk(@NotNull Chunk chunk) {
@@ -47,6 +55,7 @@ public class TrackedWorld {
         }
     }
 
+    @Nullable
     private TrackedChunk getChunkOf(@NotNull Block block) {
         return this.chunkMap.get(TrackUtil.getChunkKeyOfBlock(block));
     }

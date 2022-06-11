@@ -7,7 +7,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.Version;
 import su.nexmedia.engine.utils.random.Rnd;
 
 public class EffectUtil {
@@ -27,7 +26,7 @@ public class EffectUtil {
             Color color = dataRaw.isEmpty() ? Color.WHITE : StringUtil.parseColor(dataRaw);
             return new Particle.DustOptions(color, 1.5f);
         }
-        else if (Version.CURRENT.isHigher(Version.V1_16_R3) && particle == Particle.DUST_COLOR_TRANSITION) {
+        else if (particle == Particle.DUST_COLOR_TRANSITION) {
             String[] colors = dataRaw.split(":");
             Color colorStart = dataRaw.isEmpty() ? Color.WHITE : StringUtil.parseColor(colors[0]);
             Color colorEnd = dataRaw.isEmpty() || colors.length < 2 ? Color.WHITE : StringUtil.parseColor(colors[1]);
