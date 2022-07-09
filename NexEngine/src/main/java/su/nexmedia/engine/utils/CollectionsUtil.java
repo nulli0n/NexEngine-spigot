@@ -24,18 +24,6 @@ public class CollectionsUtil {
     }
 
     @NotNull
-    @Deprecated
-    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(@NotNull Map<K, V> map) {
-        return sortAscent(map);
-    }
-
-    @NotNull
-    @Deprecated
-    public static <K, V extends Comparable<? super V>> Map<K, V> sortByValueUpDown(@NotNull Map<K, V> map) {
-        return sortDescent(map);
-    }
-
-    @NotNull
     public static <K, V extends Comparable<? super V>> Map<K, V> sortAscent(@NotNull Map<K, V> map) {
         return sort(map, Map.Entry.comparingByValue());
     }

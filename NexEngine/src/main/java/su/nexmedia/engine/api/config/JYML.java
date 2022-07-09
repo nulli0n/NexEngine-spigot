@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class JYML extends YamlConfiguration {
@@ -48,16 +47,15 @@ public class JYML extends YamlConfiguration {
 
     @NotNull
     public static JYML loadOrExtract(@NotNull NexPlugin<?> plugin, @NotNull String filePath) {
-        if (!plugin.getDataFolder().exists()) {
-            FileUtil.mkdir(plugin.getDataFolder());
-        }
+        /*if (!plugin.getDataFolder().exists()) {
+            plugin.getDataFolder().mkdir();
+        }*/
         if (!filePath.startsWith("/")) {
             filePath = "/" + filePath;
         }
 
         File file = new File(plugin.getDataFolder() + filePath);
-        if (!file.exists()) {
-            FileUtil.create(file);
+        if (FileUtil.create(file)) {
             try {
                 InputStream input = plugin.getClass().getResourceAsStream(filePath);
                 if (input != null) FileUtil.copy(input, file);
@@ -137,8 +135,7 @@ public class JYML extends YamlConfiguration {
     }
 
     public boolean remove(@NotNull String path) {
-        if (!this.contains(path))
-            return false;
+        if (!this.contains(path)) return false;
         this.set(path, null);
         return true;
     }
@@ -160,10 +157,7 @@ public class JYML extends YamlConfiguration {
     @NotNull
     public String getString(@NotNull String path, @Nullable String def) {
         String str = super.getString(path, def);
-        if (str == null) {
-            return def != null ? def : "";
-        }
-        return str;
+        return str == null ? "" : str;
     }
 
     @NotNull
@@ -176,11 +170,6 @@ public class JYML extends YamlConfiguration {
     public Location getLocation(@NotNull String path) {
         String raw = this.getString(path);
         return raw == null ? null : LocationUtil.deserialize(raw);
-    }
-
-    @Deprecated
-    public void setLocation(@NotNull String path, @Nullable Location loc) {
-        this.set(path, loc == null ? null : LocationUtil.serialize(loc));
     }
 
     public int[] getIntArray(@NotNull String path) {
@@ -207,6 +196,12 @@ public class JYML extends YamlConfiguration {
     public <T extends Enum<T>> T getEnum(@NotNull String path, @NotNull Class<T> clazz, @NotNull T def) {
         @Nullable T val = this.getEnum(path, clazz);
         return val == null ? def : val;
+    }
+
+    @NotNull
+    public <T extends Enum<T>> List<T> getEnumList(@NotNull String path, @NotNull Class<T> clazz) {
+        return this.getStringSet(path).stream().map(str -> CollectionsUtil.getEnum(str, clazz))
+            .filter(Objects::nonNull).toList();
     }
 
     @NotNull
@@ -276,13 +271,7 @@ public class JYML extends YamlConfiguration {
 
         String hash = this.getString(path + "skull-hash", this.getString(path + "head-texture"));
         if (!hash.isEmpty()) {
-            if (id) {
-                String idz = this.getFile().getName().replace(".yml", "");
-                ItemUtil.addSkullTexture(item, hash, idz);
-            }
-            else {
-                ItemUtil.addSkullTexture(item, hash);
-            }
+            ItemUtil.setSkullTexture(item, hash);
         }
 
         ItemMeta meta = item.getItemMeta();
@@ -318,7 +307,7 @@ public class JYML extends YamlConfiguration {
         meta.setCustomModelData(model != 0 ? model : null);
 
         List<String> flags = this.getStringList(path + "item-flags");
-        if (flags.contains(Constants.MASK_ANY)) {
+        if (flags.contains(Placeholders.MASK_ANY)) {
             meta.addItemFlags(ItemFlag.values());
         }
         else {
@@ -365,7 +354,7 @@ public class JYML extends YamlConfiguration {
 
         String headTexture = this.getString(path + "Head_Texture", "");
         if (!headTexture.isEmpty()) {
-            ItemUtil.addSkullTexture(item, headTexture, id);
+            ItemUtil.setSkullTexture(item, headTexture);
         }
 
         ItemMeta meta = item.getItemMeta();
@@ -394,15 +383,11 @@ public class JYML extends YamlConfiguration {
         meta.setCustomModelData(model != 0 ? model : null);
 
         List<String> flags = this.getStringList(path + "Item_Flags");
-        if (flags.contains(Constants.MASK_ANY)) {
+        if (flags.contains(Placeholders.MASK_ANY)) {
             meta.addItemFlags(ItemFlag.values());
         }
         else {
-            for (String flag : flags) {
-                ItemFlag itemFlag = CollectionsUtil.getEnum(flag, ItemFlag.class);
-                if (itemFlag != null)
-                    meta.addItemFlags(itemFlag);
-            }
+            flags.stream().map(str -> CollectionsUtil.getEnum(str, ItemFlag.class)).filter(Objects::nonNull).forEach(meta::addItemFlags);
         }
 
         String colorRaw = this.getString(path + "Color");
@@ -526,76 +511,6 @@ public class JYML extends YamlConfiguration {
         this.set(path + "Unbreakable", meta.isUnbreakable());
     }
 
-    @Deprecated
-    public void setItemOld(@NotNull String path, @Nullable ItemStack item) {
-        if (item == null) {
-            this.set(path, null);
-            return;
-        }
-
-        if (!path.endsWith("."))
-            path = path + ".";
-        this.set(path.substring(0, path.length() - 1), null);
-
-        Material material = item.getType();
-        this.set(path + "material", material.name());
-        this.set(path + "amount", item.getAmount());
-        this.set(path + "head-texture", ItemUtil.getSkullTexture(item));
-
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null)
-            return;
-
-        if (meta instanceof Damageable) {
-            int durability = ((Damageable) meta).getDamage();
-            this.set(path + "durability", durability);
-        }
-
-        if (meta.hasDisplayName()) {
-            this.set(path + "name", StringUtil.colorRaw(meta.getDisplayName()));
-        }
-
-        List<String> lore = meta.getLore();
-        if (lore != null) {
-            List<String> loreRaw = new ArrayList<>();
-            lore.forEach(line -> loreRaw.add(StringUtil.colorRaw(line)));
-            this.set(path + "lore", loreRaw);
-        }
-
-        this.set(path + "enchanted", meta.hasEnchants());
-        this.set(path + "custom-model-data", meta.hasCustomModelData() ? meta.getCustomModelData() : null);
-
-        Color color = null;
-        String colorRaw = null;
-        if (meta instanceof PotionMeta) {
-            PotionMeta pm = (PotionMeta) meta;
-            color = pm.getColor();
-        }
-        else if (meta instanceof LeatherArmorMeta) {
-            LeatherArmorMeta lm = (LeatherArmorMeta) meta;
-            color = lm.getColor();
-        }
-        if (color != null) {
-            colorRaw = new StringBuilder().append(color.getRed()).append(",").append(color.getGreen()).append(",").append(color.getBlue()).append(",").toString();
-        }
-        this.set(path + "color", colorRaw);
-
-        List<String> itemFlags = meta.getItemFlags().stream().map(ItemFlag::name).collect(Collectors.toList());
-        this.set(path + "item-flags", itemFlags);
-        this.set(path + "unbreakable", meta.isUnbreakable());
-    }
-
-    @Deprecated
-    public void setItemNew(@NotNull String path, @Nullable ItemStack item) {
-        this.setItem(path, item);
-    }
-
-    @Nullable
-    @Deprecated
-    public ItemStack getItem64(@NotNull String path) {
-        return this.getItemEncoded(path);
-    }
-
     @Nullable
     public ItemStack getItemEncoded(@NotNull String path) {
         String code = this.getString(path);
@@ -604,35 +519,13 @@ public class JYML extends YamlConfiguration {
         return ItemUtil.fromBase64(code);
     }
 
-    @Deprecated
-    public void setItem64(@NotNull String path, @Nullable ItemStack item) {
-        this.setItemEncoded(path, item);
-    }
-
     public void setItemEncoded(@NotNull String path, @Nullable ItemStack item) {
-        if (item == null) {
-            this.set(path, null);
-        }
-        else {
-            String code = ItemUtil.toBase64(item);
-            this.set(path, code);
-        }
-    }
-
-    @NotNull
-    @Deprecated
-    public ItemStack[] getItemList64(@NotNull String path) {
-        return this.getItemsEncoded(path);
+        this.set(path, item == null ? null : ItemUtil.toBase64(item));
     }
 
     @NotNull
     public ItemStack[] getItemsEncoded(@NotNull String path) {
         return ItemUtil.fromBase64(this.getStringList(path));
-    }
-
-    @Deprecated
-    public void setItemList64(@NotNull String path, @NotNull List<ItemStack> item) {
-        this.setItemsEncoded(path, item);
     }
 
     public void setItemsEncoded(@NotNull String path, @NotNull List<ItemStack> item) {
@@ -641,7 +534,6 @@ public class JYML extends YamlConfiguration {
     }
 
     @Nullable
-    @Deprecated
     public CraftRecipe getCraftRecipe(@NotNull NexPlugin<?> plugin, @NotNull String id, @NotNull String path) {
         if (!path.endsWith(".")) path += ".";
 
@@ -671,7 +563,6 @@ public class JYML extends YamlConfiguration {
         return recipe;
     }
 
-    @Deprecated
     public void setRecipe(@NotNull String path, @Nullable CraftRecipe recipe) {
         if (!path.endsWith(".")) path += ".";
         if (recipe == null) {

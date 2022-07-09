@@ -16,11 +16,7 @@ import java.util.List;
 
 public class Reflex {
 
-    private static final NexEngine ENGINE;
-
-    static {
-        ENGINE = NexEngine.get();
-    }
+    private static final NexEngine ENGINE = NexEngine.get();
 
     @Nullable
     public static Class<?> getClass(@NotNull String path, @NotNull String name) {

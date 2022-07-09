@@ -1,7 +1,6 @@
 package su.nexmedia.engine.actions.action.list;
 
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -10,8 +9,6 @@ import su.nexmedia.engine.actions.action.ActionId;
 import su.nexmedia.engine.actions.parameter.ParameterId;
 import su.nexmedia.engine.actions.parameter.ParameterResult;
 import su.nexmedia.engine.actions.parameter.value.ParameterValueNumber;
-
-import java.util.Set;
 
 public class Action_Potion extends AbstractActionExecutor {
 
@@ -23,12 +20,7 @@ public class Action_Potion extends AbstractActionExecutor {
     }
 
     @Override
-    public boolean mustHaveTarget() {
-        return true;
-    }
-
-    @Override
-    protected void execute(@NotNull Entity exe, @NotNull Set<Entity> targets, @NotNull ParameterResult result) {
+    protected void execute(@NotNull Player player, @NotNull ParameterResult result) {
         String name = (String) result.getValue(ParameterId.NAME);
         if (name == null) return;
 
@@ -47,9 +39,6 @@ public class Action_Potion extends AbstractActionExecutor {
         int amplifier = (int) Math.max(0, numberAmp.getValue(0) - 1);
         PotionEffect effect = new PotionEffect(effectType, duration, amplifier);
 
-        for (Entity target : targets) {
-            if (!(target instanceof LivingEntity livingEntity)) continue;
-            livingEntity.addPotionEffect(effect);
-        }
+        player.addPotionEffect(effect);
     }
 }

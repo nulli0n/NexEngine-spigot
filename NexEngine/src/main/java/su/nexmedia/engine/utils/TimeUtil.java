@@ -1,15 +1,14 @@
 package su.nexmedia.engine.utils;
 
+import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.NexEngine;
+import su.nexmedia.engine.lang.EngineLang;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
-
-import org.jetbrains.annotations.NotNull;
-
-import su.nexmedia.engine.NexEngine;
-import su.nexmedia.engine.core.config.CoreLang;
 
 public class TimeUtil {
 
@@ -22,32 +21,30 @@ public class TimeUtil {
         long minutes = TimeUnit.MILLISECONDS.toMinutes(time) % 60;
         long seconds = TimeUnit.MILLISECONDS.toSeconds(time) % 60;
 
-        CoreLang lang = ENGINE.lang();
         StringBuilder str = new StringBuilder();
-
         if (days > 0) {
             if (str.length() > 0) {
                 str.append(" ");
             }
-            str.append(lang.Time_Day.replace("%s%", days).getMsg());
+            str.append(ENGINE.getMessage(EngineLang.TIME_DAY).replace("%s%", days).getLocalized());
         }
         if (hours > 0) {
             if (str.length() > 0) {
                 str.append(" ");
             }
-            str.append(lang.Time_Hour.replace("%s%", hours).getMsg());
+            str.append(ENGINE.getMessage(EngineLang.TIME_HOUR).replace("%s%", hours).getLocalized());
         }
         if (minutes > 0) {
             if (str.length() > 0) {
                 str.append(" ");
             }
-            str.append(lang.Time_Min.replace("%s%", minutes).getMsg());
+            str.append(ENGINE.getMessage(EngineLang.TIME_MIN).replace("%s%", minutes).getLocalized());
         }
         if (str.length() == 0 || seconds > 0) {
             if (str.length() > 0) {
                 str.append(" ");
             }
-            str.append(lang.Time_Sec.replace("%s%", seconds).getMsg());
+            str.append(ENGINE.getMessage(EngineLang.TIME_SEC).replace("%s%", seconds).getLocalized());
         }
 
         return StringUtil.oneSpace(str.toString());

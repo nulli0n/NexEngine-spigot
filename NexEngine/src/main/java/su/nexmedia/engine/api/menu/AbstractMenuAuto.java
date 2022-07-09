@@ -14,22 +14,15 @@ import java.util.List;
 
 public abstract class AbstractMenuAuto<P extends NexPlugin<P>, I> extends AbstractMenu<P> {
 
-    @Deprecated
-    protected int[] objectSlots;
-
     public AbstractMenuAuto(@NotNull P plugin, @NotNull JYML cfg, @NotNull String path) {
         super(plugin, cfg, path);
-        this.objectSlots = cfg.getIntArray(path + "Object.Slots");
     }
 
     public AbstractMenuAuto(@NotNull P plugin, @NotNull String title, int size, int[] slots) {
         super(plugin, title, size);
-        this.objectSlots = slots;
     }
 
-    protected int[] getObjectSlots() {
-        return objectSlots;
-    }
+    protected abstract int[] getObjectSlots();
 
     @NotNull
     protected abstract List<I> getObjects(@NotNull Player player);

@@ -3,7 +3,6 @@ package su.nexmedia.engine.api.menu;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.actions.ActionManipulator;
 
 import java.util.ArrayList;
@@ -49,6 +48,6 @@ public class MenuItemDisplay {
     }
 
     public boolean isAvailable(@NotNull Player player) {
-        return ActionManipulator.processConditions(NexEngine.get(), player, this.getConditions());
+        return ActionManipulator.processConditions(player, this.getConditions());
     }
 }

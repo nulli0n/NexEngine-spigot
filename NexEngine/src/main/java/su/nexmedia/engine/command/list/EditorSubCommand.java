@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.api.editor.EditorHolder;
+import su.nexmedia.engine.lang.EngineLang;
 
 public class EditorSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> {
 
@@ -23,7 +24,7 @@ public class EditorSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P>
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Core_Command_Editor_Desc.getLocalized();
+        return plugin.getMessage(EngineLang.CORE_COMMAND_EDITOR_DESC).getLocalized();
     }
 
     @Override

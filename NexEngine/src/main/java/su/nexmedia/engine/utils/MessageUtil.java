@@ -34,24 +34,9 @@ public class MessageUtil {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
     }
 
-    @Deprecated
-    public static void sendTitles(@NotNull Player player, @NotNull String title, @NotNull String subtitle, int fadeIn, int stay, int fadeOut) {
-        player.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
-    }
-
-    @Deprecated
-    public static void sound(@NotNull Player player, @NotNull String sound) {
-        sound(player, CollectionsUtil.getEnum(sound, Sound.class));
-    }
-
     public static void sound(@NotNull Player player, @Nullable Sound sound) {
         if (sound == null) return;
         player.playSound(player.getLocation(), sound, 0.9f, 0.9f);
-    }
-
-    @Deprecated
-    public static void sound(@NotNull Location location, @NotNull String sound) {
-        sound(location, CollectionsUtil.getEnum(sound, Sound.class));
     }
 
     public static void sound(@NotNull Location location, @Nullable Sound sound) {

@@ -1,5 +1,6 @@
 package su.nexmedia.engine.utils;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -8,9 +9,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.hooks.Hooks;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -24,6 +24,10 @@ public class PlayerUtil {
             sender = Bukkit.getConsoleSender();
         }
         command = command.trim().replace("%player%", player.getName());
+        command = Placeholders.Player.replacer(player).apply(command);
+        if (Hooks.hasPlaceholderAPI()) {
+            command = PlaceholderAPI.setPlaceholders(player, command);
+        }
         Bukkit.dispatchCommand(sender, command);
     }
 
@@ -32,136 +36,31 @@ public class PlayerUtil {
         return Bukkit.getServer().getOnlinePlayers().stream().map(Player::getName).toList();
     }
 
-    @NotNull
-    @Deprecated
-    public static String getIP(@NotNull Player player) {
-        InetSocketAddress inet = player.getAddress();
-        return inet == null ? "null" : getIP(inet.getAddress());
-    }
-
-    @NotNull
-    @Deprecated
-    public static String getIP(@NotNull InetAddress inet) {
-        return inet.toString().replace("\\/", "").replace("/", "");
-    }
-
-    @Deprecated
-    public static void setExp(@NotNull Player player, long amount) {
-        amount += getTotalExperience(player);
-
-        if (amount > 2147483647L) {
-            amount = 2147483647L;
-        }
-        if (amount < 0L) {
-            amount = 0L;
-        }
-
-        setTotalExperience(player, (int) amount);
-    }
-
-    @Deprecated
-    public static void setTotalExperience(@NotNull Player player, int exp) {
-        if (exp < 0) {
-            throw new IllegalArgumentException("Experience is negative!");
-        }
-        player.setExp(0.0F);
-        player.setLevel(0);
-        player.setTotalExperience(0);
-
-        int amount = exp;
-        while (amount > 0) {
-            int expToLevel = getExpAtLevel(player);
-            amount -= expToLevel;
-            if (amount >= 0) {
-                player.giveExp(expToLevel);
-            }
-            else {
-                amount += expToLevel;
-                player.giveExp(amount);
-                amount = 0;
-            }
-        }
-    }
-
-    @Deprecated
-    private static int getExpAtLevel(@NotNull Player player) {
-        return getExpAtLevel(player.getLevel());
-    }
-
-    @Deprecated
-    public static int getExpAtLevel(int level) {
-        if (level <= 15) {
-            return 2 * level + 7;
-        }
-        if ((level >= 16) && (level <= 30)) {
-            return 5 * level - 38;
-        }
-        return 9 * level - 158;
-    }
-
-    @Deprecated
-    public static int getExpToLevel(int level) {
-        int currentLevel = 0;
-        int exp = 0;
-        while (currentLevel < level) {
-            exp += getExpAtLevel(currentLevel);
-            currentLevel++;
-        }
-        if (exp < 0) {
-            exp = Integer.MAX_VALUE;
-        }
-        return exp;
-    }
-
-    @Deprecated
-    public static int getTotalExperience(@NotNull Player player) {
-        int exp = Math.round(getExpAtLevel(player) * player.getExp());
-        int currentLevel = player.getLevel();
-        while (currentLevel > 0) {
-            currentLevel--;
-            exp += getExpAtLevel(currentLevel);
-        }
-        if (exp < 0) {
-            exp = Integer.MAX_VALUE;
-        }
-        return exp;
-    }
-
-    @Deprecated
-    public static int getExpUntilNextLevel(@NotNull Player player) {
-        int exp = Math.round(getExpAtLevel(player) * player.getExp());
-        int nextLevel = player.getLevel();
-        return getExpAtLevel(nextLevel) - exp;
-    }
-
     public static boolean hasEmptyInventory(@NotNull Player player) {
         return Stream.of(player.getInventory().getContents()).allMatch(item -> item == null || item.getType().isAir());
     }
 
+    public static boolean hasEmptyContents(@NotNull Player player) {
+        return Stream.of(player.getInventory().getStorageContents()).allMatch(item -> item == null || item.getType().isAir());
+    }
+
     public static int countItemSpace(@NotNull Player player, @NotNull ItemStack item) {
-        int space = 0;
         int stackSize = item.getType().getMaxStackSize();
-        for (int slot = 0; slot < 36; slot++) {
-            ItemStack itemHas = player.getInventory().getItem(slot);
+        return Stream.of(player.getInventory().getStorageContents()).mapToInt(itemHas -> {
             if (itemHas == null || itemHas.getType().isAir()) {
-                space += stackSize;
-                continue;
+                return stackSize;
             }
             if (itemHas.isSimilar(item)) {
-                space += (stackSize - itemHas.getAmount());
+                return (stackSize - itemHas.getAmount());
             }
-        }
-        return space;
+            return 0;
+        }).sum();
     }
 
     public static int countItem(@NotNull Player player, @NotNull Predicate<ItemStack> predicate) {
-        int userHas = 0;
-        for (ItemStack itemHas : player.getInventory().getContents()) {
-            if (itemHas != null && !itemHas.getType().isAir() && predicate.test(itemHas)) {
-                userHas += itemHas.getAmount();
-            }
-        }
-        return userHas;
+        return Stream.of(player.getInventory().getStorageContents())
+            .filter(item -> item != null && !item.getType().isAir() && predicate.test(item))
+            .mapToInt(ItemStack::getAmount).sum();
     }
 
     public static int countItem(@NotNull Player player, @NotNull ItemStack item) {
@@ -198,7 +97,7 @@ public class PlayerUtil {
         int takenAmount = 0;
 
         Inventory inventory = player.getInventory();
-        for (ItemStack itemHas : inventory.getContents()) {
+        for (ItemStack itemHas : inventory.getStorageContents()) {
             if (itemHas == null || !predicate.test(itemHas)) continue;
 
             int hasAmount = itemHas.getAmount();
@@ -217,25 +116,7 @@ public class PlayerUtil {
     }
 
     public static void addItem(@NotNull Player player, @NotNull ItemStack... items) {
-        Inventory inventory = player.getInventory();
-        World world = player.getWorld();
-
-        for (ItemStack item2 : items) {
-            addItem(player, item2, item2.getAmount());
-            /*ItemStack item = new ItemStack(item2);
-            if (item.getType().isAir()) continue;
-
-            int space = countItemSpace(player, item);
-            if (space < item.getAmount()) {
-                ItemStack drop = new ItemStack(item);
-                drop.setAmount(item.getAmount() - space);
-                item.setAmount(space);
-                world.dropItem(player.getLocation(), drop);
-            }
-            if (item.getAmount() > 0) {
-                inventory.addItem(item);
-            }*/
-        }
+        Stream.of(items).forEach(item -> addItem(player, item, item.getAmount()));
     }
 
     public static void addItem(@NotNull Player player, @NotNull ItemStack item2, int amount) {

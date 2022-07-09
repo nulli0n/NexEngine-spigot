@@ -35,7 +35,7 @@ public class WorldGuardHook extends AbstractHook<NexEngine> {
 
     @Override
     public void shutdown() {
-
+        worldGuard = null;
     }
 
     public static boolean canFights(@NotNull Entity damager, @NotNull Entity victim) {

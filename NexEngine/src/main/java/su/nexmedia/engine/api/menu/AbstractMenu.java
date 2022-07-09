@@ -182,10 +182,6 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
         boolean isEmptyItem = item == null || item.getType().isAir();
 
         SlotType slotType = isPlayerSlot ? (isEmptyItem ? SlotType.EMPTY_PLAYER : SlotType.PLAYER) : (isEmptyItem ? SlotType.EMPTY_MENU : SlotType.MENU);
-
-        if (this.cancelClick(slotType, slot)) {
-            e.setCancelled(true);
-        }
         if (this.cancelClick(e, slotType)) {
             e.setCancelled(true);
         }

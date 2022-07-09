@@ -27,7 +27,7 @@ public class HookManager extends AbstractManager<NexEngine> {
 
     @Override
     protected void onShutdown() {
-        this.plugin.getChildPlugins().forEach(this::shutdown);
+        this.plugin.getChildrens().forEach(this::shutdown);
     }
 
     public void shutdown(@NotNull NexPlugin<?> holder) {

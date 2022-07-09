@@ -1,15 +1,11 @@
 package su.nexmedia.engine.actions.condition.list;
 
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.actions.condition.AbstractConditionValidator;
 import su.nexmedia.engine.actions.condition.ConditionId;
 import su.nexmedia.engine.actions.parameter.ParameterId;
 import su.nexmedia.engine.actions.parameter.ParameterResult;
-
-import java.util.Set;
-import java.util.function.Predicate;
 
 public class Condition_Permission extends AbstractConditionValidator {
 
@@ -19,18 +15,11 @@ public class Condition_Permission extends AbstractConditionValidator {
     }
 
     @Override
-    public boolean mustHaveTarget() {
-        return true;
-    }
-
-    @Override
-    @Nullable
-    protected Predicate<Entity> validate(@NotNull Entity executor, @NotNull Set<Entity> targets,
-                                         @NotNull ParameterResult result) {
+    protected boolean validate(@NotNull Player player, @NotNull ParameterResult result) {
         String node = (String) result.getValue(ParameterId.NAME);
-        if (node == null) return null;
+        if (node == null) return true;
 
         boolean negative = node.startsWith("-");
-        return target -> target.hasPermission(node) == !negative;
+        return player.hasPermission(node) == !negative;
     }
 }

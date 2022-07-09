@@ -4,22 +4,20 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginEnableEvent;
-import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.actions.ActionsManager;
 import su.nexmedia.engine.api.command.GeneralCommand;
-import su.nexmedia.engine.api.module.AbstractExternalModule;
-import su.nexmedia.engine.core.config.CoreConfig;
-import su.nexmedia.engine.core.config.CoreLang;
+import su.nexmedia.engine.config.EngineConfig;
 import su.nexmedia.engine.craft.CraftManager;
+import su.nexmedia.engine.editor.EditorManager;
 import su.nexmedia.engine.hooks.HookManager;
 import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.hooks.external.MythicMobsHook;
 import su.nexmedia.engine.hooks.external.VaultHook;
 import su.nexmedia.engine.hooks.external.WorldGuardHook;
 import su.nexmedia.engine.hooks.external.citizens.CitizensHook;
-import su.nexmedia.engine.manager.packet.PacketManager;
-import su.nexmedia.engine.manager.player.PlayerBlockTracker;
+import su.nexmedia.engine.lang.EngineLang;
+import su.nexmedia.engine.manager.player.blocktracker.PlayerBlockTracker;
 import su.nexmedia.engine.nms.NMS;
 import su.nexmedia.engine.utils.Reflex;
 
@@ -29,22 +27,16 @@ import java.util.Set;
 public class NexEngine extends NexPlugin<NexEngine> implements Listener {
 
     private static NexEngine         instance;
-    private final  Set<NexPlugin<?>> plugins;
+    private Set<NexPlugin<?>> childrens;
 
-    private CoreConfig cfg;
-    private CoreLang   lang;
-
-    NMS            nms;
-
-    PluginManager  pluginManager;
-    PacketManager  packetManager;
+    NMS nms;
     ActionsManager actionsManager;
     CraftManager   craftManager;
+    private EditorManager editorManager;
     private HookManager   hookManager;
 
     public NexEngine() {
         instance = this;
-        this.plugins = new HashSet<>();
     }
 
     @NotNull
@@ -52,8 +44,14 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
         return instance;
     }
 
+    @Override
+    @NotNull
+    protected NexEngine getSelf() {
+        return this;
+    }
+
     final boolean loadCore() {
-        this.pluginManager = this.getServer().getPluginManager();
+        this.childrens = new HashSet<>();
 
         if (!this.setupNMS()) {
             this.error("Could not setup NMS version. Plugin will be disabled.");
@@ -65,14 +63,14 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
         this.hookManager = new HookManager(this);
         this.hookManager.setup();
 
-        this.packetManager = new PacketManager(this);
-        this.packetManager.setup();
-
         this.actionsManager = new ActionsManager(this);
         this.actionsManager.setup();
 
         this.craftManager = new CraftManager(this);
         this.craftManager.setup();
+
+        this.editorManager = new EditorManager(this);
+        this.editorManager.setup();
 
         return true;
     }
@@ -96,18 +94,18 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
 
     @Override
     public void enable() {
-        this.getModuleManager().registerExternal(AbstractExternalModule.LoadPriority.HIGH);
-        this.getModuleManager().registerExternal(AbstractExternalModule.LoadPriority.LOW);
+
     }
 
     @Override
     public void disable() {
+        if (this.editorManager != null) {
+            this.editorManager.shutdown();
+            this.editorManager = null;
+        }
         if (this.actionsManager != null) {
             this.actionsManager.shutdown();
             this.actionsManager = null;
-        }
-        if (this.packetManager != null) {
-            this.packetManager.shutdown();
         }
         if (this.hookManager != null) {
             this.hookManager.shutdown();
@@ -118,7 +116,6 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
         }
 
         PlayerBlockTracker.shutdown();
-        su.nexmedia.engine.manager.player.blocktracker.PlayerBlockTracker.shutdown();
     }
 
     @Override
@@ -132,24 +129,13 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
     }
 
     @Override
-    public void setConfig() {
-        this.cfg = new CoreConfig(this);
-        this.cfg.setup();
-
-        this.lang = new CoreLang(this);
-        this.lang.setup();
+    public void loadConfig() {
+        EngineConfig.load(this);
     }
 
     @Override
-    @NotNull
-    public CoreConfig cfg() {
-        return this.cfg;
-    }
-
-    @Override
-    @NotNull
-    public CoreLang lang() {
-        return this.lang;
+    public void loadLang() {
+        this.getLangManager().loadMissing(EngineLang.class);
     }
 
     @NotNull
@@ -157,13 +143,13 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
         return this.hookManager;
     }
 
-    void hookChild(@NotNull NexPlugin<?> child) {
-        this.plugins.add(child);
+    void addChildren(@NotNull NexPlugin<?> child) {
+        this.childrens.add(child);
     }
 
     @NotNull
-    public Set<NexPlugin<?>> getChildPlugins() {
-        return this.plugins;
+    public Set<NexPlugin<?>> getChildrens() {
+        return this.childrens;
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

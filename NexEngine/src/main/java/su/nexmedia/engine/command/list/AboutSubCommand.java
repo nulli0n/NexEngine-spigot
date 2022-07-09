@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.command.AbstractCommand;
+import su.nexmedia.engine.lang.EngineLang;
 import su.nexmedia.engine.utils.StringUtil;
 
 import java.util.Arrays;
@@ -25,7 +26,7 @@ public class AboutSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> 
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Core_Command_About_Desc.getLocalized();
+        return plugin.getMessage(EngineLang.CORE_COMMAND_ABOUT_DESC).getLocalized();
     }
 
     @Override

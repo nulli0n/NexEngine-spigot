@@ -32,6 +32,14 @@ public enum Version {
         return this.ordinal() > version.ordinal();
     }
 
+    public static boolean isAbove(@NotNull Version version) {
+        return CURRENT.isHigher(version);
+    }
+
+    public static boolean isBehind(@NotNull Version version) {
+        return CURRENT.isLower(version);
+    }
+
     public boolean isCurrent() {
         return this == Version.CURRENT;
     }

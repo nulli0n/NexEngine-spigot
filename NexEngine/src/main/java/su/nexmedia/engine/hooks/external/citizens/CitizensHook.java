@@ -47,11 +47,6 @@ public class CitizensHook extends AbstractHook<NexEngine> {
         getListeners(plugin).add(listener);
     }
 
-    @Deprecated
-    public void removeListener(@NotNull CitizensListener listener) {
-        getListeners(plugin).remove(listener);
-    }
-
     @NotNull
     public static Set<CitizensListener> getListeners(@NotNull NexPlugin<?> plugin) {
         return listeners.computeIfAbsent(plugin, set -> new HashSet<>());

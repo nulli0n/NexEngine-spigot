@@ -6,34 +6,19 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.util.Locale;
 
 public class NumberUtil {
 
-    @Deprecated
-    public static final  NumberFormat  FORMAT_GROUP;
-    @Deprecated
-    private static final DecimalFormat FORMAT_ROUND_SIMPLE;
     private static final DecimalFormat FORMAT_ROUND_HUMAN;
 
     static {
-        FORMAT_ROUND_SIMPLE = new DecimalFormat("#.##", new DecimalFormatSymbols(Locale.ENGLISH));
         FORMAT_ROUND_HUMAN = new DecimalFormat("#,###.##", new DecimalFormatSymbols(Locale.ENGLISH));
-
-        FORMAT_GROUP = NumberFormat.getInstance();
-        FORMAT_GROUP.setGroupingUsed(true);
     }
 
     @NotNull
     public static String format(double value) {
         return FORMAT_ROUND_HUMAN.format(value);
-    }
-
-    @NotNull
-    @Deprecated
-    public static String formatGroup(double value) {
-        return format(value);
     }
 
     public static double round(double value) {

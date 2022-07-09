@@ -4,9 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.manager.AbstractManager;
 import su.nexmedia.engine.api.manager.ILogger;
-import su.nexmedia.engine.core.config.CoreConfig;
-
-import java.util.UUID;
 
 public abstract class AbstractModule<P extends NexPlugin<P>> extends AbstractManager<P> implements ILogger {
 
@@ -16,15 +13,10 @@ public abstract class AbstractModule<P extends NexPlugin<P>> extends AbstractMan
     private boolean isFailed;
     private boolean isLoaded;
 
-    @Deprecated
-    public AbstractModule(@NotNull P plugin) {
-        this(plugin, UUID.randomUUID().toString());
-    }
-
     public AbstractModule(@NotNull P plugin, @NotNull String id) {
         super(plugin);
         this.id = id.toLowerCase();
-        this.name = plugin.cfg().getModuleName(this);
+        this.name = plugin.getConfigManager().getModuleName(this);
         this.isLoaded = false;
         this.isFailed = false;
     }
@@ -56,7 +48,7 @@ public abstract class AbstractModule<P extends NexPlugin<P>> extends AbstractMan
     }
 
     public final boolean isEnabled() {
-        return this.plugin.cfg().isModuleEnabled(this);
+        return this.plugin.getConfigManager().isModuleEnabled(this);
     }
 
     public final boolean isLoaded() {
@@ -73,18 +65,12 @@ public abstract class AbstractModule<P extends NexPlugin<P>> extends AbstractMan
         return this.name;
     }
 
-    @NotNull
-    @Deprecated
-    public String getVersion() {
-        return "1.0";
-    }
-
     /**
      * @return Local sub-path to the module folder, like /modules/MODULE_ID/
      */
     @NotNull
     public String getPath() {
-        return CoreConfig.MODULES_PATH_INTERNAL + this.getId() + "/";
+        return AbstractModuleManager.DIR_NAME + this.getId() + "/";
     }
 
     @NotNull

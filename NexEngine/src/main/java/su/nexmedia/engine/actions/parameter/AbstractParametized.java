@@ -13,8 +13,8 @@ import java.util.regex.Matcher;
 public abstract class AbstractParametized {
 
     protected static final NexEngine ENGINE = NexEngine.get();
-    protected static final String                       FLAG_NO_DELAY = "@NODELAY@";
     private static final   Map<String, ParameterResult> RESULT_CACHE  = new HashMap<>();
+
     protected final String                    name;
     protected final Set<AbstractParameter<?>> parameters;
 
@@ -47,17 +47,16 @@ public abstract class AbstractParametized {
     }
 
     @NotNull
-    public final ParameterResult getParameterResult(@NotNull String str) {
-        String cache = str.replace(FLAG_NO_DELAY, "");
+    public final ParameterResult getParameterResult(@NotNull String cache) {
         if (RESULT_CACHE.containsKey(cache)) return RESULT_CACHE.get(cache);
 
         Map<String, Object> values = new HashMap<>();
         for (AbstractParameter<?> parameter : this.getParameters()) {
             String flag = parameter.getFlag(); // Raw flag, without '~' prefix
-            if (!str.contains(flag)) continue;
+            if (!cache.contains(flag)) continue;
 
             // Search for flag of this parameter
-            Matcher matcher = RegexUtil.getMatcher(parameter.getPattern(), str);
+            Matcher matcher = RegexUtil.getMatcher(parameter.getPattern(), cache);
             if (matcher == null) {
                 ENGINE.warn("Could not process regex matcher for parameter values!");
                 continue;

@@ -1,5 +1,8 @@
 package su.nexmedia.engine.utils;
 
+import org.apache.commons.lang.Validate;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,9 +11,6 @@ import java.lang.reflect.Method;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import org.apache.commons.lang.Validate;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ResourceExtractor {
 
@@ -44,7 +44,6 @@ public final class ResourceExtractor {
     /**
      * Starts extracting the files.
      *
-     * @throws IOException
      */
     public void extract() throws IOException {
         this.extract(false, true);
@@ -54,7 +53,6 @@ public final class ResourceExtractor {
      * Starts extracting the files.
      *
      * @param override Whether you want to override the old files.
-     * @throws IOException
      */
     public void extract(boolean override) throws IOException {
         this.extract(override, true);
@@ -66,12 +64,11 @@ public final class ResourceExtractor {
      * @param override Whether you want to override the old files.
      * @param subpaths Whether you want to create sub folders if it's also found in
      *                 the jar file.
-     * @throws IOException
      */
     public void extract(boolean override, boolean subpaths) throws IOException {
         File jarfile = null;
 
-        /**
+        /*
          * Get the jar file from the plugin.
          */
         try {
@@ -83,7 +80,7 @@ public final class ResourceExtractor {
             throw new IOException(e);
         }
 
-        /**
+        /*
          * Make the folders if missing.
          */
         if (!this.extractfolder.exists()) {
@@ -92,7 +89,7 @@ public final class ResourceExtractor {
 
         JarFile jar = new JarFile(jarfile);
 
-        /**
+        /*
          * Loop through all the entries.
          */
         Enumeration<JarEntry> entries = jar.entries();
@@ -100,7 +97,7 @@ public final class ResourceExtractor {
             JarEntry entry = entries.nextElement();
             String path = entry.getName();
 
-            /**
+            /*
              * Not in the folder.
              */
             if (!path.startsWith(this.folderpath)) {
@@ -126,7 +123,7 @@ public final class ResourceExtractor {
             else {
                 File file;
 
-                /**
+                /*
                  * Use the right path.
                  */
                 if (subpaths) {
@@ -138,7 +135,7 @@ public final class ResourceExtractor {
 
                 String name = file.getName();
 
-                /**
+                /*
                  * Be sure that the file is valid.
                  */
                 if (this.regex == null || name.matches(this.regex)) {
@@ -148,7 +145,7 @@ public final class ResourceExtractor {
 
                     if (!file.exists()) {
                         FileUtil.create(file);
-                        /**
+                        /*
                          * Copy the file to the path.
                          */
                         InputStream is = jar.getInputStream(entry);

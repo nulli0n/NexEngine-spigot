@@ -11,7 +11,7 @@ import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.hooks.external.MythicMobsHook;
 import su.nexmedia.engine.hooks.external.VaultHook;
 import su.nexmedia.engine.hooks.external.WorldGuardHook;
-import su.nexmedia.engine.utils.Constants;
+import su.nexmedia.engine.utils.Placeholders;
 
 import java.util.Collections;
 import java.util.Map;
@@ -54,7 +54,7 @@ public class Hooks {
         // System.out.println("[0] groups of '" + player.getName() + "': " + groups);
         // System.out.println("[1] map to compare: " + map);
 
-        Optional<Map.Entry<String, Double>> opt = map.entrySet().stream().filter(entry -> entry.getKey().equalsIgnoreCase(Constants.DEFAULT) || groups.contains(entry.getKey())).min((entry1, entry2) -> {
+        Optional<Map.Entry<String, Double>> opt = map.entrySet().stream().filter(entry -> entry.getKey().equalsIgnoreCase(Placeholders.DEFAULT) || groups.contains(entry.getKey())).min((entry1, entry2) -> {
             double val1 = entry1.getValue();
             double val2 = entry2.getValue();
             if (isNegaBetter && val2 < 0) return 1;

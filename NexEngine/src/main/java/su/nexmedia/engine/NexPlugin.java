@@ -10,21 +10,21 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.actions.ActionsManager;
 import su.nexmedia.engine.actions.parameter.AbstractParametized;
 import su.nexmedia.engine.api.command.GeneralCommand;
-import su.nexmedia.engine.api.config.ConfigTemplate;
+import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.data.UserDataHolder;
 import su.nexmedia.engine.api.hook.AbstractHook;
+import su.nexmedia.engine.api.lang.LangKey;
+import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.api.manager.ILogger;
 import su.nexmedia.engine.api.menu.IMenu;
 import su.nexmedia.engine.command.CommandManager;
 import su.nexmedia.engine.command.PluginMainCommand;
 import su.nexmedia.engine.config.ConfigManager;
-import su.nexmedia.engine.core.config.CoreLang;
 import su.nexmedia.engine.craft.CraftManager;
 import su.nexmedia.engine.hooks.HookManager;
 import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.hooks.external.citizens.CitizensHook;
-import su.nexmedia.engine.manager.packet.PacketManager;
-import su.nexmedia.engine.module.ModuleManager;
+import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.nms.NMS;
 
 import java.util.List;
@@ -36,8 +36,9 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
     public static final String TM = "NEX-Media";
 
     protected ConfigManager<P>  configManager;
-    protected CommandManager<P> commandManager;
-    protected ModuleManager<P>  moduleManager;
+    protected LangManager<P> langManager;
+    protected CommandManager<P>        commandManager;
+
     private Logger  logger;
     private boolean isEngine;
 
@@ -50,10 +51,8 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         return this.isEngine;
     }
 
-    @Deprecated
-    public boolean useNewConfigFields() {
-        return true;
-    }
+    @NotNull
+    protected abstract P getSelf();
 
     @Override
     public final void onEnable() {
@@ -69,7 +68,7 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
             }
         }
         else {
-            engine.hookChild(this);
+            engine.addChildren(this);
             this.info("Powered by: " + engine.getName());
         }
         this.loadManagers();
@@ -87,26 +86,43 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
 
     public final void reload() {
         if (this.isEngine()) {
-            this.setConfig();
+            this.loadConfig();
+            this.loadLang();
             return;
         }
         this.unloadManagers();
         this.loadManagers();
     }
 
-    public abstract void setConfig();
+    @Override
+    public final void reloadConfig() {
+        this.getConfig().reload();
+        this.loadConfig();
+    }
+
+    public final void reloadLang() {
+        this.getLang().reload();
+        this.loadLang();
+    }
+
+    public abstract void loadConfig();
+
+    public abstract void loadLang();
 
     public abstract void registerHooks();
 
-    public void registerCommands(@NotNull GeneralCommand<P> mainCommand) {
+    public abstract void registerCommands(@NotNull GeneralCommand<P> mainCommand);
 
+    @Override
+    @NotNull
+    public final JYML getConfig() {
+        return this.getConfigManager().getConfig();
     }
 
     @NotNull
-    public abstract ConfigTemplate cfg();
-
-    @NotNull
-    public abstract CoreLang lang();
+    public final JYML getLang() {
+        return this.getLangManager().getConfig();
+    }
 
     @Override
     public final void info(@NotNull String msg) {
@@ -138,14 +154,23 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         HandlerList.unregisterAll(this);
     }
 
-    @SuppressWarnings("unchecked")
     protected void loadManagers() {
         // Setup plugin Hooks.
         this.registerHooks();
 
         // Setup ConfigManager before any other managers.
-        this.configManager = new ConfigManager<>((P) this);
+        this.configManager = new ConfigManager<>(this.getSelf());
         this.configManager.setup();
+        this.loadConfig();
+
+        // Setup language manager after the main config.
+        this.langManager = new LangManager<>(this.getSelf());
+        this.langManager.setup();
+        this.loadLang();
+
+        // Register plugin commands.
+        this.commandManager = new CommandManager<>(this.getSelf());
+        this.commandManager.setup();
 
         // Connect to the database if present.
         UserDataHolder<?, ?> dataHolder = null;
@@ -157,14 +182,6 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
                 return;
             }
         }
-
-        // Register plugin commands.
-        this.commandManager = new CommandManager<>((P) this);
-        this.commandManager.setup();
-
-        // Register plugin modules.
-        this.moduleManager = new ModuleManager<>((P) this);
-        this.moduleManager.setup();
 
         // Custom plugin loaders.
         this.enable();
@@ -180,9 +197,6 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
     private void unloadManagers() {
         this.getServer().getScheduler().cancelTasks(this); // First stop all plugin tasks
 
-        if (this.moduleManager != null) {
-            this.moduleManager.shutdown();
-        }
         this.disable();
         if (this.commandManager != null) {
             this.commandManager.shutdown();
@@ -207,6 +221,9 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
             dataHolder.getUserManager().shutdown();
             dataHolder.getData().shutdown();
         }
+
+        this.getConfigManager().shutdown();
+        this.getLangManager().shutdown();
     }
 
     @NotNull
@@ -227,7 +244,7 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
 
     @NotNull
     public final String[] getLabels() {
-        return this.cfg().commandAliases;
+        return this.getConfigManager().commandAliases;
     }
 
     @NotNull
@@ -244,6 +261,16 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         return this.configManager;
     }
 
+    @NotNull
+    public final LangManager<P> getLangManager() {
+        return this.langManager;
+    }
+
+    @NotNull
+    public final LangMessage getMessage(@NotNull LangKey key) {
+        return this.getLangManager().getMessage(key);
+    }
+
     public final CommandManager<P> getCommandManager() {
         return this.commandManager;
     }
@@ -254,23 +281,13 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
     }
 
     @NotNull
-    public final ModuleManager<P> getModuleManager() {
-        return this.moduleManager;
-    }
-
-    @NotNull
     public final ActionsManager getActionsManager() {
         return getEngine().actionsManager;
     }
 
     @NotNull
-    public final PacketManager getPacketManager() {
-        return getEngine().packetManager;
-    }
-
-    @NotNull
     public final PluginManager getPluginManager() {
-        return getEngine().pluginManager;
+        return this.getServer().getPluginManager();
     }
 
     @NotNull

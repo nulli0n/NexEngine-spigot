@@ -11,7 +11,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexEngine;
-import su.nexmedia.engine.core.config.CoreConfig;
+import su.nexmedia.engine.config.EngineConfig;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,26 +25,12 @@ public class LocationUtil {
         World world = loc.getWorld();
         if (world == null) return null;
 
-        StringBuilder raw = new StringBuilder()
-            .append(loc.getX()).append(",")
-            .append(loc.getY()).append(",")
-            .append(loc.getZ()).append(",")
-            .append(loc.getPitch()).append(",")
-            .append(loc.getYaw()).append(",")
-            .append(world.getName());
-
-        return raw.toString();
+        return loc.getX() + "," + loc.getY() + "," + loc.getZ() + "," + loc.getPitch() + "," + loc.getYaw() + "," + world.getName();
     }
 
     @NotNull
     public static List<String> serialize(@NotNull Collection<Location> list) {
         return new ArrayList<>(list.stream().map(LocationUtil::serialize).filter(Objects::nonNull).toList());
-    }
-
-    @NotNull
-    @Deprecated
-    public static List<String> serialize(@NotNull List<Location> list) {
-        return serialize((Collection<Location>) list);
     }
 
     @Nullable
@@ -73,12 +59,6 @@ public class LocationUtil {
     }
 
     @NotNull
-    @Deprecated
-    public static List<Location> deserialize(@NotNull List<String> list) {
-        return deserialize((Collection<String>) list);
-    }
-
-    @NotNull
     public static String getWorldName(@NotNull Location loc) {
         World world = loc.getWorld();
         return world == null ? "null" : getWorldName(world);
@@ -86,7 +66,7 @@ public class LocationUtil {
 
     @NotNull
     public static String getWorldName(@NotNull World world) {
-        return CoreConfig.getWorldName(world.getName());
+        return EngineConfig.getWorldName(world.getName());
     }
 
     @NotNull

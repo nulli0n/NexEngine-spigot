@@ -4,6 +4,7 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.command.AbstractCommand;
+import su.nexmedia.engine.lang.EngineLang;
 
 public class ReloadSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> {
 
@@ -20,7 +21,7 @@ public class ReloadSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P>
     @Override
     @NotNull
     public String getDescription() {
-        return plugin.lang().Core_Command_Reload_Desc.getLocalized();
+        return plugin.getMessage(EngineLang.CORE_COMMAND_RELOAD_DESC).getLocalized();
     }
 
     @Override
@@ -31,6 +32,6 @@ public class ReloadSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P>
     @Override
     public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
         plugin.reload();
-        plugin.lang().Core_Command_Reload_Done.send(sender);
+        plugin.getMessage(EngineLang.CORE_COMMAND_RELOAD_DESC).send(sender);
     }
 }

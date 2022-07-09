@@ -28,11 +28,11 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
     protected AbstractDataHandler(@NotNull P plugin) throws SQLException {
         super(plugin);
         this.lastLive = System.currentTimeMillis();
-        this.dataType = plugin.cfg().dataStorage;
+        this.dataType = plugin.getConfigManager().dataStorage;
         if (this.dataType == StorageType.MYSQL) {
-            this.url = "jdbc:mysql://" + plugin.cfg().mysqlHost + "/" + plugin.cfg().mysqlBase + "?allowPublicKeyRetrieval=true&useSSL=false&autoReconnect=true";
-            this.user = plugin.cfg().mysqlLogin;
-            this.password = plugin.cfg().mysqlPassword;
+            this.url = "jdbc:mysql://" + plugin.getConfigManager().dataMysqlHost + "/" + plugin.getConfigManager().dataMysqlBase + "?allowPublicKeyRetrieval=true&useSSL=false&autoReconnect=true";
+            this.user = plugin.getConfigManager().dataMysqlUser;
+            this.password = plugin.getConfigManager().dataMysqlPassword;
         }
         else {
             this.url = "jdbc:sqlite:" + plugin.getDataFolder().getAbsolutePath() + "/data.db";

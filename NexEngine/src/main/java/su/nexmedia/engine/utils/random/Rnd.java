@@ -35,14 +35,6 @@ public class Rnd {
         return min + (max - min) * rnd.nextDouble();
     }
 
-    @Deprecated // The same as above
-    public static double getDoubleNega(double min, double max) {
-        double range = max - min;
-        double scaled = rnd.nextDouble() * range;
-        double shifted = scaled + min;
-        return shifted;
-    }
-
     @NotNull
     public static <E> E get(@NotNull E[] list) {
         return list[get(list.length)];

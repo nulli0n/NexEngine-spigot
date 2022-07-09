@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.manager.IPlaceholder;
+import su.nexmedia.engine.lang.EngineLang;
 import su.nexmedia.engine.utils.CollectionsUtil;
 
 import java.util.*;
@@ -82,7 +83,7 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
 
     @NotNull
     public Collection<AbstractCommand<P>> getChildrens() {
-        return this.childrens.values();
+        return new HashSet<>(this.childrens.values());
     }
 
     @NotNull
@@ -140,30 +141,30 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
     }
 
     protected final void printUsage(@NotNull CommandSender sender) {
-        plugin.lang().Core_Command_Usage.replace(this.replacePlaceholders()).send(sender);
+        plugin.getMessage(EngineLang.CORE_COMMAND_USAGE).replace(this.replacePlaceholders()).send(sender);
     }
 
     protected final void errorPermission(@NotNull CommandSender sender) {
-        plugin.lang().Error_Permission_Deny.send(sender);
+        plugin.getMessage(EngineLang.ERROR_PERMISSION_DENY).send(sender);
     }
 
     protected final void errorItem(@NotNull CommandSender sender) {
-        plugin.lang().Error_Item_Invalid.send(sender);
+        plugin.getMessage(EngineLang.ERROR_ITEM_INVALID).send(sender);
     }
 
     protected final void errorPlayer(@NotNull CommandSender sender) {
-        plugin.lang().Error_Player_Invalid.send(sender);
+        plugin.getMessage(EngineLang.ERROR_PLAYER_INVALID).send(sender);
     }
 
     protected final void errorSender(@NotNull CommandSender sender) {
-        plugin.lang().Error_Command_Sender.send(sender);
+        plugin.getMessage(EngineLang.ERROR_COMMAND_SENDER).send(sender);
     }
 
     protected final void errorType(@NotNull CommandSender sender, @NotNull Class<?> clazz) {
-        plugin.lang().Error_Type_Invalid.replace("%types%", CollectionsUtil.getEnums(clazz)).send(sender);
+        plugin.getMessage(EngineLang.ERROR_TYPE_INVALID).replace("%types%", CollectionsUtil.getEnums(clazz)).send(sender);
     }
 
     protected final void errorNumber(@NotNull CommandSender sender, @NotNull String from) {
-        plugin.lang().Error_Number_Invalid.replace("%num%", from);
+        plugin.getMessage(EngineLang.ERROR_NUMBER_INVALID).replace("%num%", from);
     }
 }

@@ -3,9 +3,9 @@ package su.nexmedia.engine.api.menu;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.type.ClickType;
-import su.nexmedia.engine.utils.Constants;
 import su.nexmedia.engine.actions.ActionManipulator;
+import su.nexmedia.engine.api.type.ClickType;
+import su.nexmedia.engine.utils.Placeholders;
 
 import java.util.Map;
 import java.util.Optional;
@@ -62,7 +62,7 @@ public interface IMenuItem {
             .filter(d -> d.isAvailable(player))
             .min((dis1, dis2) -> dis2.getPriority() - dis1.getPriority());
 
-        return opt.orElse(this.getDisplay(Constants.DEFAULT));
+        return opt.orElse(this.getDisplay(Placeholders.DEFAULT));
     }
 
 

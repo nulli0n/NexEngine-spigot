@@ -42,6 +42,10 @@ public class VaultHook extends AbstractHook<NexEngine> {
     @Override
     public void shutdown() {
         this.unregisterListeners();
+
+        economy = null;
+        permission = null;
+        chat = null;
     }
 
     private void setPermission() {
@@ -116,23 +120,11 @@ public class VaultHook extends AbstractHook<NexEngine> {
     }
 
     @NotNull
-    @Deprecated
-    public static String getPlayerGroup(@NotNull Player player) {
-        return getPermissionGroup(player);
-    }
-
-    @NotNull
     public static String getPermissionGroup(@NotNull Player player) {
         if (!hasPermissions() || !permission.hasGroupSupport()) return "";
 
         String group = permission.getPrimaryGroup(player);
         return group == null ? "" : group.toLowerCase();
-    }
-
-    @NotNull
-    @Deprecated
-    public static Set<String> getPlayerGroups(@NotNull Player player) {
-        return getPermissionGroups(player);
     }
 
     @NotNull
@@ -163,32 +155,12 @@ public class VaultHook extends AbstractHook<NexEngine> {
         return economy.getBalance(player);
     }
 
-    @Deprecated
-    public void give(@NotNull Player player, double amount) {
-        addMoney(player, amount);
-    }
-
-    @Deprecated
-    public void give(@NotNull OfflinePlayer player, double amount) {
-        economy.depositPlayer(player, amount);
-    }
-
     public static boolean addMoney(@NotNull Player player, double amount) {
         return addMoney((OfflinePlayer) player, amount);
     }
 
     public static boolean addMoney(@NotNull OfflinePlayer player, double amount) {
         return economy.depositPlayer(player, amount).transactionSuccess();
-    }
-
-    @Deprecated
-    public void take(@NotNull Player player, double amount) {
-        economy.withdrawPlayer(player, Math.min(Math.abs(amount), getBalance(player)));
-    }
-
-    @Deprecated
-    public void take(@NotNull OfflinePlayer player, double amount) {
-        economy.withdrawPlayer(player, Math.min(Math.abs(amount), getBalance(player)));
     }
 
     public static boolean takeMoney(@NotNull Player player, double amount) {

@@ -32,7 +32,7 @@ public class MythicMobsHook extends AbstractHook<NexEngine> {
 
     @Override
     public void shutdown() {
-
+        mythicMobs = null;
     }
 
     public static boolean isMythicMob(@NotNull Entity entity) {
@@ -55,11 +55,6 @@ public class MythicMobsHook extends AbstractHook<NexEngine> {
         return mythicMobs.getAPIHelper().getMythicMob(mobId);
     }
 
-    @Deprecated
-    public static String getMythicNameByEntity(@NotNull Entity entity) {
-        return getMobInternalName(entity);
-    }
-
     @NotNull
     public static String getMobInternalName(@NotNull Entity entity) {
         MythicMob mythicMob = getMobConfig(entity);
@@ -67,31 +62,10 @@ public class MythicMobsHook extends AbstractHook<NexEngine> {
     }
 
     @NotNull
-    @Deprecated
-    public static String getName(@NotNull String mobId) {
-        return getMobDisplayName(mobId);
-    }
-
-    @NotNull
     public static String getMobDisplayName(@NotNull String mobId) {
         MythicMob mythicMob = getMobConfig(mobId);
         PlaceholderString string = mythicMob != null ? mythicMob.getDisplayName() : null;
         return string != null ? string.get() : mobId;
-    }
-
-    @Deprecated
-    public static MythicMob getMythicInstance(@NotNull Entity e) {
-        return getMobConfig(e);
-    }
-
-    @Deprecated
-    public static boolean isDropTable(@NotNull String table) {
-        return mythicMobs.getDropManager().getDropTable(table).isPresent() && mythicMobs.getDropManager().getDropTable(table).isPresent();
-    }
-
-    @Deprecated
-    public static double getLevel(@NotNull Entity e) {
-        return getMobLevel(e);
     }
 
     public static double getMobLevel(@NotNull Entity entity) {
@@ -104,30 +78,6 @@ public class MythicMobsHook extends AbstractHook<NexEngine> {
         return new ArrayList<>(mythicMobs.getMobManager().getMobNames());
     }
 
-    @NotNull
-    @Deprecated
-    public static List<String> getMythicIds() {
-        return getMobConfigIds();
-    }
-
-    @Deprecated
-    public static void setSkillDamage(@NotNull Entity e, double d) {
-        if (!isMythicMob(e))
-            return;
-        ActiveMob am1 = mythicMobs.getMobManager().getMythicMobInstance(e);
-        am1.setLastDamageSkillAmount(d);
-    }
-
-    @Deprecated
-    public static void castSkill(@NotNull Entity e, @NotNull String skill) {
-        mythicMobs.getAPIHelper().castSkill(e, skill);
-    }
-
-    @Deprecated
-    public static void killMythic(@NotNull Entity e) {
-        killMob(e);
-    }
-
     public static void killMob(@NotNull Entity entity) {
         ActiveMob mob = getMobInstance(entity);
         if (mob == null || mob.isDead()) return;
@@ -137,9 +87,8 @@ public class MythicMobsHook extends AbstractHook<NexEngine> {
         entity.remove();
     }
 
-    @Deprecated
-    public static boolean isValid(@NotNull String name) {
-        return getMobConfig(name) != null;
+    public static boolean isValid(@NotNull String mobId) {
+        return getMobConfig(mobId) != null;
     }
 
     @Nullable

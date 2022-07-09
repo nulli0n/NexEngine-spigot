@@ -76,7 +76,7 @@ public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends 
     }
 
     public void purge() {
-        if (!plugin.cfg().dataPurgeEnabled)
+        if (!plugin.getConfigManager().dataPurgeEnabled)
             return;
 
         int count = 0;
@@ -86,7 +86,7 @@ public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends 
             long diff = System.currentTimeMillis() - lastOnline;
             int days = (int) ((diff / (1000 * 60 * 60 * 24)) % 7);
 
-            if (days >= plugin.cfg().dataPurgeDays) {
+            if (days >= plugin.getConfigManager().dataPurgeDays) {
                 this.deleteUser(user.getUUID().toString());
                 count++;
             }

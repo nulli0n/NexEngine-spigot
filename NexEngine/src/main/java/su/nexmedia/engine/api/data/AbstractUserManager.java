@@ -251,7 +251,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     class SaveTask extends AbstractTask<P> {
 
         SaveTask(@NotNull P plugin) {
-            super(plugin, plugin.cfg().dataSaveInterval * 60, true);
+            super(plugin, plugin.getConfigManager().dataSaveInterval * 60, true);
         }
 
         @Override

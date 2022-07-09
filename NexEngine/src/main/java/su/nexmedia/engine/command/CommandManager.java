@@ -25,7 +25,7 @@ public class CommandManager<P extends NexPlugin<P>> extends AbstractManager<P> {
     @Override
     public void onLoad() {
         this.commands = new HashSet<>();
-        if (this.plugin.cfg().commandAliases == null || this.plugin.cfg().commandAliases.length == 0) {
+        if (this.plugin.getConfigManager().commandAliases == null || this.plugin.getConfigManager().commandAliases.length == 0) {
             this.plugin.error("Could not register plugin commands!");
             return;
         }

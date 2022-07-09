@@ -7,7 +7,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class FileUtil {
 
@@ -21,81 +23,63 @@ public class FileUtil {
             }
             fileOutputStream.close();
             inputStream.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
         }
-    }
-
-    public static void mkdir(@NotNull File file) {
-        try {
-            file.mkdir();
-        } catch (Exception ex) {
+        catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
     public static boolean create(@NotNull File file) {
-        if (file.exists())
-            return false;
+        if (file.exists()) return false;
 
         File parent = file.getParentFile();
-        if (parent == null)
-            return false;
+        if (parent == null) return false;
 
         parent.mkdirs();
         try {
-            file.createNewFile();
-        } catch (IOException e) {
+            return file.createNewFile();
+        }
+        catch (IOException e) {
             e.printStackTrace();
             return false;
         }
-        return true;
     }
 
     @NotNull
     public static List<File> getFiles(@NotNull String path, boolean deep) {
-        List<File> names = new ArrayList<>();
+        List<File> files = new ArrayList<>();
 
         File folder = new File(path);
         File[] listOfFiles = folder.listFiles();
-        if (listOfFiles == null)
-            return names;
+        if (listOfFiles == null) return files;
 
         for (File file : listOfFiles) {
             if (file.isFile()) {
-                names.add(file);
+                files.add(file);
             }
             else if (file.isDirectory() && deep) {
-                names.addAll(getFiles(file.getPath(), deep));
+                files.addAll(getFiles(file.getPath(), true));
             }
         }
-        return names;
+        return files;
     }
 
     @NotNull
     public static List<File> getFolders(@NotNull String path) {
-        List<File> dirs = new ArrayList<>();
-
         File folder = new File(path);
         File[] listOfFiles = folder.listFiles();
-        if (listOfFiles == null)
-            return dirs;
+        if (listOfFiles == null) return Collections.emptyList();
 
-        for (File file : listOfFiles) {
-            if (file.isDirectory()) {
-                dirs.add(file);
-            }
-        }
-
-        return dirs;
+        return Stream.of(listOfFiles).filter(File::isDirectory).toList();
     }
 
     public static boolean deleteRecursive(@NotNull String path) {
-        File dir = new File(path);
-        return dir.exists() && deleteRecursive(dir);
+        return deleteRecursive(new File(path));
     }
 
     public static boolean deleteRecursive(@NotNull File dir) {
+        if (!dir.exists()) return false;
+
         File[] inside = dir.listFiles();
         if (inside != null) {
             for (File file : inside) {

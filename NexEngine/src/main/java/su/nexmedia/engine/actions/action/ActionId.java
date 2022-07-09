@@ -12,13 +12,10 @@ public class ActionId {
     public static final String COMMAND_CONSOLE    = "COMMAND_CONSOLE";
     public static final String FIREWORK           = "FIREWORK";
     public static final String LIGHTNING          = "LIGHTNING";
-    public static final String PARTICLE_SIMPLE    = "PARTICLE_SIMPLE";
     public static final String POTION             = "POTION";
     public static final String SATURATION         = "SATURATION";
     public static final String HUNGER             = "HUNGER";
-
     public static final String SOUND    = "SOUND";
-    public static final String TELEPORT = "TELEPORT";
 
 
     public static final String GOTO = "GOTO";

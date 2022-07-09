@@ -116,11 +116,6 @@ public interface IMenu extends ICleanable {
         return Bukkit.getServer().createInventory(null, this.getSize(), this.getTitle());
     }
 
-    @Deprecated
-    default boolean cancelClick(@NotNull SlotType slotType, int slot) {
-        return false;
-    }
-
     default boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
         return false;
     }
@@ -223,7 +218,7 @@ public interface IMenu extends ICleanable {
     }
 
     default void onItemPrepare(@NotNull Player player, @NotNull IMenuItem menuItem, @NotNull ItemStack item) {
-        ItemUtil.applyPlaceholderAPI(player, item);
+        ItemUtil.setPlaceholderAPI(player, item);
     }
 
     default void onClick(@NotNull Player player, @Nullable ItemStack item, int slot, @NotNull InventoryClickEvent e) {

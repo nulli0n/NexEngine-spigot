@@ -6,14 +6,12 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexEngine;
-import su.nexmedia.engine.config.ConfigManager;
 import su.nexmedia.engine.hooks.Hooks;
 
 import java.lang.reflect.Method;
@@ -206,39 +204,28 @@ public class ItemUtil {
     @NotNull
     public static String getItemName(@NotNull ItemStack item) {
         ItemMeta meta = item.getItemMeta();
-        if (meta != null && meta.hasDisplayName()) {
-            return meta.getDisplayName();
-        }
-        return ENGINE.lang().getEnum(item.getType());
+        return (meta == null || !meta.hasDisplayName()) ? ENGINE.getLangManager().getEnum(item.getType()) : meta.getDisplayName();
     }
 
     @NotNull
     public static List<String> getLore(@NotNull ItemStack item) {
         ItemMeta meta = item.getItemMeta();
-        if (meta == null || meta.getLore() == null) return new ArrayList<>();
-        return meta.getLore();
+        return (meta == null || meta.getLore() == null) ? new ArrayList<>() : meta.getLore();
     }
 
-    public static void addSkullTexture(@NotNull ItemStack item, @NotNull String value) {
-        ItemUtil.addSkullTexture(item, value, "");
-    }
-
-    public static void addSkullTexture(@NotNull ItemStack item, @NotNull String value, @Nullable String id) {
+    public static void setSkullTexture(@NotNull ItemStack item, @NotNull String value) {
         if (item.getType() != Material.PLAYER_HEAD) return;
+        if (!(item.getItemMeta() instanceof SkullMeta meta)) return;
 
-        UUID uuid = ConfigManager.getTempUUID(id == null ? "" : id);
-        if (uuid == null) uuid = UUID.randomUUID();
-
-        SkullMeta meta = (SkullMeta) item.getItemMeta();
-        if (meta == null) return;
-
-        GameProfile profile = new GameProfile(uuid, null);
+        GameProfile profile = new GameProfile(null, value);
         profile.getProperties().put("textures", new Property("textures", value));
-        Reflex.setFieldValue(meta, "profile", profile);
 
         Method method = Reflex.getMethod(meta.getClass(), "setProfile", GameProfile.class);
         if (method != null) {
             Reflex.invokeMethod(method, meta, profile);
+        }
+        else {
+            Reflex.setFieldValue(meta, "profile", profile);
         }
 
         item.setItemMeta(meta);
@@ -262,9 +249,8 @@ public class ItemUtil {
         return opt.map(Property::getValue).orElse(null);
     }
 
-    public static void applyPlaceholderAPI(@NotNull Player player, @NotNull ItemStack item) {
-        if (!Hooks.hasPlaceholderAPI())
-            return;
+    public static void setPlaceholderAPI(@NotNull Player player, @NotNull ItemStack item) {
+        if (!Hooks.hasPlaceholderAPI()) return;
         replace(item, str -> StringUtil.color(PlaceholderAPI.setPlaceholders(player, str)));
     }
 
@@ -368,37 +354,6 @@ public class ItemUtil {
 
     public static boolean isBoots(@NotNull ItemStack item) {
         return ENGINE.getNMS().isBoots(item);
-    }
-
-    @NotNull
-    @Deprecated
-    public static EquipmentSlot[] getItemSlots(@NotNull ItemStack item) {
-        if (isArmor(item)) {
-            return new EquipmentSlot[]{getEquipmentSlotByItemType(item)};
-        }
-        return new EquipmentSlot[]{EquipmentSlot.HAND, EquipmentSlot.OFF_HAND};
-    }
-
-    @NotNull
-    @Deprecated
-    public static EquipmentSlot getEquipmentSlotByItemType(@NotNull ItemStack item) {
-        String raw = item.getType().name();
-        if (raw.contains("HELMET") || raw.contains("SKULL") || raw.contains("HEAD")) {
-            return EquipmentSlot.HEAD;
-        }
-        if (raw.endsWith("CHESTPLATE") || raw.endsWith("ELYTRA")) {
-            return EquipmentSlot.CHEST;
-        }
-        if (raw.endsWith("LEGGINGS")) {
-            return EquipmentSlot.LEGS;
-        }
-        if (raw.endsWith("BOOTS")) {
-            return EquipmentSlot.FEET;
-        }
-        if (item.getType() == Material.SHIELD) {
-            return EquipmentSlot.OFF_HAND;
-        }
-        return EquipmentSlot.HAND;
     }
 
     @NotNull

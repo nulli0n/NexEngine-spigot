@@ -1,13 +1,15 @@
 package su.nexmedia.engine.utils;
 
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.utils.random.Rnd;
@@ -49,65 +51,6 @@ public class EntityUtil {
     }
 
     @NotNull
-    @Deprecated
-    public static ItemStack getSkull(@NotNull LivingEntity victim) {
-        ItemStack item;
-        if (victim instanceof WitherSkeleton) {
-            item = new ItemStack(Material.WITHER_SKELETON_SKULL);
-        }
-        else if (victim instanceof Zombie && !(victim instanceof ZombieVillager)) {
-            item = new ItemStack(Material.ZOMBIE_HEAD);
-        }
-        else if (victim instanceof Skeleton) {
-            item = new ItemStack(Material.SKELETON_SKULL);
-        }
-        else if (victim instanceof Creeper) {
-            item = new ItemStack(Material.CREEPER_HEAD);
-        }
-        else if (victim instanceof EnderDragon) {
-            item = new ItemStack(Material.DRAGON_HEAD);
-        }
-        else {
-            item = new ItemStack(Material.PLAYER_HEAD);
-            SkullMeta meta = (SkullMeta) item.getItemMeta();
-            if (meta == null)
-                return item;
-
-            String owner = victim instanceof Player ? victim.getName() : getValidSkullName(victim);
-            meta.setOwner(owner);
-            item.setItemMeta(meta);
-        }
-
-        return item;
-    }
-
-    @NotNull
-    @Deprecated
-    public static String getValidSkullName(@NotNull Entity entity) {
-        return getValidSkullName(entity.getType());
-    }
-
-    @NotNull
-    @Deprecated
-    public static String getValidSkullName(@NotNull EntityType type) {
-        switch (type) {
-            case MAGMA_CUBE: {
-                return "MHF_LavaSlime";
-            }
-            case ELDER_GUARDIAN: {
-                return "MHF_EGuardian";
-            }
-            case IRON_GOLEM: {
-                return "MHF_Golem";
-            }
-            default: {
-                String s = type.name().toLowerCase().replace("_", " ");
-                return "MHF_" + StringUtil.capitalizeFully(s).replace(" ", "");
-            }
-        }
-    }
-
-    @NotNull
     public static String getName(@NotNull Entity entity) {
         if (entity instanceof Player) {
             return entity.getName();
@@ -119,7 +62,7 @@ public class EntityUtil {
             }
         }
 
-        return NexEngine.get().lang().getEnum(entity.getType());
+        return NexEngine.get().getLangManager().getEnum(entity.getType());
     }
 
     @NotNull

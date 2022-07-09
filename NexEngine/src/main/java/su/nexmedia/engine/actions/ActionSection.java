@@ -1,33 +1,26 @@
 package su.nexmedia.engine.actions;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-
 public class ActionSection {
 
-    private List<String> targetSelectors;
-    private List<String> conditionList;
-    private String       conditionActionOnFail;
-    private List<String> actionExecutors;
+    private       List<String> conditionList;
+    private final String       conditionActionOnFail;
+    private       List<String> actionExecutors;
 
-    public ActionSection(@NotNull List<String> targetSelectors, @NotNull List<String> conditionList, @NotNull String conditionActionOnFail, @NotNull List<String> actionExecutors) {
-        this.targetSelectors = targetSelectors;
+    public ActionSection(@NotNull List<String> conditionList, @NotNull String conditionActionOnFail, @NotNull List<String> actionExecutors) {
         this.conditionList = conditionList;
         this.conditionActionOnFail = conditionActionOnFail;
         this.actionExecutors = actionExecutors;
     }
 
     public ActionSection(@NotNull ActionSection from) {
-        this.targetSelectors = new ArrayList<>(from.getTargetSelectors());
         this.conditionList = new ArrayList<>(from.getConditions()); // New list
         this.actionExecutors = new ArrayList<>(from.getActionExecutors()); // New list
-    }
-
-    @NotNull
-    public List<String> getTargetSelectors() {
-        return this.targetSelectors;
+        this.conditionActionOnFail = from.conditionActionOnFail;
     }
 
     @NotNull
