@@ -131,7 +131,7 @@ public class EditorManager extends AbstractManager<NexEngine> implements IListen
     }
 
     public static void tip(@NotNull Player player, @NotNull String title, @NotNull String text) {
-        player.sendTitle(title, text, 20, TITLE_STAY, 40);
+        player.sendTitle(StringUtil.color(title), StringUtil.color(text), 20, TITLE_STAY, 40);
     }
 
     public static void error(@NotNull Player player, @NotNull String text) {

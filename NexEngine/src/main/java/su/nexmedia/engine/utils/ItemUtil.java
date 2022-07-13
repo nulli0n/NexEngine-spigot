@@ -12,6 +12,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexEngine;
+import su.nexmedia.engine.config.EngineConfig;
 import su.nexmedia.engine.hooks.Hooks;
 
 import java.lang.reflect.Method;
@@ -217,7 +218,7 @@ public class ItemUtil {
         if (item.getType() != Material.PLAYER_HEAD) return;
         if (!(item.getItemMeta() instanceof SkullMeta meta)) return;
 
-        GameProfile profile = new GameProfile(null, value);
+        GameProfile profile = new GameProfile(EngineConfig.getIdForSkullTexture(value), null);
         profile.getProperties().put("textures", new Property("textures", value));
 
         Method method = Reflex.getMethod(meta.getClass(), "setProfile", GameProfile.class);

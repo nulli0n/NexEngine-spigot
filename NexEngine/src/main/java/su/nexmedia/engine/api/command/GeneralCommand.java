@@ -70,11 +70,11 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
     public final boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd,
                                    @NotNull String label, String[] args) {
 
-        int childAmount = this.countChildren(args);
+        /*int childAmount = this.countChildren(args);
         if (this.getChildrens().isEmpty() || (args.length - childAmount == 0 && this.defaultCommand == null)) {
             this.execute(sender, label, args);
             return true;
-        }
+        }*/
 
         AbstractCommand<P> command = this.findChildren(args);//this;//.defaultCommand;
         /*int childCount = 0;
