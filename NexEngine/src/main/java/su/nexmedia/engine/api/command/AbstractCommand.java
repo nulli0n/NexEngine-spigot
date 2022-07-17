@@ -8,32 +8,28 @@ import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.manager.IPlaceholder;
 import su.nexmedia.engine.lang.EngineLang;
 import su.nexmedia.engine.utils.CollectionsUtil;
+import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.regex.RegexUtil;
 
 import java.util.*;
 import java.util.function.UnaryOperator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceholder {
 
-    protected P                               plugin;
-    protected String[]                        aliases;
-    protected String                          permission;
-    protected Map<String, AbstractCommand<P>> childrens;
-    protected AbstractCommand<P>              parent;
-
-    public static final String PLACEHOLDER_USAGE = "%command_usage%";
+    public static final String PLACEHOLDER_USAGE       = "%command_usage%";
     public static final String PLACEHOLDER_DESCRIPTION = "%command_description%";
-    public static final String PLACEHOLDER_LABEL = "%command_label%";
+    public static final String PLACEHOLDER_LABEL       = "%command_label%";
 
-    @Override
-    @NotNull
-    public UnaryOperator<String> replacePlaceholders() {
-        return str -> str
-            .replace(PLACEHOLDER_DESCRIPTION, this.getDescription())
-            .replace(PLACEHOLDER_USAGE, this.getUsage())
-            .replace(PLACEHOLDER_LABEL, this.getLabelFull())
-            ;
-    }
+    private final Map<String, Pattern>            flagPatterns;
+    protected     P                               plugin;
+    protected     String[]                        aliases;
+    protected     String                          permission;
+    protected     Map<String, AbstractCommand<P>> childrens;
+    protected     AbstractCommand<P>              parent;
+    protected     Set<String>                     flags;
 
     public AbstractCommand(@NotNull P plugin, @NotNull List<String> aliases) {
         this(plugin, aliases.toArray(new String[0]));
@@ -52,6 +48,18 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
         this.aliases = Stream.of(aliases).map(String::toLowerCase).toArray(String[]::new);
         this.permission = permission;
         this.childrens = new TreeMap<>();
+        this.flags = new HashSet<>();
+        this.flagPatterns = new HashMap<>();
+    }
+
+    @Override
+    @NotNull
+    public UnaryOperator<String> replacePlaceholders() {
+        return str -> str
+            .replace(PLACEHOLDER_DESCRIPTION, this.getDescription())
+            .replace(PLACEHOLDER_USAGE, this.getUsage())
+            .replace(PLACEHOLDER_LABEL, this.getLabelFull())
+            ;
     }
 
     @Nullable
@@ -97,6 +105,21 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
     }
 
     @NotNull
+    public Set<String> getFlags() {
+        return new HashSet<>(this.flags);
+    }
+
+    public final void registerFlag(@NotNull String flag) {
+        this.flags.add(flag);
+        this.flagPatterns.put(flag, Pattern.compile("(\\~" + flag + ")+(\\{)+(.*?)(\\})"));
+    }
+
+    public final void unregisterFlag(@NotNull String flag) {
+        this.flags.remove(flag);
+        this.flagPatterns.remove(flag);
+    }
+
+    @NotNull
     public abstract String getUsage();
 
     @NotNull
@@ -111,6 +134,12 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
 
     protected abstract void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args);
 
+    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
+        if (flags.isEmpty()) {
+            this.onExecute(sender, label, args);
+        }
+    }
+
     public final void execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
         if (this.isPlayerOnly() && !(sender instanceof Player)) {
             this.errorSender(sender);
@@ -120,7 +149,28 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
             this.errorPermission(sender);
             return;
         }
-        this.onExecute(sender, label, args);
+
+        if (!this.getFlags().isEmpty()) {
+            String argLine = String.join(" ", args);
+            Map<String, String> flags = new HashMap<>();
+
+            for (Map.Entry<String, Pattern> entry : this.flagPatterns.entrySet()) {
+                String flag = entry.getKey();
+                Pattern pattern = entry.getValue();
+
+                Matcher matcher = RegexUtil.getMatcher(pattern, argLine);
+                if (matcher != null && matcher.find()) {
+                    flags.put(flag, StringUtil.color(matcher.group(3)));
+                    argLine = StringUtil.oneSpace(argLine.replace(matcher.group(0), ""));
+                }
+            }
+
+            args = argLine.split(" ");
+            this.onExecute(sender, label, args, flags);
+        }
+        else {
+            this.onExecute(sender, label, args);
+        }
     }
 
     public final boolean hasPermission(@NotNull CommandSender sender) {
