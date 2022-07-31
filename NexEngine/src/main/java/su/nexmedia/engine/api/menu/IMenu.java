@@ -116,9 +116,7 @@ public interface IMenu extends ICleanable {
         return Bukkit.getServer().createInventory(null, this.getSize(), this.getTitle());
     }
 
-    default boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType) {
-        return false;
-    }
+    boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType);
 
     default boolean cancelClick(@NotNull InventoryDragEvent e) {
         return false;

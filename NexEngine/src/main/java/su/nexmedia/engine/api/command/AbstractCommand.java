@@ -132,12 +132,12 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
         return Collections.emptyList();
     }
 
-    protected abstract void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args);
+    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+        this.onExecute(sender, label, args, new HashMap<>());
+    }
 
     protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
-        if (flags.isEmpty()) {
-            this.onExecute(sender, label, args);
-        }
+
     }
 
     public final void execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
@@ -215,6 +215,6 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
     }
 
     protected final void errorNumber(@NotNull CommandSender sender, @NotNull String from) {
-        plugin.getMessage(EngineLang.ERROR_NUMBER_INVALID).replace("%num%", from);
+        plugin.getMessage(EngineLang.ERROR_NUMBER_INVALID).replace("%num%", from).send(sender);
     }
 }

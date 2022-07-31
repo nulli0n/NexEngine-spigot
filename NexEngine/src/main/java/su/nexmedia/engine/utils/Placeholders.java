@@ -1,5 +1,6 @@
 package su.nexmedia.engine.utils;
 
+import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
 
@@ -10,6 +11,12 @@ public class Placeholders {
     public static final String DEFAULT = "default";
     public static final String NONE = "none";
     public static final String MASK_ANY = "*";
+
+    public static final Placeholder<org.bukkit.Location> LOCATION = new Location();
+
+    public static abstract class Placeholder<U> {
+        public abstract UnaryOperator<String> replacer(@NotNull U src);
+    }
 
     public static class Plugin {
 
@@ -35,6 +42,32 @@ public class Placeholders {
             return str -> str
                 .replace(NAME, player.getName())
                 .replace(DISPLAY_NAME, player.getDisplayName())
+                ;
+        }
+
+        @NotNull
+        public static UnaryOperator<String> replacer(@NotNull CommandSender sender) {
+            if (sender instanceof org.bukkit.entity.Player player) return replacer(player);
+            return str -> str
+                .replace(NAME, sender.getName())
+                ;
+        }
+    }
+
+    public static class Location extends Placeholder<org.bukkit.Location> {
+
+        public static final String X = "%location_x%";
+        public static final String Y = "%location_y%";
+        public static final String Z = "%location_z%";
+        public static final String WORLD = "%location_world%";
+
+        @Override
+        public UnaryOperator<String> replacer(@NotNull org.bukkit.Location src) {
+            return str -> str
+                .replace(X, NumberUtil.format(src.getX()))
+                .replace(Y, NumberUtil.format(src.getY()))
+                .replace(Z, NumberUtil.format(src.getZ()))
+                .replace(WORLD, LocationUtil.getWorldName(src))
                 ;
         }
     }
