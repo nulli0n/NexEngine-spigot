@@ -41,7 +41,7 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
     }
 
     @NotNull
-    private AbstractCommand<P> findChildren(@NotNull String[] args) {
+    public AbstractCommand<P> findChildren(@NotNull String[] args) {
         AbstractCommand<P> command = this;//.defaultCommand;
         int childCount = 0;
         while (args.length > childCount) {

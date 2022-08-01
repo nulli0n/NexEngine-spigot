@@ -1,6 +1,7 @@
 package su.nexmedia.engine.command;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.command.GeneralCommand;
 import su.nexmedia.engine.api.editor.EditorHolder;
@@ -9,6 +10,7 @@ import su.nexmedia.engine.command.list.AboutSubCommand;
 import su.nexmedia.engine.command.list.EditorSubCommand;
 import su.nexmedia.engine.command.list.HelpSubCommand;
 import su.nexmedia.engine.command.list.ReloadSubCommand;
+import su.nexmedia.engine.utils.ArrayUtil;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -68,6 +70,13 @@ public class CommandManager<P extends NexPlugin<P>> extends AbstractManager<P> {
     @NotNull
     public PluginMainCommand<P> getMainCommand() {
         return this.mainCommand;
+    }
+
+    @Nullable
+    public GeneralCommand<P> getCommand(@NotNull String alias) {
+        return this.getCommands().stream()
+            .filter(command -> ArrayUtil.contains(command.getAliases(), alias))
+            .findFirst().orElse(null);
     }
 
     public void registerCommand(@NotNull GeneralCommand<P> command) {
