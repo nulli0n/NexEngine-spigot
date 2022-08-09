@@ -1487,13 +1487,13 @@ Enchantment:
   power: 力量
   infinity: 无限
   confusing_arrows: 困惑箭头
-  dragonfire_arrows: 龙箭头
+  dragonfire_arrows: 龙火箭头
   electrified_arrows: 闪电箭头
   ender_bow: 安德弓
   bomber: 轰炸机
   poisoned_arrows: 剧毒箭头
   withered_arrows: 凋零箭头
-  blast_mining: Blast Mining
+  blast_mining: 爆破采矿
 Core:
   Command:
     Usage: '&c用法: &e/%command_label% &6%command_usage%'
@@ -1519,12 +1519,12 @@ Time:
   Min: '%s%分钟.'
   Sec: '%s%秒.'
 Other:
-  'Yes': '&aYes'
-  'No': '&cNo'
+  'Yes': '&a是'
+  'No': '&c否'
   Any: 任意
   None: 无
   Never: 从不
-  OneTimed: 一次定时
+  OneTimed: 一次性的
   Unlimited: 无限
   Infinity: ∞
 Error:
@@ -1539,7 +1539,7 @@ Error:
   Item:
     Invalid: '&c您必须持有物品!'
   Type:
-    Invalid: '类型无效。可用的: %types%'
+    Invalid: '无效类型。有效类型: %types%'
   Command:
     Self: 不能用在自己身上.
     Sender: 此命令仅供玩家使用.
