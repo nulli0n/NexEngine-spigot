@@ -1,58 +1,6 @@
-Prefix: '&e%plugin%&8&7'
-Core:
-  Command:
-    Usage: '&c* 用法: &f/%label% %cmd% %usage%'
-    Help:
-      Format: '&6&e/%label% %cmd% %usage% &7- %description%'
-      List:
-        - '&8&m━━━━━━━━━━━━&8&l[ &e&l%plugin% &7- &6&l帮助 &8&l]&8&m━━━━━━━━━━━━'
-        - '%cmds%'
-      Desc: 显示帮助页面.
-    Editor:
-      Desc: 打开GUI编辑器.
-    About:
-      Desc: 显示插件信息.
-    Reload:
-      Desc: 重载插件.
-      Done: 已重载!
-    Statistics:
-      Desc: 核心数据.
-      Usage: '[disable/silent]'
-      Disable: 统计信息已被模块禁用, 模块将在服务器重新加载时被卸载.
-      Silent: 已关闭加入游戏时显示的统计信息.
-  Statistics:
-    Info:
-      - '&6&m                     &6&l[ &e&lFCore 统计信息 &4Beta &6&l]&6&m                     &6'
-      - '&e你已经在 &6config.yml &e启用了 &6''统计信息'' &e模块.'
-      - '&e这意味着FCore会将相关插件的统计信息发送到我们的网站上.'
-      - '&7'
-      - '&3▸ &b你正在和 &a%count% &b个服务器一起使用 &a%child-plugin%&b!&7'
-      - '&7        %button_disable%       %button_silent%'
-    Button:
-      Disable:
-        Text: '&c&l[停止统计信息!]'
-        Hint: '&7禁用统计信息模块.'
-      Silent:
-        Text: '&6&l[我不想看到这些东西]'
-        Hint: '&7关闭加入游戏时的统计信息.'
-Time:
-  Day: 天
-  Hour: 小时
-  Min: 分钟
-  Sec: 秒
-Other:
-  'Yes': '&a是'
-  'No': '&c否'
-Error:
-  NoPlayer: '&c找不到玩家.'
-  NoWorld: '&c找不到世界.'
-  Number: '&7%num% &c不是有效的数字.'
-  NoPerm: '&c你没有权限这么做!'
-  NoData: '&4获取 &c%player% &4数据时出现错误.'
-  NoItem: '&c你必须手持物品!'
-  Type: '无效的类型. 有效类型: %types%'
-  Self: '&c这不能用在自己身上!'
-  Sender: 这个指令只能由玩家使用.
+custom-placeholders:
+  my-color: '#ff0000'
+  my-text: 示例文本
 EntityType:
   DROPPED_ITEM: 掉落的物品
   EXPERIENCE_ORB: 经验球
@@ -154,10 +102,26 @@ EntityType:
   WANDERING_TRADER: 流浪商人
   FOX: 狐狸
   BEE: 蜜蜂
+  HOGLIN: 疣猪兽
+  PIGLIN: 猪灵
+  STRIDER: 炽足兽
+  ZOGLIN: 僵尸疣猪兽
+  PIGLIN_BRUTE: 猪灵蛮兵
+  AXOLOTL: 蝾螈
+  GLOW_ITEM_FRAME: 发光物品框
+  GLOW_SQUID: 发光鱿鱼
+  GOAT: 山羊
+  MARKER: 标记
+  ALLAY: 悦灵
+  CHEST_BOAT: 箱子船
+  FROG: 青蛙
+  TADPOLE: 蝌蚪
+  WARDEN: 监守者
   FISHING_HOOK: 浮漂
   LIGHTNING: 闪电束
   PLAYER: 玩家
   UNKNOWN: 未知的实体
+  ZOMBIFIED_PIGLIN: Zombified Piglin
 Material:
   ACACIA_BOAT: 金合欢木船
   ACACIA_BUTTON: 金合欢木按钮
@@ -1134,3 +1098,449 @@ Material:
   ZOMBIE_SPAWN_EGG: 僵尸刷怪蛋
   ZOMBIE_VILLAGER_SPAWN_EGG: 僵尸村民刷怪蛋
   ZOMBIE_WALL_HEAD: 墙上的僵尸头颅
+  DEEPSLATE: 深板岩
+  COBBLED_DEEPSLATE: 深板岩圆石
+  POLISHED_DEEPSLATE: 深板岩楼梯
+  CALCITE: 方解石
+  TUFF: 凝灰岩
+  DRIPSTONE_BLOCK: 滴水石块
+  ROOTED_DIRT: 缠根泥土
+  MUD: 泥巴
+  CRIMSON_NYLIUM: 绯红菌岩
+  WARPED_NYLIUM: 诡异菌岩
+  MANGROVE_PLANKS: 红树木板
+  CRIMSON_PLANKS: 绯红木板
+  WARPED_PLANKS: 诡异木板
+  MANGROVE_PROPAGULE: 红树树苗
+  DEEPSLATE_COAL_ORE: 深层煤矿石
+  DEEPSLATE_IRON_ORE: 深层铁矿石
+  COPPER_ORE: 铜矿石
+  DEEPSLATE_COPPER_ORE: 深层铜矿石
+  DEEPSLATE_GOLD_ORE: 深层金矿石
+  DEEPSLATE_REDSTONE_ORE: 深层红石矿石
+  DEEPSLATE_EMERALD_ORE: 深层绿宝石矿石
+  DEEPSLATE_LAPIS_ORE: 深层青金石矿石
+  DEEPSLATE_DIAMOND_ORE: 深层钻石矿石
+  NETHER_GOLD_ORE: 下界金矿石
+  ANCIENT_DEBRIS: 远古残骸
+  RAW_IRON_BLOCK: 粗铁块
+  RAW_COPPER_BLOCK: 粗铜块
+  RAW_GOLD_BLOCK: 粗金块
+  AMETHYST_BLOCK: 紫水晶块
+  BUDDING_AMETHYST: 紫水晶母岩
+  COPPER_BLOCK: 铜块
+  NETHERITE_BLOCK: 下界合金块
+  EXPOSED_COPPER: 斑驳的铜块
+  WEATHERED_COPPER: 锈蚀的铜块
+  OXIDIZED_COPPER: 氧化的铜块
+  CUT_COPPER: 切制铜块
+  EXPOSED_CUT_COPPER: 斑驳的切制铜块
+  WEATHERED_CUT_COPPER: 锈蚀的切制铜块
+  OXIDIZED_CUT_COPPER: 氧化的切制铜块
+  CUT_COPPER_STAIRS: 切制铜楼梯
+  EXPOSED_CUT_COPPER_STAIRS: 斑驳的切制铜楼梯
+  WEATHERED_CUT_COPPER_STAIRS: 锈蚀的切制铜楼梯
+  OXIDIZED_CUT_COPPER_STAIRS: 氧化的切制铜楼梯
+  CUT_COPPER_SLAB: 切制铜台阶
+  EXPOSED_CUT_COPPER_SLAB: 斑驳的切制铜台阶
+  WEATHERED_CUT_COPPER_SLAB: 锈蚀的切制铜台阶
+  OXIDIZED_CUT_COPPER_SLAB: 氧化的切制铜台阶
+  WAXED_COPPER_BLOCK: 涂蜡铜块
+  WAXED_EXPOSED_COPPER: 斑驳的涂蜡铜块
+  WAXED_WEATHERED_COPPER: 锈蚀的涂蜡铜块
+  WAXED_OXIDIZED_COPPER: 氧化的涂蜡铜块
+  WAXED_CUT_COPPER: 涂蜡切制铜块
+  WAXED_EXPOSED_CUT_COPPER: 斑驳的涂蜡切制铜块
+  WAXED_WEATHERED_CUT_COPPER: 锈蚀的涂蜡切制铜块
+  WAXED_OXIDIZED_CUT_COPPER: 氧化的涂蜡切制铜块
+  WAXED_CUT_COPPER_STAIRS: 涂蜡切制铜楼梯
+  WAXED_EXPOSED_CUT_COPPER_STAIRS: 斑驳的涂蜡切制铜楼梯
+  WAXED_WEATHERED_CUT_COPPER_STAIRS: 锈蚀的涂蜡切制铜楼梯
+  WAXED_OXIDIZED_CUT_COPPER_STAIRS: 氧化的涂蜡切制铜楼梯
+  WAXED_CUT_COPPER_SLAB: 涂蜡切制铜台阶
+  WAXED_EXPOSED_CUT_COPPER_SLAB: 斑驳的涂蜡切制铜台阶
+  WAXED_WEATHERED_CUT_COPPER_SLAB: 锈蚀的涂蜡切制铜台阶
+  WAXED_OXIDIZED_CUT_COPPER_SLAB: 氧化的涂蜡切制铜台阶
+  MANGROVE_LOG: 红树原木
+  MANGROVE_ROOTS: 红树根
+  MUDDY_MANGROVE_ROOTS: 沾泥的红树根
+  CRIMSON_STEM: 绯红菌柄
+  WARPED_STEM: 诡异菌柄
+  STRIPPED_MANGROVE_LOG: 去皮红树原木
+  STRIPPED_CRIMSON_STEM: 去皮绯红菌柄
+  STRIPPED_WARPED_STEM: 去皮诡异菌柄
+  STRIPPED_MANGROVE_WOOD: 去皮红树木
+  STRIPPED_CRIMSON_HYPHAE: 去皮绯红菌核
+  STRIPPED_WARPED_HYPHAE: 去皮诡异菌核
+  MANGROVE_WOOD: 红树木
+  CRIMSON_HYPHAE: 绯红菌核
+  WARPED_HYPHAE: 诡异菌核
+  MANGROVE_LEAVES: 红树树叶
+  AZALEA_LEAVES: 杜鹃树叶
+  FLOWERING_AZALEA_LEAVES: 盛开的杜鹃树叶
+  TINTED_GLASS: 遮光玻璃
+  AZALEA: 杜鹃花丛
+  FLOWERING_AZALEA: 盛开的杜鹃花丛
+  SPORE_BLOSSOM: 孢子花
+  CRIMSON_FUNGUS: 绯红菌
+  WARPED_FUNGUS: 诡异菌
+  CRIMSON_ROOTS: 绯红菌索
+  WARPED_ROOTS: 诡异菌索
+  NETHER_SPROUTS: 下界苗
+  WEEPING_VINES: 垂泪藤
+  TWISTING_VINES: 缠怨藤
+  MOSS_CARPET: 苔藓地毯
+  MOSS_BLOCK: 苔藓块
+  HANGING_ROOTS: 垂根
+  BIG_DRIPLEAF: 大型垂滴叶
+  SMALL_DRIPLEAF: 小型垂滴叶
+  MANGROVE_SLAB: 红树木台阶
+  CRIMSON_SLAB: 绯红木台阶
+  WARPED_SLAB: 诡异木台阶
+  MUD_BRICK_SLAB: 泥砖台阶
+  MANGROVE_FENCE: 红树木栅栏
+  CRIMSON_FENCE: 绯红木栅栏
+  WARPED_FENCE: 诡异木栅栏
+  SOUL_SOIL: 灵魂土
+  BASALT: 玄武岩
+  POLISHED_BASALT: 磨制玄武岩
+  SMOOTH_BASALT: 平滑玄武岩
+  SOUL_TORCH: 灵魂火把
+  INFESTED_DEEPSLATE: 被虫蚀的深板岩
+  PACKED_MUD: 泥坯
+  MUD_BRICKS: 泥砖
+  DEEPSLATE_BRICKS: 深板岩砖
+  CRACKED_DEEPSLATE_BRICKS: 裂纹深板岩砖
+  DEEPSLATE_TILES: 深板岩瓦
+  CRACKED_DEEPSLATE_TILES: 裂纹深板岩瓦
+  CHISELED_DEEPSLATE: 錾制深板岩
+  REINFORCED_DEEPSLATE: 强化深板岩
+  CHAIN: 锁链
+  GLOW_LICHEN: 发光地衣
+  MUD_BRICK_STAIRS: 泥砖楼梯
+  CRACKED_NETHER_BRICKS: 裂纹下界砖块
+  CHISELED_NETHER_BRICKS: 錾制下界砖块
+  SCULK: 幽匿块
+  SCULK_VEIN: 幽匿脉络
+  SCULK_CATALYST: 幽匿催发体
+  SCULK_SHRIEKER: 幽匿尖啸体
+  MANGROVE_STAIRS: 红树木楼梯
+  CRIMSON_STAIRS: 绯红木楼梯
+  WARPED_STAIRS: 诡异木楼梯
+  MUD_BRICK_WALL: 泥砖墙
+  BLACKSTONE_WALL: 黑石墙
+  POLISHED_BLACKSTONE_WALL: 磨制黑石墙
+  POLISHED_BLACKSTONE_BRICK_WALL: 磨制黑石砖墙
+  COBBLED_DEEPSLATE_WALL: 深板岩圆石墙
+  POLISHED_DEEPSLATE_WALL: 磨制深板岩墙
+  DEEPSLATE_BRICK_WALL: 深板岩砖墙
+  DEEPSLATE_TILE_WALL: 深板岩瓦墙
+  QUARTZ_BRICKS: 石英砖
+  LIGHT: 光
+  DIRT_PATH: 土径
+  WARPED_WART_BLOCK: 诡异疣块
+  PINK_CONCRETE: 粉红色混凝土
+  COBBLED_DEEPSLATE_STAIRS: 深板岩圆石楼梯
+  POLISHED_DEEPSLATE_STAIRS: 磨制深板岩楼梯
+  DEEPSLATE_BRICK_STAIRS: 深板岩砖楼梯
+  DEEPSLATE_TILE_STAIRS: 深板岩瓦楼梯
+  COBBLED_DEEPSLATE_SLAB: 深板岩圆石台阶
+  POLISHED_DEEPSLATE_SLAB: 磨制深板岩台阶
+  DEEPSLATE_BRICK_SLAB: 深板岩砖台阶
+  DEEPSLATE_TILE_SLAB: 深板岩瓦台阶
+  TARGET: 目标
+  LIGHTNING_ROD: 避雷针
+  SCULK_SENSOR: 幽匿感测体
+  POLISHED_BLACKSTONE_BUTTON: 磨制黑石按钮
+  MANGROVE_BUTTON: 红树木按钮
+  CRIMSON_BUTTON: 绯红木按钮
+  WARPED_BUTTON: 诡异木按钮
+  POLISHED_BLACKSTONE_PRESSURE_PLATE: 磨制黑石压力板
+  MANGROVE_PRESSURE_PLATE: 红树木压力板
+  CRIMSON_PRESSURE_PLATE: 绯红木压力板
+  WARPED_PRESSURE_PLATE: 诡异木压力板
+  MANGROVE_DOOR: 红树木门
+  CRIMSON_DOOR: 绯红木门
+  WARPED_DOOR: 诡异木门
+  MANGROVE_TRAPDOOR: 红树木活板门
+  CRIMSON_TRAPDOOR: 绯红木活板门
+  WARPED_TRAPDOOR: 诡异木活板门
+  MANGROVE_FENCE_GATE: 红树木栅栏门
+  CRIMSON_FENCE_GATE: 绯红木栅栏门
+  WARPED_FENCE_GATE: 诡异木栅栏门
+  WARPED_FUNGUS_ON_A_STICK: 诡异菌钓竿
+  OAK_CHEST_BOAT: 橡木运输船
+  SPRUCE_CHEST_BOAT: 云杉木运输船
+  BIRCH_CHEST_BOAT: 白桦木运输船
+  JUNGLE_CHEST_BOAT: 丛林木运输船
+  ACACIA_CHEST_BOAT: 金合欢木运输船
+  DARK_OAK_CHEST_BOAT: 深色橡木运输船
+  MANGROVE_BOAT: 红树木船
+  MANGROVE_CHEST_BOAT: 红树木运输船
+  AMETHYST_SHARD: 紫水晶碎片
+  RAW_IRON: 粗铁
+  RAW_COPPER: 粗铜
+  COPPER_INGOT: 铜锭
+  RAW_GOLD: 粗金
+  NETHERITE_INGOT: 下界合金锭
+  NETHERITE_SCRAP: 下界合金碎片
+  NETHERITE_SWORD: 下界合金剑
+  NETHERITE_SHOVEL: 下界合金锹
+  NETHERITE_PICKAXE: 下界合金镐
+  NETHERITE_AXE: 下界合金斧
+  NETHERITE_HOE: 下界合金锄
+  NETHERITE_HELMET: 下界合金头盔
+  NETHERITE_CHESTPLATE: 下界合金胸甲
+  NETHERITE_LEGGINGS: 下界合金护腿
+  NETHERITE_BOOTS: 下界合金靴子
+  MANGROVE_SIGN: 红树木告示牌
+  CRIMSON_SIGN: 绯红木告示牌
+  WARPED_SIGN: 诡异木告示牌
+  POWDER_SNOW_BUCKET: 细雪桶
+  AXOLOTL_BUCKET: 美西螈桶
+  TADPOLE_BUCKET: 蝌蚪桶
+  RECOVERY_COMPASS: 追溯指针
+  BUNDLE: 收纳袋
+  SPYGLASS: 望远镜
+  GLOW_INK_SAC: 荧光墨囊
+  ALLAY_SPAWN_EGG: 悦灵刷怪蛋
+  AXOLOTL_SPAWN_EGG: 美西螈刷怪蛋
+  FROG_SPAWN_EGG: 青蛙刷怪蛋
+  GLOW_SQUID_SPAWN_EGG: 发光鱿鱼刷怪蛋
+  GOAT_SPAWN_EGG: 山羊刷怪蛋
+  HOGLIN_SPAWN_EGG: 疣猪兽刷怪蛋
+  PIGLIN_SPAWN_EGG: 猪灵刷怪蛋
+  PIGLIN_BRUTE_SPAWN_EGG: 猪灵蛮兵刷怪蛋
+  STRIDER_SPAWN_EGG: 炽足兽刷怪蛋
+  TADPOLE_SPAWN_EGG: 蝌蚪刷怪蛋
+  WARDEN_SPAWN_EGG: 监守者刷怪蛋
+  ZOGLIN_SPAWN_EGG: 生成僵尸疣猪兽
+  ZOMBIFIED_PIGLIN_SPAWN_EGG: 僵尸猪灵刷怪蛋
+  GLOW_ITEM_FRAME: 荧光物品展示框
+  MUSIC_DISC_OTHERSIDE: 音乐唱片 Otherside
+  MUSIC_DISC_5: 音乐唱片 5
+  MUSIC_DISC_PIGSTEP: 音乐唱片 Pigstep
+  DISC_FRAGMENT_5: 唱片残片 5
+  PIGLIN_BANNER_PATTERN: 猪鼻
+  GOAT_HORN: 山羊角
+  SOUL_LANTERN: 灵魂灯笼
+  GLOW_BERRIES: 发光浆果
+  SOUL_CAMPFIRE: 灵魂营火
+  SHROOMLIGHT: 菌光体
+  LODESTONE: 磁石
+  CRYING_OBSIDIAN: 哭泣的黑曜石
+  BLACKSTONE: 黑石
+  BLACKSTONE_SLAB: 黑石台阶
+  BLACKSTONE_STAIRS: 黑石楼梯
+  GILDED_BLACKSTONE: 镶金黑石
+  POLISHED_BLACKSTONE: 磨制黑石
+  POLISHED_BLACKSTONE_SLAB: 磨制黑石台阶
+  POLISHED_BLACKSTONE_STAIRS: 磨制黑石楼梯
+  CHISELED_POLISHED_BLACKSTONE: 錾制磨制黑石
+  POLISHED_BLACKSTONE_BRICKS: 磨制黑石砖
+  POLISHED_BLACKSTONE_BRICK_SLAB: 磨制黑石砖台阶
+  POLISHED_BLACKSTONE_BRICK_STAIRS: 磨制黑石砖楼梯
+  CRACKED_POLISHED_BLACKSTONE_BRICKS: 裂纹磨制黑石砖
+  RESPAWN_ANCHOR: 重生锚
+  CANDLE: 蜡烛
+  WHITE_CANDLE: 白色蜡烛
+  ORANGE_CANDLE: 橙色蜡烛
+  MAGENTA_CANDLE: 品红色蜡烛
+  LIGHT_BLUE_CANDLE: 淡蓝色蜡烛
+  YELLOW_CANDLE: 黄色蜡烛
+  LIME_CANDLE: 黄绿色蜡烛
+  PINK_CANDLE: 粉红色蜡烛
+  GRAY_CANDLE: 灰色蜡烛
+  LIGHT_GRAY_CANDLE: 淡灰色蜡烛
+  CYAN_CANDLE: 青色蜡烛
+  PURPLE_CANDLE: 紫色蜡烛
+  BLUE_CANDLE: 蓝色蜡烛
+  BROWN_CANDLE: 棕色蜡烛
+  GREEN_CANDLE: 绿色蜡烛
+  RED_CANDLE: 红色蜡烛
+  BLACK_CANDLE: 黑色蜡烛
+  SMALL_AMETHYST_BUD: 小型紫晶芽
+  MEDIUM_AMETHYST_BUD: 中型紫晶芽
+  LARGE_AMETHYST_BUD: 大型紫晶芽
+  AMETHYST_CLUSTER: 紫水晶簇
+  POINTED_DRIPSTONE: 滴水石锥
+  OCHRE_FROGLIGHT: 赭黄蛙明灯
+  VERDANT_FROGLIGHT: 青翠蛙明灯
+  PEARLESCENT_FROGLIGHT: 珠光蛙明灯
+  FROGSPAWN: 青蛙卵
+  ECHO_SHARD: 回响碎片
+  SOUL_FIRE: 灵魂火
+  MANGROVE_WALL_SIGN: 墙上的红树木告示牌
+  SOUL_WALL_TORCH: 墙上的灵魂火把
+  WATER_CAULDRON: 装有水的炼药锅
+  LAVA_CAULDRON: 装有熔岩的炼药锅
+  POWDER_SNOW_CAULDRON: 装有细雪的炼药锅
+  POTTED_MANGROVE_PROPAGULE: 红树胎生苗盆栽
+  WEEPING_VINES_PLANT: 垂泪藤植株
+  TWISTING_VINES_PLANT: 缠怨藤植株
+  CRIMSON_WALL_SIGN: 墙上的绯红木告示牌
+  WARPED_WALL_SIGN: 墙上的诡异木告示牌
+  POTTED_CRIMSON_FUNGUS: 绯红菌盆栽
+  POTTED_WARPED_FUNGUS: 诡异菌盆栽
+  POTTED_CRIMSON_ROOTS: 绯红菌索盆栽
+  POTTED_WARPED_ROOTS: 诡异菌索盆栽
+  CANDLE_CAKE: 插上蜡烛的蛋糕
+  WHITE_CANDLE_CAKE: 插上白色蜡烛的蛋糕
+  ORANGE_CANDLE_CAKE: 插上橙色蜡烛的蛋糕
+  MAGENTA_CANDLE_CAKE: 插上品红色蜡烛的蛋糕
+  LIGHT_BLUE_CANDLE_CAKE: 插上淡蓝色蜡烛的蛋糕
+  YELLOW_CANDLE_CAKE: 插上黄色蜡烛的蛋糕
+  LIME_CANDLE_CAKE: 插上黄绿色蜡烛的蛋糕
+  PINK_CANDLE_CAKE: 插上粉红色蜡烛的蛋糕
+  GRAY_CANDLE_CAKE: 插上灰色蜡烛的蛋糕
+  LIGHT_GRAY_CANDLE_CAKE: 插上淡灰色蜡烛的蛋糕
+  CYAN_CANDLE_CAKE: 插上青色蜡烛的蛋糕
+  PURPLE_CANDLE_CAKE: 插上紫色蜡烛的蛋糕
+  BLUE_CANDLE_CAKE: 插上蓝色蜡烛的蛋糕
+  BROWN_CANDLE_CAKE: 插上棕色蜡烛的蛋糕
+  GREEN_CANDLE_CAKE: 插上绿色蜡烛的蛋糕
+  RED_CANDLE_CAKE: 插上红色蜡烛的蛋糕
+  BLACK_CANDLE_CAKE: 插上黑色蜡烛的蛋糕
+  POWDER_SNOW: 细雪
+  CAVE_VINES: 洞穴藤蔓
+  CAVE_VINES_PLANT: 洞穴藤蔓植株
+  BIG_DRIPLEAF_STEM: 大型垂滴叶茎
+  POTTED_AZALEA_BUSH: 盆栽杜鹃花丛
+  POTTED_FLOWERING_AZALEA_BUSH: 盆栽开花杜鹃花灌木
+GameMode:
+  CREATIVE: 创造
+  SURVIVAL: 生存
+  ADVENTURE: 冒险
+  SPECTATOR: 观察
+PotionEffectType:
+  SPEED: 速度
+  SLOW: 缓慢
+  FAST_DIGGING: 急迫
+  SLOW_DIGGING: 挖掘疲劳
+  INCREASE_DAMAGE: 力量
+  HEAL: 瞬间治疗
+  HARM: 瞬间伤害
+  JUMP: 跳跃提升
+  CONFUSION: 反胃
+  REGENERATION: 生命恢复
+  DAMAGE_RESISTANCE: 抗性提升
+  FIRE_RESISTANCE: 防火
+  WATER_BREATHING: 水下呼吸
+  INVISIBILITY: 隐身
+  BLINDNESS: 失明
+  NIGHT_VISION: 夜视
+  HUNGER: 饥饿
+  WEAKNESS: 虚弱
+  POISON: 中毒
+  WITHER: 凋零
+  HEALTH_BOOST: 生命提升
+  ABSORPTION: 伤害吸收
+  SATURATION: 饱和
+  GLOWING: 发光
+  LEVITATION: 飘浮
+  LUCK: 幸运
+  UNLUCK: 霉运
+  SLOW_FALLING: 缓降
+  CONDUIT_POWER: 潮涌能量
+  DOLPHINS_GRACE: 海豚的恩惠
+  BAD_OMEN: 不祥之兆
+  HERO_OF_THE_VILLAGE: 村庄英雄
+  DARKNESS: 黑暗
+Enchantment:
+  fire_protection: 火焰保护
+  sharpness: 锋利
+  flame: 火矢
+  soul_speed: 灵魂疾行
+  aqua_affinity: 水下速掘
+  punch: 冲击
+  loyalty: 忠诚
+  depth_strider: 深海探索者
+  vanishing_curse: 消失诅咒
+  unbreaking: 耐久
+  knockback: 击退
+  luck_of_the_sea: 海之眷顾
+  binding_curse: 绑定诅咒
+  fortune: 时运
+  protection: 保护
+  efficiency: 效率
+  mending: 经验修补
+  frost_walker: 冰霜行者
+  lure: 饵钓
+  looting: 抢夺
+  piercing: 穿透
+  blast_protection: 爆炸保护
+  smite: 亡灵杀手
+  multishot: 多重射击
+  swift_sneak: 迅捷潜行
+  fire_aspect: 火焰附加
+  channeling: 引雷
+  sweeping: 横扫之刃
+  thorns: 荆棘
+  bane_of_arthropods: 节肢杀手
+  respiration: 水下呼吸
+  riptide: 激流
+  silk_touch: 精准采集
+  quick_charge: 快速装填
+  projectile_protection: 弹射物保护
+  impaling: 穿刺
+  feather_falling: 摔落保护
+  power: 力量
+  infinity: 无限
+  confusing_arrows: 困惑箭头
+  dragonfire_arrows: 龙火箭头
+  electrified_arrows: 闪电箭头
+  ender_bow: 安德弓
+  bomber: 轰炸机
+  poisoned_arrows: 剧毒箭头
+  withered_arrows: 凋零箭头
+  blast_mining: 爆破采矿
+Core:
+  Command:
+    Usage: '&c用法: &e/%command_label% &6%command_usage%'
+    Help:
+      List:
+      - '&6&m              &6&l[ &e&l%plugin_name% &7- &e&l命令 &6&l]&6&m              &7'
+      - '&7'
+      - '&7          &4&l<> &7- 必需的, &2&l[] &7- 可选的.'
+      - '&7'
+      - '&6▪ &e/%command_label% &6%command_usage% &7- %command_description%'
+      - '&7'
+      Desc: 显示帮助页面.
+    Editor:
+      Desc: 打开GUI编辑器.
+    About:
+      Desc: 显示插件信息.
+    Reload:
+      Desc: 重载插件.
+      Done: 已重载!
+Time:
+  Day: '%s%天.'
+  Hour: '%s%小时.'
+  Min: '%s%分钟.'
+  Sec: '%s%秒.'
+Other:
+  'Yes': '&a是'
+  'No': '&c否'
+  Any: 任意
+  None: 无
+  Never: 从不
+  OneTimed: 一次性的
+  Unlimited: 无限
+  Infinity: ∞
+Error:
+  Player:
+    Invalid: '&c找不到玩家.'
+  World:
+    Invalid: '&c未找到世界.'
+  Number:
+    Invalid: '&7%num% &c不是有效数字.'
+  Permission:
+    Deny: '&c您无权执行此操作!'
+  Item:
+    Invalid: '&c您必须持有物品!'
+  Type:
+    Invalid: '无效类型。有效类型: %types%'
+  Command:
+    Self: 不能用在自己身上.
+    Sender: 此命令仅供玩家使用.
+  Internal: '&c内部错误!'
