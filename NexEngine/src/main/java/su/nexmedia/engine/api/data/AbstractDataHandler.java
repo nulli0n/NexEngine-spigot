@@ -17,6 +17,7 @@ import java.util.function.Function;
 public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     private static final ItemStackSerializer SERIALIZER_ITEM_STACK = new ItemStackSerializer();
+
     private final String url;
     protected StorageType dataType;
     protected Connection  connection;
@@ -47,7 +48,7 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
         this.lastLive = System.currentTimeMillis();
         this.dataType = StorageType.MYSQL;
 
-        this.url = "jdbc:mysql://" + host + "/" + base + "?useSSL=false";
+        this.url = "jdbc:mysql://" + host + "/" + base + "?allowPublicKeyRetrieval=true&useSSL=false&autoReconnect=true";
         this.user = login;
         this.password = password;
     }
@@ -92,14 +93,17 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
             if (this.connection != null) {
                 this.connection.close();
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             e.printStackTrace();
-        } finally {
+        }
+        finally {
             try {
                 if (this.connection != null) {
                     this.connection.close();
                 }
-            } catch (SQLException e) {
+            }
+            catch (SQLException e) {
                 e.printStackTrace();
             }
         }
@@ -121,7 +125,8 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
                 this.connection.prepareStatement("SELECT 1").executeQuery();
                 this.lastLive = System.currentTimeMillis();
             }
-        } catch (SQLException ex) {
+        }
+        catch (SQLException ex) {
             this.openConnection();
         }
         return this.connection;
@@ -222,7 +227,8 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
                 }
             }
             return false;
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             plugin.error("Could not check SQL column: '" + columnName + "' for '" + table + "'");
             e.printStackTrace();
             return false;
@@ -389,7 +395,8 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
         this.connection = this.getConnection();
         try (PreparedStatement statement = this.connection.prepareStatement(sql)) {
             statement.executeUpdate();
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             plugin.error("Could not execute SQL statement: [" + sql + "]");
             e.printStackTrace();
         }

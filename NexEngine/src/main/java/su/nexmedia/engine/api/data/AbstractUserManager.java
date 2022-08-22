@@ -4,47 +4,45 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexPlugin;
-import su.nexmedia.engine.api.data.event.EngineUserCreatedEvent;
-import su.nexmedia.engine.api.data.event.EngineUserLoadEvent;
-import su.nexmedia.engine.api.data.event.EngineUserUnloadEvent;
 import su.nexmedia.engine.api.manager.AbstractListener;
 import su.nexmedia.engine.api.manager.AbstractManager;
-import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.api.task.AbstractTask;
+import su.nexmedia.engine.hooks.Hooks;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends AbstractUser<P>> extends AbstractManager<P> {
 
     private final UserDataHolder<P, U> dataHolder;
-
-    private Map<String, U> activeUsers;
-    private Set<UUID>      isPassJoin;
-    private Set<UUID>      toCreate;
-
+    private final Map<UUID, U> usersLoaded;
     private SaveTask saveTask;
+    private SyncTask syncTask;
 
     public AbstractUserManager(@NotNull P plugin, @NotNull UserDataHolder<P, U> dataHolder) {
         super(plugin);
         this.dataHolder = dataHolder;
+        this.usersLoaded = new HashMap<>();
     }
 
     @Override
     protected void onLoad() {
-        this.activeUsers = new HashMap<>();
-        this.isPassJoin = ConcurrentHashMap.newKeySet();
-        this.toCreate = ConcurrentHashMap.newKeySet();
-
         this.addListener(new PlayerListener(this.plugin));
 
         this.saveTask = new SaveTask(this.plugin);
         this.saveTask.start();
+
+        if (this.plugin.getConfigManager().dataSaveInstant && this.plugin.getConfigManager().dataSyncInterval > 0) {
+            this.syncTask = new SyncTask(this.plugin);
+            this.syncTask.start();
+            this.plugin.info("Enabled data synchronization with " + plugin.getConfigManager().dataSyncInterval + " seconds interval.");
+        }
+        else {
+            this.plugin.warn("Data synchronization is disabled because 'Instant_Save' option is not enabled.");
+        }
     }
 
     @Override
@@ -53,33 +51,36 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
             this.saveTask.stop();
             this.saveTask = null;
         }
+        if (this.syncTask != null) {
+            this.syncTask.stop();
+            this.syncTask = null;
+        }
+        this.onSynchronize();
         this.autosave();
-        this.activeUsers.clear();
-        this.isPassJoin.clear();
-        this.toCreate.clear();
+        this.getUsersLoadedMap().clear();
     }
 
+    protected abstract void onSynchronize();
+
     @NotNull
-    protected abstract U createData(@NotNull Player player);
+    protected abstract U createData(@NotNull UUID uuid, @NotNull String name);
 
     public void loadOnlineUsers() {
-        for (Player player : plugin.getServer().getOnlinePlayers()) {
-            this.getOrLoadUser(player);
-        }
+        this.plugin.getServer().getOnlinePlayers().stream().map(Player::getUniqueId).forEach(this::getUserData);
     }
 
     public void autosave() {
         int off = 0;
-        for (U userOn : new HashSet<>(this.getActiveUsers())) {
+        for (U userOn : new HashSet<>(this.getUsersLoaded())) {
             if (!userOn.isOnline()) {
-                this.activeUsers.remove(userOn.getUUID().toString());
+                this.getUsersLoadedMap().remove(userOn.getUUID());
                 off++;
             }
             this.save(userOn);
         }
 
-        int on = this.activeUsers.size();
-        plugin.info("Auto-save: Saved " + on + " online users | " + off + " offline users.");
+        int on = this.getUsersLoadedMap().size();
+        this.plugin.info("Auto-save: Saved " + on + " online users | " + off + " offline users.");
     }
 
     public void save(@NotNull U user) {
@@ -91,107 +92,123 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     }
 
     @NotNull
+    @Deprecated
     public final U getOrLoadUser(@NotNull Player player) {
+        return this.getUserData(player);
+    }
+
+    /**
+     * Gets the preloaded user data for specified player.
+     * Throwns an exception if user data is not loaded for the player, because it have to be loaded on player login.
+     * @param player A player instance to get user data for.
+     * @return User data for the specified player.
+     */
+    @NotNull
+    public final U getUserData(@NotNull Player player) {
         if (Hooks.isCitizensNPC(player)) {
             throw new IllegalStateException("Could not load user data from an NPC!");
         }
 
-        String uuid = player.getUniqueId().toString();
-
-        // Check if user is loaded.
-        U user = this.activeUsers.get(uuid);
-        if (user == null) user = this.dataHolder.getData().getUser(uuid, true);
-        if (user != null) {
-            this.lateJoin(user);
-            return user;
+        U user = this.getUserLoaded(player.getUniqueId());
+        if (user == null) {
+            throw new IllegalStateException("User data for '" + player.getName() + "' is not loaded or created!");
         }
-
-        U user2 = this.createData(player);
-        user2.setRecentlyCreated(true);
-
-        EngineUserCreatedEvent<P, U> event = new EngineUserCreatedEvent<>(plugin, user2);
-        this.plugin.getPluginManager().callEvent(event);
-
-        this.plugin.info("Created new user data for: '" + uuid + "'");
-        this.plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            this.dataHolder.getData().addUser(user2);
-        });
-        this.activeUsers.put(uuid, user2);
-        this.toCreate.remove(user2.getUUID());
-        return user2;
+        return user;
     }
 
     @Nullable
-    public final U getOrLoadUser(@NotNull String nameOrUuid, boolean isUuid) {
-        Player playerHolder;
-        if (isUuid) playerHolder = plugin.getServer().getPlayer(UUID.fromString(nameOrUuid));
-        else playerHolder = plugin.getServer().getPlayer(nameOrUuid);
-        if (playerHolder != null) return this.getOrLoadUser(playerHolder);
-
-        // Check by user name.
-        for (U userOff : this.getActiveUsers()) {
-            if (userOff.getName().equalsIgnoreCase(nameOrUuid)) {
-                return userOff;
-            }
-        }
-
-        // Check if user is loaded.
-        U user = this.activeUsers.get(nameOrUuid);
-        if (user == null) user = this.dataHolder.getData().getUser(nameOrUuid, isUuid);
-        if (user != null) {
-            this.lateJoin(user);
-            return user;
-        }
-
-        return null;
+    @Deprecated
+    public final U getOrLoadUser(@NotNull String name) {
+        return this.getUserData(name);
     }
 
-    private void lateJoin(@NotNull U user) {
-        this.activeUsers.put(user.getUUID().toString(), user);
+    /**
+     * Attempts to load user data from online player with that Name (if there is any).
+     * In case if no such player is online, attempts to load data from the database.
+     * @param name A user name to load data for.
+     * @return User data for the specified user name.
+     */
+    @Nullable
+    public final U getUserData(@NotNull String name) {
+        Player player = this.plugin.getServer().getPlayer(name);
+        if (player != null) return this.getUserData(player);
 
-        // Игрок уже успел войти полностью на сервер (пройти JoinEvent)
-        // поэтому кастомный ивент в JoinEvent вызван не будет, а значит вызываем его здесь.
-        if (this.isPassJoin.remove(user.getUUID())) {
-            user.setLastOnline(System.currentTimeMillis());
+        U user = this.getUsersLoaded().stream().filter(userOff -> userOff.getName().equalsIgnoreCase(name))
+            .findFirst().orElse(null);
+        if (user != null) return user;
 
-            EngineUserLoadEvent<P, U> event = new EngineUserLoadEvent<>(plugin, user);
-            plugin.getPluginManager().callEvent(event);
+        user = this.dataHolder.getData().getUser(name, false);
+        if (user != null) {
+            user.onLoad();
+            this.cache(user);
         }
+
+        return user;
+    }
+
+    @Nullable
+    @Deprecated
+    public final U getOrLoadUser(@NotNull UUID uuid) {
+        return this.getUserData(uuid);
+    }
+
+    /**
+     * Attempts to load user data from online player with that UUID (if there is any).
+     * In case if no such player is online, attempts to load data from the database.
+     * @param uuid A user unique id to load data for.
+     * @return User data for the specified uuid.
+     */
+    @Nullable
+    public final U getUserData(@NotNull UUID uuid) {
+        U user = this.getUserLoaded(uuid);
+        if (user != null) return user;
+
+        user = this.dataHolder.getData().getUser(uuid);
+        if (user != null) {
+            user.onLoad();
+            this.cache(user);
+        }
+
+        return user;
     }
 
     public final void unloadUser(@NotNull Player player) {
-        U user = this.activeUsers.remove(player.getUniqueId().toString());
-        if (user == null) return;
-
-        user.setLastOnline(System.currentTimeMillis());
-        this.unloadUser(user);
+        this.unloadUser(player.getUniqueId());
     }
 
     public final void unloadUser(@NotNull UUID uuid) {
-        U user = this.activeUsers.remove(uuid.toString());
+        U user = this.getUsersLoadedMap().remove(uuid);
         if (user == null) return;
 
         this.unloadUser(user);
     }
 
-    private void unloadUser(@NotNull U user) {
-        EngineUserUnloadEvent<P, U> event = new EngineUserUnloadEvent<>(plugin, user);
-        plugin.getPluginManager().callEvent(event);
+    public void unloadUser(@NotNull U user) {
+        user.onUnload();
         this.save(user, true);
     }
 
     @NotNull
-    public Map<String, @NotNull U> getActiveUsersMap() {
-        return this.activeUsers;
+    public Map<UUID, @NotNull U> getUsersLoadedMap() {
+        return this.usersLoaded;
     }
 
     @NotNull
-    public Collection<@NotNull U> getActiveUsers() {
-        return this.activeUsers.values();
+    public Collection<@NotNull U> getUsersLoaded() {
+        return this.getUsersLoadedMap().values();
     }
 
-    public boolean isLoaded(@NotNull Player player) {
-        return this.activeUsers.containsKey(player.getUniqueId().toString());
+    @Nullable
+    public U getUserLoaded(@NotNull UUID uuid) {
+        return this.getUsersLoadedMap().get(uuid);
+    }
+
+    public boolean isUserLoaded(@NotNull Player player) {
+        return this.getUsersLoadedMap().containsKey(player.getUniqueId());
+    }
+
+    public void cache(@NotNull U user) {
+        this.getUsersLoadedMap().put(user.getUUID(), user);
     }
 
     class PlayerListener extends AbstractListener<P> {
@@ -204,42 +221,23 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         public void onUserLogin(AsyncPlayerPreLoginEvent e) {
             if (e.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) return;
 
-            // For new players, prepare the UserManager to create new data on PlayerJoinEvent.
-            if (!dataHolder.getData().isUserExists(e.getUniqueId().toString(), true)) {
-                toCreate.add(e.getUniqueId());
+            UUID uuid = e.getUniqueId();
+            U user;
+            if (!dataHolder.getData().isUserExists(uuid.toString(), true)) {
+                user = createData(uuid, e.getName());
+                user.setRecentlyCreated(true);
+                cache(user);
+                dataHolder.getData().addUser(user);
+                plugin.info("Created new user data for: '" + uuid + "'");
                 return;
             }
+            else {
+                user = getUserData(uuid);
+            }
 
-            // For old players, load the user data from the database in async mode.
-            getOrLoadUser(e.getUniqueId().toString(), true);
-        }
-
-        @EventHandler(priority = EventPriority.LOWEST)
-        public void onUserJoin(PlayerJoinEvent e) {
-            Player player = e.getPlayer();
-
-            // Добавляем игрока в джойн лист для дальнейших проверок.
-            isPassJoin.add(player.getUniqueId());
-
-            // Если игрок до сих пор не был загружен из БД, при этом запись о нем есть в базе,
-            // мы выходим из метода, оставляя его в "джойн" листе, таким образом
-            // при завершении загрузки из БД, в методе getOrLoadUser менеджер увидит
-            // его и загрузит в память с вызовом кастомного ивента.
-            if (!isLoaded(player) && !toCreate.contains(player.getUniqueId())) return;
-
-            // Так как при загрузке данных в асихнронном режиме мы не можем получить объект игрока,
-            // то мы получаем уже загруженные его данные здесь для вызова кастомного ивента.
-            // Либо здесь же создаются новые данные если игрока не было в базе.
-            U user = getOrLoadUser(player);
-            //if (user == null) return;
-
-            //user.setLastOnline(System.currentTimeMillis());
-
-            // Call custom UserLoad event.
-            EngineUserLoadEvent<P, U> event = new EngineUserLoadEvent<>(plugin, user);
-            plugin.getPluginManager().callEvent(event);
-
-            isPassJoin.remove(user.getUUID());
+            if (user == null) {
+                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Unable to load your user data.");
+            }
         }
 
         @EventHandler(priority = EventPriority.MONITOR)
@@ -257,6 +255,18 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         @Override
         public void action() {
             autosave();
+        }
+    }
+
+    class SyncTask extends AbstractTask<P> {
+
+        public SyncTask(@NotNull P plugin) {
+            super(plugin, plugin.getConfigManager().dataSyncInterval, true);
+        }
+
+        @Override
+        public void action() {
+            onSynchronize();
         }
     }
 }

@@ -31,6 +31,8 @@ public class ClickText {
 
     @NotNull
     public ClickWord addComponent(@NotNull String text) {
+        text = StringUtil.colorFix(text); // Remove color duplications
+
         ClickWord clickWord = new ClickWord(text);
         String placeholder = "%" + this.components.size() + "%";
 
@@ -79,6 +81,7 @@ public class ClickText {
                 // This happens for strings with a color on the end, like: '&aText&2', where '&2' will be an empty component
                 // not related to the '&aText'.
                 else {
+                    // TODO Not removing correctly for multi-color words, like &a&l&oTe&e&l&oxt
                     while (component.getText().isEmpty() && component.getExtra() == null) {
                         component = (TextComponent) builder.getCurrentComponent();
                         builder.getParts().remove(builder.getParts().size() - 1);

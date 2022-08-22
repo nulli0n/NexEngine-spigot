@@ -32,14 +32,12 @@ public class StringUtil {
     }
 
     /**
-     * Removes multiple color codes that are 'color of color'. Example: '&a&b&cText'
-     * -> '&cText'. Probably not needed anymore.
+     * Removes multiple color codes that are 'color of color'. Example: '&a&b&cText -> '&cText'.
      *
      * @param str String to fix.
      * @return A string with a proper color codes formatting.
      */
     @NotNull
-    @Deprecated
     public static String colorFix(@NotNull String str) {
         return NexEngine.get().getNMS().fixColors(str);
     }

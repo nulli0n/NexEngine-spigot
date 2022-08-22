@@ -13,6 +13,11 @@ public class LangKey {
     }
 
     @NotNull
+    public static LangKey of(@NotNull String path, @NotNull String defaultText) {
+        return new LangKey(path, defaultText);
+    }
+
+    @NotNull
     public String getPath() {
         return path;
     }

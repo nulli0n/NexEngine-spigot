@@ -13,22 +13,32 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
     protected transient final P plugin;
 
     protected final UUID   uuid;
-    protected       String name;
-    protected       long   lastOnline;
+    protected final String name;
+    protected long dateCreated;
+    protected long lastOnline;
 
     private boolean isRecent = false;
 
-    // Create new user data
-    public AbstractUser(@NotNull P plugin, @NotNull Player player) {
-        this(plugin, player.getUniqueId(), player.getName(), System.currentTimeMillis());
-    }
+    /*public AbstractUser(@NotNull P plugin, @NotNull UUID uuid, @NotNull String name) {
+        this(plugin, uuid, name, System.currentTimeMillis());
+    }*/
 
-    // Load existent user data
-    public AbstractUser(@NotNull P plugin, @NotNull UUID uuid, @NotNull String name, long lastOnline) {
+    public AbstractUser(@NotNull P plugin, @NotNull UUID uuid, @NotNull String name, long dateCreated, long lastOnline) {
         this.plugin = plugin;
         this.uuid = uuid;
-        this.setName(name);
+        this.name = name;
+        this.setDateCreated(dateCreated);
         this.setLastOnline(lastOnline);
+    }
+
+    public void onLoad() {
+
+    }
+
+    public void onUnload() {
+        if (this.isOnline()) {
+            this.setLastOnline(System.currentTimeMillis());
+        }
     }
 
     public boolean isRecentlyCreated() {
@@ -49,17 +59,25 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
         return this.name;
     }
 
-    /**
+    /*/**
      * Update stored user names to their mojang names.
      *
      * @param name stored user name.
      */
-    public void setName(@NotNull String name) {
+    /*public void setName(@NotNull String name) {
         OfflinePlayer offlinePlayer = this.getOfflinePlayer();
         String nameHas = offlinePlayer.getName();
         if (nameHas != null) name = nameHas;
 
         this.name = name;
+    }*/
+
+    public final long getDateCreated() {
+        return dateCreated;
+    }
+
+    public final void setDateCreated(long dateCreated) {
+        this.dateCreated = dateCreated;
     }
 
     public final long getLastOnline() {

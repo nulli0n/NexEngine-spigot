@@ -25,6 +25,7 @@ public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     public int         dataSaveInterval;
     public boolean     dataSaveInstant;
+    public int         dataSyncInterval;
     public StorageType dataStorage;
     public boolean     dataPurgeEnabled;
     public int         dataPurgeDays;
@@ -57,6 +58,7 @@ public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         if (this.plugin instanceof UserDataHolder) {
             this.getConfig().addMissing("Database.Auto_Save_Interval", 20);
             this.getConfig().addMissing("Database.Instant_Save", false);
+            this.getConfig().addMissing("Database.Sync_Interval", 60);
             this.getConfig().addMissing("Database.Type", StorageType.SQLITE.name());
             this.getConfig().addMissing("Database.MySQL.Username", "root");
             this.getConfig().addMissing("Database.MySQL.Password", "root");
@@ -69,6 +71,7 @@ public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
             this.dataStorage = this.getConfig().getEnum(path + "Type", StorageType.class, StorageType.SQLITE);
             this.dataSaveInterval = this.getConfig().getInt(path + "Auto_Save_Interval", 20);
             this.dataSaveInstant = this.getConfig().getBoolean(path + "Instant_Save");
+            this.dataSyncInterval = this.getConfig().getInt(path + "Sync_Interval");
 
             if (this.dataStorage == StorageType.MYSQL) {
                 this.dataMysqlUser = this.getConfig().getString(path + "MySQL.Username");

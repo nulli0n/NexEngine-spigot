@@ -4,6 +4,7 @@ import com.google.common.collect.Multimap;
 import io.netty.channel.Channel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -21,6 +22,9 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_19_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
@@ -35,6 +39,7 @@ import java.io.*;
 import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public class V1_19_R1 implements NMS {
 

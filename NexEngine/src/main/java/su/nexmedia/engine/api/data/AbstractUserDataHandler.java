@@ -13,8 +13,9 @@ import java.util.function.Function;
 public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends AbstractUser<P>> extends AbstractDataHandler<P> {
 
     protected static final String COL_USER_UUID        = "uuid";
-    protected static final String COL_USER_NAME        = "name";
-    protected static final String COL_USER_LAST_ONLINE = "last_online";
+    protected static final String COL_USER_NAME         = "name";
+    protected static final String COL_USER_DATE_CREATED = "dateCreated";
+    protected static final String COL_USER_LAST_ONLINE  = "last_online";
     protected final String tableUsers;
 
     public AbstractUserDataHandler(@NotNull P plugin) throws SQLException {
@@ -52,11 +53,14 @@ public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends 
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         map.put(COL_USER_UUID, DataTypes.CHAR.build(this.dataType, 36));
         map.put(COL_USER_NAME, DataTypes.STRING.build(this.dataType, 24));
+        map.put(COL_USER_DATE_CREATED, DataTypes.LONG.build(this.dataType, 64));
         map.put(COL_USER_LAST_ONLINE, DataTypes.LONG.build(this.dataType, 64));
         this.getColumnsToCreate().forEach((col, type) -> {
             map.merge(col, type, (oldV, newV) -> newV);
         });
         this.createTable(this.tableUsers, map);
+
+        this.addColumn(tableUsers, COL_USER_DATE_CREATED, DataTypes.LONG.build(this.dataType), String.valueOf(System.currentTimeMillis()));
         this.addColumn(tableUsers, COL_USER_LAST_ONLINE, DataTypes.LONG.build(this.dataType), String.valueOf(System.currentTimeMillis()));
 
         this.onTableCreate();
@@ -76,8 +80,7 @@ public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends 
     }
 
     public void purge() {
-        if (!plugin.getConfigManager().dataPurgeEnabled)
-            return;
+        if (!plugin.getConfigManager().dataPurgeEnabled) return;
 
         int count = 0;
         for (U user : this.getUsers()) {
@@ -124,7 +127,8 @@ public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends 
 
     public void saveUser(@NotNull U user) {
         LinkedHashMap<String, String> colMap = new LinkedHashMap<>();
-        colMap.put(COL_USER_NAME, user.getName());
+        colMap.put(COL_USER_NAME, user.getOfflinePlayer().getName());
+        colMap.put(COL_USER_DATE_CREATED, String.valueOf(user.getDateCreated()));
         colMap.put(COL_USER_LAST_ONLINE, String.valueOf(user.getLastOnline()));
         this.getColumnsToSave(user).forEach((col, val) -> {
             colMap.merge(col, val, (oldV, newV) -> newV);
@@ -142,6 +146,7 @@ public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends 
         LinkedHashMap<String, String> colMap = new LinkedHashMap<>();
         colMap.put(COL_USER_UUID, user.getUUID().toString());
         colMap.put(COL_USER_NAME, user.getName());
+        colMap.put(COL_USER_DATE_CREATED, String.valueOf(user.getDateCreated()));
         colMap.put(COL_USER_LAST_ONLINE, String.valueOf(user.getLastOnline()));
         this.getColumnsToSave(user).forEach((col, val) -> {
             colMap.merge(col, val, (oldV, newV) -> newV);
