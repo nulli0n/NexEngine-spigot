@@ -40,7 +40,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
             this.syncTask.start();
             this.plugin.info("Enabled data synchronization with " + plugin.getConfigManager().dataSyncInterval + " seconds interval.");
         }
-        else {
+        else if (!this.plugin.getConfigManager().dataSaveInstant) {
             this.plugin.warn("Data synchronization is disabled because 'Instant_Save' option is not enabled.");
         }
     }
@@ -71,7 +71,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
 
     public void autosave() {
         int off = 0;
-        for (U userOn : new HashSet<>(this.getUsersLoaded())) {
+        for (U userOn : this.getUsersLoaded()) {
             if (!userOn.isOnline()) {
                 this.getUsersLoadedMap().remove(userOn.getUUID());
                 off++;
@@ -110,6 +110,10 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         }
 
         U user = this.getUserLoaded(player.getUniqueId());
+        if (user == null) {
+            user = this.getUserData(player.getUniqueId());
+            this.plugin.warn("Sync data load for '" + player.getUniqueId() + "'! (Lost user data?)");
+        }
         if (user == null) {
             throw new IllegalStateException("User data for '" + player.getName() + "' is not loaded or created!");
         }
@@ -195,7 +199,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
 
     @NotNull
     public Collection<@NotNull U> getUsersLoaded() {
-        return this.getUsersLoadedMap().values();
+        return new HashSet<>(this.getUsersLoadedMap().values());
     }
 
     @Nullable

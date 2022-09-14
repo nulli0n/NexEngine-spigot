@@ -1,6 +1,7 @@
 package su.nexmedia.engine.api.data;
 
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.api.data.StorageType;
 
 public class DataTypes {
 
@@ -52,10 +53,30 @@ public class DataTypes {
 
         @NotNull
         public String build(@NotNull StorageType dataType, int length) {
+            return build(dataType, length, false);
+        }
+
+        @NotNull
+        public String build(@NotNull StorageType dataType, int length, boolean autoInc) {
+            String type;
+
             if (length < 1 || dataType == StorageType.SQLITE) {
-                return "INTEGER NOT NULL";
+                type =  "INTEGER NOT NULL";
             }
-            return "int(" + length + ") NOT NULL";
+            else {
+                type = "int(" + length + ") NOT NULL";
+            }
+
+            if (autoInc) {
+                if (dataType == StorageType.SQLITE) {
+                    type += " PRIMARY KEY AUTOINCREMENT";
+                }
+                else {
+                    type += " PRIMARY KEY AUTO_INCREMENT";
+                }
+            }
+
+            return type;
         }
     }
 

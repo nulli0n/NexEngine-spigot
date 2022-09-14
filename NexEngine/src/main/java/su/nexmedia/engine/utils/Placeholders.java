@@ -50,6 +50,7 @@ public class Placeholders {
             if (sender instanceof org.bukkit.entity.Player player) return replacer(player);
             return str -> str
                 .replace(NAME, sender.getName())
+                .replace(DISPLAY_NAME, sender.getName())
                 ;
         }
     }

@@ -96,4 +96,13 @@ public class ClickWord {
         }
         return component;
     }
+
+    @Override
+    public String toString() {
+        return "ClickWord{" +
+            "text='" + text + '\'' +
+            ", hoverEvent=" + hoverEvent +
+            ", clickEvent=" + clickEvent +
+            '}';
+    }
 }

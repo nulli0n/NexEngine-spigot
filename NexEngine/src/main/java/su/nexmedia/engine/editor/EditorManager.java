@@ -4,9 +4,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexEngine;
+import su.nexmedia.engine.Version;
 import su.nexmedia.engine.api.editor.EditorInput;
 import su.nexmedia.engine.api.editor.EditorObject;
 import su.nexmedia.engine.api.manager.AbstractManager;
@@ -70,7 +72,7 @@ public class EditorManager extends AbstractManager<NexEngine> implements IListen
 
         String msg = StringUtil.color("&b<<< Click to exit the &dEdit Mode &b>>>");
         ClickText clickText = new ClickText(msg);
-        clickText.addComponent(msg).runCommand(EXIT).showText(StringUtil.color("&7Click me or type &f" + EXIT + "&7."));
+        clickText.addComponent(msg).runCommand("/" + EXIT).showText(StringUtil.color("&7Click me or type &f" + EXIT + "&7."));
         clickText.send(player);
     }
 
@@ -96,11 +98,16 @@ public class EditorManager extends AbstractManager<NexEngine> implements IListen
             return;
         }
 
+        boolean fixCommand = Version.isAbove(Version.V1_18_R2);
+
         List<String> items = items2.stream().sorted(String::compareTo).map(str -> StringUtil.color("&e" + str)).toList();
         ClickText text = new ClickText(String.join(" &8-- ", items));
         items.forEach(item -> {
             ClickWord word = text.addComponent(item);
             word.showText(StringUtil.color("&7Click me to select &f" + item));
+
+            if (autoRun && fixCommand && !item.startsWith("/")) item = "/" + item;
+
             if (autoRun) word.runCommand(StringUtil.colorOff(item));
             else word.suggestCommand(StringUtil.colorOff(item));
         });
@@ -160,6 +167,25 @@ public class EditorManager extends AbstractManager<NexEngine> implements IListen
         String msg = StringUtil.color(e.getMessage());
         this.plugin.getServer().getScheduler().runTask(plugin, () -> {
             if (msg.equalsIgnoreCase(EXIT) || editorInput.handle(player, e)) {
+                endEdit(player);
+            }
+        });
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onChatCommand(PlayerCommandPreprocessEvent e) {
+        Player player = e.getPlayer();
+
+        EditorObject<?, ?> editorInput = getEditorInput(player);
+        if (editorInput == null) return;
+
+        e.setCancelled(true);
+
+        String msg = StringUtil.color(e.getMessage().substring(1));
+        AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(true, player, msg, new HashSet<>());
+
+        this.plugin.getServer().getScheduler().runTask(plugin, () -> {
+            if (msg.equalsIgnoreCase(EXIT) || editorInput.handle(player, event)) {
                 endEdit(player);
             }
         });

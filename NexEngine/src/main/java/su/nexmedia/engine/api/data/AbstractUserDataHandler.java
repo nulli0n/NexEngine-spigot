@@ -25,14 +25,14 @@ public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends 
 
     protected AbstractUserDataHandler(@NotNull P plugin,
                                       @NotNull String host, @NotNull String base,
-                                      @NotNull String login, @NotNull String password) {
+                                      @NotNull String login, @NotNull String password) throws SQLException {
         super(plugin, host, base, login, password);
         this.tableUsers = plugin.getNameRaw() + "_users";
     }
 
     protected AbstractUserDataHandler(@NotNull P plugin,
                                       @NotNull String filePath, @NotNull String fileName) throws SQLException {
-        super(plugin, filePath, fileName);
+        super(plugin, filePath);
         this.tableUsers = plugin.getNameRaw() + "_users";
     }
 
@@ -155,7 +155,9 @@ public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends 
     }
 
     public void deleteUser(@NotNull String uuid) {
-        String sql = "DELETE FROM " + tableUsers + " WHERE `uuid` = '" + uuid + "'";
-        this.executeSQL(sql);
+        LinkedHashMap<String, String> whereMap = new LinkedHashMap<>();
+        whereMap.put(COL_USER_UUID, uuid);
+
+        DataQueries.executeDelete(this.getConnector(), this.tableUsers, whereMap);
     }
 }

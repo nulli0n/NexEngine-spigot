@@ -7,3 +7,5 @@ softdepend: [ Vault ]
 loadbefore: [ WorldGuard, MythicMobs, Citizens ]
 api-version: 1.16
 load: STARTUP
+libraries:
+  - com.zaxxer:HikariCP:5.0.1
