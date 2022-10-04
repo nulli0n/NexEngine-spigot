@@ -3,8 +3,6 @@ package su.nexmedia.engine.config;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.data.StorageType;
-import su.nexmedia.engine.api.data.UserDataHolder;
 import su.nexmedia.engine.api.manager.AbstractManager;
 import su.nexmedia.engine.api.module.AbstractModule;
 import su.nexmedia.engine.utils.Placeholders;
@@ -23,18 +21,6 @@ public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
     public String[] commandAliases;
     public String   languageCode;
 
-    public int         dataSaveInterval;
-    public boolean     dataSaveInstant;
-    public int         dataSyncInterval;
-    public StorageType dataStorage;
-    public boolean     dataPurgeEnabled;
-    public int         dataPurgeDays;
-
-    public String dataMysqlUser;
-    public String dataMysqlPassword;
-    public String dataMysqlHost;
-    public String dataMysqlBase;
-
     public ConfigManager(@NotNull P plugin) {
         super(plugin);
     }
@@ -46,7 +32,7 @@ public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
         this.getConfig().addMissing("Plugin.Name", plugin.getName());
         this.getConfig().addMissing("Plugin.Prefix", "&e" + Placeholders.Plugin.NAME + " &8» &7");
-        this.getConfig().addMissing("Plugin.Command_Aliases", plugin.getNameRaw());
+        this.getConfig().addMissing("Plugin.Command_Aliases", plugin.getName().toLowerCase());
         this.getConfig().addMissing("Plugin.Language", "en");
 
         this.pluginName = StringUtil.color(getConfig().getString("Plugin.Name", plugin.getName()));
@@ -54,36 +40,6 @@ public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
             .replace(Placeholders.Plugin.NAME, this.pluginName));
         this.commandAliases = getConfig().getString("Plugin.Command_Aliases", "").split(",");
         this.languageCode = getConfig().getString("Plugin.Language", "en").toLowerCase();
-
-        if (this.plugin instanceof UserDataHolder) {
-            this.getConfig().addMissing("Database.Auto_Save_Interval", 20);
-            this.getConfig().addMissing("Database.Instant_Save", false);
-            this.getConfig().addMissing("Database.Sync_Interval", 60);
-            this.getConfig().addMissing("Database.Type", StorageType.SQLITE.name());
-            this.getConfig().addMissing("Database.MySQL.Username", "root");
-            this.getConfig().addMissing("Database.MySQL.Password", "root");
-            this.getConfig().addMissing("Database.MySQL.Host", "localhost");
-            this.getConfig().addMissing("Database.MySQL.Database", "minecraft");
-            this.getConfig().addMissing("Database.Purge.Enabled", false);
-            this.getConfig().addMissing("Database.Purge.For_Inactive_Days", 60);
-
-            String path = "Database.";
-            this.dataStorage = this.getConfig().getEnum(path + "Type", StorageType.class, StorageType.SQLITE);
-            this.dataSaveInterval = this.getConfig().getInt(path + "Auto_Save_Interval", 20);
-            this.dataSaveInstant = this.getConfig().getBoolean(path + "Instant_Save");
-            this.dataSyncInterval = this.getConfig().getInt(path + "Sync_Interval");
-
-            if (this.dataStorage == StorageType.MYSQL) {
-                this.dataMysqlUser = this.getConfig().getString(path + "MySQL.Username");
-                this.dataMysqlPassword = this.getConfig().getString(path + "MySQL.Password");
-                this.dataMysqlHost = this.getConfig().getString(path + "MySQL.Host");
-                this.dataMysqlBase = this.getConfig().getString(path + "MySQL.Database");
-            }
-
-            path = "Database.Purge.";
-            this.dataPurgeEnabled = getConfig().getBoolean(path + "Enabled");
-            this.dataPurgeDays = getConfig().getInt(path + "For_Inactive_Days", 60);
-        }
 
         this.getConfig().saveChanges();
     }

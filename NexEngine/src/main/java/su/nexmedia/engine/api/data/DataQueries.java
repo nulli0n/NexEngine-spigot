@@ -17,9 +17,9 @@ public class DataQueries {
 
     @Nullable
     public static <T> T readData(@NotNull AbstractDataConnector connector,
-                                                @NotNull String table,
-                                                @NotNull Map<String, String> whereMap,
-                                                @NotNull Function<ResultSet, T> dataFunction) {
+                                 @NotNull String table,
+                                 @NotNull Map<String, String> whereMap,
+                                 @NotNull Function<ResultSet, T> dataFunction) {
         return readData(connector, table, Collections.emptyList(), whereMap, dataFunction);
     }
 
@@ -58,9 +58,9 @@ public class DataQueries {
     }
 
     public static <T> void readData(@NotNull AbstractDataConnector connector,
-                                                @NotNull String table,
-                                                @NotNull Map<String, String> whereMap,
-                                                @NotNull Consumer<ResultSet> dataFunction) {
+                                    @NotNull String table,
+                                    @NotNull Map<String, String> whereMap,
+                                    @NotNull Consumer<ResultSet> dataFunction) {
         readData(connector, table, Collections.emptyList(), whereMap, dataFunction);
     }
 

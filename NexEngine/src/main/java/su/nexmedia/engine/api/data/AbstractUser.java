@@ -11,17 +11,12 @@ import java.util.UUID;
 public abstract class AbstractUser<P extends NexPlugin<P>> {
 
     protected transient final P plugin;
+    private transient boolean isRecent = false;
 
-    protected final UUID   uuid;
+    protected final UUID uuid;
     protected final String name;
     protected long dateCreated;
     protected long lastOnline;
-
-    private boolean isRecent = false;
-
-    /*public AbstractUser(@NotNull P plugin, @NotNull UUID uuid, @NotNull String name) {
-        this(plugin, uuid, name, System.currentTimeMillis());
-    }*/
 
     public AbstractUser(@NotNull P plugin, @NotNull UUID uuid, @NotNull String name, long dateCreated, long lastOnline) {
         this.plugin = plugin;
@@ -41,6 +36,11 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public <U extends AbstractUser<P>> void saveData(@NotNull UserDataHolder<P, U> dataHolder) {
+        this.plugin.runTask(c -> dataHolder.getData().saveUser((U) this), true);
+    }
+
     public boolean isRecentlyCreated() {
         return isRecent;
     }
@@ -50,7 +50,13 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
     }
 
     @NotNull
+    @Deprecated
     public final UUID getUUID() {
+        return this.getId();
+    }
+
+    @NotNull
+    public final UUID getId() {
         return this.uuid;
     }
 
@@ -58,19 +64,6 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
     public final String getName() {
         return this.name;
     }
-
-    /*/**
-     * Update stored user names to their mojang names.
-     *
-     * @param name stored user name.
-     */
-    /*public void setName(@NotNull String name) {
-        OfflinePlayer offlinePlayer = this.getOfflinePlayer();
-        String nameHas = offlinePlayer.getName();
-        if (nameHas != null) name = nameHas;
-
-        this.name = name;
-    }*/
 
     public final long getDateCreated() {
         return dateCreated;
@@ -94,12 +87,12 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
 
     @NotNull
     public final OfflinePlayer getOfflinePlayer() {
-        return this.plugin.getServer().getOfflinePlayer(this.getUUID());
+        return this.plugin.getServer().getOfflinePlayer(this.getId());
     }
 
     @Nullable
     public final Player getPlayer() {
-        return this.plugin.getServer().getPlayer(this.getUUID());
+        return this.plugin.getServer().getPlayer(this.getId());
     }
 
     @Override

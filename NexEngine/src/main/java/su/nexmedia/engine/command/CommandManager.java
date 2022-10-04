@@ -4,12 +4,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.command.GeneralCommand;
-import su.nexmedia.engine.api.editor.EditorHolder;
 import su.nexmedia.engine.api.manager.AbstractManager;
 import su.nexmedia.engine.command.list.AboutSubCommand;
-import su.nexmedia.engine.command.list.EditorSubCommand;
 import su.nexmedia.engine.command.list.HelpSubCommand;
-import su.nexmedia.engine.command.list.ReloadSubCommand;
 import su.nexmedia.engine.utils.ArrayUtil;
 
 import java.util.HashSet;
@@ -40,10 +37,10 @@ public class CommandManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         this.plugin.registerCommands(this.mainCommand);
 
         // Check for plugin settings to register default commands.
-        if (this.plugin instanceof EditorHolder) {
+        /*if (this.plugin instanceof EditorHolder) {
             this.mainCommand.addChildren(new EditorSubCommand<>(this.plugin));
-        }
-        this.mainCommand.addChildren(new ReloadSubCommand<>(this.plugin));
+        }*/
+        //this.mainCommand.addChildren(new ReloadSubCommand<>(this.plugin));
 
         if (!this.plugin.isEngine()) {
             this.mainCommand.addChildren(new AboutSubCommand<>(this.plugin));

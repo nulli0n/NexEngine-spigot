@@ -11,7 +11,6 @@ package su.nexmedia.engine.utils.evaluation.javaluator;
  *
  * @author Jean-Marc Astesana
  * @see <a href="../../../license.html">License information</a>
- * @see AbstractEvaluator#evaluate(Constant, Object)
  */
 public class Constant {
 

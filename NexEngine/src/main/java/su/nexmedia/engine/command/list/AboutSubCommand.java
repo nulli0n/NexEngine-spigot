@@ -44,14 +44,5 @@ public class AboutSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> 
             "&2Powered by &a&l" + NexEngine.get().getName() + "&2, © 2019-2022 &a" + NexPlugin.TM));
 
         info.forEach(sender::sendMessage);
-
-        /*Player player = (Player) sender;
-        ItemStack item = player.getInventory().getItemInMainHand();
-
-        ClickText clickText = new ClickText("&b&lSome example &5[&d&lButton &b1&d] &e&nfor the ClickText &7[Click Me] &6&owell &2 yeah&c [Send Nudes] &3&kblabla &1sucx");
-        clickText.addComponent("[&d&lButton &b1&d]").showText("Zhopa!", "Yay!", "#ccc888Hey");
-        clickText.addComponent("&7[Click Me]").showText("Piska!");
-        clickText.addComponent("[Send Nudes]").showItem(item);
-        clickText.send(sender);*/
     }
 }

@@ -6,12 +6,14 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexPlugin;
+import su.nexmedia.engine.api.data.config.DataConfig;
 import su.nexmedia.engine.api.data.connection.AbstractDataConnector;
 import su.nexmedia.engine.api.data.connection.ConnectorMySQL;
 import su.nexmedia.engine.api.data.connection.ConnectorSQLite;
 import su.nexmedia.engine.api.data.serialize.ItemStackSerializer;
+import su.nexmedia.engine.api.data.task.DataSaveTask;
+import su.nexmedia.engine.api.data.task.DataSynchronizationTask;
 import su.nexmedia.engine.api.manager.AbstractManager;
-import su.nexmedia.engine.config.ConfigManager;
 
 import java.sql.*;
 import java.util.LinkedHashMap;
@@ -24,50 +26,98 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
 
     private static final ItemStackSerializer SERIALIZER_ITEM_STACK = new ItemStackSerializer();
 
-    protected StorageType dataType;
-    protected AbstractDataConnector connector;
+    protected final DataConfig config;
+    protected final AbstractDataConnector connector;
     protected Gson gson;
 
-    protected AbstractDataHandler(@NotNull P plugin) throws SQLException {
-        super(plugin);
-        ConfigManager<P> config = plugin.getConfigManager();
+    private DataSynchronizationTask<P> synchronizationTask;
+    private DataSaveTask<P> saveTask;
 
-        this.dataType = plugin.getConfigManager().dataStorage;
-        if (this.dataType == StorageType.MYSQL) {
-            this.connector = new ConnectorMySQL(plugin, config.dataMysqlHost, config.dataMysqlBase, config.dataMysqlUser, config.dataMysqlPassword);
+    protected AbstractDataHandler(@NotNull P plugin) {
+        this(plugin, new DataConfig(plugin.getConfig()));
+    }
+
+    protected AbstractDataHandler(@NotNull P plugin, @NotNull DataConfig config) {
+        super(plugin);
+
+        this.config = config;
+        if (this.getDataType() == StorageType.MYSQL) {
+            this.connector = new ConnectorMySQL(plugin, config);
         }
         else {
-            this.connector = new ConnectorSQLite(plugin);
+            this.connector = new ConnectorSQLite(plugin, config);
         }
-    }
-
-    protected AbstractDataHandler(@NotNull P plugin,
-                                  @NotNull String host, @NotNull String base,
-                                  @NotNull String login, @NotNull String password) throws SQLException {
-        super(plugin);
-        this.dataType = StorageType.MYSQL;
-        this.connector = new ConnectorMySQL(plugin, host, base, login, password);
-    }
-
-    protected AbstractDataHandler(@NotNull P plugin, @NotNull String filePath) throws SQLException {
-        super(plugin);
-        this.dataType = StorageType.SQLITE;
-        this.connector = new ConnectorSQLite(plugin, filePath);
     }
 
     @Override
     protected void onLoad() {
         this.gson = this.registerAdapters(new GsonBuilder().setPrettyPrinting()).create();
+
+        if (this.config != null) {
+            if (this.getConfig().saveInterval > 0) {
+                this.saveTask = new DataSaveTask<>(this);
+                this.saveTask.start();
+            }
+
+            if (this.getConfig().syncInterval > 0) {
+                if (this.getDataType() != StorageType.SQLITE) {
+                    this.synchronizationTask = new DataSynchronizationTask<>(this);
+                    this.synchronizationTask.start();
+                    this.plugin.info("Enabled data synchronization with " + config.syncInterval + " seconds interval.");
+                }
+                else {
+                    this.plugin.warn("Data synchronization is useless for local databases (SQLite). It will be disabled.");
+                }
+            }
+
+            if (this.getConfig().purgeEnabled && this.getConfig().purgePeriod > 0) {
+                this.onPurge();
+            }
+        }
     }
 
     @Override
     protected void onShutdown() {
+        if (this.synchronizationTask != null) {
+            this.synchronizationTask.stop();
+            this.synchronizationTask = null;
+        }
+        if (this.saveTask != null) {
+            this.saveTask.stop();
+            this.saveTask = null;
+        }
+        this.onSynchronize();
+        this.onSave();
         this.getConnector().close();
+    }
+
+    public abstract void onSynchronize();
+
+    public abstract void onSave();
+
+    public abstract void onPurge();
+
+    @NotNull
+    public DataConfig getConfig() {
+        return this.config;
+    }
+
+    @NotNull
+    public StorageType getDataType() {
+        return this.getConfig().storageType;
+    }
+
+    @NotNull
+    public String getTablePrefix() {
+        if (this.getConfig().tablePrefix.isEmpty()) {
+            return this.plugin.getName().replace(" ", "_").toLowerCase();
+        }
+        return this.getConfig().tablePrefix;
     }
 
     @NotNull
     public AbstractDataConnector getConnector() {
-        return connector;
+        return this.connector;
     }
 
     @NotNull
@@ -86,7 +136,7 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
         StringBuilder columns = new StringBuilder();
 
         LinkedHashMap<String, String> valuesMap = new LinkedHashMap<>();
-        valuesMap.put("id", DataTypes.INTEGER.build(this.dataType, 11, true));
+        valuesMap.put("id", DataTypes.INTEGER.build(this.getDataType(), 11, true));
         valuesMap.putAll(valMap);
 
         // Adding all other columns with their types.
@@ -105,7 +155,7 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
         if (!this.hasTable(from)) return;
 
         StringBuilder sql = new StringBuilder();
-        if (this.dataType == StorageType.MYSQL) {
+        if (this.getDataType() == StorageType.MYSQL) {
             sql.append("RENAME TABLE ").append(from).append(" TO ").append(to).append(";");
         }
         else {

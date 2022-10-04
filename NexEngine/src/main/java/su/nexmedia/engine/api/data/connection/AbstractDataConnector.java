@@ -37,7 +37,7 @@ public abstract class AbstractDataConnector {
     }
 
     public void close() {
-        //this.dataSource.close();
+        this.dataSource.close();
     }
 
     @NotNull

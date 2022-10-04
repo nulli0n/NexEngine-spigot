@@ -4,9 +4,11 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexPlugin;
+import su.nexmedia.engine.api.data.config.DataConfig;
+import su.nexmedia.engine.utils.TimeUtil;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 
@@ -16,24 +18,18 @@ public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends 
     protected static final String COL_USER_NAME         = "name";
     protected static final String COL_USER_DATE_CREATED = "dateCreated";
     protected static final String COL_USER_LAST_ONLINE  = "last_online";
+
+    protected final UserDataHolder<P, U> dataHolder;
     protected final String tableUsers;
 
-    public AbstractUserDataHandler(@NotNull P plugin) throws SQLException {
-        super(plugin);
-        this.tableUsers = plugin.getNameRaw() + "_users";
+    protected AbstractUserDataHandler(@NotNull P plugin, @NotNull UserDataHolder<P, U> dataHolder) {
+        this(plugin, dataHolder, new DataConfig(plugin.getConfig()));
     }
 
-    protected AbstractUserDataHandler(@NotNull P plugin,
-                                      @NotNull String host, @NotNull String base,
-                                      @NotNull String login, @NotNull String password) throws SQLException {
-        super(plugin, host, base, login, password);
-        this.tableUsers = plugin.getNameRaw() + "_users";
-    }
-
-    protected AbstractUserDataHandler(@NotNull P plugin,
-                                      @NotNull String filePath, @NotNull String fileName) throws SQLException {
-        super(plugin, filePath);
-        this.tableUsers = plugin.getNameRaw() + "_users";
+    protected AbstractUserDataHandler(@NotNull P plugin, @NotNull UserDataHolder<P, U> dataHolder, @NotNull DataConfig config) {
+        super(plugin, config);
+        this.dataHolder = dataHolder;
+        this.tableUsers = this.getTablePrefix() + "_users";
     }
 
     @Override
@@ -41,7 +37,6 @@ public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends 
         super.onLoad();
 
         this.createUsersTable();
-        this.plugin.runTask(c -> this.purge(), true);
     }
 
     @Override
@@ -49,19 +44,45 @@ public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends 
         super.onShutdown();
     }
 
+    @Override
+    public void onSave() {
+        int off = 0;
+        for (U userLoaded : this.dataHolder.getUserManager().getUsersLoaded()) {
+            if (!userLoaded.isOnline()) {
+                this.dataHolder.getUserManager().getUsersLoadedMap().remove(userLoaded.getId());
+                off++;
+            }
+            this.saveUser(userLoaded);
+        }
+
+        int on = this.dataHolder.getUserManager().getUsersLoadedMap().size();
+        this.plugin.info("Auto-save: Saved " + on + " online users | " + off + " offline users.");
+    }
+
+    @Override
+    public void onPurge() {
+        if (!this.hasTable(this.tableUsers)) return;
+
+        LocalDateTime deadline = LocalDateTime.now().minusDays(this.getConfig().purgePeriod);
+        long deadlineMs = TimeUtil.toEpochMillis(deadline);
+
+        String sql = "DELETE FROM " + this.tableUsers + " WHERE " + COL_USER_LAST_ONLINE + " < " + deadlineMs;
+        DataQueries.executeStatement(this.getConnector(), sql);
+    }
+
     private void createUsersTable() {
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
-        map.put(COL_USER_UUID, DataTypes.CHAR.build(this.dataType, 36));
-        map.put(COL_USER_NAME, DataTypes.STRING.build(this.dataType, 24));
-        map.put(COL_USER_DATE_CREATED, DataTypes.LONG.build(this.dataType, 64));
-        map.put(COL_USER_LAST_ONLINE, DataTypes.LONG.build(this.dataType, 64));
+        map.put(COL_USER_UUID, DataTypes.CHAR.build(this.getDataType(), 36));
+        map.put(COL_USER_NAME, DataTypes.STRING.build(this.getDataType(), 24));
+        map.put(COL_USER_DATE_CREATED, DataTypes.LONG.build(this.getDataType(), 64));
+        map.put(COL_USER_LAST_ONLINE, DataTypes.LONG.build(this.getDataType(), 64));
         this.getColumnsToCreate().forEach((col, type) -> {
             map.merge(col, type, (oldV, newV) -> newV);
         });
         this.createTable(this.tableUsers, map);
 
-        this.addColumn(tableUsers, COL_USER_DATE_CREATED, DataTypes.LONG.build(this.dataType), String.valueOf(System.currentTimeMillis()));
-        this.addColumn(tableUsers, COL_USER_LAST_ONLINE, DataTypes.LONG.build(this.dataType), String.valueOf(System.currentTimeMillis()));
+        this.addColumn(tableUsers, COL_USER_DATE_CREATED, DataTypes.LONG.build(this.getDataType()), String.valueOf(System.currentTimeMillis()));
+        this.addColumn(tableUsers, COL_USER_LAST_ONLINE, DataTypes.LONG.build(this.getDataType()), String.valueOf(System.currentTimeMillis()));
 
         this.onTableCreate();
     }
@@ -79,24 +100,6 @@ public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends 
 
     }
 
-    public void purge() {
-        if (!plugin.getConfigManager().dataPurgeEnabled) return;
-
-        int count = 0;
-        for (U user : this.getUsers()) {
-            long lastOnline = user.getLastOnline();
-
-            long diff = System.currentTimeMillis() - lastOnline;
-            int days = (int) ((diff / (1000 * 60 * 60 * 24)) % 7);
-
-            if (days >= plugin.getConfigManager().dataPurgeDays) {
-                this.deleteUser(user.getUUID().toString());
-                count++;
-            }
-        }
-        plugin.info("[User Data] Purged " + count + " inactive users.");
-    }
-
     @NotNull
     public List<@NotNull U> getUsers() {
         return this.getDatas(this.tableUsers, Collections.emptyMap(), this.getFunctionToUser(), -1);
@@ -108,26 +111,34 @@ public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends 
     }
 
     @Nullable
-    public U getUser(@NotNull UUID uuid) {
-        return this.getUser(uuid.toString(), true);
-    }
-
-    @Nullable
-    public final U getUser(@NotNull String nameOrId, boolean isId) {
+    public final U getUser(@NotNull String name) {
         Map<String, String> whereMap = new HashMap<>();
-        whereMap.put(isId ? COL_USER_UUID : COL_USER_NAME, nameOrId);
+        whereMap.put(COL_USER_NAME, name);
         return this.getData(this.tableUsers, whereMap, this.getFunctionToUser());
     }
 
-    public boolean isUserExists(@NotNull String nameOrId, boolean isId) {
+    @Nullable
+    public final U getUser(@NotNull UUID uuid) {
         Map<String, String> whereMap = new HashMap<>();
-        whereMap.put(isId ? COL_USER_UUID : COL_USER_NAME, nameOrId);
+        whereMap.put(COL_USER_UUID, uuid.toString());
+        return this.getData(this.tableUsers, whereMap, this.getFunctionToUser());
+    }
+
+    public boolean isUserExists(@NotNull String name) {
+        Map<String, String> whereMap = new HashMap<>();
+        whereMap.put(COL_USER_NAME, name);
+        return this.hasData(this.tableUsers, whereMap);
+    }
+
+    public boolean isUserExists(@NotNull UUID uuid) {
+        Map<String, String> whereMap = new HashMap<>();
+        whereMap.put(COL_USER_UUID, uuid.toString());
         return this.hasData(this.tableUsers, whereMap);
     }
 
     public void saveUser(@NotNull U user) {
         LinkedHashMap<String, String> colMap = new LinkedHashMap<>();
-        colMap.put(COL_USER_NAME, user.getOfflinePlayer().getName());
+        colMap.put(COL_USER_NAME, user.getName());
         colMap.put(COL_USER_DATE_CREATED, String.valueOf(user.getDateCreated()));
         colMap.put(COL_USER_LAST_ONLINE, String.valueOf(user.getLastOnline()));
         this.getColumnsToSave(user).forEach((col, val) -> {
@@ -135,16 +146,16 @@ public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends 
         });
 
         Map<String, String> whereMap = new HashMap<>();
-        whereMap.put(COL_USER_UUID, user.getUUID().toString());
+        whereMap.put(COL_USER_UUID, user.getId().toString());
 
         this.saveData(this.tableUsers, colMap, whereMap);
     }
 
     public void addUser(@NotNull U user) {
-        if (this.isUserExists(user.getUUID().toString(), true)) return;
+        if (this.isUserExists(user.getId())) return;
 
         LinkedHashMap<String, String> colMap = new LinkedHashMap<>();
-        colMap.put(COL_USER_UUID, user.getUUID().toString());
+        colMap.put(COL_USER_UUID, user.getId().toString());
         colMap.put(COL_USER_NAME, user.getName());
         colMap.put(COL_USER_DATE_CREATED, String.valueOf(user.getDateCreated()));
         colMap.put(COL_USER_LAST_ONLINE, String.valueOf(user.getLastOnline()));
@@ -154,9 +165,9 @@ public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends 
         this.addData(this.tableUsers, colMap);
     }
 
-    public void deleteUser(@NotNull String uuid) {
-        LinkedHashMap<String, String> whereMap = new LinkedHashMap<>();
-        whereMap.put(COL_USER_UUID, uuid);
+    public void deleteUser(@NotNull UUID uuid) {
+        Map<String, String> whereMap = new LinkedHashMap<>();
+        whereMap.put(COL_USER_UUID, uuid.toString());
 
         DataQueries.executeDelete(this.getConnector(), this.tableUsers, whereMap);
     }

@@ -2,6 +2,7 @@ package su.nexmedia.engine.command.list;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 
 import su.nexmedia.engine.NexPlugin;
@@ -11,8 +12,15 @@ import su.nexmedia.engine.lang.EngineLang;
 
 public class EditorSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> {
 
-    public EditorSubCommand(@NotNull P plugin) {
-        super(plugin, new String[]{"editor"}, plugin.getNameRaw() + ".cmd.editor");
+    protected final EditorHolder<P, ?> editorHolder;
+
+    public EditorSubCommand(@NotNull P plugin, @NotNull EditorHolder<P, ?> editorHolder, @NotNull Permission permission) {
+        this(plugin, editorHolder, permission.getName());
+    }
+
+    public EditorSubCommand(@NotNull P plugin, @NotNull EditorHolder<P, ?> editorHolder, @NotNull String permission) {
+        super(plugin, new String[]{"editor"}, permission);
+        this.editorHolder = editorHolder;
     }
 
     @Override
@@ -35,8 +43,6 @@ public class EditorSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P>
     @Override
     public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
         Player player = (Player) sender;
-        if (this.plugin instanceof EditorHolder<?, ?> editorHolder) {
-            editorHolder.getEditor().open(player, 1);
-        }
+        this.editorHolder.getEditor().open(player, 1);
     }
 }

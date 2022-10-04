@@ -2,6 +2,7 @@ package su.nexmedia.engine;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -27,7 +28,9 @@ import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.hooks.external.citizens.CitizensHook;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.nms.NMS;
+import su.nexmedia.engine.utils.Reflex;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -114,6 +117,25 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
 
     public abstract void registerCommands(@NotNull GeneralCommand<P> mainCommand);
 
+    public abstract void registerPermissions();
+
+    protected void registerPermissions(@NotNull Class<?> clazz) {
+        for (Field field : Reflex.getFields(clazz)) {
+            if (!Permission.class.isAssignableFrom(field.getType())) continue;
+            if (!field.canAccess(null)) continue;
+
+            try {
+                Permission permission = (Permission) field.get(null);
+                if (this.getPluginManager().getPermission(permission.getName()) == null) {
+                    this.getPluginManager().addPermission(permission);
+                }
+            }
+            catch (IllegalAccessException | IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
     @NotNull
     public final JYML getConfig() {
@@ -168,6 +190,8 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         this.langManager = new LangManager<>(this.getSelf());
         this.langManager.setup();
         this.loadLang();
+
+        this.registerPermissions();
 
         // Register plugin commands.
         this.commandManager = new CommandManager<>(this.getSelf());
@@ -234,6 +258,7 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
     }
 
     @NotNull
+    @Deprecated
     public final String getNameRaw() {
         return this.getName().toLowerCase().replace(" ", "").replace("-", "");
     }

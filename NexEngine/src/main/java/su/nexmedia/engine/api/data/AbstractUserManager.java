@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.manager.AbstractListener;
 import su.nexmedia.engine.api.manager.AbstractManager;
-import su.nexmedia.engine.api.task.AbstractTask;
 import su.nexmedia.engine.hooks.Hooks;
 
 import java.util.*;
@@ -19,8 +18,6 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
 
     private final UserDataHolder<P, U> dataHolder;
     private final Map<UUID, U> usersLoaded;
-    private SaveTask saveTask;
-    private SyncTask syncTask;
 
     public AbstractUserManager(@NotNull P plugin, @NotNull UserDataHolder<P, U> dataHolder) {
         super(plugin);
@@ -31,70 +28,18 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     @Override
     protected void onLoad() {
         this.addListener(new PlayerListener(this.plugin));
-
-        this.saveTask = new SaveTask(this.plugin);
-        this.saveTask.start();
-
-        if (this.plugin.getConfigManager().dataSaveInstant && this.plugin.getConfigManager().dataSyncInterval > 0) {
-            this.syncTask = new SyncTask(this.plugin);
-            this.syncTask.start();
-            this.plugin.info("Enabled data synchronization with " + plugin.getConfigManager().dataSyncInterval + " seconds interval.");
-        }
-        else if (!this.plugin.getConfigManager().dataSaveInstant) {
-            this.plugin.warn("Data synchronization is disabled because 'Instant_Save' option is not enabled.");
-        }
     }
 
     @Override
     protected void onShutdown() {
-        if (this.saveTask != null) {
-            this.saveTask.stop();
-            this.saveTask = null;
-        }
-        if (this.syncTask != null) {
-            this.syncTask.stop();
-            this.syncTask = null;
-        }
-        this.onSynchronize();
-        this.autosave();
         this.getUsersLoadedMap().clear();
     }
-
-    protected abstract void onSynchronize();
 
     @NotNull
     protected abstract U createData(@NotNull UUID uuid, @NotNull String name);
 
     public void loadOnlineUsers() {
         this.plugin.getServer().getOnlinePlayers().stream().map(Player::getUniqueId).forEach(this::getUserData);
-    }
-
-    public void autosave() {
-        int off = 0;
-        for (U userOn : this.getUsersLoaded()) {
-            if (!userOn.isOnline()) {
-                this.getUsersLoadedMap().remove(userOn.getUUID());
-                off++;
-            }
-            this.save(userOn);
-        }
-
-        int on = this.getUsersLoadedMap().size();
-        this.plugin.info("Auto-save: Saved " + on + " online users | " + off + " offline users.");
-    }
-
-    public void save(@NotNull U user) {
-        this.dataHolder.getData().saveUser(user);
-    }
-
-    public void save(@NotNull U user, boolean async) {
-        this.plugin.runTask(c -> this.dataHolder.getData().saveUser(user), async);
-    }
-
-    @NotNull
-    @Deprecated
-    public final U getOrLoadUser(@NotNull Player player) {
-        return this.getUserData(player);
     }
 
     /**
@@ -120,12 +65,6 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         return user;
     }
 
-    @Nullable
-    @Deprecated
-    public final U getOrLoadUser(@NotNull String name) {
-        return this.getUserData(name);
-    }
-
     /**
      * Attempts to load user data from online player with that Name (if there is any).
      * In case if no such player is online, attempts to load data from the database.
@@ -141,19 +80,13 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
             .findFirst().orElse(null);
         if (user != null) return user;
 
-        user = this.dataHolder.getData().getUser(name, false);
+        user = this.dataHolder.getData().getUser(name);
         if (user != null) {
             user.onLoad();
             this.cache(user);
         }
 
         return user;
-    }
-
-    @Nullable
-    @Deprecated
-    public final U getOrLoadUser(@NotNull UUID uuid) {
-        return this.getUserData(uuid);
     }
 
     /**
@@ -189,7 +122,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
 
     public void unloadUser(@NotNull U user) {
         user.onUnload();
-        this.save(user, true);
+        this.plugin.runTask(c -> this.dataHolder.getData().saveUser(user), true);
     }
 
     @NotNull
@@ -212,7 +145,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     }
 
     public void cache(@NotNull U user) {
-        this.getUsersLoadedMap().put(user.getUUID(), user);
+        this.getUsersLoadedMap().put(user.getId(), user);
     }
 
     class PlayerListener extends AbstractListener<P> {
@@ -227,7 +160,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
 
             UUID uuid = e.getUniqueId();
             U user;
-            if (!dataHolder.getData().isUserExists(uuid.toString(), true)) {
+            if (!dataHolder.getData().isUserExists(uuid)) {
                 user = createData(uuid, e.getName());
                 user.setRecentlyCreated(true);
                 cache(user);
@@ -247,30 +180,6 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         @EventHandler(priority = EventPriority.MONITOR)
         public void onUserQuit(PlayerQuitEvent e) {
             unloadUser(e.getPlayer());
-        }
-    }
-
-    class SaveTask extends AbstractTask<P> {
-
-        SaveTask(@NotNull P plugin) {
-            super(plugin, plugin.getConfigManager().dataSaveInterval * 60, true);
-        }
-
-        @Override
-        public void action() {
-            autosave();
-        }
-    }
-
-    class SyncTask extends AbstractTask<P> {
-
-        public SyncTask(@NotNull P plugin) {
-            super(plugin, plugin.getConfigManager().dataSyncInterval, true);
-        }
-
-        @Override
-        public void action() {
-            onSynchronize();
         }
     }
 }

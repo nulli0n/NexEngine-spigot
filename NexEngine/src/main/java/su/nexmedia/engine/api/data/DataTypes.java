@@ -1,7 +1,6 @@
 package su.nexmedia.engine.api.data;
 
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.api.data.StorageType;
 
 public class DataTypes {
 

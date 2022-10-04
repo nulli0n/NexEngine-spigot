@@ -129,6 +129,11 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
     }
 
     @Override
+    public void registerPermissions() {
+
+    }
+
+    @Override
     public void loadConfig() {
         EngineConfig.load(this);
     }

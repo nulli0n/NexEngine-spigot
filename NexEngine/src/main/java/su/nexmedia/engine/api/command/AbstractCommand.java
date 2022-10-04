@@ -2,6 +2,7 @@ package su.nexmedia.engine.api.command;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexPlugin;
@@ -36,11 +37,19 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
     }
 
     public AbstractCommand(@NotNull P plugin, @NotNull String[] aliases) {
-        this(plugin, aliases, null);
+        this(plugin, aliases, (String) null);
     }
 
     public AbstractCommand(@NotNull P plugin, @NotNull List<String> aliases, @Nullable String permission) {
         this(plugin, aliases.toArray(new String[0]), permission);
+    }
+
+    public AbstractCommand(@NotNull P plugin, @NotNull List<String> aliases, @Nullable Permission permission) {
+        this(plugin, aliases.toArray(new String[0]), permission);
+    }
+
+    public AbstractCommand(@NotNull P plugin, @NotNull String[] aliases, @Nullable Permission permission) {
+        this(plugin, aliases, permission == null ? null : permission.getName());
     }
 
     public AbstractCommand(@NotNull P plugin, @NotNull String[] aliases, @Nullable String permission) {

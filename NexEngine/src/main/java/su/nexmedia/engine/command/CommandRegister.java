@@ -69,6 +69,7 @@ public class CommandRegister extends Command implements PluginIdentifiableComman
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void unregister(@NotNull String name) {
         SimpleCommandMap map = (SimpleCommandMap) Reflex.getFieldValue(Bukkit.getServer(), "commandMap");
         if (map == null) return;
