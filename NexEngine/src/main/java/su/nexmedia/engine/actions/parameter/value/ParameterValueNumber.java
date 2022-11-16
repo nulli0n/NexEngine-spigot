@@ -2,6 +2,7 @@ package su.nexmedia.engine.actions.parameter.value;
 
 import org.jetbrains.annotations.NotNull;
 
+@Deprecated
 public class ParameterValueNumber {
 
     private double   value;

@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.actions.parameter.value.ParameterValueNumber;
 import su.nexmedia.engine.utils.StringUtil;
 
+@Deprecated
 public class ParameterParserNumber implements IParameterValueParser<ParameterValueNumber> {
 
     @Override

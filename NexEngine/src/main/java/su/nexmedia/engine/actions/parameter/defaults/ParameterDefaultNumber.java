@@ -5,6 +5,7 @@ import su.nexmedia.engine.actions.parameter.AbstractParameter;
 import su.nexmedia.engine.actions.parameter.parser.IParameterValueParser;
 import su.nexmedia.engine.actions.parameter.value.ParameterValueNumber;
 
+@Deprecated // TODO Move in Paramter class as static constructor.
 public class ParameterDefaultNumber extends AbstractParameter<ParameterValueNumber> {
 
     public ParameterDefaultNumber(@NotNull String key, @NotNull String flag) {

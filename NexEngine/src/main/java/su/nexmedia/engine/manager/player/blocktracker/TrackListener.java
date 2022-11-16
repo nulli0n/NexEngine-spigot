@@ -11,10 +11,7 @@ import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.event.world.ChunkUnloadEvent;
-import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.event.world.*;
 import org.bukkit.metadata.FixedMetadataValue;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.api.manager.AbstractListener;
@@ -57,7 +54,7 @@ public class TrackListener extends AbstractListener<NexEngine> {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
-        PlayerBlockTracker.unTrack(event.getBlock());
+        this.plugin.runTask(c -> PlayerBlockTracker.unTrack(event.getBlock()), false);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -93,6 +90,12 @@ public class TrackListener extends AbstractListener<NexEngine> {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onGrow(BlockGrowEvent event) {
         PlayerBlockTracker.unTrack(event.getBlock());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onStructureGrow(StructureGrowEvent e) {
+        if (e.getPlayer() == null) return;
+        PlayerBlockTracker.track(e.getBlocks().stream().map(BlockState::getBlock).toList());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

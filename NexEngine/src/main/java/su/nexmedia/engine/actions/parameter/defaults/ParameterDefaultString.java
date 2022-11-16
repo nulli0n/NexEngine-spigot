@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.actions.parameter.AbstractParameter;
 import su.nexmedia.engine.actions.parameter.parser.IParameterValueParser;
 
+@Deprecated // TODO Move in Paramter class as static constructor.
 public class ParameterDefaultString extends AbstractParameter<String> {
 
     public ParameterDefaultString(@NotNull String key, @NotNull String flag) {

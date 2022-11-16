@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.NexPlugin;
+import su.nexmedia.engine.Version;
 import su.nexmedia.engine.actions.ActionManipulator;
 import su.nexmedia.engine.api.craft.CraftRecipe;
 import su.nexmedia.engine.api.craft.FurnaceRecipe;
@@ -27,6 +28,7 @@ import su.nexmedia.engine.utils.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -69,11 +71,27 @@ public class JYML extends YamlConfiguration {
 
     @NotNull
     public static List<JYML> loadAll(@NotNull String path, boolean deep) {
-        List<JYML> configs = new ArrayList<>();
-        for (File file : FileUtil.getFiles(path, deep)) {
-            configs.add(new JYML(file));
+        return FileUtil.getFiles(path, deep).stream().filter(file -> file.getName().endsWith(".yml")).map(JYML::new).toList();
+    }
+
+    public void initializeOptions(@NotNull Class<?> clazz) {
+        initializeOptions(clazz, this);
+    }
+
+    public static void initializeOptions(@NotNull Class<?> clazz, @NotNull JYML cfg) {
+        for (Field field : Reflex.getFields(clazz)) {
+            if (!JOption.class.isAssignableFrom(field.getType())) continue;
+            if (!field.canAccess(null)) continue;
+
+            try {
+                JOption<?> option = (JOption<?>) field.get(null);
+                option.load(cfg);
+            }
+            catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
-        return configs;
+        cfg.saveChanges();
     }
 
     @NotNull
@@ -120,18 +138,59 @@ public class JYML extends YamlConfiguration {
 
     @Override
     public void set(@NotNull String path, @Nullable Object o) {
-        /*
-         * if (o != null && o instanceof String) { String s = (String) o; s =
-         * s.replace('§', '&'); o = s; }
-         */
-        if (o instanceof Set) {
-            o = new ArrayList<>((Set<?>) o);
+        if (o instanceof JWriter writer) {
+            writer.write(this, path);
         }
-        else if (o instanceof Location) {
-            o = LocationUtil.serialize((Location) o);
+        else {
+            if (o instanceof String str) {
+                o = StringUtil.colorRaw(str);
+            }
+            else if (o instanceof Set<?> set) {
+                List<Object> list = new ArrayList<>(set);
+                list.replaceAll(obj -> obj instanceof String str ? StringUtil.colorRaw(str) : obj);
+                o = list;
+            }
+            else if (o instanceof List<?> set) {
+                List<Object> list = new ArrayList<>(set);
+                list.replaceAll(obj -> obj instanceof String str ? StringUtil.colorRaw(str) : obj);
+                o = list;
+            }
+            else if (o instanceof Map<?, ?> map) {
+                map.forEach((key, value) -> {
+                    this.set(path + "." + key, value);
+                });
+                this.isChanged = true;
+                return;
+            }
+            else if (o instanceof Location) {
+                o = LocationUtil.serialize((Location) o);
+            }
+            super.set(path, o);
         }
-        super.set(path, o);
         this.isChanged = true;
+    }
+
+    public void setComments(@NotNull String path, @Nullable String... comments) {
+        this.setComments(path, Arrays.asList(comments));
+    }
+
+    public void setInlineComments(@NotNull String path, @Nullable String... comments) {
+        this.setInlineComments(path, Arrays.asList(comments));
+    }
+
+    @Override
+    public void setComments(@NotNull String path, @Nullable List<String> comments) {
+        if (Version.isBehind(Version.V1_18_R2)) return;
+        if (this.getComments(path).equals(comments)) return;
+
+        super.setComments(path, comments);
+        this.isChanged = true;
+    }
+
+    @Override
+    public void setInlineComments(@NotNull String path, @Nullable List<String> comments) {
+        if (Version.isBehind(Version.V1_18_R2)) return;
+        super.setInlineComments(path, comments);
     }
 
     public boolean remove(@NotNull String path) {
@@ -234,117 +293,19 @@ public class JYML extends YamlConfiguration {
     }
 
     @NotNull
+    public ItemStack getItem(@NotNull String path, @Nullable ItemStack def) {
+        ItemStack item = this.getItem(path);
+        return item.getType().isAir() && def != null ? def : item;
+    }
+
+    @NotNull
     public ItemStack getItem(@NotNull String path) {
-        return this.getItem(path, null);
-    }
-
-    @NotNull
-    public ItemStack getItem(@NotNull String path, @Nullable String id) {
-        ItemStack item = this.getItemOld(path, false);
-
-        if (path.endsWith(".")) path = path.substring(0, path.length() - 1);
-        if (this.contains(path + ".material")) {
-            this.remove(path);
-            this.setItem(path, item);
-            this.saveChanges();
-        }
-
-        return this.getItemNew(path, id);
-    }
-
-    @NotNull
-    @Deprecated
-    public ItemStack getItemOld(@NotNull String path) {
-        return this.getItem(path, null);
-    }
-
-    @NotNull
-    @Deprecated
-    public ItemStack getItemOld(@NotNull String path, boolean id) {
         if (!path.isEmpty() && !path.endsWith(".")) path = path + ".";
 
-        Material material = Material.getMaterial(this.getString(path + "material", "").toUpperCase());
-        if (material == null || material == Material.AIR) return this.getItemNew(path);
-
-        ItemStack item = new ItemStack(material);
-        item.setAmount(this.getInt(path + "amount", 1));
-
-        String hash = this.getString(path + "skull-hash", this.getString(path + "head-texture"));
-        if (!hash.isEmpty()) {
-            ItemUtil.setSkullTexture(item, hash);
+        if (this.getBoolean(path + "Encoded.Use")) {
+            ItemStack item = this.getItemEncoded(path + "Encoded.Value");
+            return item == null ? new ItemStack(Material.AIR) : item;
         }
-
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return item;
-
-        int durability = this.getInt(path + "durability");
-        if (durability > 0 && meta instanceof Damageable damageable) {
-            damageable.setDamage(durability);
-        }
-
-        String name = this.getString(path + "name");
-        meta.setDisplayName(name != null ? StringUtil.color(name) : null);
-        meta.setLore(StringUtil.color(this.getStringList(path + "lore")));
-
-        if (this.contains(path + "enchants")) {
-            for (String sKey : this.getSection(path + "enchants")) {
-                Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(sKey.toLowerCase()));
-                if (enchantment == null)
-                    continue;
-
-                int eLvl = this.getInt(path + "enchants." + sKey);
-                if (eLvl <= 1)
-                    continue;
-
-                meta.addEnchant(enchantment, eLvl, true);
-            }
-        }
-        else if (this.getBoolean(path + "enchanted")) {
-            meta.addEnchant(Enchantment.DURABILITY, 1, true);
-        }
-
-        int model = this.getInt(path + "model-data", this.getInt(path + "Custom_Model_Data"));
-        meta.setCustomModelData(model != 0 ? model : null);
-
-        List<String> flags = this.getStringList(path + "item-flags");
-        if (flags.contains(Placeholders.MASK_ANY)) {
-            meta.addItemFlags(ItemFlag.values());
-        }
-        else {
-            for (String flag : flags) {
-                ItemFlag itemFlag = CollectionsUtil.getEnum(flag, ItemFlag.class);
-                if (itemFlag != null)
-                    meta.addItemFlags(itemFlag);
-            }
-        }
-
-        String colorRaw = this.getString(path + "color");
-        if (colorRaw != null && !colorRaw.isEmpty()) {
-            Color color = StringUtil.parseColor(colorRaw);
-            if (meta instanceof LeatherArmorMeta armorMeta) {
-                armorMeta.setColor(color);
-            }
-            else if (meta instanceof PotionMeta potionMeta) {
-                potionMeta.setColor(color);
-            }
-        }
-
-        meta.setUnbreakable(this.getBoolean(path + "unbreakable"));
-        item.setItemMeta(meta);
-
-        return item;
-    }
-
-    @NotNull
-    @Deprecated
-    public ItemStack getItemNew(@NotNull String path) {
-        return this.getItemNew(path, null);
-    }
-
-    @NotNull
-    @Deprecated
-    public ItemStack getItemNew(@NotNull String path, @Nullable String id) {
-        if (!path.isEmpty() && !path.endsWith(".")) path = path + ".";
 
         Material material = Material.getMaterial(this.getString(path + "Material", "").toUpperCase());
         if (material == null || material == Material.AIR) return new ItemStack(Material.AIR);
@@ -472,21 +433,30 @@ public class JYML extends YamlConfiguration {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
 
+        boolean hasNbt = !meta.getPersistentDataContainer().isEmpty();
+        if (hasNbt) {
+            this.set(path + "Encoded.Use", true);
+            this.setItemEncoded(path + "Encoded.Value", item);
+        }
+        else this.set(path + "Encoded.Use", false);
+
         if (meta instanceof Damageable damageable) {
-            int durability = damageable.getDamage();
-            this.set(path + "Durability", durability);
+            //int durability = damageable.getDamage();
+            this.set(path + "Durability", damageable.getDamage());
         }
 
-        if (meta.hasDisplayName()) {
+        /*if (meta.hasDisplayName()) {
             this.set(path + "Name", StringUtil.colorRaw(meta.getDisplayName()));
-        }
+        }*/
 
-        List<String> lore = meta.getLore();
-        if (lore != null) {
+        //List<String> lore = meta.getLore();
+        this.set(path + "Name", meta.getDisplayName());
+        this.set(path + "Lore", meta.getLore());
+        /*if (lore != null) {
             List<String> loreRaw = new ArrayList<>();
             lore.forEach(line -> loreRaw.add(StringUtil.colorRaw(line)));
             this.set(path + "Lore", loreRaw);
-        }
+        }*/
 
         for (Map.Entry<Enchantment, Integer> entry : meta.getEnchants().entrySet()) {
             this.set(path + "Enchants." + entry.getKey().getKey().getKey(), entry.getValue());

@@ -5,6 +5,7 @@ import su.nexmedia.engine.actions.parameter.parser.IParameterValueParser;
 
 import java.util.regex.Pattern;
 
+// TODO Remove abstraction
 public abstract class AbstractParameter<T> {
 
     protected final String  name;
@@ -33,5 +34,6 @@ public abstract class AbstractParameter<T> {
     }
 
     @NotNull
+    @Deprecated // TODO Create field, move in constructor
     public abstract IParameterValueParser<T> getParser();
 }

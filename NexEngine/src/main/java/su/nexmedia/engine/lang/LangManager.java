@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.config.JYML;
+import su.nexmedia.engine.api.editor.EditorButtonType;
 import su.nexmedia.engine.api.lang.LangKey;
 import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.api.manager.AbstractManager;
@@ -161,6 +162,23 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
             return NexPlugin.getEngine().getLangManager().getEnum(e);
         }
         return locEnum == null ? "null" : locEnum;
+    }
+
+    public void setupEditorEnum(@NotNull Class<? extends Enum<? extends EditorButtonType>> clazz) {
+        if (!clazz.isEnum()) return;
+        for (Object eName : clazz.getEnumConstants()) {
+            if (!(eName instanceof EditorButtonType buttonType)) continue;
+            if (buttonType.getMaterial().isAir()) continue;
+
+            String nameRaw = buttonType.name();
+            String path = "Editor." + clazz.getSimpleName() + "." + nameRaw + ".";
+
+            this.getConfig().addMissing(path + "Name", buttonType.getName());
+            this.getConfig().addMissing(path + "Lore", buttonType.getLore());
+
+            buttonType.setName(this.getConfig().getString(path + "Name", nameRaw));
+            buttonType.setLore(this.getConfig().getStringList(path + "Lore"));
+        }
     }
 
     @NotNull

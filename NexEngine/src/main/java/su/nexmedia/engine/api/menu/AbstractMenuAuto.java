@@ -18,7 +18,7 @@ public abstract class AbstractMenuAuto<P extends NexPlugin<P>, I> extends Abstra
         super(plugin, cfg, path);
     }
 
-    public AbstractMenuAuto(@NotNull P plugin, @NotNull String title, int size, int[] slots) {
+    public AbstractMenuAuto(@NotNull P plugin, @NotNull String title, int size/*, int[] slots*/) {
         super(plugin, title, size);
     }
 

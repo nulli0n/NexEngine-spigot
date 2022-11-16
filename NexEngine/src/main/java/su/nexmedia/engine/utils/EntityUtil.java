@@ -8,11 +8,17 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.utils.random.Rnd;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
 
 public class EntityUtil {
 
@@ -26,6 +32,7 @@ public class EntityUtil {
         return instance == null ? 0D : instance.getBaseValue();
     }
 
+    @Deprecated
     public static ItemStack[] getArmor(@NotNull LivingEntity entity) {
         EntityEquipment equip = entity.getEquipment();
         if (equip == null) return new ItemStack[4];
@@ -33,6 +40,34 @@ public class EntityUtil {
         return equip.getArmorContents();
     }
 
+    @NotNull
+    public static Map<EquipmentSlot, ItemStack> getEquippedItems(@NotNull LivingEntity entity) {
+        return getEquippedItems(entity, EquipmentSlot.values());
+    }
+
+    @NotNull
+    public static Map<EquipmentSlot, ItemStack> getEquippedItems(@NotNull LivingEntity entity, @NotNull EquipmentSlot... slots) {
+        EntityEquipment equipment = entity.getEquipment();
+        if (equipment == null) return Collections.emptyMap();
+
+        Map<EquipmentSlot, ItemStack> map = new HashMap<>();
+        Stream.of(slots).forEach(slot -> {
+            map.put(slot, equipment.getItem(slot));
+        });
+        return map;
+    }
+
+    @NotNull
+    public static Map<EquipmentSlot, ItemStack> getEquippedHands(@NotNull LivingEntity entity) {
+        return getEquippedItems(entity, EquipmentSlot.HAND, EquipmentSlot.OFF_HAND);
+    }
+
+    @NotNull
+    public static Map<EquipmentSlot, ItemStack> getEquippedArmor(@NotNull LivingEntity entity) {
+        return getEquippedItems(entity, EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD);
+    }
+
+    @Deprecated
     public static ItemStack[] getEquipment(@NotNull LivingEntity entity) {
         ItemStack[] items = new ItemStack[6];
 

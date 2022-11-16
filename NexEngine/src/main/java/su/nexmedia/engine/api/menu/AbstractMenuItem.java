@@ -32,7 +32,11 @@ public abstract class AbstractMenuItem implements IMenuItem {
     }
 
     public AbstractMenuItem(@NotNull ItemStack item, int[] slots) {
-        this(UUID.randomUUID().toString(), null, slots,
+        this(item, null, slots);
+    }
+
+    public AbstractMenuItem(@NotNull ItemStack item, @Nullable Enum<?> type, int[] slots) {
+        this(UUID.randomUUID().toString(), type, slots,
             new HashMap<>(),
             new HashMap<>(),
 

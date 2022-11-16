@@ -7,6 +7,7 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.actions.ActionsManager;
 import su.nexmedia.engine.api.command.GeneralCommand;
+import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.config.EngineConfig;
 import su.nexmedia.engine.craft.CraftManager;
 import su.nexmedia.engine.editor.EditorManager;
@@ -141,6 +142,8 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
     @Override
     public void loadLang() {
         this.getLangManager().loadMissing(EngineLang.class);
+        this.getLangManager().setupEditorEnum(MenuItemType.class);
+        this.getLang().saveChanges();
     }
 
     @NotNull
