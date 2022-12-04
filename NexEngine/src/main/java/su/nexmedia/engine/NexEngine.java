@@ -13,9 +13,7 @@ import su.nexmedia.engine.craft.CraftManager;
 import su.nexmedia.engine.editor.EditorManager;
 import su.nexmedia.engine.hooks.HookManager;
 import su.nexmedia.engine.hooks.Hooks;
-import su.nexmedia.engine.hooks.external.MythicMobsHook;
 import su.nexmedia.engine.hooks.external.VaultHook;
-import su.nexmedia.engine.hooks.external.WorldGuardHook;
 import su.nexmedia.engine.hooks.external.citizens.CitizensHook;
 import su.nexmedia.engine.lang.EngineLang;
 import su.nexmedia.engine.manager.player.blocktracker.PlayerBlockTracker;
@@ -34,7 +32,7 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
     ActionsManager actionsManager;
     CraftManager   craftManager;
     private EditorManager editorManager;
-    private HookManager   hookManager;
+    @Deprecated private HookManager   hookManager;
 
     public NexEngine() {
         instance = this;
@@ -117,11 +115,16 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
         }
 
         PlayerBlockTracker.shutdown();
+        if (Hooks.hasCitizens()) CitizensHook.shutdown();
+        if (Hooks.hasVault()) VaultHook.shutdown();
     }
 
     @Override
     public void registerHooks() {
-        this.registerHook(Hooks.VAULT, VaultHook.class);
+        //this.registerHook(Hooks.VAULT, VaultHook.class);
+        if (Hooks.hasVault()) {
+            VaultHook.setup();
+        }
     }
 
     @Override
@@ -147,6 +150,7 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
     }
 
     @NotNull
+    @Deprecated
     public HookManager getHookManager() {
         return this.hookManager;
     }
@@ -163,14 +167,14 @@ public class NexEngine extends NexPlugin<NexEngine> implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onHookLate(PluginEnableEvent e) {
         String name = e.getPlugin().getName();
-        if (name.equalsIgnoreCase(Hooks.MYTHIC_MOBS)) {
-            this.registerHook(Hooks.MYTHIC_MOBS, MythicMobsHook.class);
+        /*if (name.equalsIgnoreCase(Hooks.MYTHIC_MOBS)) {
+            //this.registerHook(Hooks.MYTHIC_MOBS, MythicMobsHook.class);
         }
         else if (name.equalsIgnoreCase(Hooks.WORLD_GUARD)) {
-            this.registerHook(Hooks.WORLD_GUARD, WorldGuardHook.class);
-        }
-        else if (name.equalsIgnoreCase(Hooks.CITIZENS)) {
-            this.registerHook(Hooks.CITIZENS, CitizensHook.class);
+            //this.registerHook(Hooks.WORLD_GUARD, WorldGuardHook.class);
+        }*/
+        if (name.equalsIgnoreCase(Hooks.CITIZENS)) {
+            CitizensHook.setup();
         }
     }
 }

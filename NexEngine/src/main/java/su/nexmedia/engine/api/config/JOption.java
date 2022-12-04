@@ -2,6 +2,7 @@ package su.nexmedia.engine.api.config;
 
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.utils.StringUtil;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class JOption<T> {
     protected final String[]       description;
     protected final T              defaultValue;
     protected       T              value;
+    protected JWriter writer;
 
     public JOption(@NotNull String path, @NotNull ValueLoader<T> valueLoader, @NotNull T defaultValue) {
         this(path, "", valueLoader, defaultValue);
@@ -80,10 +82,30 @@ public class JOption<T> {
         return new JOption<>(path, description, LOADER_ITEM, defaultValue);
     }
 
+    @Deprecated
     public void load(@NotNull JYML cfg) {
-        cfg.addMissing(this.getPath(), this.getDefaultValue());
+        this.read(cfg);
+    }
+
+    public void read(@NotNull JYML cfg) {
+        if (!cfg.contains(this.getPath())) {
+            this.write(cfg);
+        }
         cfg.setComments(this.getPath(), this.getDescription());
         this.value = this.valueLoader.loadFromConfig(cfg, this.getPath(), this.getDefaultValue());
+    }
+
+    public void write(@NotNull JYML cfg) {
+        if (this.getWriter() != null) {
+            this.getWriter().write(cfg, this.getPath());
+        }
+        else {
+            cfg.set(this.getPath(), this.get());
+        }
+    }
+
+    public void remove(@NotNull JYML cfg) {
+        cfg.remove(this.getPath());
     }
 
     @NotNull
@@ -108,19 +130,37 @@ public class JOption<T> {
 
     @NotNull
     public T get() {
-        return value;
+        return this.value == null ? this.getDefaultValue() : this.value;
     }
 
+    public void set(@NotNull T value) {
+        this.value = value;
+    }
+
+    @Nullable
+    public JWriter getWriter() {
+        return writer;
+    }
+
+    @NotNull
+    public JOption<T> setWriter(@Nullable JWriter writer) {
+        this.writer = writer;
+        return this;
+    }
+
+    @Deprecated
     public void set(@NotNull JYML cfg, @NotNull T value) {
         cfg.set(this.getPath(), value);
     }
 
-    public void remove(@NotNull JYML cfg) {
-        cfg.remove(this.getPath());
-    }
-
+    // TODO Rename to Reader, add Writer interface here
     public interface ValueLoader<T> {
 
         @NotNull T loadFromConfig(@NotNull JYML cfg, @NotNull String path, @NotNull T def);
+    }
+
+    public interface Writer {
+
+        void write(@NotNull JYML cfg, @NotNull String path);
     }
 }

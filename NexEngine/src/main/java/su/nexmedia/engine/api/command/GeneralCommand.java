@@ -62,8 +62,8 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
         return command;
     }
 
-    private int countChildren(@NotNull String[] args) {
-        AbstractCommand<P> command = this;//.defaultCommand;
+    /*private int countChildren(@NotNull String[] args) {
+        AbstractCommand<P> command = this;
         int childCount = 0;
         while (args.length > childCount) {
             AbstractCommand<P> child = command.getChildren(args[childCount]);
@@ -73,32 +73,16 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
             childCount++;
         }
         return childCount;
-    }
+    }*/
 
     @Override
-    public final boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd,
-                                   @NotNull String label, String[] args) {
-
-        /*int childAmount = this.countChildren(args);
-        if (this.getChildrens().isEmpty() || (args.length - childAmount == 0 && this.defaultCommand == null)) {
-            this.execute(sender, label, args);
-            return true;
-        }*/
-
-        AbstractCommand<P> command = this.findChildren(args);//this;//.defaultCommand;
-        /*int childCount = 0;
-        while (args.length > childCount) {
-            AbstractCommand<P> child = command.getChildren(args[childCount++]);
-            if (child == null) break;
-
-            command = child;
-        }*/
+    public final boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
+        AbstractCommand<P> command = this.findChildren(args);
         if (command instanceof GeneralCommand<P> generalCommand) {
             if (generalCommand.defaultCommand != null) {
                 command = generalCommand.defaultCommand;
             }
         }
-
         command.execute(sender, label, args);
         return true;
     }
@@ -109,13 +93,6 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
 
         if (!(sender instanceof Player player) || args.length == 0) return Collections.emptyList();
 
-        /*if (args.length == 1 && !this.getChildrens().isEmpty()) {
-            List<String> list = new ArrayList<>();
-            this.getChildrens().stream().filter(child -> child.hasPermission(sender))
-                    .forEach(child -> list.addAll(Arrays.asList(child.getAliases())));
-            return StringUT.getByFirstLetters(args[0], list);
-        }*/
-
         AbstractCommand<P> command = this.findChildren(args);
         if (!command.hasPermission(sender)) return Collections.emptyList();
 
@@ -125,15 +102,6 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
                 .forEach(child -> list.addAll(Arrays.asList(child.getAliases())));
             return StringUtil.getByFirstLetters(args[args.length - 1], list);
         }
-
-        /*int parents = 0;
-        AbstractCommand<P> parent = command.getParent();
-        while (parent != null) {
-            parents++;
-            parent = parent.getParent();
-        }
-
-        int index = command.equals(this) ? (args.length) : (args.length - parents);*/
 
         List<String> list = command.getTab(player, command.equals(this) ? (args.length) : (args.length - 1), args);
         return StringUtil.getByFirstLetters(args[args.length - 1], list);

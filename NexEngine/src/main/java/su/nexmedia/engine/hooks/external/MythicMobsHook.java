@@ -10,17 +10,15 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.NexEngine;
-import su.nexmedia.engine.api.hook.AbstractHook;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MythicMobsHook extends AbstractHook<NexEngine> {
+public class MythicMobsHook /*extends AbstractHook<NexEngine>*/ {
 
-    private static MythicBukkit mythicMobs;
+    static MythicBukkit mythicMobs = MythicBukkit.inst();
 
-    public MythicMobsHook(@NotNull NexEngine plugin, @NotNull String pluginName) {
+    /*public MythicMobsHook(@NotNull NexEngine plugin, @NotNull String pluginName) {
         super(plugin, pluginName);
     }
 
@@ -33,7 +31,7 @@ public class MythicMobsHook extends AbstractHook<NexEngine> {
     @Override
     public void shutdown() {
         mythicMobs = null;
-    }
+    }*/
 
     public static boolean isMythicMob(@NotNull Entity entity) {
         return mythicMobs.getAPIHelper().isMythicMob(entity);

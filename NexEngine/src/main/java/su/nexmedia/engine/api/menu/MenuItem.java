@@ -16,11 +16,19 @@ public class MenuItem extends AbstractMenuItem {
     }
 
     public MenuItem(@NotNull ItemStack item, int... slots) {
-        super(item, null, slots);
+        super(item, slots);
     }
 
     public MenuItem(@NotNull ItemStack item, @Nullable Enum<?> type, int... slots) {
         super(item, type, slots);
+    }
+
+    public MenuItem(@NotNull String id, @NotNull ItemStack item, int... slots) {
+        super(id, item, null, slots);
+    }
+
+    public MenuItem(@NotNull String id, @NotNull ItemStack item, @Nullable Enum<?> type, int... slots) {
+        super(id, item, type, slots);
     }
 
     public MenuItem(

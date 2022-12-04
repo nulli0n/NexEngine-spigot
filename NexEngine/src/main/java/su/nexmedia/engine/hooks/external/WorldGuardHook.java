@@ -12,24 +12,22 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.NexEngine;
-import su.nexmedia.engine.api.hook.AbstractHook;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class WorldGuardHook extends AbstractHook<NexEngine> {
+public class WorldGuardHook /*extends AbstractHook<NexEngine>*/ {
 
-    private static WorldGuard worldGuard;
+    static WorldGuard worldGuard = WorldGuard.getInstance();
 
-    public WorldGuardHook(@NotNull NexEngine plugin, @NotNull String pluginName) {
+    /*public WorldGuardHook(@NotNull NexEngine plugin, @NotNull String pluginName) {
         super(plugin, pluginName);
     }
 
     @Override
     public boolean setup() {
-        worldGuard = WorldGuard.getInstance();
+        //worldGuard = WorldGuard.getInstance();
         return true;
     }
 
@@ -37,6 +35,10 @@ public class WorldGuardHook extends AbstractHook<NexEngine> {
     public void shutdown() {
         worldGuard = null;
     }
+
+    public static boolean isEnabled() {
+        return worldGuard != null;
+    }*/
 
     public static boolean canFights(@NotNull Entity damager, @NotNull Entity victim) {
         return WorldGuardPlugin.inst().createProtectionQuery().testEntityDamage(damager, victim);

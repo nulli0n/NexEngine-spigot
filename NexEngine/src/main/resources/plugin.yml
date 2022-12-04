@@ -1,11 +1,11 @@
 name: NexEngine
 main: su.nexmedia.engine.NexEngine
 version: '${project.version} build-${buildNumber}'
-description: NEX Plugin Engine
-author: NEX-Media
+description: Plugin Engine
+author: NightExpress
 softdepend: [ Vault ]
 loadbefore: [ WorldGuard, MythicMobs, Citizens ]
-api-version: 1.16
+api-version: 1.17
 load: STARTUP
 libraries:
   - com.zaxxer:HikariCP:5.0.1

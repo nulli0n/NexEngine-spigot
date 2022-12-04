@@ -6,6 +6,7 @@ import su.nexmedia.engine.api.config.JYML;
 
 import java.io.File;
 
+@Deprecated
 public abstract class AbstractLoadableItem<P extends NexPlugin<P>> implements ConfigHolder {
 
     protected final P      plugin;

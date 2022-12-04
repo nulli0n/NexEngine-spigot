@@ -16,6 +16,8 @@ public abstract class AbstractDataConnector {
     protected final HikariConfig config;
     protected final HikariDataSource dataSource;
 
+    // хочу сказать спасибо всем с stackoverflow, cyberforum, spigotmc и остальным!!
+
     public AbstractDataConnector(@NotNull NexPlugin<?> plugin, @NotNull String url) {
         this(plugin, url, null, null);
     }
@@ -32,7 +34,10 @@ public abstract class AbstractDataConnector {
         this.config.addDataSourceProperty("cachePrepStmts", "true");
         this.config.addDataSourceProperty("prepStmtCacheSize", "250");
         this.config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
-
+        // SQLite don't need more than 1 active connection.
+        if (this instanceof ConnectorSQLite) {
+            this.config.setMaximumPoolSize(1);
+        }
         this.dataSource = new HikariDataSource(this.config);
     }
 

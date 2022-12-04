@@ -3,8 +3,8 @@ package su.nexmedia.engine.api.menu;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.type.ClickType;
 import su.nexmedia.engine.actions.ActionManipulator;
+import su.nexmedia.engine.api.type.ClickType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,10 +36,15 @@ public abstract class AbstractMenuItem implements IMenuItem {
     }
 
     public AbstractMenuItem(@NotNull ItemStack item, @Nullable Enum<?> type, int[] slots) {
-        this(UUID.randomUUID().toString(), type, slots,
-            new HashMap<>(),
-            new HashMap<>(),
+        this(UUID.randomUUID().toString(), item, type, slots);
+    }
 
+    public AbstractMenuItem(@NotNull String id, @NotNull ItemStack item, int[] slots) {
+        this(id, item, null, slots);
+    }
+
+    public AbstractMenuItem(@NotNull String id, @NotNull ItemStack item, @Nullable Enum<?> type, int[] slots) {
+        this(id, type, slots, new HashMap<>(), new HashMap<>(),
             0, new String[0], true, false);
 
         MenuItemDisplay itemDisplay = new MenuItemDisplay(item);

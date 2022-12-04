@@ -10,37 +10,41 @@ import org.bukkit.event.EventPriority;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.NexPlugin;
-import su.nexmedia.engine.api.hook.AbstractHook;
+import su.nexmedia.engine.api.manager.AbstractListener;
 
 import java.util.*;
 
-public class CitizensHook extends AbstractHook<NexEngine> {
+public final class CitizensHook extends AbstractListener<NexEngine> {
 
-    private static Map<NexPlugin<?>, Set<TraitInfo>>        traits;
-    private static Map<NexPlugin<?>, Set<CitizensListener>> listeners;
+    private static final Map<NexPlugin<?>, Set<TraitInfo>>        TRAITS    = new HashMap<>();
+    private static final Map<NexPlugin<?>, Set<CitizensListener>> LISTENERS = new HashMap<>();
 
-    public CitizensHook(@NotNull NexEngine plugin, @NotNull String pluginName) {
+    private static CitizensHook instance;
+
+    /*public CitizensHook(@NotNull NexEngine plugin, @NotNull String pluginName) {
         super(plugin, pluginName);
-    }
+    }*/
 
-    @Override
-    public boolean setup() {
-        traits = new HashMap<>();
-        listeners = new HashMap<>();
-
+    private CitizensHook(NexEngine plugin) {
+        super(plugin);
         this.registerListeners();
-        return true;
     }
 
-    @Override
-    public void shutdown() {
-        this.unregisterListeners();
+    public static void setup() {
+        if (instance == null) {
+            instance = new CitizensHook(NexEngine.get());
+        }
+    }
 
-        traits.forEach((plugin, traits) -> {
-            traits.forEach(trait -> CitizensAPI.getTraitFactory().deregisterTrait(trait));
-        });
-        traits.clear();
-        listeners.clear();
+    public static void shutdown() {
+        if (instance != null) {
+            instance.unregisterListeners();
+            TRAITS.forEach((plugin, traits) -> {
+                traits.forEach(trait -> CitizensAPI.getTraitFactory().deregisterTrait(trait));
+            });
+            TRAITS.clear();
+            LISTENERS.clear();
+        }
     }
 
     public static void addListener(@NotNull NexPlugin<?> plugin, @NotNull CitizensListener listener) {
@@ -49,11 +53,11 @@ public class CitizensHook extends AbstractHook<NexEngine> {
 
     @NotNull
     public static Set<CitizensListener> getListeners(@NotNull NexPlugin<?> plugin) {
-        return listeners.computeIfAbsent(plugin, set -> new HashSet<>());
+        return LISTENERS.computeIfAbsent(plugin, set -> new HashSet<>());
     }
 
     public static void unregisterListeners(@NotNull NexPlugin<?> plugin) {
-        if (listeners.remove(plugin) != null) {
+        if (LISTENERS.remove(plugin) != null) {
             plugin.info("[Citizens Hook] Unregistered listeners");
         }
     }
@@ -65,34 +69,34 @@ public class CitizensHook extends AbstractHook<NexEngine> {
 
     public static void registerTrait(@NotNull NexPlugin<?> plugin, @NotNull TraitInfo trait) {
         unregisterTrait(plugin, trait);
-        if (traits.computeIfAbsent(plugin, set -> new HashSet<>()).add(trait)) {
+        if (TRAITS.computeIfAbsent(plugin, set -> new HashSet<>()).add(trait)) {
             plugin.info("[Citizens Hook] Registered trait: " + trait.getTraitName());
             CitizensAPI.getTraitFactory().registerTrait(trait);
         }
     }
 
     public static void unregisterTrait(@NotNull NexPlugin<?> plugin, @NotNull TraitInfo trait) {
-        if (traits.getOrDefault(plugin, Collections.emptySet()).remove(trait)) {
+        if (TRAITS.getOrDefault(plugin, Collections.emptySet()).remove(trait)) {
             plugin.info("[Citizens Hook] Unregistered trait: " + trait.getTraitName());
         }
         CitizensAPI.getTraitFactory().deregisterTrait(trait);
     }
 
     public static void unregisterTraits(@NotNull NexPlugin<?> plugin) {
-        traits.getOrDefault(plugin, Collections.emptySet()).forEach(trait -> {
+        TRAITS.getOrDefault(plugin, Collections.emptySet()).forEach(trait -> {
             plugin.info("[Citizens Hook] Unregistered trait: " + trait.getTraitName());
             CitizensAPI.getTraitFactory().deregisterTrait(trait);
         });
-        traits.remove(plugin);
+        TRAITS.remove(plugin);
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public static void onLeftClick(NPCLeftClickEvent e) {
-        listeners.values().forEach(set -> set.forEach(listener -> listener.onLeftClick(e)));
+        LISTENERS.values().forEach(set -> set.forEach(listener -> listener.onLeftClick(e)));
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public static void onRightClick(NPCRightClickEvent e) {
-        listeners.values().forEach(set -> set.forEach(listener -> listener.onRightClick(e)));
+        LISTENERS.values().forEach(set -> set.forEach(listener -> listener.onRightClick(e)));
     }
 }

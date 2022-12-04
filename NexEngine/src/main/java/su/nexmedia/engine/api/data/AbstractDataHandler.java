@@ -194,6 +194,13 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
         DataQueries.executeStatement(this.getConnector(), sql.toString());
     }
 
+    protected final void removeColumn(@NotNull String table, @NotNull String column) {
+        if (!this.hasColumn(table, column)) return;
+
+        String sql = "ALTER TABLE " + table + " DROP COLUMN " + column;
+        DataQueries.executeStatement(this.getConnector(), sql);
+    }
+
     protected final void renameColumn(@NotNull String table, @NotNull String from, @NotNull String to) {
         if (!this.hasColumn(table, from)) return;
 

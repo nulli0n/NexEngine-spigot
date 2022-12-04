@@ -78,14 +78,26 @@ public class JYML extends YamlConfiguration {
         initializeOptions(clazz, this);
     }
 
+    public void initializeOptions(@NotNull Object from) {
+        initializeOptions(from, this);
+    }
+
     public static void initializeOptions(@NotNull Class<?> clazz, @NotNull JYML cfg) {
+        initializeOptions(clazz, cfg, null);
+    }
+
+    public static void initializeOptions(@NotNull Object from, @NotNull JYML cfg) {
+        initializeOptions(from.getClass(), cfg, from);
+    }
+
+    public static void initializeOptions(@NotNull Class<?> clazz, @NotNull JYML cfg, @Nullable Object from) {
         for (Field field : Reflex.getFields(clazz)) {
             if (!JOption.class.isAssignableFrom(field.getType())) continue;
-            if (!field.canAccess(null)) continue;
+            if (!field.canAccess(from)) continue;
 
             try {
-                JOption<?> option = (JOption<?>) field.get(null);
-                option.load(cfg);
+                JOption<?> option = (JOption<?>) field.get(from);
+                option.read(cfg);
             }
             catch (IllegalAccessException e) {
                 e.printStackTrace();

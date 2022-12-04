@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.manager.AbstractListener;
 
+@Deprecated
 public abstract class AbstractHook<P extends NexPlugin<P>> extends AbstractListener<P> {
 
     private final String pluginName;

@@ -119,7 +119,7 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
 
     public abstract void registerPermissions();
 
-    protected void registerPermissions(@NotNull Class<?> clazz) {
+    public void registerPermissions(@NotNull Class<?> clazz) {
         for (Field field : Reflex.getFields(clazz)) {
             if (!Permission.class.isAssignableFrom(field.getType())) continue;
             if (!field.canAccess(null)) continue;
@@ -163,6 +163,7 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
     }
 
     @Nullable
+    @Deprecated
     public final <T extends AbstractHook<P>> T registerHook(@NotNull String pluginName, @NotNull Class<T> clazz) {
         return this.getHooks().register(this, pluginName, clazz);
     }
@@ -322,24 +323,29 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
     }
 
     @NotNull
+    @Deprecated
     public final HookManager getHooks() {
         return getEngine().getHookManager();
     }
 
+    @Deprecated
     public final boolean isHooked(@NotNull Class<? extends AbstractHook<?>> clazz) {
         return this.getHooks().isHooked(this, clazz);
     }
 
+    @Deprecated
     public final boolean isHooked(@NotNull String plugin) {
         return this.getHooks().isHooked(this, plugin);
     }
 
     @Nullable
+    @Deprecated
     public final <T extends AbstractHook<?>> T getHook(@NotNull Class<T> clazz) {
         return this.getHooks().getHook(this, clazz);
     }
 
     @Nullable
+    @Deprecated
     public final AbstractHook<? extends NexPlugin<?>> getHook(@NotNull String name) {
         return this.getHooks().getHook(this, name);
     }

@@ -12,40 +12,42 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexEngine;
-import su.nexmedia.engine.api.hook.AbstractHook;
+import su.nexmedia.engine.api.manager.AbstractListener;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class VaultHook extends AbstractHook<NexEngine> {
+public final class VaultHook extends AbstractListener<NexEngine> {
 
+    private static VaultHook instance;
     private static Economy    economy;
     private static Permission permission;
     private static Chat       chat;
 
-    public VaultHook(@NotNull NexEngine plugin, @NotNull String pluginName) {
-        super(plugin, pluginName);
-    }
-
-    @Override
-    public boolean setup() {
+    private VaultHook(@NotNull NexEngine plugin) {
+        super(plugin);
         this.setPermission();
         this.setEconomy();
         this.setChat();
         this.registerListeners();
-
-        return true;
     }
 
-    @Override
-    public void shutdown() {
-        this.unregisterListeners();
+    public static void setup() {
+        if (instance == null) {
+            instance = new VaultHook(NexEngine.get());
+        }
+    }
 
-        economy = null;
-        permission = null;
-        chat = null;
+    public static void shutdown() {
+        if (instance != null) {
+            instance.unregisterListeners();
+
+            economy = null;
+            permission = null;
+            chat = null;
+        }
     }
 
     private void setPermission() {

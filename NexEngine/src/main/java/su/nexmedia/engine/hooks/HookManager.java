@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+@Deprecated
 public class HookManager extends AbstractManager<NexEngine> {
 
     private Map<String, Set<AbstractHook<?>>> hooks;

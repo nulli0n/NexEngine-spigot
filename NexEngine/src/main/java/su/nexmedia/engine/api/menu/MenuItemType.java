@@ -14,7 +14,7 @@ public enum MenuItemType implements EditorButtonType {
     PAGE_NEXT(Material.ARROW, "&6&lNext Page"),
     PAGE_PREVIOUS(Material.ARROW, "&6&lPrevious Page"),
     CLOSE(Material.BARRIER, "&c&lClose"),
-    RETURN(Material.BARRIER, "&c&lReturn", ""),
+    RETURN(Material.BARRIER, "&c&lReturn"),
     CONFIRMATION_ACCEPT(Material.LIME_DYE, "&a&lAccept"),
     CONFIRMATION_DECLINE(Material.PINK_DYE, "&c&lDecline"),
     ;
