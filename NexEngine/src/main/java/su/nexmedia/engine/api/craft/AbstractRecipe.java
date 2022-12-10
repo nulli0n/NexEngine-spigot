@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import su.nexmedia.engine.NexPlugin;
 
+@Deprecated
 public abstract class AbstractRecipe {
 
     protected final NexPlugin<?> plugin;

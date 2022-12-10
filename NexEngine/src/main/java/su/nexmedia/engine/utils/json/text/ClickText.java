@@ -1,5 +1,6 @@
 package su.nexmedia.engine.utils.json.text;
 
+import com.google.common.base.Preconditions;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -7,13 +8,11 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import su.nexmedia.engine.utils.Reflex;
 import su.nexmedia.engine.utils.StringUtil;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.stream.Stream;
 
 /**
@@ -30,14 +29,14 @@ public class ClickText {
     }
 
     @NotNull
-    public ClickWord addComponent(@NotNull String text) {
+    public ClickWord addComponent(@NotNull String placeholder, @NotNull String text) {
         text = StringUtil.colorFix(text); // Remove color duplications
 
         ClickWord clickWord = new ClickWord(text);
-        String placeholder = "%" + this.components.size() + "%";
+        String placeholder2 = "{$" + this.components.size() + "}";
 
-        this.components.put(placeholder, clickWord);
-        this.text = this.text.replaceAll("(?=\\W+|^)"+Pattern.quote(text)+"(?=\\W+|$)", placeholder);
+        this.components.put(placeholder2, clickWord);
+        this.text = this.text.replace(placeholder, placeholder2);
         return clickWord;
     }
 
@@ -45,81 +44,35 @@ public class ClickText {
     private BaseComponent[] build(@NotNull String line) {
         ComponentBuilder builder = new ComponentBuilder();
 
-        String[] words = line.split(" ");
-        for (String word : words) {
+        StringBuilder text = new StringBuilder();
+        for (int index = 0; index < line.length(); index++) {
+            char letter = line.charAt(index);
+            if (letter == '{') {
+                int indexEnd = line.indexOf("}", index);
+                if (indexEnd > index && ++indexEnd <= line.length()) {
+                    String varRaw = line.substring(index, indexEnd);
+                    if (varRaw.charAt(1) == '$') {
+                        if (!text.isEmpty()) {
+                            append(builder, fromLegacyText(text.toString()), ComponentBuilder.FormatRetention.ALL);
+                            text = new StringBuilder();
+                        }
 
-            boolean isFirst = builder.getParts().isEmpty();
-            ChatColor colorLast = builder.getCurrentComponent().getColor();
+                        index += varRaw.length() - 1;
 
-            //System.out.println("------------");
-            //System.out.println("word: '" + word + "'");
+                        ClickWord word = this.components.get(varRaw);
+                        if (word == null) continue;
 
-            ClickWord clickWord = this.components.get(StringUtil.colorOff(word));
-            this.append(builder, word, clickWord);
-
-            ChatColor colorCurrent = builder.getCurrentComponent().getColor();
-
-            // Save text formations (bold, italic, etc.) for the same colors and reset it when the different color starts.
-            // (я не придумал ничего лучше)
-            if (clickWord != null && builder.getCursor() != 0 || (!isFirst && !colorCurrent.getName().equalsIgnoreCase(colorLast.getName()))) {
-                //System.out.println("do reset");
-                TextComponent component = (TextComponent) builder.getCurrentComponent();
-                //System.out.println("current comp: " + component.toString());
-
-                // Remove the recently added component to reset the text formatting.
-                // For components with a text or extra elements, or strings with only color, remove the latest one.
-                if (StringUtil.colorOff(word).isEmpty() || (!component.getText().isEmpty() || component.getExtra() != null)) {
-                    // Because a multicolor word is being spliited into multiple components by TextComponent.fromLegacyText
-                    // we have to get that array here and remove all of them.
-                    BaseComponent[] componentWord = TextComponent.fromLegacyText(word);
-                    for (BaseComponent baseComponent : componentWord) {
-                        builder.getParts().remove(builder.getParts().size() - 1);
-                        builder.setCursor(builder.getCursor() - 1);
+                        append(builder, word.build(), ComponentBuilder.FormatRetention.ALL);
+                        continue;
                     }
                 }
-                // If there is 'empty' components containing only colors, remove all of them until the first text is found.
-                // This happens for strings with a color on the end, like: '&aText&2', where '&2' will be an empty component
-                // not related to the '&aText'.
-                else {
-                    // TODO Not removing correctly for multi-color words, like &a&l&oTe&e&l&oxt
-                    while (component.getText().isEmpty() && component.getExtra() == null) {
-                        component = (TextComponent) builder.getCurrentComponent();
-                        builder.getParts().remove(builder.getParts().size() - 1);
-                        builder.setCursor(builder.getCursor() - 1);
-                    }
-                }
-                this.cleanUp(builder);
-                //builder.append(component);
-
-                this.append(builder, word, clickWord);
             }
-
-            this.append(builder, " ", null);
+            text.append(letter);
+        }
+        if (!text.isEmpty()) {
+            append(builder, fromLegacyText(text.toString()), ComponentBuilder.FormatRetention.ALL);
         }
         return builder.create();
-    }
-
-    private void append(@NotNull ComponentBuilder builder, @NotNull String word, @Nullable ClickWord clickWord) {
-        if (clickWord != null) {
-            builder.append(clickWord.build());
-        }
-        else {
-            BaseComponent[] componentWord = TextComponent.fromLegacyText(word);
-            ChatColor colorFirst = null;
-
-            for (BaseComponent baseComponent : componentWord) {
-                builder.append(baseComponent, ComponentBuilder.FormatRetention.FORMATTING);
-                if (colorFirst != null && !colorFirst.getName().equalsIgnoreCase(baseComponent.getColor().getName())) {
-                    this.cleanUp(builder);
-                }
-                colorFirst = baseComponent.getColor();
-            }
-            //builder.append(TextComponent.fromLegacyText(word), ComponentBuilder.FormatRetention.FORMATTING);
-        }
-    }
-
-    private void cleanUp(@NotNull ComponentBuilder builder) {
-        builder.bold(false).italic(false).underlined(false).strikethrough(false).obfuscated(false);
     }
 
     public void send(@NotNull CommandSender sender) {
@@ -136,5 +89,127 @@ public class ClickText {
 
     public void send(@NotNull Collection<CommandSender> senders) {
         senders.forEach(this::send);
+    }
+
+    // Фикс форматирования компонентов на основе https://github.com/SpigotMC/BungeeCord/pull/3344/
+    // Так как этот фикс не встроен в API спигота, и все равно работает не так, как нужно, будем использовать свой.
+
+    private static final Set<BaseComponent> TO_RETAIN = new HashSet<>();
+    private static final Method GET_DUMMY = Reflex.getMethod(ComponentBuilder.class, "getDummy");
+
+    @NotNull
+    public static ComponentBuilder append(@NotNull ComponentBuilder orig,
+                                          @NotNull BaseComponent[] components,
+                                          @NotNull ComponentBuilder.FormatRetention retention) {
+        Preconditions.checkArgument(components.length != 0, "No components to append");
+        for (BaseComponent component : components) {
+            append(orig, component, retention);
+        }
+        return orig;
+    }
+
+    @NotNull
+    public static ComponentBuilder append(@NotNull ComponentBuilder orig,
+                                          @NotNull BaseComponent component,
+                                          @NotNull ComponentBuilder.FormatRetention retention) {
+        List<BaseComponent> parts = orig.getParts();
+        BaseComponent previous = parts.isEmpty() ? null : parts.get(parts.size() - 1);
+        if (previous == null) {
+            previous = GET_DUMMY == null ? null : (BaseComponent)  Reflex.invokeMethod(GET_DUMMY, orig);
+            Reflex.setFieldValue(orig, "dummy", null);
+        }
+
+        BaseComponent inheritance = TO_RETAIN.stream().filter(has -> has.equals(component)).findFirst().orElse(null);
+        if (previous != null && inheritance != null) {
+            component.copyFormatting(previous, retention, false);
+            TO_RETAIN.remove(inheritance);
+        }
+
+        parts.add(component);
+        orig.resetCursor();
+        return orig;
+    }
+
+    public static BaseComponent[] fromLegacyText(@NotNull String message) {
+        return fromLegacyText(message, ChatColor.WHITE);
+    }
+
+    public static BaseComponent[] fromLegacyText(@NotNull String message, @NotNull ChatColor defaultColor) {
+        ArrayList<BaseComponent> components = new ArrayList<>();
+        StringBuilder builder = new StringBuilder();
+        TextComponent component = new TextComponent();
+
+        for (int index = 0; index < message.length(); index++) {
+            char letter = message.charAt(index);
+            if (letter == ChatColor.COLOR_CHAR) {
+                if (++index >= message.length()) break;
+
+                letter = message.charAt(index);
+                if (letter >= 'A' && letter <= 'Z') {
+                    letter += 32;
+                }
+
+                ChatColor format;
+                if (letter == 'x' && index + 12 < message.length()) {
+                    StringBuilder hex = new StringBuilder("#");
+                    for (int indexHex = 0; indexHex < 6; indexHex++) {
+                        hex.append(message.charAt(index + 2 + (indexHex * 2)));
+                    }
+                    try {
+                        format = ChatColor.of(hex.toString());
+                    }
+                    catch (IllegalArgumentException ex) {
+                        format = null;
+                    }
+
+                    index += 12;
+                }
+                else {
+                    format = ChatColor.getByChar( letter );
+                }
+                if (format == null) continue;
+
+                if (builder.length() > 0) {
+                    TextComponent old = component;
+                    component = new TextComponent(old);
+                    old.setText(builder.toString());
+                    builder = new StringBuilder();
+                    components.add(old);
+                }
+
+                if (format == ChatColor.BOLD) {
+                    component.setBold( true );
+                }
+                else if (format == ChatColor.ITALIC) {
+                    component.setItalic(true);
+                }
+                else if (format == ChatColor.UNDERLINE) {
+                    component.setUnderlined(true);
+                }
+                else if (format == ChatColor.STRIKETHROUGH) {
+                    component.setStrikethrough(true);
+                }
+                else if (format == ChatColor.MAGIC) {
+                    component.setObfuscated(true);
+                }
+                else {
+                    if (format == ChatColor.RESET) {
+                        format = defaultColor;
+                    }
+                    component = new TextComponent();
+                    component.setColor(format);
+                }
+                continue;
+            }
+            builder.append(letter);
+        }
+
+        if (!component.hasFormatting()) {
+            TO_RETAIN.add(component);
+        }
+
+        component.setText(builder.toString());
+        components.add(component);
+        return components.toArray(new BaseComponent[0]);
     }
 }

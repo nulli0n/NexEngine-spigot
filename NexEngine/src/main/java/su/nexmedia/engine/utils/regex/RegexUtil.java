@@ -1,9 +1,9 @@
 package su.nexmedia.engine.utils.regex;
 
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.NexEngine;
 
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,19 +26,39 @@ public class RegexUtil {
         return matches(PATTERN_IP, str);
     }
 
-    public static boolean matches(@NotNull Pattern pattern, @NotNull String msg) {
-        Matcher matcher = getMatcher(pattern, msg);
-        return matcher != null && matcher.matches();
+    public static boolean matches(@NotNull Pattern pattern, @NotNull String text) {
+        Matcher matcher = getMatcher(pattern, text);
+        return matcher.matches();
     }
 
-    @Nullable
-    public static Matcher getMatcher(@NotNull String patter, @NotNull String msg) {
-        Pattern pattern = Pattern.compile(patter);
-        return getMatcher(pattern, msg);
+    @NotNull
+    public static Matcher getMatcher(@NotNull String pattern, @NotNull String text) {
+        return getMatcher(pattern, text, 200);
     }
 
-    @Nullable
+    @NotNull
+    public static Matcher getMatcher(@NotNull String patternText, @NotNull String text, long timeout) {
+        Pattern pattern = Pattern.compile(patternText);
+        return getMatcher(pattern, text, timeout);
+    }
+
+    @NotNull
     public static Matcher getMatcher(@NotNull Pattern pattern, @NotNull String msg) {
+        return getMatcher(pattern, msg, 200);
+    }
+
+    public static boolean matcherFind(@NotNull Matcher matcher) {
+        try {
+            return matcher.find();
+        }
+        catch (MatcherTimeoutException e) {
+            Bukkit.getLogger().log(Level.SEVERE, "Matcher timeout error: '" + matcher.pattern().pattern() + "' (" + e.getTimeout() + "ms)");
+            return false;
+        }
+    }
+
+    /*@Nullable
+    public static Matcher getMatcher(@NotNull Pattern pattern, @NotNull String msg, long timeout) {
         Matcher matcher = pattern.matcher(new TimedCharSequence(msg, 200));
         try {
             if (matcher.find()) {
@@ -49,5 +69,13 @@ public class RegexUtil {
             NexEngine.get().error("Matcher timeout error! Pattern: '" + pattern.pattern() + "' String: '" + msg + "'");
         }
         return null;
+    }*/
+
+    @NotNull
+    public static Matcher getMatcher(@NotNull Pattern pattern, @NotNull String text, long timeout) {
+        if (timeout <= 0) {
+            return pattern.matcher(text);
+        }
+        return pattern.matcher(new TimeoutCharSequence(text, timeout));
     }
 }

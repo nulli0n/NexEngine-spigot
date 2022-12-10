@@ -23,6 +23,6 @@ public class Action_MessageChat extends AbstractActionExecutor {
 
         text = Placeholders.Player.replacer(player).apply(text);
 
-        MessageUtil.sendWithJSON(player, text);
+        MessageUtil.sendWithJson(player, text);
     }
 }

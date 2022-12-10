@@ -32,7 +32,6 @@ public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         this.getConfig().addMissing("Plugin.Command_Aliases", plugin.getName().toLowerCase());
         this.getConfig().addMissing("Plugin.Language", "en");
 
-        this.getConfig().setComments("Plugin", "General plugin settings.");
         this.getConfig().setComments("Plugin.Name", "Localized plugin name. It's used in messages and with internal placeholders.");
         this.getConfig().setComments("Plugin.Prefix", "Plugin prefix. Used in messages.", "You can use " + Placeholders.Plugin.NAME_LOCALIZED + " placeholder for a plugin name.");
         this.getConfig().setComments("Plugin.Command_Aliases", "Command names that will be registered as main plugin commands.", "Do not leave this empty. Split multiple names with a comma.");

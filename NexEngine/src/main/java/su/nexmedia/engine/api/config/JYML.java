@@ -74,26 +74,27 @@ public class JYML extends YamlConfiguration {
         return FileUtil.getFiles(path, deep).stream().filter(file -> file.getName().endsWith(".yml")).map(JYML::new).toList();
     }
 
+    /*@Deprecated
     public void initializeOptions(@NotNull Class<?> clazz) {
         initializeOptions(clazz, this);
-    }
+    }*/
 
     public void initializeOptions(@NotNull Object from) {
         initializeOptions(from, this);
     }
 
+    /*@Deprecated
     public static void initializeOptions(@NotNull Class<?> clazz, @NotNull JYML cfg) {
         initializeOptions(clazz, cfg, null);
-    }
+    }*/
 
     public static void initializeOptions(@NotNull Object from, @NotNull JYML cfg) {
-        initializeOptions(from.getClass(), cfg, from);
-    }
+        boolean isStatic = from instanceof Class;
+        Class<?> clazz = isStatic ? (Class<?>) from : from.getClass();
 
-    public static void initializeOptions(@NotNull Class<?> clazz, @NotNull JYML cfg, @Nullable Object from) {
         for (Field field : Reflex.getFields(clazz)) {
             if (!JOption.class.isAssignableFrom(field.getType())) continue;
-            if (!field.canAccess(from)) continue;
+            if (!field.trySetAccessible()) continue;
 
             try {
                 JOption<?> option = (JOption<?>) field.get(from);
@@ -105,6 +106,23 @@ public class JYML extends YamlConfiguration {
         }
         cfg.saveChanges();
     }
+
+    /*@Deprecated
+    public static void initializeOptions(@NotNull Class<?> clazz, @NotNull JYML cfg, @Nullable Object of) {
+        for (Field field : Reflex.getFields(clazz)) {
+            if (!JOption.class.isAssignableFrom(field.getType())) continue;
+            if (!field.canAccess(of)) continue;
+
+            try {
+                JOption<?> option = (JOption<?>) field.get(of);
+                option.read(cfg);
+            }
+            catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        cfg.saveChanges();
+    }*/
 
     @NotNull
     public File getFile() {
@@ -151,6 +169,9 @@ public class JYML extends YamlConfiguration {
     @Override
     public void set(@NotNull String path, @Nullable Object o) {
         if (o instanceof JWriter writer) {
+            writer.write(this, path);
+        }
+        else if (o instanceof JOption.Writer writer) {
             writer.write(this, path);
         }
         else {
@@ -453,22 +474,11 @@ public class JYML extends YamlConfiguration {
         else this.set(path + "Encoded.Use", false);
 
         if (meta instanceof Damageable damageable) {
-            //int durability = damageable.getDamage();
             this.set(path + "Durability", damageable.getDamage());
         }
 
-        /*if (meta.hasDisplayName()) {
-            this.set(path + "Name", StringUtil.colorRaw(meta.getDisplayName()));
-        }*/
-
-        //List<String> lore = meta.getLore();
         this.set(path + "Name", meta.getDisplayName());
         this.set(path + "Lore", meta.getLore());
-        /*if (lore != null) {
-            List<String> loreRaw = new ArrayList<>();
-            lore.forEach(line -> loreRaw.add(StringUtil.colorRaw(line)));
-            this.set(path + "Lore", loreRaw);
-        }*/
 
         for (Map.Entry<Enchantment, Integer> entry : meta.getEnchants().entrySet()) {
             this.set(path + "Enchants." + entry.getKey().getKey().getKey(), entry.getValue());
@@ -516,6 +526,7 @@ public class JYML extends YamlConfiguration {
     }
 
     @Nullable
+    @Deprecated
     public CraftRecipe getCraftRecipe(@NotNull NexPlugin<?> plugin, @NotNull String id, @NotNull String path) {
         if (!path.endsWith(".")) path += ".";
 
@@ -545,6 +556,7 @@ public class JYML extends YamlConfiguration {
         return recipe;
     }
 
+    @Deprecated
     public void setRecipe(@NotNull String path, @Nullable CraftRecipe recipe) {
         if (!path.endsWith(".")) path += ".";
         if (recipe == null) {
@@ -564,6 +576,7 @@ public class JYML extends YamlConfiguration {
     }
 
     @Nullable
+    @Deprecated
     public FurnaceRecipe getFurnaceRecipe(@NotNull NexPlugin<?> plugin, @NotNull String id, @NotNull String path) {
         if (!path.endsWith(".")) path += ".";
 
@@ -592,6 +605,7 @@ public class JYML extends YamlConfiguration {
         return recipe;
     }
 
+    @Deprecated
     public void setRecipe(@NotNull String path, @Nullable FurnaceRecipe recipe) {
         if (!path.endsWith(".")) path += ".";
         if (recipe == null) {

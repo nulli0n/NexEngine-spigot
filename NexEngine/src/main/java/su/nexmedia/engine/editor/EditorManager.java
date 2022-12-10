@@ -14,6 +14,7 @@ import su.nexmedia.engine.api.editor.EditorObject;
 import su.nexmedia.engine.api.manager.AbstractManager;
 import su.nexmedia.engine.api.manager.IListener;
 import su.nexmedia.engine.api.menu.IMenu;
+import su.nexmedia.engine.lang.EngineLang;
 import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nexmedia.engine.utils.json.text.ClickText;
@@ -23,16 +24,18 @@ import java.util.*;
 
 public class EditorManager extends AbstractManager<NexEngine> implements IListener {
 
+    private static final NexEngine ENGINE = NexEngine.get();
     private static final Map<Player, Map.Entry<IMenu, Integer>> EDITOR_CACHE_MENU  = new WeakHashMap<>();
     private static final Map<Player, EditorObject<?,?>>         EDITOR_CACHE_INPUT = new WeakHashMap<>();
 
     private static final String EXIT       = "#exit";
     private static final int    TITLE_STAY = Short.MAX_VALUE;
-    private static final String TIP_TITLE = StringUtil.color("&a&lEditing");
-    private static final String ERROR_TITLE = StringUtil.color("&c&lError!");
-    public static final String ERROR_NUM_INVALID = StringUtil.color("&7Invalid Number!");
-    public static final String ERROR_NUM_NOT_INT = StringUtil.color("&7Number must be &fInteger&7!");
-    public static final String ERROR_ENUM = StringUtil.color("&7Invalid Type! See in chat.");
+
+    @Deprecated private static final String TIP_TITLE = StringUtil.color("&a&lEditing");
+    @Deprecated private static final String ERROR_TITLE = StringUtil.color("&c&lError!");
+    @Deprecated public static final String ERROR_NUM_INVALID = StringUtil.color("&7Invalid Number!");
+    @Deprecated public static final String ERROR_NUM_NOT_INT = StringUtil.color("&7Number must be &fInteger&7!");
+    @Deprecated public static final String ERROR_ENUM = StringUtil.color("&7Invalid Type! See in chat.");
 
     public EditorManager(@NotNull NexEngine plugin) {
         super(plugin);
@@ -69,11 +72,7 @@ public class EditorManager extends AbstractManager<NexEngine> implements IListen
         if (menu != null) {
             EDITOR_CACHE_MENU.put(player, new AbstractMap.SimpleEntry<>(menu, menu.getPage(player)));
         }
-
-        String msg = StringUtil.color("&b<<< Click to exit the &dEdit Mode &b>>>");
-        ClickText clickText = new ClickText(msg);
-        clickText.addComponent(msg).runCommand("/" + EXIT).showText(StringUtil.color("&7Click me or type &f" + EXIT + "&7."));
-        clickText.send(player);
+        ENGINE.getMessage(EngineLang.EDITOR_TIP_EXIT).send(player);
     }
 
     public static void endEdit(@NotNull Player player) {
@@ -88,7 +87,7 @@ public class EditorManager extends AbstractManager<NexEngine> implements IListen
             entry.getKey().open(player, entry.getValue());
         }
 
-        player.sendTitle(StringUtil.color("&a&lDone!"), "", 10, 40, 10);
+        player.sendTitle(ENGINE.getMessage(EngineLang.EDITOR_TITLE_DONE).getLocalized(), "", 10, 40, 10);
     }
 
     public static void suggestValues(@NotNull Player player, @NotNull Collection<String> items2, boolean autoRun) {
@@ -103,7 +102,7 @@ public class EditorManager extends AbstractManager<NexEngine> implements IListen
         List<String> items = items2.stream().sorted(String::compareTo).map(str -> StringUtil.color("&e" + str)).toList();
         ClickText text = new ClickText(String.join(" &8-- ", items));
         items.forEach(item -> {
-            ClickWord word = text.addComponent(item);
+            ClickWord word = text.addComponent(StringUtil.colorOff(item), item);
             word.showText(StringUtil.color("&7Click me to select &f" + item));
 
             if (autoRun && fixCommand && !item.startsWith("/")) item = "/" + item;
@@ -134,7 +133,7 @@ public class EditorManager extends AbstractManager<NexEngine> implements IListen
     }
 
     public static void tip(@NotNull Player player, @NotNull String text) {
-        tip(player, TIP_TITLE, text);
+        tip(player, ENGINE.getMessage(EngineLang.EDITOR_TITLE_EDIT).getLocalized(), text);
     }
 
     public static void tip(@NotNull Player player, @NotNull String title, @NotNull String text) {
@@ -142,7 +141,7 @@ public class EditorManager extends AbstractManager<NexEngine> implements IListen
     }
 
     public static void error(@NotNull Player player, @NotNull String text) {
-        error(player, ERROR_TITLE, text);
+        error(player, ENGINE.getMessage(EngineLang.EDITOR_TITLE_ERROR).getLocalized(), text);
     }
 
     public static void error(@NotNull Player player, @NotNull String title, @NotNull String text) {

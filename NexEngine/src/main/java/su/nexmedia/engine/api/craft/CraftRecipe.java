@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import su.nexmedia.engine.NexPlugin;
 
+@Deprecated
 public class CraftRecipe extends AbstractRecipe {
 
     private final boolean     isShaped;

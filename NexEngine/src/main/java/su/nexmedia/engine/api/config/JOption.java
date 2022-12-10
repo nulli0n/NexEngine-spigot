@@ -11,88 +11,85 @@ import java.util.function.Supplier;
 
 public class JOption<T> {
 
-    public static final ValueLoader<Boolean>      LOADER_BOOLEAN     = JYML::getBoolean;
-    public static final ValueLoader<Integer>      LOADER_INT         = JYML::getInt;
-    public static final ValueLoader<Double>       LOADER_DOUBLE      = JYML::getDouble;
-    public static final ValueLoader<Long>         LOADER_LONG        = JYML::getLong;
-    public static final ValueLoader<String>       LOADER_STRING      = (cfg, path, def) -> StringUtil.color(cfg.getString(path, def));
-    public static final ValueLoader<Set<String>>  LOADER_SET_STRING  = (cfg, path, def) -> StringUtil.color(cfg.getStringSet(path));
-    public static final ValueLoader<List<String>> LOADER_LIST_STRING = (cfg, path, def) -> StringUtil.color(cfg.getStringList(path));
-    public static final ValueLoader<ItemStack>    LOADER_ITEM        = JYML::getItem;
+    public static final Reader<Boolean>      READER_BOOLEAN     = JYML::getBoolean;
+    public static final Reader<Integer>      READER_INT         = JYML::getInt;
+    public static final Reader<Double>       READER_DOUBLE      = JYML::getDouble;
+    public static final Reader<Long>         READER_LONG        = JYML::getLong;
+    public static final Reader<String>       READER_STRING      = (cfg, path, def) -> StringUtil.color(cfg.getString(path, def));
+    public static final Reader<Set<String>>  READER_SET_STRING  = (cfg, path, def) -> StringUtil.color(cfg.getStringSet(path));
+    public static final Reader<List<String>> READER_LIST_STRING = (cfg, path, def) -> StringUtil.color(cfg.getStringList(path));
+    public static final Reader<ItemStack>    READER_ITEM        = JYML::getItem;
 
-    protected final ValueLoader<T> valueLoader;
-    protected final String         path;
-    protected final String[]       description;
-    protected final T              defaultValue;
-    protected       T              value;
-    protected JWriter writer;
+    protected final Reader<T> reader;
+    protected final String    path;
+    protected final T         defaultValue;
+    protected final String[]  description;
+    protected       T         value;
+    protected       Writer    writer;
 
-    public JOption(@NotNull String path, @NotNull ValueLoader<T> valueLoader, @NotNull T defaultValue) {
-        this(path, "", valueLoader, defaultValue);
+    public JOption(@NotNull String path, @NotNull Reader<T> reader, @NotNull Supplier<T> defaultValue, @NotNull String... description) {
+        this(path, reader, defaultValue.get(), description);
     }
 
-    public JOption(@NotNull String path, @NotNull String description, @NotNull ValueLoader<T> valueLoader, @NotNull Supplier<T> defaultValue) {
-        this(path, description, valueLoader, defaultValue.get());
-    }
-
-    public JOption(@NotNull String path, @NotNull String description, @NotNull ValueLoader<T> valueLoader, @NotNull T defaultValue) {
+    public JOption(@NotNull String path, @NotNull Reader<T> reader, @NotNull T defaultValue, @NotNull String... description) {
         this.path = path;
-        this.description = description.split("\n");
-        this.valueLoader = valueLoader;
+        this.description = description;
+        this.reader = reader;
         this.defaultValue = defaultValue;
     }
 
     @NotNull
-    public static JOption<Boolean> create(@NotNull String path, @NotNull String description, boolean defaultValue) {
-        return new JOption<>(path, description, LOADER_BOOLEAN, defaultValue);
+    public static JOption<Boolean> create(@NotNull String path, boolean defaultValue, @NotNull String... description) {
+        return new JOption<>(path, READER_BOOLEAN, defaultValue, description);
     }
 
     @NotNull
-    public static JOption<Integer> create(@NotNull String path, @NotNull String description, int defaultValue) {
-        return new JOption<>(path, description, LOADER_INT, defaultValue);
+    public static JOption<Integer> create(@NotNull String path, int defaultValue, @NotNull String... description) {
+        return new JOption<>(path, READER_INT, defaultValue, description);
     }
 
     @NotNull
-    public static JOption<Double> create(@NotNull String path, @NotNull String description, double defaultValue) {
-        return new JOption<>(path, description, LOADER_DOUBLE, defaultValue);
+    public static JOption<Double> create(@NotNull String path, double defaultValue, @NotNull String... description) {
+        return new JOption<>(path, READER_DOUBLE, defaultValue, description);
     }
 
     @NotNull
-    public static JOption<Long> create(@NotNull String path, @NotNull String description, long defaultValue) {
-        return new JOption<>(path, description, LOADER_LONG, defaultValue);
+    public static JOption<Long> create(@NotNull String path, long defaultValue, @NotNull String... description) {
+        return new JOption<>(path, READER_LONG, defaultValue, description);
     }
 
     @NotNull
-    public static JOption<String> create(@NotNull String path, @NotNull String description, @NotNull String defaultValue) {
-        return new JOption<>(path, description, LOADER_STRING, defaultValue);
+    public static JOption<String> create(@NotNull String path, @NotNull String defaultValue, @NotNull String... description) {
+        return new JOption<>(path, READER_STRING, defaultValue, description);
     }
 
     @NotNull
-    public static JOption<List<String>> create(@NotNull String path, @NotNull String description, @NotNull List<String> defaultValue) {
-        return new JOption<>(path, description, LOADER_LIST_STRING, defaultValue);
+    public static JOption<List<String>> create(@NotNull String path, @NotNull List<String> defaultValue, @NotNull String... description) {
+        return new JOption<>(path, READER_LIST_STRING, defaultValue, description);
     }
 
     @NotNull
-    public static JOption<Set<String>> create(@NotNull String path, @NotNull String description, @NotNull Set<String> defaultValue) {
-        return new JOption<>(path, description, LOADER_SET_STRING, defaultValue);
+    public static JOption<Set<String>> create(@NotNull String path, @NotNull Set<String> defaultValue, @NotNull String... description) {
+        return new JOption<>(path, READER_SET_STRING, defaultValue, description);
     }
 
     @NotNull
-    public static JOption<ItemStack> create(@NotNull String path, @NotNull String description, @NotNull ItemStack defaultValue) {
-        return new JOption<>(path, description, LOADER_ITEM, defaultValue);
+    public static JOption<ItemStack> create(@NotNull String path, @NotNull ItemStack defaultValue, @NotNull String... description) {
+        return new JOption<>(path, READER_ITEM, defaultValue, description);
     }
 
-    @Deprecated
-    public void load(@NotNull JYML cfg) {
-        this.read(cfg);
+    @NotNull
+    public static <E extends Enum<E>> JOption<E> create(@NotNull String path, @NotNull Class<E> clazz, @NotNull E defaultValue, @NotNull String... description) {
+        return new JOption<>(path, ((cfg, path1, def) -> cfg.getEnum(path1, clazz, defaultValue)), defaultValue, description);
     }
 
-    public void read(@NotNull JYML cfg) {
+    @NotNull
+    public T read(@NotNull JYML cfg) {
         if (!cfg.contains(this.getPath())) {
             this.write(cfg);
         }
         cfg.setComments(this.getPath(), this.getDescription());
-        this.value = this.valueLoader.loadFromConfig(cfg, this.getPath(), this.getDefaultValue());
+        return (this.value = this.reader.read(cfg, this.getPath(), this.getDefaultValue()));
     }
 
     public void write(@NotNull JYML cfg) {
@@ -104,8 +101,8 @@ public class JOption<T> {
         }
     }
 
-    public void remove(@NotNull JYML cfg) {
-        cfg.remove(this.getPath());
+    public boolean remove(@NotNull JYML cfg) {
+        return cfg.remove(this.getPath());
     }
 
     @NotNull
@@ -119,8 +116,8 @@ public class JOption<T> {
     }
 
     @NotNull
-    public ValueLoader<T> getValueLoader() {
-        return valueLoader;
+    public JOption.Reader<T> getValueLoader() {
+        return reader;
     }
 
     @NotNull
@@ -138,25 +135,19 @@ public class JOption<T> {
     }
 
     @Nullable
-    public JWriter getWriter() {
+    public Writer getWriter() {
         return writer;
     }
 
     @NotNull
-    public JOption<T> setWriter(@Nullable JWriter writer) {
+    public JOption<T> setWriter(@Nullable Writer writer) {
         this.writer = writer;
         return this;
     }
 
-    @Deprecated
-    public void set(@NotNull JYML cfg, @NotNull T value) {
-        cfg.set(this.getPath(), value);
-    }
+    public interface Reader<T> {
 
-    // TODO Rename to Reader, add Writer interface here
-    public interface ValueLoader<T> {
-
-        @NotNull T loadFromConfig(@NotNull JYML cfg, @NotNull String path, @NotNull T def);
+        @NotNull T read(@NotNull JYML cfg, @NotNull String path, @NotNull T def);
     }
 
     public interface Writer {

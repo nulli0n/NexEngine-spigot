@@ -2,13 +2,13 @@ package su.nexmedia.engine.utils.regex;
 
 import org.jetbrains.annotations.NotNull;
 
-public class TimedCharSequence implements CharSequence {
+public class TimeoutCharSequence implements CharSequence {
 
     private final CharSequence chars;
     private final long timeout;
     private final long maxTime;
 
-    public TimedCharSequence(@NotNull CharSequence chars, long timeout) {
+    public TimeoutCharSequence(@NotNull CharSequence chars, long timeout) {
         this.chars = chars;
         this.timeout = timeout;
         this.maxTime = (System.currentTimeMillis() + timeout);
@@ -17,7 +17,7 @@ public class TimedCharSequence implements CharSequence {
     @Override
     public char charAt(int index) {
         if (System.currentTimeMillis() > this.maxTime) {
-            throw new RuntimeMatchException(this.chars, this.timeout);
+            throw new MatcherTimeoutException(this.chars, this.timeout);
         }
         return this.chars.charAt(index);
     }
@@ -29,7 +29,7 @@ public class TimedCharSequence implements CharSequence {
 
     @Override
     public CharSequence subSequence(int start, int end) {
-        return new TimedCharSequence(this.chars.subSequence(start, end), this.timeout);
+        return new TimeoutCharSequence(this.chars.subSequence(start, end), this.timeout);
     }
 
     @Override

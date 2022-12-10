@@ -56,7 +56,7 @@ public class LangMessage {
 
     void setArguments(@NotNull String msg) {
         Matcher matcher = RegexUtil.getMatcher(PATTERN_MESSAGE_FULL, msg);
-        if (matcher == null || !matcher.find()) return;
+        if (!RegexUtil.matcherFind(matcher)) return;
 
         // String with only args
         String msgRaw = matcher.group(0);
@@ -65,9 +65,7 @@ public class LangMessage {
 
         for (Map.Entry<String, Pattern> entryParams : PATTERN_MESSAGE_PARAMS.entrySet()) {
             Matcher matcherParam = RegexUtil.getMatcher(entryParams.getValue(), msgParams);
-            if (matcherParam == null || !matcherParam.find()) {
-                continue;
-            }
+            if (!RegexUtil.matcherFind(matcherParam)) continue;
 
             String paramName = entryParams.getKey();
             String paramValue = matcherParam.group(2).stripLeading();
@@ -148,7 +146,7 @@ public class LangMessage {
 
         if (this.type == LangMessage.OutputType.CHAT) {
             String prefix = hasPrefix ? plugin.getConfigManager().pluginPrefix : "";
-            this.asList().forEach(line -> MessageUtil.sendWithJSON(sender, prefix + line));
+            this.asList().forEach(line -> MessageUtil.sendWithJson(sender, prefix + line));
             return;
         }
 

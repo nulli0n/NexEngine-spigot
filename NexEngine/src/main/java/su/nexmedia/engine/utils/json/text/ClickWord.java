@@ -49,7 +49,7 @@ public class ClickWord {
 
     @NotNull
     public ClickWord showText(@NotNull String... text) {
-        BaseComponent[] base = TextComponent.fromLegacyText(StringUtil.color(String.join("\n", text)));
+        BaseComponent[] base = ClickText.fromLegacyText(StringUtil.color(String.join("\n", text)));
         this.hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(base));
         return this;
     }
@@ -87,7 +87,7 @@ public class ClickWord {
 
     @NotNull
     public TextComponent build() {
-        TextComponent component = new TextComponent(TextComponent.fromLegacyText(this.getText()));
+        TextComponent component = new TextComponent(ClickText.fromLegacyText(this.getText()));
         if (this.hoverEvent != null) {
             component.setHoverEvent(this.getHoverEvent());
         }

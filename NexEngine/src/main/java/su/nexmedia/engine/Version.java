@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 public enum Version {
 
     // KEEP VERSIONS LIST FROM LOWER TO HIGHER
-    V1_17_R1, V1_18_R2, V1_19_R1,
+    V1_17_R1, V1_18_R2, V1_19_R1, V1_19_R2,
     ;
 
     public static final Version CURRENT;

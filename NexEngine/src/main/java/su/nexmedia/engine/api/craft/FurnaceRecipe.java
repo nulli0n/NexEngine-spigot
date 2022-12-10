@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import su.nexmedia.engine.NexPlugin;
 
+@Deprecated
 public class FurnaceRecipe extends AbstractRecipe {
 
     private ItemStack input;

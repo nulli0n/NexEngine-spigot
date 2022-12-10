@@ -2,12 +2,12 @@ package su.nexmedia.engine.utils.regex;
 
 import org.jetbrains.annotations.NotNull;
 
-public class RuntimeMatchException extends RuntimeException {
+public class MatcherTimeoutException extends RuntimeException {
 
     private final String chars;
     private final long   timeout;
 
-    RuntimeMatchException(@NotNull CharSequence chars, long timeout) {
+    MatcherTimeoutException(@NotNull CharSequence chars, long timeout) {
         this.chars = chars.toString();
         this.timeout = timeout;
     }

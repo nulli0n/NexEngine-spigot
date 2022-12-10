@@ -10,12 +10,16 @@ public class Placeholders {
 
     public static final String DEFAULT = "default";
     public static final String NONE = "none";
-    public static final String MASK_ANY = "*";
+    @Deprecated public static final String MASK_ANY = "*";
+    public static final String WILDCARD = "*";
 
     public static final Placeholder<org.bukkit.Location> LOCATION = new Location();
+    public static final Placeholder<NexPlugin<?>> PLUGIN = (plugin) -> (str -> str
+        .replace(Plugin.NAME, plugin.getName())
+        .replace(Plugin.NAME_LOCALIZED, plugin.getConfigManager().pluginName));
 
-    public static abstract class Placeholder<U> {
-        public abstract UnaryOperator<String> replacer(@NotNull U src);
+    public interface Placeholder<U> {
+        UnaryOperator<String> replacer(@NotNull U src);
     }
 
     public static class Plugin {
@@ -24,11 +28,9 @@ public class Placeholders {
         public static final String NAME_LOCALIZED = "%plugin_name_localized%";
 
         @NotNull
+        @Deprecated
         public static UnaryOperator<String> replacer(@NotNull NexPlugin<?> plugin) {
-            return str -> str
-                .replace(NAME, plugin.getName())
-                .replace(NAME_LOCALIZED, plugin.getConfigManager().pluginName)
-                ;
+            return PLUGIN.replacer(plugin);
         }
     }
 
@@ -55,7 +57,7 @@ public class Placeholders {
         }
     }
 
-    public static class Location extends Placeholder<org.bukkit.Location> {
+    public static class Location implements Placeholder<org.bukkit.Location> {
 
         public static final String X = "%location_x%";
         public static final String Y = "%location_y%";
