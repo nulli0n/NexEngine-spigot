@@ -24,8 +24,6 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends AbstractManager<P> {
 
-    private static final ItemStackSerializer SERIALIZER_ITEM_STACK = new ItemStackSerializer();
-
     protected final DataConfig config;
     protected final AbstractDataConnector connector;
     protected Gson gson;
@@ -123,7 +121,7 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
     @NotNull
     protected GsonBuilder registerAdapters(@NotNull GsonBuilder builder) {
         // TODO Register for location?
-        return builder.registerTypeAdapter(ItemStack.class, SERIALIZER_ITEM_STACK);
+        return builder.registerTypeAdapter(ItemStack.class, new ItemStackSerializer());
     }
 
     @NotNull

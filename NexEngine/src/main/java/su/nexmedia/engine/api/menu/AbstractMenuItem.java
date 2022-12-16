@@ -16,13 +16,13 @@ public abstract class AbstractMenuItem implements IMenuItem {
     protected final Enum<?> type;
     protected       int[]   slots;
 
-    protected Map<String, MenuItemDisplay> displayMap;
+    @Deprecated protected Map<String, MenuItemDisplay> displayMap;
 
-    protected int      animationTickInterval;
-    protected String[] animationFrames;
-    protected boolean  animationIgnoreUnavailableFrames;
-    protected boolean  animationRandomOrder;
-    protected int      animationFrameCurrent;
+    @Deprecated protected int      animationTickInterval;
+    @Deprecated protected String[] animationFrames;
+    @Deprecated protected boolean  animationIgnoreUnavailableFrames;
+    @Deprecated protected boolean  animationRandomOrder;
+    @Deprecated protected int      animationFrameCurrent;
 
     protected IMenuClick                        click;
     protected Map<ClickType, ActionManipulator> customClicks;
@@ -44,13 +44,25 @@ public abstract class AbstractMenuItem implements IMenuItem {
     }
 
     public AbstractMenuItem(@NotNull String id, @NotNull ItemStack item, @Nullable Enum<?> type, int[] slots) {
-        this(id, type, slots, new HashMap<>(), new HashMap<>(),
-            0, new String[0], true, false);
+        this(id, type, slots, new HashMap<>(), new HashMap<>());
 
         MenuItemDisplay itemDisplay = new MenuItemDisplay(item);
         this.getDisplayMap().put(itemDisplay.getId(), itemDisplay);
     }
 
+    public AbstractMenuItem(
+        @NotNull String id, @Nullable Enum<?> type, int[] slots,
+        @NotNull Map<String, MenuItemDisplay> displayMap,
+        @NotNull Map<ClickType, ActionManipulator> customClicks) {
+        this.id = id.toLowerCase();
+        this.type = type;
+        this.setSlots(slots);
+
+        this.displayMap = displayMap;
+        this.customClicks = customClicks;
+    }
+
+    @Deprecated
     public AbstractMenuItem(
         @NotNull String id, @Nullable Enum<?> type, int[] slots,
         @NotNull Map<String, MenuItemDisplay> displayMap,
@@ -96,41 +108,49 @@ public abstract class AbstractMenuItem implements IMenuItem {
 
     @NotNull
     @Override
+    @Deprecated
     public Map<String, MenuItemDisplay> getDisplayMap() {
         return displayMap;
     }
 
     @Override
+    @Deprecated
     public @NotNull Map<ClickType, ActionManipulator> getClickCustomActions() {
         return customClicks;
     }
 
     @Override
+    @Deprecated
     public int getAnimationTickInterval() {
         return animationTickInterval;
     }
 
     @NotNull
     @Override
+    @Deprecated
     public String[] getAnimationFrames() {
         return animationFrames;
     }
 
     @Override
+    @Deprecated
     public boolean isAnimationIgnoreUnvailableFrames() {
         return this.animationIgnoreUnavailableFrames;
     }
 
     @Override
+    @Deprecated
     public boolean isAnimationRandomOrder() {
         return this.animationRandomOrder;
     }
 
     @Override
+    @Deprecated
     public int getAnimationFrameCurrent() {
         return animationFrameCurrent;
     }
 
+    @Deprecated
     public void setAnimationFrameCurrent(int frame) {
         if (frame >= this.getAnimationFrames().length) frame = 0;
         this.animationFrameCurrent = frame;

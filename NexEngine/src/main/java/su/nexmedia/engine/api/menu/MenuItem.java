@@ -34,6 +34,14 @@ public class MenuItem extends AbstractMenuItem {
     public MenuItem(
         @NotNull String id, @Nullable Enum<?> type, int[] slots,
         @NotNull Map<String, MenuItemDisplay> displayMap,
+        @NotNull Map<ClickType, ActionManipulator> customClicks) {
+        super(id, type, slots, displayMap, customClicks);
+    }
+
+    @Deprecated
+    public MenuItem(
+        @NotNull String id, @Nullable Enum<?> type, int[] slots,
+        @NotNull Map<String, MenuItemDisplay> displayMap,
         @NotNull Map<ClickType, ActionManipulator> customClicks,
         int animationTickInterval, String[] animationFrames, boolean animationIgnoreUnavailableFrames,
         boolean animationRandomOrder) {
@@ -46,9 +54,6 @@ public class MenuItem extends AbstractMenuItem {
     }
 
     public MenuItem(@NotNull IMenuItem menuItem) {
-        super(menuItem.getId(), menuItem.getType(), menuItem.getSlots(),
-            new HashMap<>(menuItem.getDisplayMap()), new HashMap<>(menuItem.getClickCustomActions()),
-            menuItem.getAnimationTickInterval(), menuItem.getAnimationFrames(), menuItem.isAnimationIgnoreUnvailableFrames(),
-            menuItem.isAnimationRandomOrder());
+        super(menuItem.getId(), menuItem.getType(), menuItem.getSlots(), new HashMap<>(menuItem.getDisplayMap()), new HashMap<>(menuItem.getClickCustomActions()));
     }
 }

@@ -24,39 +24,50 @@ public interface IMenuItem {
 
     void setClick(@Nullable IMenuClick click);
 
+    @Deprecated
     @NotNull Map<String, MenuItemDisplay> getDisplayMap();
 
 
+    @Deprecated
     default boolean isAnimationEnabled() {
         return this.getAnimationTickInterval() > 0 && this.getAnimationFrames().length > 1;
     }
 
+    @Deprecated
     int getAnimationTickInterval();
 
+    @Deprecated
     @NotNull String[] getAnimationFrames();
 
+    @Deprecated
     boolean isAnimationIgnoreUnvailableFrames();
 
+    @Deprecated
     boolean isAnimationRandomOrder();
 
+    @Deprecated
     int getAnimationFrameCurrent();
 
+    @Deprecated
     void setAnimationFrameCurrent(int animationFrameCurrent);
 
-
+    @Deprecated
     @NotNull Map<ClickType, ActionManipulator> getClickCustomActions();
 
     @Nullable
+    @Deprecated
     default ActionManipulator getClickCustomAction(@NotNull ClickType clickType) {
         return this.getClickCustomActions().get(clickType);
     }
 
     @Nullable
+    @Deprecated
     default MenuItemDisplay getDisplay(@NotNull String id) {
         return this.getDisplayMap().get(id.toLowerCase());
     }
 
     @Nullable
+    @Deprecated
     default MenuItemDisplay getDisplay(@NotNull Player player) {
         Optional<MenuItemDisplay> opt = this.getDisplayMap().values().stream()
             .filter(d -> d.isAvailable(player))

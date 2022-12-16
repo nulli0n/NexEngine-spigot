@@ -13,6 +13,7 @@ import su.nexmedia.engine.utils.StringUtil;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
@@ -28,15 +29,17 @@ public class ClickText {
         this.components = new HashMap<>();
     }
 
+    // TODO add 'font' 'paste' support
+
     @NotNull
     public ClickWord addComponent(@NotNull String placeholder, @NotNull String text) {
         text = StringUtil.colorFix(text); // Remove color duplications
 
         ClickWord clickWord = new ClickWord(text);
-        String placeholder2 = "{$" + this.components.size() + "}";
+        String placeholder2 = "{@" + this.components.size() + "}";
 
         this.components.put(placeholder2, clickWord);
-        this.text = this.text.replace(placeholder, placeholder2);
+        this.text = this.text.replaceAll(Pattern.quote(placeholder) + "(?!\\w)", placeholder2);
         return clickWord;
     }
 
@@ -51,7 +54,7 @@ public class ClickText {
                 int indexEnd = line.indexOf("}", index);
                 if (indexEnd > index && ++indexEnd <= line.length()) {
                     String varRaw = line.substring(index, indexEnd);
-                    if (varRaw.charAt(1) == '$') {
+                    if (varRaw.charAt(1) == '@') {
                         if (!text.isEmpty()) {
                             append(builder, fromLegacyText(text.toString()), ComponentBuilder.FormatRetention.ALL);
                             text = new StringBuilder();

@@ -5,6 +5,7 @@ import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.task.AbstractTask;
 import su.nexmedia.engine.utils.random.Rnd;
 
+@Deprecated
 public class MenuAnimationTask<P extends NexPlugin<P>> extends AbstractTask<P> {
 
     private final IMenu menu;

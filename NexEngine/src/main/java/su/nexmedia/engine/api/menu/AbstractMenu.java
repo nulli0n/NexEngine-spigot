@@ -27,8 +27,9 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
     protected       JYML   cfg;
     protected       Map<String, IMenuItem>       items;
     protected       Map<Player, List<IMenuItem>> userItems;
-    protected long                 animationInterval;
-    private   MenuAnimationTask<P> animationTask;
+    
+    @Deprecated protected long                 animationInterval;
+    @Deprecated private   MenuAnimationTask<P> animationTask;
 
     public AbstractMenu(@NotNull P plugin, @NotNull JYML cfg, @NotNull String path) {
         this(plugin, cfg.getString(path + "Title", ""), cfg.getInt(path + "Size"));

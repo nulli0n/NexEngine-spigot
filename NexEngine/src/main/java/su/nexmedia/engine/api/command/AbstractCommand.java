@@ -137,10 +137,11 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
     public abstract boolean isPlayerOnly();
 
     @NotNull
-    public List<@NotNull String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
+    public List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
         return Collections.emptyList();
     }
 
+    @Deprecated
     protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
         this.onExecute(sender, label, args, new HashMap<>());
     }
