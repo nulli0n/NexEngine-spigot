@@ -21,12 +21,12 @@ import java.util.function.UnaryOperator;
 
 public class ItemUtil {
 
-    public static final String LORE_FIX_PREFIX = "fogus_loren-";
-    public static final String NAME_FIX_PREFIX = "fogus_namel-";
-    public static final  String                     TAG_SPLITTER = "__x__";
+    @Deprecated public static final String LORE_FIX_PREFIX = "fogus_loren-";
+    @Deprecated public static final String NAME_FIX_PREFIX = "fogus_namel-";
+    @Deprecated public static final  String                     TAG_SPLITTER = "__x__";
     private static final NexEngine ENGINE;
-    private static final Map<String, NamespacedKey> LORE_KEYS_CACHE;
-    private static final Map<String, NamespacedKey> NAME_KEYS_CACHE;
+    @Deprecated private static final Map<String, NamespacedKey> LORE_KEYS_CACHE;
+    @Deprecated private static final Map<String, NamespacedKey> NAME_KEYS_CACHE;
 
     static {
         ENGINE = NexEngine.get();
@@ -49,11 +49,13 @@ public class ItemUtil {
         return pos < 0 ? pos : pos + 1;
     }
 
+    @Deprecated
     public static void addLore(@NotNull ItemStack item, @NotNull String id, @NotNull String text, int pos) {
         String[] lines = text.split(TAG_SPLITTER);
         addLore(item, id, Arrays.asList(lines), pos);
     }
 
+    @Deprecated
     public static void addLore(@NotNull ItemStack item, @NotNull String id, @NotNull List<String> text, int pos) {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
@@ -79,6 +81,7 @@ public class ItemUtil {
         addLoreTag(item, id, loreTag.toString());
     }
 
+    @Deprecated
     public static void delLore(@NotNull ItemStack item, @NotNull String id) {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
@@ -102,10 +105,12 @@ public class ItemUtil {
         delLoreTag(item, id);
     }
 
+    @Deprecated
     public static int getLoreIndex(@NotNull ItemStack item, @NotNull String id) {
         return getLoreIndex(item, id, 0);
     }
 
+    @Deprecated
     public static int getLoreIndex(@NotNull ItemStack item, @NotNull String id, int type) {
         String storedText = PDCUtil.getStringData(item, ItemUtil.getLoreKey(id));
         if (storedText == null) return -1;
@@ -152,52 +157,63 @@ public class ItemUtil {
     }
 
     @NotNull
+    @Deprecated
     private static NamespacedKey getLoreKey(@NotNull String id2) {
         String id = id2.toLowerCase();
         return LORE_KEYS_CACHE.computeIfAbsent(id, key -> new NamespacedKey(ENGINE, LORE_FIX_PREFIX + id));
     }
 
     @NotNull
+    @Deprecated
     private static NamespacedKey getNameKey(@NotNull String id2) {
         String id = id2.toLowerCase();
         return NAME_KEYS_CACHE.computeIfAbsent(id, key -> new NamespacedKey(ENGINE, NAME_FIX_PREFIX + id));
     }
 
+    @Deprecated
     public static void addLoreTag(@NotNull ItemStack item, @NotNull String id, @NotNull String text) {
         ItemUtil.addLoreTag(item, ItemUtil.getLoreKey(id), text);
     }
 
+    @Deprecated
     public static void addLoreTag(@NotNull ItemStack item, @NotNull NamespacedKey key, @NotNull String text) {
         PDCUtil.setData(item, key, text);
     }
 
+    @Deprecated
     public static void delLoreTag(@NotNull ItemStack item, @NotNull String id) {
         ItemUtil.delLoreTag(item, ItemUtil.getLoreKey(id));
     }
 
+    @Deprecated
     public static void delLoreTag(@NotNull ItemStack item, @NotNull NamespacedKey key) {
         PDCUtil.removeData(item, key);
     }
 
     @Nullable
+    @Deprecated
     public static String getLoreTag(@NotNull ItemStack item, @NotNull String id) {
         return ItemUtil.getLoreTag(item, ItemUtil.getLoreKey(id));
     }
 
     @Nullable
+    @Deprecated
     public static String getLoreTag(@NotNull ItemStack item, @NotNull NamespacedKey key) {
         return PDCUtil.getStringData(item, key);
     }
 
+    @Deprecated
     public static void addNameTag(@NotNull ItemStack item, @NotNull String id, @NotNull String text) {
         PDCUtil.setData(item, ItemUtil.getNameKey(id), text);
     }
 
+    @Deprecated
     public static void delNameTag(@NotNull ItemStack item, @NotNull String id) {
         PDCUtil.removeData(item, ItemUtil.getNameKey(id));
     }
 
     @Nullable
+    @Deprecated
     public static String getNameTag(@NotNull ItemStack item, @NotNull String id) {
         return PDCUtil.getStringData(item, ItemUtil.getNameKey(id));
     }

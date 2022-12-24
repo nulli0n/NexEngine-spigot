@@ -16,11 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.Version;
-import su.nexmedia.engine.actions.ActionManipulator;
-import su.nexmedia.engine.api.craft.CraftRecipe;
-import su.nexmedia.engine.api.craft.FurnaceRecipe;
 import su.nexmedia.engine.api.menu.MenuItem;
-import su.nexmedia.engine.api.menu.MenuItemDisplay;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.api.type.ClickType;
 import su.nexmedia.engine.utils.*;
@@ -42,6 +38,8 @@ public class JYML extends YamlConfiguration {
     }
 
     public JYML(@NotNull File file) {
+        this.options().width(1000);
+
         FileUtil.create(file);
         this.file = file;
         this.reload();
@@ -49,9 +47,6 @@ public class JYML extends YamlConfiguration {
 
     @NotNull
     public static JYML loadOrExtract(@NotNull NexPlugin<?> plugin, @NotNull String filePath) {
-        /*if (!plugin.getDataFolder().exists()) {
-            plugin.getDataFolder().mkdir();
-        }*/
         if (!filePath.startsWith("/")) {
             filePath = "/" + filePath;
         }
@@ -74,19 +69,9 @@ public class JYML extends YamlConfiguration {
         return FileUtil.getFiles(path, deep).stream().filter(file -> file.getName().endsWith(".yml")).map(JYML::new).toList();
     }
 
-    /*@Deprecated
-    public void initializeOptions(@NotNull Class<?> clazz) {
-        initializeOptions(clazz, this);
-    }*/
-
     public void initializeOptions(@NotNull Object from) {
         initializeOptions(from, this);
     }
-
-    /*@Deprecated
-    public static void initializeOptions(@NotNull Class<?> clazz, @NotNull JYML cfg) {
-        initializeOptions(clazz, cfg, null);
-    }*/
 
     public static void initializeOptions(@NotNull Object from, @NotNull JYML cfg) {
         boolean isStatic = from instanceof Class;
@@ -106,23 +91,6 @@ public class JYML extends YamlConfiguration {
         }
         cfg.saveChanges();
     }
-
-    /*@Deprecated
-    public static void initializeOptions(@NotNull Class<?> clazz, @NotNull JYML cfg, @Nullable Object of) {
-        for (Field field : Reflex.getFields(clazz)) {
-            if (!JOption.class.isAssignableFrom(field.getType())) continue;
-            if (!field.canAccess(of)) continue;
-
-            try {
-                JOption<?> option = (JOption<?>) field.get(of);
-                option.read(cfg);
-            }
-            catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-        cfg.saveChanges();
-    }*/
 
     @NotNull
     public File getFile() {
@@ -167,38 +135,23 @@ public class JYML extends YamlConfiguration {
     }
 
     @Override
-    public void set(@NotNull String path, @Nullable Object o) {
-        if (o instanceof JWriter writer) {
-            writer.write(this, path);
-        }
-        else if (o instanceof JOption.Writer writer) {
+    public void set(@NotNull String path, @Nullable Object value) {
+        if (value instanceof JOption.Writer writer) {
             writer.write(this, path);
         }
         else {
-            if (o instanceof String str) {
-                o = StringUtil.colorRaw(str);
+            if (value instanceof String str) {
+                value = StringUtil.colorRaw(str);
             }
-            else if (o instanceof Set<?> set) {
-                List<Object> list = new ArrayList<>(set);
+            else if (value instanceof Collection<?> collection) {
+                List<Object> list = new ArrayList<>(collection);
                 list.replaceAll(obj -> obj instanceof String str ? StringUtil.colorRaw(str) : obj);
-                o = list;
+                value = list;
             }
-            else if (o instanceof List<?> set) {
-                List<Object> list = new ArrayList<>(set);
-                list.replaceAll(obj -> obj instanceof String str ? StringUtil.colorRaw(str) : obj);
-                o = list;
+            else if (value instanceof Location location) {
+                value = LocationUtil.serialize(location);
             }
-            else if (o instanceof Map<?, ?> map) {
-                map.forEach((key, value) -> {
-                    this.set(path + "." + key, value);
-                });
-                this.isChanged = true;
-                return;
-            }
-            else if (o instanceof Location) {
-                o = LocationUtil.serialize((Location) o);
-            }
-            super.set(path, o);
+            super.set(path, value);
         }
         this.isChanged = true;
     }
@@ -296,7 +249,7 @@ public class JYML extends YamlConfiguration {
             .filter(Objects::nonNull).toList();
     }
 
-    @NotNull
+    /*@NotNull
     public Set<FireworkEffect> getFireworkEffects(@NotNull String path) {
         Set<FireworkEffect> effects = new HashSet<>();
         for (String sId : this.getSection(path)) {
@@ -323,7 +276,7 @@ public class JYML extends YamlConfiguration {
         }
 
         return effects;
-    }
+    }*/
 
     @NotNull
     public ItemStack getItem(@NotNull String path, @Nullable ItemStack def) {
@@ -377,7 +330,7 @@ public class JYML extends YamlConfiguration {
         meta.setCustomModelData(model != 0 ? model : null);
 
         List<String> flags = this.getStringList(path + "Item_Flags");
-        if (flags.contains(Placeholders.MASK_ANY)) {
+        if (flags.contains(Placeholders.WILDCARD)) {
             meta.addItemFlags(ItemFlag.values());
         }
         else {
@@ -414,39 +367,34 @@ public class JYML extends YamlConfiguration {
         String id = pathSplit[pathSplit.length - 1];
         if (id == null || id.isEmpty()) id = UUID.randomUUID().toString();
 
-        int[] slots = this.getIntArray(path + "Slots");
-        Enum<?> type = clazzEnum == null ? MenuItemType.NONE : this.getEnum(path + "Type", clazzEnum, clazzEnum.getEnumConstants()[0]);
-
-        Map<String, MenuItemDisplay> displayMap = new HashMap<>();
         for (String displayId : this.getSection(path + "Display")) {
             String path2 = path + "Display." + displayId + ".";
-            int dPriority = this.getInt(path2 + "Priority");
             ItemStack dItem = this.getItem(path2 + "Item");
-            if (dItem.getType().isAir()) dItem = this.getItem(path2 + "Item");
+            this.setItem(path + "Item", dItem);
+            break;
+        }
+        this.remove(path + "Display");
 
-            List<String> dConditions = this.getStringList(path2 + "Conditions");
 
-            MenuItemDisplay display = new MenuItemDisplay(displayId, dPriority, dItem, dConditions);
-            displayMap.put(display.getId(), display);
+        Enum<?> type = clazzEnum == null ? MenuItemType.NONE : this.getEnum(path + "Type", clazzEnum, clazzEnum.getEnumConstants()[0]);
+        if (type != MenuItemType.NONE) {
+            this.addMissing(path + "Priority", 5);
         }
 
-        int animationInterval = this.getInt(path + "Animation.Interval");
-        String[] animationFrames = this.getString(path + "Animation.Switch.Display_Names", "").split(",");
-        boolean animationIgnoreUnvailableFrames = this.getBoolean(path + "Animation.Switch.Ignore_Unavailable_Displays");
-        boolean animationRandomOrder = this.getBoolean(path + "Animation.Switch.Random_Order");
+        ItemStack item = this.getItem(path + "Item");
+        int[] slots = this.getIntArray(path + "Slots");
+        int priority = this.getInt(path + "Priority");
 
-        Map<ClickType, ActionManipulator> customClicks = new HashMap<>();
+        Map<ClickType, List<String>> clickCommands = new HashMap<>();
         for (String sType : this.getSection(path + "Click_Actions")) {
             ClickType clickType = CollectionsUtil.getEnum(sType, ClickType.class);
             if (clickType == null) continue;
 
-            ActionManipulator actions = new ActionManipulator(this, path + "Click_Actions." + sType);
-            customClicks.put(clickType, actions);
+            clickCommands.put(clickType, this.getStringList(path + "Click_Actions." + sType));
         }
 
-        return new MenuItem(
-            id, type, slots, displayMap, customClicks,
-            animationInterval, animationFrames, animationIgnoreUnvailableFrames, animationRandomOrder);
+        this.saveChanges();
+        return new MenuItem(id, type, slots, priority, item, clickCommands);
     }
 
     public void setItem(@NotNull String path, @Nullable ItemStack item) {
@@ -460,7 +408,7 @@ public class JYML extends YamlConfiguration {
 
         Material material = item.getType();
         this.set(path + "Material", material.name());
-        this.set(path + "Amount", item.getAmount());
+        this.set(path + "Amount", item.getAmount() <= 1 ? null : item.getAmount());
         this.set(path + "Head_Texture", ItemUtil.getSkullTexture(item));
 
         ItemMeta meta = item.getItemMeta();
@@ -471,13 +419,20 @@ public class JYML extends YamlConfiguration {
             this.set(path + "Encoded.Use", true);
             this.setItemEncoded(path + "Encoded.Value", item);
         }
-        else this.set(path + "Encoded.Use", false);
-
-        if (meta instanceof Damageable damageable) {
-            this.set(path + "Durability", damageable.getDamage());
+        else {
+            if (this.contains(path + "Encoded.Value")) {
+                this.set(path + "Encoded.Use", false);
+            }
+            else {
+                this.remove(path + "Encoded");
+            }
         }
 
-        this.set(path + "Name", meta.getDisplayName());
+        if (meta instanceof Damageable damageable) {
+            this.set(path + "Durability", damageable.getDamage() <= 0 ? null : damageable.getDamage());
+        }
+
+        this.set(path + "Name", meta.getDisplayName().isEmpty() ? null : meta.getDisplayName());
         this.set(path + "Lore", meta.getLore());
 
         for (Map.Entry<Enchantment, Integer> entry : meta.getEnchants().entrySet()) {
@@ -499,8 +454,8 @@ public class JYML extends YamlConfiguration {
         this.set(path + "Color", colorRaw);
 
         List<String> itemFlags = new ArrayList<>(meta.getItemFlags().stream().map(ItemFlag::name).toList());
-        this.set(path + "Item_Flags", itemFlags);
-        this.set(path + "Unbreakable", meta.isUnbreakable());
+        this.set(path + "Item_Flags", itemFlags.isEmpty() ? null : itemFlags);
+        this.set(path + "Unbreakable", meta.isUnbreakable() ? true : null);
     }
 
     @Nullable
@@ -523,100 +478,5 @@ public class JYML extends YamlConfiguration {
     public void setItemsEncoded(@NotNull String path, @NotNull List<ItemStack> item) {
         List<String> code = new ArrayList<>(ItemUtil.toBase64(item));
         this.set(path, code);
-    }
-
-    @Nullable
-    @Deprecated
-    public CraftRecipe getCraftRecipe(@NotNull NexPlugin<?> plugin, @NotNull String id, @NotNull String path) {
-        if (!path.endsWith(".")) path += ".";
-
-        boolean shape = this.getBoolean(path + "Shaped");
-        ItemStack result;
-        if (this.isConfigurationSection(path + "Result")) {
-            result = this.getItem(path + "Result");
-        }
-        else result = this.getItemEncoded(path + "Result");
-        if (result == null) return null;
-
-        CraftRecipe recipe = new CraftRecipe(plugin, id, result, shape);
-        int ingCount = 0;
-        for (String ingId : this.getSection(path + "Ingredients")) {
-            String path2 = path + "Ingredients." + ingId;
-
-            ItemStack ingredient;
-            if (this.isConfigurationSection(path2)) {
-                ingredient = this.getItem(path2);
-            }
-            else ingredient = this.getItemEncoded(path2);
-            if (ingredient == null) continue;
-
-            recipe.addIngredient(ingCount++, ingredient);
-        }
-
-        return recipe;
-    }
-
-    @Deprecated
-    public void setRecipe(@NotNull String path, @Nullable CraftRecipe recipe) {
-        if (!path.endsWith(".")) path += ".";
-        if (recipe == null) {
-            if (path.endsWith(".")) path = path.substring(0, path.length() - 1);
-            this.set(path, null);
-            return;
-        }
-
-        this.set(path + "Shaped", recipe.isShaped());
-        this.setItemEncoded(path + "Result", recipe.getResult());
-
-        char[] ingName = new char[]{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'};
-        ItemStack[] ingredients = recipe.getIngredients();
-        for (int index = 0; index < ingredients.length; index++) {
-            this.setItemEncoded(path + "Ingredients." + ingName[index], ingredients[index]);
-        }
-    }
-
-    @Nullable
-    @Deprecated
-    public FurnaceRecipe getFurnaceRecipe(@NotNull NexPlugin<?> plugin, @NotNull String id, @NotNull String path) {
-        if (!path.endsWith(".")) path += ".";
-
-        ItemStack input;
-        if (this.isConfigurationSection(path + "Input")) {
-            input = this.getItem(path + "Input");
-        }
-        else input = this.getItemEncoded(path + "Input");
-
-        ItemStack result;
-        if (this.isConfigurationSection(path + "Result")) {
-            result = this.getItem(path + "Result");
-        }
-        else result = this.getItemEncoded(path + "Result");
-
-        if (result == null || input == null) {
-            return null;
-        }
-
-        float exp = (float) this.getDouble(path + "Exp");
-        double time = this.getDouble(path + "Time");
-
-        FurnaceRecipe recipe = new FurnaceRecipe(plugin, id, result, exp, time);
-        recipe.addIngredient(input);
-
-        return recipe;
-    }
-
-    @Deprecated
-    public void setRecipe(@NotNull String path, @Nullable FurnaceRecipe recipe) {
-        if (!path.endsWith(".")) path += ".";
-        if (recipe == null) {
-            if (path.endsWith(".")) path = path.substring(0, path.length() - 1);
-            this.set(path, null);
-            return;
-        }
-
-        this.setItemEncoded(path + "Input", recipe.getInput());
-        this.setItemEncoded(path + "Result", recipe.getResult());
-        this.set(path + "Exp", recipe.getExp());
-        this.set(path + "Time", recipe.getTime() / 20D); // Turn to decimal seconds
     }
 }

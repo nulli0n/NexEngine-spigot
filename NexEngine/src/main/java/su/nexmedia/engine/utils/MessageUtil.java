@@ -1,7 +1,6 @@
 package su.nexmedia.engine.utils;
 
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -13,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.utils.json.text.ClickText;
 import su.nexmedia.engine.utils.json.text.ClickWord;
+import su.nexmedia.engine.utils.message.NexParser;
 import su.nexmedia.engine.utils.regex.RegexUtil;
 
 import java.util.HashMap;
@@ -23,10 +23,10 @@ import java.util.regex.Pattern;
 public class MessageUtil {
 
     @Deprecated private static final Pattern  PATTERN_LEGACY_JSON_FULL = Pattern.compile("((\\{json:)+(.*?)(\\})+(.*?))(\\{end-json\\})");
-    private static final Map<String, Pattern> PATTERN_JSON_PARAMS      = new HashMap<>();
+    @Deprecated private static final Map<String, Pattern> PATTERN_JSON_PARAMS      = new HashMap<>();
     //private static final Pattern              PATTERN_JSON_FULL   = Pattern.compile("((\\{json:)+(.+?)\\}+(.*?))");
     //private static final Pattern              PATTERN_JSON_FULL   = Pattern.compile("((\\{json:){1}(.*?)\\}{1})");
-    private static final Pattern PATTERN_JSON_FULL = Pattern.compile("(\\{json:(.*?)\\}+)");
+    @Deprecated private static final Pattern PATTERN_JSON_FULL = Pattern.compile("(\\{json:(.*?)\\}+)");
 
     static {
         for (String parameter : new String[]{"text", "hint", "hover", "showText", "chat-type", "runCommand", "chat-suggest", "suggestCommand", "url", "openUrl", "showItem", "copyToClipboard"}) {
@@ -34,8 +34,16 @@ public class MessageUtil {
         }
     }
 
+    public static void sendCustom(@NotNull CommandSender sender, @NotNull String message) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(NexParser.toPlainText(message));
+            return;
+        }
+        NexParser.toMessage(message).send(sender);
+    }
+
     public static void sendActionBar(@NotNull Player player, @NotNull String msg) {
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, NexParser.toMessage(msg).build());
     }
 
     public static void sound(@NotNull Player player, @Nullable Sound sound) {
@@ -51,6 +59,7 @@ public class MessageUtil {
     }
 
     @NotNull
+    @Deprecated
     public static String toNewFormat(@NotNull String message) {
         Matcher matcherOld = RegexUtil.getMatcher(PATTERN_LEGACY_JSON_FULL, message);
         int index = 0;
@@ -70,6 +79,7 @@ public class MessageUtil {
         return matcher.find();
     }
 
+    @Deprecated
     public static boolean hasJson(@NotNull String str) {
         Matcher matcher = RegexUtil.getMatcher(PATTERN_JSON_FULL, str);
         return matcher.find() || isJSON(str);
@@ -91,6 +101,7 @@ public class MessageUtil {
     }
 
     @NotNull
+    @Deprecated
     public static String stripJson(@NotNull String message) {
         Matcher matcher = RegexUtil.getMatcher(PATTERN_JSON_FULL, message);
         while (RegexUtil.matcherFind(matcher)) {
@@ -101,6 +112,7 @@ public class MessageUtil {
     }
 
     @NotNull
+    @Deprecated
     public static String toSimpleText(@NotNull String message) {
         message = toNewFormat(message);
 
@@ -119,12 +131,14 @@ public class MessageUtil {
         sendWithJson(sender, message);
     }
 
+    @Deprecated
     public static String[] extractNonJson(@NotNull String message) {
         message = StringUtil.color(message.replace("\n", " "));
         message = toNewFormat(message);
         return PATTERN_JSON_FULL.split(message);
     }
 
+    @Deprecated
     public static void sendWithJson(@NotNull CommandSender sender, @NotNull String message) {
         message = StringUtil.color(message.replace("\n", " "));
         message = toNewFormat(message);
@@ -178,6 +192,7 @@ public class MessageUtil {
     }
 
     @Nullable
+    @Deprecated
     private static String getParamValue(@NotNull String from, @NotNull String param) {
         Pattern pattern = PATTERN_JSON_PARAMS.get(param);
         if (pattern == null) return null;

@@ -10,6 +10,7 @@ import su.nexmedia.engine.api.manager.IPlaceholder;
 import su.nexmedia.engine.lang.EngineLang;
 import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.message.NexParser;
 import su.nexmedia.engine.utils.regex.RegexUtil;
 
 import java.util.*;
@@ -24,13 +25,12 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
     public static final String PLACEHOLDER_DESCRIPTION = "%command_description%";
     public static final String PLACEHOLDER_LABEL       = "%command_label%";
 
-    private final Map<String, Pattern>            flagPatterns;
-    protected     P                               plugin;
+    private final Map<String, Pattern> flags;
+    protected     P                    plugin;
     protected     String[]                        aliases;
     protected     String                          permission;
     protected     Map<String, AbstractCommand<P>> childrens;
     protected     AbstractCommand<P>              parent;
-    protected     Set<String>                     flags;
 
     public AbstractCommand(@NotNull P plugin, @NotNull List<String> aliases) {
         this(plugin, aliases.toArray(new String[0]));
@@ -57,8 +57,7 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
         this.aliases = Stream.of(aliases).map(String::toLowerCase).toArray(String[]::new);
         this.permission = permission;
         this.childrens = new TreeMap<>();
-        this.flags = new HashSet<>();
-        this.flagPatterns = new HashMap<>();
+        this.flags = new HashMap<>();
     }
 
     @Override
@@ -115,17 +114,15 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
 
     @NotNull
     public Set<String> getFlags() {
-        return new HashSet<>(this.flags);
+        return new HashSet<>(this.flags.keySet());
     }
 
     public final void registerFlag(@NotNull String flag) {
-        this.flags.add(flag);
-        this.flagPatterns.put(flag, Pattern.compile("(\\~" + flag + ")+(\\{)+(.*?)(\\})"));
+        this.flags.put(flag, Pattern.compile("-" + flag + NexParser.OPTION_PATTERN));
     }
 
     public final void unregisterFlag(@NotNull String flag) {
         this.flags.remove(flag);
-        this.flagPatterns.remove(flag);
     }
 
     @NotNull
@@ -141,14 +138,7 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
         return Collections.emptyList();
     }
 
-    @Deprecated
-    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
-        this.onExecute(sender, label, args, new HashMap<>());
-    }
-
-    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
-
-    }
+    protected abstract void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags);
 
     public final void execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
         if (this.isPlayerOnly() && !(sender instanceof Player)) {
@@ -160,27 +150,23 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
             return;
         }
 
+        Map<String, String> flags = new HashMap<>();
         if (!this.getFlags().isEmpty()) {
             String argLine = String.join(" ", args);
-            Map<String, String> flags = new HashMap<>();
-
-            for (Map.Entry<String, Pattern> entry : this.flagPatterns.entrySet()) {
+            for (Map.Entry<String, Pattern> entry : this.flags.entrySet()) {
                 String flag = entry.getKey();
                 Pattern pattern = entry.getValue();
 
                 Matcher matcher = RegexUtil.getMatcher(pattern, argLine);
-                if (matcher != null && matcher.find()) {
-                    flags.put(flag, StringUtil.color(matcher.group(3)));
+                if (RegexUtil.matcherFind(matcher)) {
+                    flags.put(flag, StringUtil.color(matcher.group(1)));
                     argLine = StringUtil.oneSpace(argLine.replace(matcher.group(0), ""));
                 }
             }
-
             args = argLine.split(" ");
-            this.onExecute(sender, label, args, flags);
         }
-        else {
-            this.onExecute(sender, label, args);
-        }
+
+        this.onExecute(sender, label, args, flags);
     }
 
     public final boolean hasPermission(@NotNull CommandSender sender) {

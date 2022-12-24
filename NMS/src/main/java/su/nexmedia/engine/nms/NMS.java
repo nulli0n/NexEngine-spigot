@@ -49,9 +49,7 @@ public interface NMS {
 
     @NotNull ItemStack damageItem(@NotNull ItemStack item, int amount, @Nullable Player player);
 
-    @NotNull
-    @Deprecated
-    String fixColors(@NotNull String str);
+    @NotNull String fixColors(@NotNull String str);
 
     double getDefaultDamage(@NotNull ItemStack itemStack);
 

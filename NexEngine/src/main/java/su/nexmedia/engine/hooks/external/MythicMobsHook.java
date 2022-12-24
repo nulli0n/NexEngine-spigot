@@ -14,24 +14,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MythicMobsHook /*extends AbstractHook<NexEngine>*/ {
+public class MythicMobsHook {
 
     static MythicBukkit mythicMobs = MythicBukkit.inst();
-
-    /*public MythicMobsHook(@NotNull NexEngine plugin, @NotNull String pluginName) {
-        super(plugin, pluginName);
-    }
-
-    @Override
-    public boolean setup() {
-        mythicMobs = MythicBukkit.inst();
-        return true;
-    }
-
-    @Override
-    public void shutdown() {
-        mythicMobs = null;
-    }*/
 
     public static boolean isMythicMob(@NotNull Entity entity) {
         return mythicMobs.getAPIHelper().isMythicMob(entity);

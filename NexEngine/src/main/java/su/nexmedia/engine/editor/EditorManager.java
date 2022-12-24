@@ -13,29 +13,23 @@ import su.nexmedia.engine.api.editor.EditorInput;
 import su.nexmedia.engine.api.editor.EditorObject;
 import su.nexmedia.engine.api.manager.AbstractManager;
 import su.nexmedia.engine.api.manager.IListener;
-import su.nexmedia.engine.api.menu.IMenu;
+import su.nexmedia.engine.api.menu.AbstractMenu;
 import su.nexmedia.engine.lang.EngineLang;
 import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.StringUtil;
-import su.nexmedia.engine.utils.json.text.ClickText;
-import su.nexmedia.engine.utils.json.text.ClickWord;
+import su.nexmedia.engine.utils.message.NexComponent;
+import su.nexmedia.engine.utils.message.NexMessage;
 
 import java.util.*;
 
 public class EditorManager extends AbstractManager<NexEngine> implements IListener {
 
     private static final NexEngine ENGINE = NexEngine.get();
-    private static final Map<Player, Map.Entry<IMenu, Integer>> EDITOR_CACHE_MENU  = new WeakHashMap<>();
+    private static final Map<Player, Map.Entry<AbstractMenu<?>, Integer>> EDITOR_CACHE_MENU  = new WeakHashMap<>();
     private static final Map<Player, EditorObject<?,?>>         EDITOR_CACHE_INPUT = new WeakHashMap<>();
 
     private static final String EXIT       = "#exit";
     private static final int    TITLE_STAY = Short.MAX_VALUE;
-
-    @Deprecated private static final String TIP_TITLE = StringUtil.color("&a&lEditing");
-    @Deprecated private static final String ERROR_TITLE = StringUtil.color("&c&lError!");
-    @Deprecated public static final String ERROR_NUM_INVALID = StringUtil.color("&7Invalid Number!");
-    @Deprecated public static final String ERROR_NUM_NOT_INT = StringUtil.color("&7Number must be &fInteger&7!");
-    @Deprecated public static final String ERROR_ENUM = StringUtil.color("&7Invalid Type! See in chat.");
 
     public EditorManager(@NotNull NexEngine plugin) {
         super(plugin);
@@ -68,7 +62,7 @@ public class EditorManager extends AbstractManager<NexEngine> implements IListen
     public static <T,E extends Enum<E>> void startEdit(@NotNull Player player, @NotNull T object, @NotNull E type, @NotNull EditorInput<T,E> input) {
         EDITOR_CACHE_INPUT.put(player, new EditorObject<>(object, type, input));
 
-        IMenu menu = IMenu.getMenu(player);
+        AbstractMenu<?> menu = AbstractMenu.getMenu(player);
         if (menu != null) {
             EDITOR_CACHE_MENU.put(player, new AbstractMap.SimpleEntry<>(menu, menu.getPage(player)));
         }
@@ -82,7 +76,7 @@ public class EditorManager extends AbstractManager<NexEngine> implements IListen
     public static void endEdit(@NotNull Player player, boolean msg) {
         EDITOR_CACHE_INPUT.remove(player);
 
-        Map.Entry<IMenu, Integer> entry = EDITOR_CACHE_MENU.remove(player);
+        Map.Entry<AbstractMenu<?>, Integer> entry = EDITOR_CACHE_MENU.remove(player);
         if (entry != null) {
             entry.getKey().open(player, entry.getValue());
         }
@@ -100,19 +94,19 @@ public class EditorManager extends AbstractManager<NexEngine> implements IListen
         boolean fixCommand = Version.isAbove(Version.V1_18_R2);
 
         List<String> items = items2.stream().sorted(String::compareTo).map(str -> StringUtil.color("&e" + str)).toList();
-        ClickText text = new ClickText(String.join(" &8-- ", items));
+        NexMessage message = new NexMessage(String.join(" &8-- ", items));
         items.forEach(item -> {
-            ClickWord word = text.addComponent(StringUtil.colorOff(item), item);
-            word.showText(StringUtil.color("&7Click me to select &f" + item));
+            NexComponent component = message.addComponent(StringUtil.colorOff(item), item);
+            component.showText(StringUtil.color("&7Click me to select &f" + item));
 
             if (autoRun && fixCommand && !item.startsWith("/")) item = "/" + item;
 
-            if (autoRun) word.runCommand(StringUtil.colorOff(item));
-            else word.suggestCommand(StringUtil.colorOff(item));
+            if (autoRun) component.runCommand(StringUtil.colorOff(item));
+            else component.suggestCommand(StringUtil.colorOff(item));
         });
 
         player.sendMessage(StringUtil.color("&6&m---------&6&l[ &e&lSuggested&7/&e&lAvailable Values &6&l]&6&m---------"));
-        text.send(player);
+        message.send(player);
     }
 
     public static void sendCommandTips(@NotNull Player player) {

@@ -8,6 +8,7 @@ import su.nexmedia.engine.api.command.AbstractCommand;
 import java.util.Arrays;
 import java.util.List;
 
+@Deprecated
 public abstract class AbstractModuleSubCommand<P extends NexPlugin<P>, M extends AbstractModule<P>> extends AbstractCommand<P> {
 
     protected M module;

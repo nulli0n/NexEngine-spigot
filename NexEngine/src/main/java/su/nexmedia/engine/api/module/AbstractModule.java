@@ -5,6 +5,7 @@ import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.manager.AbstractManager;
 import su.nexmedia.engine.api.manager.ILogger;
 
+@Deprecated
 public abstract class AbstractModule<P extends NexPlugin<P>> extends AbstractManager<P> implements ILogger {
 
     private final String id;

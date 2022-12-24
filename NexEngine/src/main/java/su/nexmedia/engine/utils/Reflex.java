@@ -2,7 +2,6 @@ package su.nexmedia.engine.utils;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.Version;
 
 import java.lang.reflect.Constructor;
@@ -15,8 +14,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class Reflex {
-
-    private static final NexEngine ENGINE = NexEngine.get();
 
     @Nullable
     public static Class<?> getClass(@NotNull String path, @NotNull String name) {
@@ -34,7 +31,6 @@ public class Reflex {
             return Class.forName(path);
         }
         catch (ClassNotFoundException e) {
-            ENGINE.error("[Reflex] Class not found: " + path);
             e.printStackTrace();
             return null;
         }

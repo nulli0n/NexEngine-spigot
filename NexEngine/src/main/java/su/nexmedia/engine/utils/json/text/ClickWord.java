@@ -11,6 +11,7 @@ import su.nexmedia.engine.utils.StringUtil;
 
 import java.util.List;
 
+@Deprecated
 public class ClickWord {
 
     private final String text;

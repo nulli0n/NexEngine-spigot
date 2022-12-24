@@ -10,6 +10,7 @@ import su.nexmedia.engine.utils.StringUtil;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class AboutSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> {
 
@@ -35,13 +36,13 @@ public class AboutSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> 
     }
 
     @Override
-    public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
         List<String> info = StringUtil.color(Arrays.asList(
             "&7",
-            "&e" + plugin.getName() + " &6v" + plugin.getDescription().getVersion() + " &ecreated by &6" + plugin.getAuthor(),
+            "&e" + plugin.getName() + " &6v" + plugin.getDescription().getVersion() + " &ecreated by &6" + plugin.getDescription().getAuthors(),
             "&eType &6/" + plugin.getLabel() + " help&e to list plugin commands.",
             "&7",
-            "&2Powered by &a&l" + NexEngine.get().getName() + "&2, © 2019-2022 &a" + NexPlugin.TM));
+            "&2Powered by &a&l" + NexEngine.get().getName() + "&2, © 2019-2022"));
 
         info.forEach(sender::sendMessage);
     }

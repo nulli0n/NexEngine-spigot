@@ -1,7 +1,6 @@
 Plugin:
   Command_Aliases: 'nexengine'
   Language: en
-  Prefix: 'NexEngine'
 
 Locale:
   World_Names:

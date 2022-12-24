@@ -5,7 +5,6 @@ import org.bukkit.Server;
 import org.bukkit.command.*;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.command.GeneralCommand;
 import su.nexmedia.engine.utils.Reflex;
 
@@ -26,14 +25,15 @@ public class CommandRegister extends Command implements PluginIdentifiableComman
         this.tab = tab;
     }
 
+    private static SimpleCommandMap getCommandMap() {
+        return (SimpleCommandMap) Reflex.getFieldValue(Bukkit.getServer(), "commandMap");
+    }
+
     public static void register(@NotNull Plugin plugin, @NotNull GeneralCommand<?> command) {
         CommandRegister register = new CommandRegister(plugin, command, command, command.getAliases(), command.getDescription(), command.getUsage());
         register.setPermission(command.getPermission());
 
-        CommandMap map = (CommandMap) Reflex.getFieldValue(plugin.getServer(), "commandMap");
-        if (map == null) return;
-
-        map.register(plugin.getDescription().getName(), register);
+        getCommandMap().register(plugin.getDescription().getName(), register);
     }
 
     public static void syncCommands() {
@@ -46,58 +46,25 @@ public class CommandRegister extends Command implements PluginIdentifiableComman
     }
 
     @SuppressWarnings("unchecked")
-    @Deprecated
-    public static void unregister(@NotNull NexPlugin<?> plugin, @NotNull String[] aliases) {
-        SimpleCommandMap map = (SimpleCommandMap) Reflex.getFieldValue(plugin.getPluginManager(), "commandMap");
-        if (map == null) return;
-
-        HashMap<String, Command> knownCommands = (HashMap<String, Command>) Reflex.getFieldValue(map, "knownCommands");
-        if (knownCommands == null) return;
-
-        for (String command : aliases) {
-            for (String commandAlias : getAliases(command, true)) {
-                Command cmd = map.getCommand(commandAlias);
-                if (cmd == null) {
-                    continue;
-                }
-                if (!cmd.unregister(map)) {
-                    plugin.error("Unable to unregister command: " + commandAlias);
-                }
-                knownCommands.remove(commandAlias);
-                // plugin.info("Command unregistered: '" + commandAlias + "'");
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public static void unregister(@NotNull String name) {
-        SimpleCommandMap map = (SimpleCommandMap) Reflex.getFieldValue(Bukkit.getServer(), "commandMap");
-        if (map == null) return;
-
+    public static boolean unregister(@NotNull String name) {
+        SimpleCommandMap map = getCommandMap();
         Command match = map.getCommands().stream()
             .filter(command -> command.getLabel().equalsIgnoreCase(name) || command.getAliases().contains(name))
             .findFirst().orElse(null);
-        if (match == null) return;
+        if (match == null) return false;
 
         Map<String, Command> knownCommands = (HashMap<String, Command>) Reflex.getFieldValue(map, "knownCommands");
-        if (knownCommands == null) return;
+        if (knownCommands == null) return false;
 
         if (match.unregister(map)) {
-            knownCommands.keySet().removeIf(key -> key.equalsIgnoreCase(match.getName()) || match.getAliases().contains(key));
+            return knownCommands.keySet().removeIf(key -> key.equalsIgnoreCase(match.getName()) || match.getAliases().contains(key));
         }
-    }
-
-    @NotNull
-    @Deprecated
-    public static Set<String> getAliases(@NotNull String name) {
-        return getAliases(name, true);
+        return false;
     }
 
     @NotNull
     public static Set<String> getAliases(@NotNull String name, boolean inclusive) {
-        SimpleCommandMap map = (SimpleCommandMap) Reflex.getFieldValue(Bukkit.getServer(), "commandMap");
-        if (map == null) return Collections.emptySet();
-
+        SimpleCommandMap map = getCommandMap();
         Command match = map.getCommands().stream()
             .filter(command -> command.getLabel().equalsIgnoreCase(name) || command.getAliases().contains(name))
             .findFirst().orElse(null);

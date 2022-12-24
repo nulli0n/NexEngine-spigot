@@ -21,10 +21,6 @@ public final class CitizensHook extends AbstractListener<NexEngine> {
 
     private static CitizensHook instance;
 
-    /*public CitizensHook(@NotNull NexEngine plugin, @NotNull String pluginName) {
-        super(plugin, pluginName);
-    }*/
-
     private CitizensHook(NexEngine plugin) {
         super(plugin);
         this.registerListeners();
@@ -49,6 +45,7 @@ public final class CitizensHook extends AbstractListener<NexEngine> {
 
     public static void addListener(@NotNull NexPlugin<?> plugin, @NotNull CitizensListener listener) {
         getListeners(plugin).add(listener);
+        setup();
     }
 
     @NotNull
@@ -72,6 +69,7 @@ public final class CitizensHook extends AbstractListener<NexEngine> {
         if (TRAITS.computeIfAbsent(plugin, set -> new HashSet<>()).add(trait)) {
             plugin.info("[Citizens Hook] Registered trait: " + trait.getTraitName());
             CitizensAPI.getTraitFactory().registerTrait(trait);
+            setup();
         }
     }
 

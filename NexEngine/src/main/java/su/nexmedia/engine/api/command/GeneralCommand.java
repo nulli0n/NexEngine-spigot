@@ -100,10 +100,10 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
             List<String> list = new ArrayList<>();
             command.getChildrens().stream().filter(child -> child.hasPermission(sender))
                 .forEach(child -> list.addAll(Arrays.asList(child.getAliases())));
-            return StringUtil.getByFirstLetters(args[args.length - 1], list);
+            return StringUtil.getByPartialMatches(list, args[args.length - 1], 2);
         }
 
         List<String> list = command.getTab(player, command.equals(this) ? (args.length) : (args.length - 1), args);
-        return StringUtil.getByFirstLetters(args[args.length - 1], list);
+        return StringUtil.getByPartialMatches(list, args[args.length - 1], 2);
     }
 }

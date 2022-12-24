@@ -1,42 +1,44 @@
 package su.nexmedia.engine.api.menu;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractListener;
+import su.nexmedia.engine.api.manager.ICleanable;
+import su.nexmedia.engine.api.type.ClickType;
+import su.nexmedia.engine.utils.ItemUtil;
+import su.nexmedia.engine.utils.PlayerUtil;
 import su.nexmedia.engine.utils.StringUtil;
 
 import java.util.*;
 
-public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListener<P> implements IMenu {
+public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListener<P> implements ICleanable {
 
-    protected final UUID   id;
-    protected final Map<Player, int[]>           userPage;
-    protected final Set<Player>       viewers;
-    private final   Map<Player, Long> fastClick;
-    protected       String title;
-    protected       int    size;
-    protected       JYML   cfg;
-    protected       Map<String, IMenuItem>       items;
-    protected       Map<Player, List<IMenuItem>> userItems;
-    
-    @Deprecated protected long                 animationInterval;
-    @Deprecated private   MenuAnimationTask<P> animationTask;
+    private static final Map<Player, AbstractMenu<?>> PLAYER_MENUS = new WeakHashMap<>();
+
+    protected final UUID                        id;
+    protected final Set<Player>                 viewers;
+    protected final Map<String, MenuItem>       items;
+    protected final Map<Player, List<MenuItem>> userItems;
+    protected final Map<Player, int[]>          userPage;
+
+    protected String title;
+    protected int    size;
+    protected JYML   cfg;
+
+    private MenuListener<P> listener;
 
     public AbstractMenu(@NotNull P plugin, @NotNull JYML cfg, @NotNull String path) {
         this(plugin, cfg.getString(path + "Title", ""), cfg.getInt(path + "Size"));
         this.cfg = cfg;
-
-        this.setAnimationInterval(cfg.getLong(path + "Animation.Tick"));
-        this.setupAnimationTask();
     }
 
     public AbstractMenu(@NotNull P plugin, @NotNull String title, int size) {
@@ -49,42 +51,32 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
         this.userItems = new WeakHashMap<>();
         this.userPage = new WeakHashMap<>();
         this.viewers = new HashSet<>();
-        this.fastClick = new HashMap<>();
 
+        this.listener = new MenuListener<>(this);
+        this.listener.registerListeners();
         this.registerListeners();
     }
 
     @Override
     public void clear() {
-        if (this.animationTask != null) {
-            this.animationTask.stop();
-            this.animationTask = null;
-        }
-        this.unregisterListeners();
         this.viewers.forEach(Player::closeInventory);
         this.viewers.clear();
         this.items.clear();
         this.userItems.clear();
         this.userPage.clear();
-        this.fastClick.clear();
+        this.unregisterListeners();
+        this.listener.unregisterListeners();
+        this.listener = null;
         this.cfg = null;
     }
 
-    private void setupAnimationTask() {
-        if (!this.isAnimationEnabled()) return;
-
-        this.animationTask = new MenuAnimationTask<>(plugin, this);
-        this.animationTask.start();
+    public enum SlotType {
+        EMPTY_PLAYER, EMPTY_MENU, PLAYER, MENU
     }
 
-    @Override
-    public long getAnimationInterval() {
-        return animationInterval;
-    }
-
-    @Override
-    public void setAnimationInterval(long animationInterval) {
-        this.animationInterval = animationInterval;
+    @Nullable
+    public static AbstractMenu<?> getMenu(@NotNull Player player) {
+        return PLAYER_MENUS.get(player);
     }
 
     protected void onItemClickDefault(@NotNull Player player, @NotNull MenuItemType itemType) {
@@ -97,117 +89,215 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
         }
     }
 
-    @Override
+    public boolean onPrepare(@NotNull Player player, @NotNull Inventory inventory) {
+        return true;
+    }
+
+    public boolean onReady(@NotNull Player player, @NotNull Inventory inventory) {
+        return true;
+    }
+
+    public abstract boolean cancelClick(@NotNull InventoryClickEvent e, @NotNull SlotType slotType);
+
+    public boolean cancelClick(@NotNull InventoryDragEvent e) {
+        return true;
+    }
+
+    public boolean open(@NotNull Player player, int page) {
+        if (player.isSleeping()) return false;
+
+        Inventory inventory;
+        if (this.isViewer(player)) {
+            this.getUserItemsMap().remove(player);
+            inventory = player.getOpenInventory().getTopInventory();
+            inventory.clear();
+        }
+        else {
+            inventory = this.createInventory();
+        }
+
+        this.setPage(player, page, page);
+        if (!this.onPrepare(player, inventory)) return false;
+        this.setItems(player, inventory);
+        if (!this.onReady(player, inventory)) return false;
+        if (this.getViewers().add(player)) {
+            player.openInventory(inventory);
+        }
+        PLAYER_MENUS.put(player, this);
+        return true;
+    }
+
+    public void update() {
+        this.getViewers().forEach(player -> this.open(player, this.getPage(player)));
+    }
+
+    public void setItems(@NotNull Player player, @NotNull Inventory inventory) {
+        // Auto paginator
+        int page = this.getPage(player);
+        int pages = this.getPageMax(player);
+
+        List<MenuItem> items = new ArrayList<>(this.getItemsMap().values());
+        items.sort(Comparator.comparingInt(MenuItem::getPriority));
+        items.addAll(this.getUserItems(player));
+
+        for (MenuItem menuItem : items) {
+            if (menuItem.getType() == MenuItemType.PAGE_NEXT) {
+                if (page >= pages) {
+                    continue;
+                }
+            }
+            if (menuItem.getType() == MenuItemType.PAGE_PREVIOUS) {
+                if (page <= 1) {
+                    continue;
+                }
+            }
+
+            ItemStack item = menuItem.getItem();
+            this.onItemPrepare(player, menuItem, item);
+
+            for (int slot : menuItem.getSlots()) {
+                if (slot >= inventory.getSize()) continue;
+                inventory.setItem(slot, item);
+            }
+        }
+    }
+
+    public void onItemPrepare(@NotNull Player player, @NotNull MenuItem menuItem, @NotNull ItemStack item) {
+        ItemUtil.setPlaceholderAPI(player, item);
+    }
+
+    public void onClick(@NotNull Player player, @Nullable ItemStack item, int slot, @NotNull InventoryClickEvent e) {
+        if (item == null || item.getType().isAir()) return;
+
+        MenuItem menuItem = this.getItem(player, slot);
+        if (menuItem == null) return;
+
+        MenuClick click = menuItem.getClickHandler();
+        if (click != null) click.click(player, menuItem.getType(), e);
+
+        // Execute custom user actions when click button.
+        ClickType clickType = ClickType.from(e);
+        menuItem.getClickCommands(clickType).forEach(command -> PlayerUtil.dispatchCommand(player, command));
+    }
+
+    public void onClose(@NotNull Player player, @NotNull InventoryCloseEvent e) {
+        this.getUserPageMap().remove(player);
+        this.getUserItemsMap().remove(player);
+        this.getViewers().remove(player);
+
+        PLAYER_MENUS.remove(player);
+
+        if (this.getViewers().isEmpty() && this.destroyWhenNoViewers()) {
+            this.clear();
+        }
+    }
+
+    public boolean isViewer(@NotNull Player player) {
+        return this.getViewers().contains(player);
+    }
+
+    @NotNull
+    public Inventory createInventory() {
+        return this.plugin.getServer().createInventory(null, this.getSize(), this.getTitle());
+    }
+
+    @NotNull
+    public List<MenuItem> getUserItems(@NotNull Player player) {
+        return this.getUserItemsMap().computeIfAbsent(player, p -> new ArrayList<>());
+    }
+
+    @Nullable
+    public MenuItem getItem(@NotNull String id) {
+        return this.getItemsMap().get(id.toLowerCase());
+    }
+
+    @Nullable
+    public MenuItem getItem(int slot) {
+        return this.getItemsMap().values().stream()
+            .filter(item -> ArrayUtils.contains(item.getSlots(), slot))
+            .max(Comparator.comparingInt(MenuItem::getPriority)).orElse(null);
+    }
+
+    @Nullable
+    public MenuItem getItem(@NotNull Player player, int slot) {
+        return this.getUserItems(player).stream()
+            .filter(item -> ArrayUtils.contains(item.getSlots(), slot))
+            .max(Comparator.comparingInt(MenuItem::getPriority)).orElse(this.getItem(slot));
+    }
+
     public void addItem(@NotNull ItemStack item, int... slots) {
         this.addItem(new MenuItem(item, slots));
     }
 
-    @Override
     public void addItem(@NotNull Player player, @NotNull ItemStack item, int... slots) {
         this.addItem(player, new MenuItem(item, slots));
     }
 
+    public void addItem(@NotNull MenuItem menuItem) {
+        this.getItemsMap().put(menuItem.getId(), menuItem);
+    }
+
+    public void addItem(@NotNull Player player, @NotNull MenuItem menuItem) {
+        this.getUserItems(player).add(menuItem);
+    }
+
+    public int getPage(@NotNull Player player) {
+        return this.getUserPageMap().getOrDefault(player, new int[]{-1, -1})[0];
+    }
+
+    public int getPageMax(@NotNull Player player) {
+        return this.getUserPageMap().getOrDefault(player, new int[]{-1, -1})[1];
+    }
+
+    public void setPage(@NotNull Player player, int pageCurrent, int pageMax) {
+        pageCurrent = Math.max(1, pageCurrent);
+        pageMax = Math.max(1, pageMax);
+        this.getUserPageMap().put(player, new int[]{Math.min(pageCurrent, pageMax), pageMax});
+    }
+
     @NotNull
-    @Override
     public UUID getId() {
         return id;
     }
 
     @NotNull
-    @Override
     public String getTitle() {
         return title;
     }
 
-    @Override
     public void setTitle(@NotNull String title) {
         this.title = StringUtil.color(title);
     }
 
-    @Override
     public int getSize() {
         return size;
     }
 
-    @Override
     public void setSize(int size) {
         this.size = size;
     }
 
     @NotNull
-    @Override
-    public Map<String, IMenuItem> getItemsMap() {
+    public Map<String, MenuItem> getItemsMap() {
         return items;
     }
 
     @NotNull
-    @Override
-    public Map<Player, List<IMenuItem>> getUserItemsMap() {
+    public Map<Player, List<MenuItem>> getUserItemsMap() {
         return userItems;
     }
 
     @NotNull
-    @Override
     public Map<Player, int[]> getUserPageMap() {
         return userPage;
     }
 
     @NotNull
-    @Override
     public Set<Player> getViewers() {
         return viewers;
     }
 
-    @Override
     public boolean destroyWhenNoViewers() {
         return false;
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onEventClick(InventoryClickEvent e) {
-        Player player = (Player) e.getWhoClicked();
-        IMenu menu = IMenu.getMenu(player);
-        if (menu == null || !menu.getId().equals(this.getId())) return;
-
-        long lastClick = this.fastClick.getOrDefault(player, 0L);
-        if (System.currentTimeMillis() - lastClick < 150) { // TODO Config option
-            e.setCancelled(true);
-            return;
-        }
-
-        Inventory inventory = e.getInventory();
-        ItemStack item = e.getCurrentItem();
-
-        int slot = e.getRawSlot();
-        boolean isPlayerSlot = slot >= inventory.getSize();
-        boolean isEmptyItem = item == null || item.getType().isAir();
-
-        SlotType slotType = isPlayerSlot ? (isEmptyItem ? SlotType.EMPTY_PLAYER : SlotType.PLAYER) : (isEmptyItem ? SlotType.EMPTY_MENU : SlotType.MENU);
-        if (this.cancelClick(e, slotType)) {
-            e.setCancelled(true);
-        }
-
-        this.onClick(player, item, slot, e);
-        this.fastClick.put(player, System.currentTimeMillis());
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onEventDrag(InventoryDragEvent e) {
-        Player player = (Player) e.getWhoClicked();
-        IMenu menu = IMenu.getMenu(player);
-        if (menu == null || !menu.getId().equals(this.getId())) return;
-
-        if (this.cancelClick(e)) {
-            e.setCancelled(true);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onEventClose(InventoryCloseEvent e) {
-        Player player = (Player) e.getPlayer();
-        IMenu menu = IMenu.getMenu(player);
-        if (menu == null || !menu.getId().equals(this.getId())) return;
-
-        this.onClose(player, e);
     }
 }

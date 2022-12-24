@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.command.GeneralCommand;
 
+import java.util.Map;
+
 public class PluginMainCommand<P extends NexPlugin<P>> extends GeneralCommand<P> {
 
     public PluginMainCommand(@NotNull P plugin) {
@@ -29,7 +31,7 @@ public class PluginMainCommand<P extends NexPlugin<P>> extends GeneralCommand<P>
     }
 
     @Override
-    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
 
     }
 }

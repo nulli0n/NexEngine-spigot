@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.command.GeneralCommand;
 
+@Deprecated
 public abstract class AbstractModuleCommand<P extends NexPlugin<P>, M extends AbstractModule<P>> extends GeneralCommand<P> {
 
     protected M module;

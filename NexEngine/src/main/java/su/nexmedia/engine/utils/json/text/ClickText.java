@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 /**
  * @author NightExpress
  */
+@Deprecated
 public class ClickText {
 
     private String                       text;

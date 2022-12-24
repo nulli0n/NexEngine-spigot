@@ -7,6 +7,8 @@ import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.lang.EngineLang;
 
+import java.util.Map;
+
 public class ReloadSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> {
 
     public ReloadSubCommand(@NotNull P plugin, @NotNull Permission permission) {
@@ -35,7 +37,7 @@ public class ReloadSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P>
     }
 
     @Override
-    public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
         plugin.reload();
         plugin.getMessage(EngineLang.CORE_COMMAND_RELOAD_DESC).send(sender);
     }

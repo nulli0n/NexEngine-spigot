@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@Deprecated
 public abstract class AbstractModuleManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     public static final String DIR_NAME = "/modules/";

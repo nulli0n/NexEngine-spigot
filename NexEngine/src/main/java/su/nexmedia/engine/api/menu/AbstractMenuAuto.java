@@ -31,10 +31,10 @@ public abstract class AbstractMenuAuto<P extends NexPlugin<P>, I> extends Abstra
     protected abstract ItemStack getObjectStack(@NotNull Player player, @NotNull I object);
 
     @NotNull
-    protected abstract IMenuClick getObjectClick(@NotNull Player player, @NotNull I object);
+    protected abstract MenuClick getObjectClick(@NotNull Player player, @NotNull I object);
 
     @Override
-    public void onPrepare(@NotNull Player player, @NotNull Inventory inventory) {
+    public boolean onPrepare(@NotNull Player player, @NotNull Inventory inventory) {
         int len = this.getObjectSlots().length;
         List<I> list = new ArrayList<>(this.getObjects(player));
         List<List<I>> split = CollectionsUtil.split(list, len);
@@ -47,10 +47,11 @@ public abstract class AbstractMenuAuto<P extends NexPlugin<P>, I> extends Abstra
         int count = 0;
         for (I object : list) {
             ItemStack item = this.getObjectStack(player, object);
-            IMenuItem menuItem = new MenuItem(item, this.getObjectSlots()[count++]);
-            menuItem.setClick(this.getObjectClick(player, object));
+            MenuItem menuItem = new MenuItem(item, this.getObjectSlots()[count++]);
+            menuItem.setClickHandler(this.getObjectClick(player, object));
             this.addItem(player, menuItem);
         }
         this.setPage(player, page, pages);
+        return true;
     }
 }

@@ -8,40 +8,32 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.actions.ActionsManager;
-import su.nexmedia.engine.actions.parameter.AbstractParametized;
 import su.nexmedia.engine.api.command.GeneralCommand;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.data.UserDataHolder;
-import su.nexmedia.engine.api.hook.AbstractHook;
 import su.nexmedia.engine.api.lang.LangKey;
 import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.api.manager.ILogger;
-import su.nexmedia.engine.api.menu.IMenu;
+import su.nexmedia.engine.api.menu.AbstractMenu;
 import su.nexmedia.engine.command.CommandManager;
 import su.nexmedia.engine.command.PluginMainCommand;
 import su.nexmedia.engine.config.ConfigManager;
-import su.nexmedia.engine.craft.CraftManager;
-import su.nexmedia.engine.hooks.HookManager;
 import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.hooks.external.citizens.CitizensHook;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.nms.NMS;
 import su.nexmedia.engine.utils.Reflex;
 
+import java.io.File;
 import java.lang.reflect.Field;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin implements ILogger {
 
-    public static final String TM = "NEX-Media";
-
     protected ConfigManager<P>  configManager;
-    protected LangManager<P> langManager;
-    protected CommandManager<P>        commandManager;
+    protected LangManager<P>    langManager;
+    protected CommandManager<P> commandManager;
 
     private Logger  logger;
     private boolean isEngine;
@@ -57,6 +49,12 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
 
     @NotNull
     protected abstract P getSelf();
+
+    @NotNull
+    @Override
+    public File getFile() {
+        return super.getFile();
+    }
 
     @Override
     public final void onEnable() {
@@ -162,15 +160,9 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         this.logger.severe(msg);
     }
 
-    @Nullable
-    @Deprecated
-    public final <T extends AbstractHook<P>> T registerHook(@NotNull String pluginName, @NotNull Class<T> clazz) {
-        return this.getHooks().register(this, pluginName, clazz);
-    }
-
     private void unregisterListeners() {
         for (Player player : this.getServer().getOnlinePlayers()) {
-            IMenu menu = IMenu.getMenu(player);
+            AbstractMenu<?> menu = AbstractMenu.getMenu(player);
             if (menu != null) {
                 player.closeInventory();
             }
@@ -216,8 +208,6 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         if (dataHolder != null) {
             dataHolder.getUserManager().loadOnlineUsers();
         }
-
-        AbstractParametized.clearCache();
     }
 
     private void unloadManagers() {
@@ -234,11 +224,6 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
             CitizensHook.unregisterListeners(this);
         }
 
-        // Unregister all plugin hooks.
-        //if (!this.isEngine()) {
-            this.getHooks().shutdown(this);
-        //}
-
         // Unregister ALL plugin listeners.
         this.unregisterListeners();
 
@@ -250,18 +235,6 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
 
         this.getConfigManager().shutdown();
         this.getLangManager().shutdown();
-    }
-
-    @NotNull
-    public final String getAuthor() {
-        List<String> list = this.getDescription().getAuthors();
-        return list.isEmpty() ? TM : list.get(0);
-    }
-
-    @NotNull
-    @Deprecated
-    public final String getNameRaw() {
-        return this.getName().toLowerCase().replace(" ", "").replace("-", "");
     }
 
     @NotNull
@@ -298,18 +271,9 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         return this.getLangManager().getMessage(key);
     }
 
+    @NotNull
     public final CommandManager<P> getCommandManager() {
         return this.commandManager;
-    }
-
-    @NotNull
-    public final CraftManager getCraftManager() {
-        return getEngine().craftManager;
-    }
-
-    @NotNull
-    public final ActionsManager getActionsManager() {
-        return getEngine().actionsManager;
     }
 
     @NotNull
@@ -320,34 +284,6 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
     @NotNull
     public final PluginManager getPluginManager() {
         return this.getServer().getPluginManager();
-    }
-
-    @NotNull
-    @Deprecated
-    public final HookManager getHooks() {
-        return getEngine().getHookManager();
-    }
-
-    @Deprecated
-    public final boolean isHooked(@NotNull Class<? extends AbstractHook<?>> clazz) {
-        return this.getHooks().isHooked(this, clazz);
-    }
-
-    @Deprecated
-    public final boolean isHooked(@NotNull String plugin) {
-        return this.getHooks().isHooked(this, plugin);
-    }
-
-    @Nullable
-    @Deprecated
-    public final <T extends AbstractHook<?>> T getHook(@NotNull Class<T> clazz) {
-        return this.getHooks().getHook(this, clazz);
-    }
-
-    @Nullable
-    @Deprecated
-    public final AbstractHook<? extends NexPlugin<?>> getHook(@NotNull String name) {
-        return this.getHooks().getHook(this, name);
     }
 
     public ClassLoader getClazzLoader() {

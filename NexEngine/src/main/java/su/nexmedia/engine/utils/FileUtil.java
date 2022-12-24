@@ -15,13 +15,13 @@ public class FileUtil {
 
     public static void copy(@NotNull InputStream inputStream, @NotNull File file) {
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            FileOutputStream outputStream = new FileOutputStream(file);
             byte[] array = new byte[1024];
             int read;
             while ((read = inputStream.read(array)) > 0) {
-                fileOutputStream.write(array, 0, read);
+                outputStream.write(array, 0, read);
             }
-            fileOutputStream.close();
+            outputStream.close();
             inputStream.close();
         }
         catch (IOException ex) {

@@ -165,15 +165,11 @@ public class V1_18_R2 implements NMS {
         return CraftItemStack.asBukkitCopy(nmsStack);
     }
 
-    @Deprecated
     @Override
     @NotNull
     public String fixColors(@NotNull String str) {
-        str = str.replace("\n", "%n%"); // CraftChatMessage wipes all lines out.
-
-        Component baseComponent = CraftChatMessage.fromStringOrNull(str);
-        String singleColor = CraftChatMessage.fromComponent(baseComponent);
-        return singleColor.replace("%n%", "\n");
+        Component baseComponent = CraftChatMessage.fromStringOrNull(str, true);
+        return CraftChatMessage.fromComponent(baseComponent);
     }
 
     @Nullable

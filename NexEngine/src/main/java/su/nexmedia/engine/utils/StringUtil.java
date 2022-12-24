@@ -5,6 +5,7 @@ import org.bukkit.Color;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.utils.random.Rnd;
+import su.nexmedia.engine.utils.regex.RegexUtil;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -14,7 +15,8 @@ import java.util.stream.Stream;
 
 public class StringUtil {
 
-    public static final Pattern HEX_PATTERN = Pattern.compile("#([A-Fa-f0-9]{6})");
+    public static final Pattern PATTERN_HEX      = Pattern.compile("#([A-Fa-f0-9]{6})");
+    public static final Pattern PATTERN_GRADIENT = Pattern.compile("<gradient:" + PATTERN_HEX.pattern() + ">(.*?)</gradient:" + PATTERN_HEX.pattern() + ">");
 
     @NotNull
     public static String oneSpace(@NotNull String str) {
@@ -28,12 +30,11 @@ public class StringUtil {
 
     @NotNull
     public static String color(@NotNull String str) {
-        return colorHex(ChatColor.translateAlternateColorCodes('&', colorFix(str)));
+        return colorHex(colorGradient(ChatColor.translateAlternateColorCodes('&', colorFix(str))));
     }
 
     /**
-     * Removes multiple color codes that are 'color of color'. Example: '&a&b&cText -> '&cText'.
-     *
+     * Removes color duplications.
      * @param str String to fix.
      * @return A string with a proper color codes formatting.
      */
@@ -57,9 +58,70 @@ public class StringUtil {
         return Color.fromRGB(red, green, blue);
     }
 
+    private static ChatColor[] createGradient(@NotNull java.awt.Color start, @NotNull java.awt.Color end, int step) {
+        ChatColor[] colors = new ChatColor[step];
+        int stepR = Math.abs(start.getRed() - end.getRed()) / (step - 1);
+        int stepG = Math.abs(start.getGreen() - end.getGreen()) / (step - 1);
+        int stepB = Math.abs(start.getBlue() - end.getBlue()) / (step - 1);
+        int[] direction = new int[] {
+            start.getRed() < end.getRed() ? +1 : -1,
+            start.getGreen() < end.getGreen() ? +1 : -1,
+            start.getBlue() < end.getBlue() ? +1 : -1
+        };
+
+        for (int i = 0; i < step; i++) {
+            java.awt.Color color = new java.awt.Color(start.getRed() + ((stepR * i) * direction[0]), start.getGreen() + ((stepG * i) * direction[1]), start.getBlue() + ((stepB * i) * direction[2]));
+            colors[i] = ChatColor.of(color);
+        }
+
+        return colors;
+    }
+
+    @NotNull
+    private static String injectColors(@NotNull String source, ChatColor[] colors) {
+        StringBuilder specialColors = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
+        String[] characters = source.split("");
+        int outIndex = 0;
+        for (int i = 0; i < characters.length; i++) {
+            if (characters[i].equals("&") || characters[i].equals("§")) {
+                if (i + 1 < characters.length) {
+                    if (characters[i + 1].equals("r")) {
+                        specialColors.setLength(0);
+                    }
+                    else {
+                        specialColors.append(characters[i]);
+                        specialColors.append(characters[i + 1]);
+                    }
+                    i++;
+                }
+                else stringBuilder.append(colors[outIndex++]).append(specialColors).append(characters[i]);
+            }
+            else stringBuilder.append(colors[outIndex++]).append(specialColors).append(characters[i]);
+        }
+        return stringBuilder.toString();
+    }
+
+    @NotNull
+    public static String colorGradient(@NotNull String string) {
+        Matcher matcher = PATTERN_GRADIENT.matcher(string);
+        while (RegexUtil.matcherFind(matcher)) {
+            String start = matcher.group(1);
+            String end = matcher.group(3);
+            String content = matcher.group(2);
+
+            java.awt.Color colorStart = new java.awt.Color(Integer.parseInt(start, 16));
+            java.awt.Color colorEnd = new java.awt.Color(Integer.parseInt(end, 16));
+            ChatColor[] colors = createGradient(colorStart, colorEnd, string.length());
+
+            string = string.replace(matcher.group(0), injectColors(content, colors));
+        }
+        return string;
+    }
+
     @NotNull
     public static String colorHex(@NotNull String str) {
-        Matcher matcher = HEX_PATTERN.matcher(str);
+        Matcher matcher = PATTERN_HEX.matcher(str);
         StringBuilder buffer = new StringBuilder(str.length() + 4 * 8);
         while (matcher.find()) {
             String group = matcher.group(1);
@@ -136,14 +198,12 @@ public class StringUtil {
         return getDouble(input, def, false);
     }
 
-    public static double getDouble(@NotNull String input, double def, boolean allowNega) {
+    public static double getDouble(@NotNull String input, double def, boolean allowNegative) {
         try {
             double amount = Double.parseDouble(input);
-            if (amount < 0.0 && !allowNega) {
-                throw new NumberFormatException();
-            }
-            return amount;
-        } catch (NumberFormatException ex) {
+            return (amount < 0D && !allowNegative ? def : amount);
+        }
+        catch (NumberFormatException ex) {
             return def;
         }
     }
@@ -152,19 +212,22 @@ public class StringUtil {
         return getInteger(input, def, false);
     }
 
-    public static int getInteger(@NotNull String input, int def, boolean nega) {
-        return (int) getDouble(input, def, nega);
+    public static int getInteger(@NotNull String input, int def, boolean allowNegative) {
+        return (int) getDouble(input, def, allowNegative);
     }
 
     public static int[] getIntArray(@NotNull String str) {
-        String[] raw = str.replaceAll("\\s", "").split(",");
-        int[] slots = new int[raw.length];
-        for (int i = 0; i < raw.length; i++) {
+        String[] split = noSpace(str).split(",");
+        int[] array = new int[split.length];
+        for (int index = 0; index < split.length; index++) {
             try {
-                slots[i] = Integer.parseInt(raw[i].trim());
-            } catch (NumberFormatException ignored) {}
+                array[index] = Integer.parseInt(split[index]);
+            }
+            catch (NumberFormatException e) {
+                array[index] = 0;
+            }
         }
-        return slots;
+        return array;
     }
 
     @NotNull
@@ -227,12 +290,28 @@ public class StringUtil {
     }
 
     @NotNull
-    public static List<String> getByFirstLetters(@NotNull String arg, @NotNull List<String> source) {
-        List<String> ret = new ArrayList<>();
-        List<String> sugg = new ArrayList<>(source);
-        org.bukkit.util.StringUtil.copyPartialMatches(arg, sugg, ret);
-        Collections.sort(ret);
-        return ret;
+    public static List<String> getByPartialMatches(@NotNull List<String> originals, @NotNull String token, int steps) {
+        token = token.toLowerCase();
+
+        int[] parts = NumberUtil.splitIntoParts(token.length(), steps);
+        int lastIndex = 0;
+        StringBuilder builder = new StringBuilder();
+        for (int partSize: parts) {
+            String sub = token.substring(lastIndex, lastIndex + partSize);
+            lastIndex += partSize;
+
+            builder.append(sub).append("(?:.*)");
+        }
+
+        Pattern pattern = Pattern.compile(builder.toString());
+        List<String> list = new ArrayList<>(originals.stream().filter(orig -> pattern.matcher(orig.toLowerCase()).matches()).toList());
+        /*for (String src : originals) {
+            if (src.toLowerCase().startsWith(token.toLowerCase())) {
+                list.add(src);
+            }
+        }*/
+        Collections.sort(list);
+        return list;
     }
 
     @NotNull

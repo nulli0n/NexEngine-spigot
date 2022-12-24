@@ -9,3 +9,4 @@ api-version: 1.17
 load: STARTUP
 libraries:
   - com.zaxxer:HikariCP:5.0.1
+  - it.unimi.dsi:fastutil:8.5.11

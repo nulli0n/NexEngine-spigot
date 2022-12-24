@@ -32,14 +32,6 @@ public class EntityUtil {
         return instance == null ? 0D : instance.getBaseValue();
     }
 
-    @Deprecated
-    public static ItemStack[] getArmor(@NotNull LivingEntity entity) {
-        EntityEquipment equip = entity.getEquipment();
-        if (equip == null) return new ItemStack[4];
-
-        return equip.getArmorContents();
-    }
-
     @NotNull
     public static Map<EquipmentSlot, ItemStack> getEquippedItems(@NotNull LivingEntity entity) {
         return getEquippedItems(entity, EquipmentSlot.values());
@@ -65,24 +57,6 @@ public class EntityUtil {
     @NotNull
     public static Map<EquipmentSlot, ItemStack> getEquippedArmor(@NotNull LivingEntity entity) {
         return getEquippedItems(entity, EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD);
-    }
-
-    @Deprecated
-    public static ItemStack[] getEquipment(@NotNull LivingEntity entity) {
-        ItemStack[] items = new ItemStack[6];
-
-        EntityEquipment equip = entity.getEquipment();
-        if (equip == null) return items;
-
-        int aCount = 0;
-        for (ItemStack armor : equip.getArmorContents()) {
-            items[aCount++] = armor;
-        }
-
-        items[4] = equip.getItemInMainHand();
-        items[5] = equip.getItemInOffHand();
-
-        return items;
     }
 
     @NotNull

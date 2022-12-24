@@ -6,6 +6,8 @@ import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.lang.EngineLang;
 
+import java.util.Map;
+
 public class HelpSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> {
 
     public HelpSubCommand(@NotNull P plugin) {
@@ -30,7 +32,7 @@ public class HelpSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> {
     }
 
     @Override
-    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
         if (!this.parent.hasPermission(sender)) {
             this.errorPermission(sender);
             return;

@@ -36,12 +36,6 @@ public class CommandManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         // Register child plugin sub-commands to the main plugin command.
         this.plugin.registerCommands(this.mainCommand);
 
-        // Check for plugin settings to register default commands.
-        /*if (this.plugin instanceof EditorHolder) {
-            this.mainCommand.addChildren(new EditorSubCommand<>(this.plugin));
-        }*/
-        //this.mainCommand.addChildren(new ReloadSubCommand<>(this.plugin));
-
         if (!this.plugin.isEngine()) {
             this.mainCommand.addChildren(new AboutSubCommand<>(this.plugin));
         }

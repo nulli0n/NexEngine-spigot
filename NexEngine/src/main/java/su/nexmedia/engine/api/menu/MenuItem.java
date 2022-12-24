@@ -4,56 +4,107 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.type.ClickType;
-import su.nexmedia.engine.actions.ActionManipulator;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-public class MenuItem extends AbstractMenuItem {
+public class MenuItem {
+
+    protected final String  id;
+    protected final Enum<?> type;
+
+    protected int priority;
+    protected ItemStack item;
+    protected int[]                        slots;
+    protected MenuClick                    clickHandler;
+    protected Map<ClickType, List<String>> clickCommands;
 
     public MenuItem(@NotNull ItemStack item) {
-        super(item);
+        this(item, new int[0]);
     }
 
     public MenuItem(@NotNull ItemStack item, int... slots) {
-        super(item, slots);
+        this(item, null, slots);
     }
 
     public MenuItem(@NotNull ItemStack item, @Nullable Enum<?> type, int... slots) {
-        super(item, type, slots);
+        this(UUID.randomUUID().toString(), item, type, slots);
     }
 
     public MenuItem(@NotNull String id, @NotNull ItemStack item, int... slots) {
-        super(id, item, null, slots);
+        this(id, item, null, slots);
     }
 
     public MenuItem(@NotNull String id, @NotNull ItemStack item, @Nullable Enum<?> type, int... slots) {
-        super(id, item, type, slots);
+        this(id, type, slots, 0, item, new HashMap<>());
+    }
+
+    public MenuItem(@NotNull MenuItem menuItem) {
+        this(menuItem.getId(), menuItem.getType(), menuItem.getSlots(), menuItem.getPriority(), menuItem.getItem(), menuItem.getClickCommands());
     }
 
     public MenuItem(
-        @NotNull String id, @Nullable Enum<?> type, int[] slots,
-        @NotNull Map<String, MenuItemDisplay> displayMap,
-        @NotNull Map<ClickType, ActionManipulator> customClicks) {
-        super(id, type, slots, displayMap, customClicks);
+        @NotNull String id, @Nullable Enum<?> type, int[] slots, int priority,
+        @NotNull ItemStack item,
+        @NotNull Map<ClickType, List<String>> clickCommands) {
+        this.id = id.toLowerCase();
+        this.type = type;
+        this.setPriority(priority);
+        this.setSlots(slots);
+        this.setItem(item);
+        this.clickCommands = clickCommands;
     }
 
-    @Deprecated
-    public MenuItem(
-        @NotNull String id, @Nullable Enum<?> type, int[] slots,
-        @NotNull Map<String, MenuItemDisplay> displayMap,
-        @NotNull Map<ClickType, ActionManipulator> customClicks,
-        int animationTickInterval, String[] animationFrames, boolean animationIgnoreUnavailableFrames,
-        boolean animationRandomOrder) {
-        super(
-            id, type, slots,
-            displayMap, customClicks,
-
-            animationTickInterval, animationFrames, animationIgnoreUnavailableFrames, animationRandomOrder
-        );
+    @NotNull
+    public String getId() {
+        return id;
     }
 
-    public MenuItem(@NotNull IMenuItem menuItem) {
-        super(menuItem.getId(), menuItem.getType(), menuItem.getSlots(), new HashMap<>(menuItem.getDisplayMap()), new HashMap<>(menuItem.getClickCustomActions()));
+    @Nullable
+    public Enum<?> getType() {
+        return type;
+    }
+
+    public int[] getSlots() {
+        return slots;
+    }
+
+    public void setSlots(int[] slots) {
+        this.slots = slots;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    @NotNull
+    public ItemStack getItem() {
+        return new ItemStack(this.item);
+    }
+
+    public void setItem(@NotNull ItemStack item) {
+        this.item = new ItemStack(item);
+    }
+
+    @Nullable
+    public MenuClick getClickHandler() {
+        return clickHandler;
+    }
+
+    public void setClickHandler(@Nullable MenuClick clickHandler) {
+        this.clickHandler = clickHandler;
+    }
+
+    @NotNull
+    public Map<ClickType, List<String>> getClickCommands() {
+        return clickCommands;
+    }
+
+    @NotNull
+    public List<String> getClickCommands(@NotNull ClickType clickType) {
+        return this.getClickCommands().getOrDefault(clickType, Collections.emptyList());
     }
 }

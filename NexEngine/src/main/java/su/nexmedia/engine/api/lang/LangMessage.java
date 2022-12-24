@@ -10,6 +10,7 @@ import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.MessageUtil;
 import su.nexmedia.engine.utils.Placeholders;
 import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.message.NexParser;
 import su.nexmedia.engine.utils.regex.RegexUtil;
 
 import java.util.*;
@@ -21,12 +22,35 @@ import java.util.stream.Stream;
 
 public class LangMessage {
 
-    private static final Pattern              PATTERN_MESSAGE_FULL   = Pattern.compile("((\\{message:)+(.+?)\\}+(.*?))");
-    private static final Map<String, Pattern> PATTERN_MESSAGE_PARAMS = new HashMap<>();
+    @Deprecated private static final Pattern              PATTERN_MESSAGE_FULL   = Pattern.compile("((\\{message:)+(.+?)\\}+(.*?))");
+    @Deprecated private static final Map<String, Pattern> PATTERN_MESSAGE_PARAMS = new HashMap<>();
+
+    private static final Pattern PATTERN_OPTIONS = Pattern.compile("<\\!(.*?)\\!>");
+    //private static final Pattern PATTERN_NO_PREFIX = Pattern.compile("<noprefix>");
+    //private static final Pattern PATTERN_SOUND = Pattern.compile("sound" + OPTION_PATTERN);
 
     static {
         for (String parameter : new String[]{"type", "prefix", "sound", "fadeIn", "stay", "fadeOut"}) {
             PATTERN_MESSAGE_PARAMS.put(parameter, Pattern.compile("~+(" + parameter + ")+?:+(.*?);"));
+        }
+    }
+
+    enum Option {
+        PREFIX("prefix"),
+        SOUND("sound"),
+        TYPE("type"),
+        PLACEHOLDER_API("papi")
+        ;
+
+        private final Pattern pattern;
+
+        Option(@NotNull String name) {
+            this.pattern = Pattern.compile(name + NexParser.OPTION_PATTERN);
+        }
+
+        @NotNull
+        public Pattern getPattern() {
+            return pattern;
         }
     }
 
@@ -54,6 +78,7 @@ public class LangMessage {
         this.titleTimes = Arrays.copyOf(from.titleTimes, from.titleTimes.length);
     }
 
+    @Deprecated
     void setArguments(@NotNull String msg) {
         Matcher matcher = RegexUtil.getMatcher(PATTERN_MESSAGE_FULL, msg);
         if (!RegexUtil.matcherFind(matcher)) return;
@@ -83,6 +108,36 @@ public class LangMessage {
         }
     }
 
+    void setOptions(@NotNull String msg) {
+        Matcher matcher = RegexUtil.getMatcher(PATTERN_OPTIONS, msg);
+        if (!RegexUtil.matcherFind(matcher)) return;
+
+        // String with only args
+        String matchFull = matcher.group(0);
+        String matchOptions = matcher.group(1).trim();
+        this.msgLocalized = msg.replace(matchFull, "");
+
+        for (Option option : Option.values()) {
+            Matcher matcherParam = RegexUtil.getMatcher(option.getPattern(), matchOptions);
+            if (!RegexUtil.matcherFind(matcherParam)) continue;
+
+            String optionValue = matcherParam.group(1).stripLeading();
+            switch (option) {
+                case TYPE -> {
+                    String[] split = optionValue.split(":");
+                    this.type = CollectionsUtil.getEnum(split[0], OutputType.class);
+                    if (this.type == OutputType.TITLES) {
+                        this.titleTimes[0] = split.length >= 2 ? StringUtil.getInteger(split[1], -1) : -1;
+                        this.titleTimes[1] = split.length >= 3 ? StringUtil.getInteger(split[2], -1) : -1;
+                        this.titleTimes[2] = split.length >= 4 ? StringUtil.getInteger(split[3], -1) : -1;
+                    }
+                }
+                case PREFIX -> this.hasPrefix = Boolean.parseBoolean(optionValue);
+                case SOUND -> this.sound = CollectionsUtil.getEnum(optionValue, Sound.class);
+            }
+        }
+    }
+
     @NotNull
     public String getRaw() {
         return this.msgRaw;
@@ -92,6 +147,7 @@ public class LangMessage {
         this.msgRaw = msgRaw;
         this.setLocalized(this.replaceDefaults().apply(this.getRaw()));
         this.setArguments(this.getLocalized());
+        this.setOptions(this.getLocalized());
     }
 
     @NotNull
@@ -146,7 +202,12 @@ public class LangMessage {
 
         if (this.type == LangMessage.OutputType.CHAT) {
             String prefix = hasPrefix ? plugin.getConfigManager().pluginPrefix : "";
-            this.asList().forEach(line -> MessageUtil.sendWithJson(sender, prefix + line));
+            this.asList().forEach(line -> {
+                if (NexParser.contains(line)) {
+                    MessageUtil.sendCustom(sender, prefix + line);
+                }
+                else MessageUtil.sendWithJson(sender, prefix + line);
+            });
             return;
         }
 
@@ -156,8 +217,8 @@ public class LangMessage {
             }
             else if (this.type == LangMessage.OutputType.TITLES) {
                 List<String> list = this.asList();
-                String title = list.size() > 0 ? list.get(0) : "";
-                String subtitle = list.size() > 1 ? list.get(1) : "";
+                String title = list.size() > 0 ? NexParser.toPlainText(list.get(0)) : "";
+                String subtitle = list.size() > 1 ? NexParser.toPlainText(list.get(1)) : "";
                 player.sendTitle(title, subtitle, this.titleTimes[0], this.titleTimes[1], this.titleTimes[2]);
             }
         }

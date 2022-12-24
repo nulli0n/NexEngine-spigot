@@ -28,13 +28,15 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
     protected JYML config;
     protected Map<String, LangMessage> messages;
 
+    public static final String DIR_LANG = "/lang/";
+    
     public LangManager(@NotNull P plugin) {
         super(plugin);
     }
 
     @Override
     protected void onLoad() {
-        this.plugin.getConfigManager().extract("lang");
+        this.plugin.getConfigManager().extractResources(DIR_LANG);
         this.messages = new HashMap<>();
 
         if (this.plugin.isEngine()) {

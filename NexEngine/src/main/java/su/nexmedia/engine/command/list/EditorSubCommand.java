@@ -10,6 +10,8 @@ import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.api.editor.EditorHolder;
 import su.nexmedia.engine.lang.EngineLang;
 
+import java.util.Map;
+
 public class EditorSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> {
 
     protected final EditorHolder<P, ?> editorHolder;
@@ -41,7 +43,7 @@ public class EditorSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P>
     }
 
     @Override
-    public void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
         Player player = (Player) sender;
         this.editorHolder.getEditor().open(player, 1);
     }
