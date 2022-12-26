@@ -68,7 +68,7 @@ public class MenuItem {
         return slots;
     }
 
-    public void setSlots(int[] slots) {
+    public void setSlots(int... slots) {
         this.slots = slots;
     }
 

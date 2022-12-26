@@ -4,7 +4,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -21,22 +20,10 @@ import java.util.function.UnaryOperator;
 
 public class ItemUtil {
 
-    @Deprecated public static final String LORE_FIX_PREFIX = "fogus_loren-";
-    @Deprecated public static final String NAME_FIX_PREFIX = "fogus_namel-";
-    @Deprecated public static final  String                     TAG_SPLITTER = "__x__";
     private static final NexEngine ENGINE;
-    @Deprecated private static final Map<String, NamespacedKey> LORE_KEYS_CACHE;
-    @Deprecated private static final Map<String, NamespacedKey> NAME_KEYS_CACHE;
 
     static {
         ENGINE = NexEngine.get();
-        LORE_KEYS_CACHE = new HashMap<>();
-        NAME_KEYS_CACHE = new HashMap<>();
-    }
-
-    public static void clear() {
-        LORE_KEYS_CACHE.clear();
-        NAME_KEYS_CACHE.clear();
     }
 
     public static int addToLore(@NotNull List<String> lore, int pos, @NotNull String value) {
@@ -47,175 +34,6 @@ public class ItemUtil {
             lore.add(pos, value);
         }
         return pos < 0 ? pos : pos + 1;
-    }
-
-    @Deprecated
-    public static void addLore(@NotNull ItemStack item, @NotNull String id, @NotNull String text, int pos) {
-        String[] lines = text.split(TAG_SPLITTER);
-        addLore(item, id, Arrays.asList(lines), pos);
-    }
-
-    @Deprecated
-    public static void addLore(@NotNull ItemStack item, @NotNull String id, @NotNull List<String> text, int pos) {
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return;
-
-        List<String> lore = meta.getLore();
-        if (lore == null) lore = new ArrayList<>();
-
-        text = StringUtil.color(text);
-        StringBuilder loreTag = new StringBuilder();
-
-        delLore(item, id);
-        for (String line : text) {
-            pos = addToLore(lore, pos, line);
-
-            if (loreTag.length() > 0)
-                loreTag.append(TAG_SPLITTER);
-            loreTag.append(line);
-        }
-
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-
-        addLoreTag(item, id, loreTag.toString());
-    }
-
-    @Deprecated
-    public static void delLore(@NotNull ItemStack item, @NotNull String id) {
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return;
-
-        List<String> lore = meta.getLore();
-        if (lore == null) return;
-
-        int index = getLoreIndex(item, id, 0);
-        if (index < 0) return;
-
-        int lastIndex = getLoreIndex(item, id, 1);
-        int diff = lastIndex - index;
-
-        for (int i = 0; i < (diff + 1); i++) {
-            lore.remove(index);
-        }
-
-        meta.setLore(lore);
-        item.setItemMeta(meta);
-
-        delLoreTag(item, id);
-    }
-
-    @Deprecated
-    public static int getLoreIndex(@NotNull ItemStack item, @NotNull String id) {
-        return getLoreIndex(item, id, 0);
-    }
-
-    @Deprecated
-    public static int getLoreIndex(@NotNull ItemStack item, @NotNull String id, int type) {
-        String storedText = PDCUtil.getStringData(item, ItemUtil.getLoreKey(id));
-        if (storedText == null) return -1;
-
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return -1;
-
-        List<String> lore = meta.getLore();
-        if (lore == null) return -1;
-
-        String[] lines = storedText.split(TAG_SPLITTER);
-        String lastText = null;
-        int count = 0;
-
-        if (type == 0) {
-            for (String line : lines) {
-                lastText = line;
-                if (!StringUtil.colorOff(lastText).isEmpty()) {
-                    break;
-                }
-                count--;
-            }
-        }
-        else {
-            for (int i = lines.length; i > 0; i--) {
-                lastText = lines[i - 1];
-                if (!StringUtil.colorOff(lastText).isEmpty()) {
-                    break;
-                }
-                count++;
-            }
-        }
-
-        if (lastText == null)
-            return -1;
-
-        int index = lore.indexOf(lastText) + count;
-
-        // Clean up invalid lore tags.
-        if (index < 0) {
-            delLoreTag(item, id);
-        }
-        return index;
-    }
-
-    @NotNull
-    @Deprecated
-    private static NamespacedKey getLoreKey(@NotNull String id2) {
-        String id = id2.toLowerCase();
-        return LORE_KEYS_CACHE.computeIfAbsent(id, key -> new NamespacedKey(ENGINE, LORE_FIX_PREFIX + id));
-    }
-
-    @NotNull
-    @Deprecated
-    private static NamespacedKey getNameKey(@NotNull String id2) {
-        String id = id2.toLowerCase();
-        return NAME_KEYS_CACHE.computeIfAbsent(id, key -> new NamespacedKey(ENGINE, NAME_FIX_PREFIX + id));
-    }
-
-    @Deprecated
-    public static void addLoreTag(@NotNull ItemStack item, @NotNull String id, @NotNull String text) {
-        ItemUtil.addLoreTag(item, ItemUtil.getLoreKey(id), text);
-    }
-
-    @Deprecated
-    public static void addLoreTag(@NotNull ItemStack item, @NotNull NamespacedKey key, @NotNull String text) {
-        PDCUtil.setData(item, key, text);
-    }
-
-    @Deprecated
-    public static void delLoreTag(@NotNull ItemStack item, @NotNull String id) {
-        ItemUtil.delLoreTag(item, ItemUtil.getLoreKey(id));
-    }
-
-    @Deprecated
-    public static void delLoreTag(@NotNull ItemStack item, @NotNull NamespacedKey key) {
-        PDCUtil.removeData(item, key);
-    }
-
-    @Nullable
-    @Deprecated
-    public static String getLoreTag(@NotNull ItemStack item, @NotNull String id) {
-        return ItemUtil.getLoreTag(item, ItemUtil.getLoreKey(id));
-    }
-
-    @Nullable
-    @Deprecated
-    public static String getLoreTag(@NotNull ItemStack item, @NotNull NamespacedKey key) {
-        return PDCUtil.getStringData(item, key);
-    }
-
-    @Deprecated
-    public static void addNameTag(@NotNull ItemStack item, @NotNull String id, @NotNull String text) {
-        PDCUtil.setData(item, ItemUtil.getNameKey(id), text);
-    }
-
-    @Deprecated
-    public static void delNameTag(@NotNull ItemStack item, @NotNull String id) {
-        PDCUtil.removeData(item, ItemUtil.getNameKey(id));
-    }
-
-    @Nullable
-    @Deprecated
-    public static String getNameTag(@NotNull ItemStack item, @NotNull String id) {
-        return PDCUtil.getStringData(item, ItemUtil.getNameKey(id));
     }
 
     @NotNull
@@ -310,7 +128,7 @@ public class ItemUtil {
     }
 
     public static boolean isWeapon(@NotNull ItemStack item) {
-        return ENGINE.getNMS().isWeapon(item);
+        return isSword(item) || isAxe(item) || isTrident(item);
     }
 
     public static boolean isTool(@NotNull ItemStack item) {
@@ -334,7 +152,7 @@ public class ItemUtil {
     }
 
     public static boolean isTrident(@NotNull ItemStack item) {
-        return ENGINE.getNMS().isTrident(item);
+        return item.getType() == Material.TRIDENT;
     }
 
     public static boolean isPickaxe(@NotNull ItemStack item) {

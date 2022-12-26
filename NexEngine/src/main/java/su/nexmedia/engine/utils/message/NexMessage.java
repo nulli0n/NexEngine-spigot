@@ -32,7 +32,7 @@ public class NexMessage {
         String tag = "{@" + this.components.size() + "}";
 
         this.components.put(tag, component);
-        this.message = this.message.replaceAll(Pattern.quote(placeholder) + "(?!\\w)", tag);
+        this.message = this.message.replaceFirst(Pattern.quote(placeholder) + "(?!\\w)", tag);
         return component;
     }
 

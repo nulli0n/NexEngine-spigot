@@ -38,7 +38,9 @@ public class JYML extends YamlConfiguration {
     }
 
     public JYML(@NotNull File file) {
-        this.options().width(1000);
+        if (Version.isAbove(Version.V1_17_R1)) {
+            this.options().width(1000);
+        }
 
         FileUtil.create(file);
         this.file = file;
