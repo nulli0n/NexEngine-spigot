@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.geysermc.floodgate.api.FloodgateApi;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.hooks.Hooks;
 
@@ -16,6 +17,10 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class PlayerUtil {
+
+    public static boolean isBedrockPlayer(@NotNull Player player) {
+        return Hooks.hasFloodgate() && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId());
+    }
 
     public static void dispatchCommand(@NotNull Player player, @NotNull String command) {
         CommandSender sender = player;

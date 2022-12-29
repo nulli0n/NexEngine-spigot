@@ -26,6 +26,7 @@ public class Hooks {
     public static final String PLACEHOLDER_API = "PlaceholderAPI";
     public static final String MYTHIC_MOBS     = "MythicMobs";
     public static final String WORLD_GUARD     = "WorldGuard";
+    public static final String FLOODGATE = "floodgate";
 
     private static final NexEngine ENGINE = NexEngine.get();
 
@@ -109,6 +110,10 @@ public class Hooks {
 
     public static boolean hasWorldGuard() {
         return hasPlugin(WORLD_GUARD);
+    }
+
+    public static boolean hasFloodgate() {
+        return hasPlugin(FLOODGATE);
     }
 
     @Deprecated
