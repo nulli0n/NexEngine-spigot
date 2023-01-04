@@ -32,36 +32,37 @@ public abstract class AbstractDataConnector {
         } catch (ClassNotFoundException e1) {
             try { // Otherwise fallback to the old one or just ignore if it still can't be found
                 Class.forName("com.mysql.jdbc.Driver");
-            } catch (ClassNotFoundException ignored) { }
+            } catch (ClassNotFoundException ignored) {
+            }
         }
 
         this.plugin = plugin;
         this.url = url;
-        
+
         // Create the Connector config
         this.config = new HikariConfig();
 
         // Create jdbc driver connection url
-       this.config.setJdbcUrl(url);
+        this.config.setJdbcUrl(url);
 
         // Authenticate
         if (userName != null)
-           this.config.setUsername(userName);
+            this.config.setUsername(userName);
         if (password != null)
-           this.config.setPassword(password);
+            this.config.setPassword(password);
 
 
         if (this instanceof ConnectorMySQL) {
             // Set connection pool options
-           this.config.setMaximumPoolSize(size);
-           this.config.setMinimumIdle(idle);
-           this.config.setMaxLifetime(lifetime);
-           this.config.setKeepaliveTime(keepalive);
-           this.config.setConnectionTimeout(timeout);
-           this.config.setPoolName(DATA_POOL_NAME);
+            this.config.setMaximumPoolSize(size);
+            this.config.setMinimumIdle(idle);
+            this.config.setMaxLifetime(lifetime);
+            this.config.setKeepaliveTime(keepalive);
+            this.config.setConnectionTimeout(timeout);
+            this.config.setPoolName(DATA_POOL_NAME);
 
             // Set additional connection pool properties
-           this.config.setDataSourceProperties(new Properties() {{
+            this.config.setDataSourceProperties(new Properties() {{
                 put("cachePrepStmts", "true");
                 put("prepStmtCacheSize", "250");
                 put("prepStmtCacheSqlLimit", "2048");
@@ -76,7 +77,7 @@ public abstract class AbstractDataConnector {
             }});
         } else {
             // SQLite doesn't need more than 1 active connection.
-           this.config.setMaximumPoolSize(1);
+            this.config.setMaximumPoolSize(1);
         }
 
         this.dataSource = new HikariDataSource(config);
