@@ -3,7 +3,7 @@ main: su.nexmedia.engine.NexEngine
 version: '${project.version} build-${buildNumber}'
 description: Plugin Engine
 author: NightExpress
-softdepend: [ Vault ]
+softdepend: [ Citizens, Vault ]
 loadbefore: [ WorldGuard, MythicMobs, Citizens ]
 api-version: 1.17
 load: STARTUP

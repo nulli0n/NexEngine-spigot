@@ -20,6 +20,13 @@ public class DataConfig {
     public String mysqlPassword;
     public String mysqlHost;
     public String mysqlBase;
+    public String mysqlParameters;
+
+    public int mysqlSize;
+    public int mysqlIdle;
+    public long mysqlLifetime;
+    public long mysqlKeepalive;
+    public long mysqlTimeout;
 
     public String sqliteFilename;
 
@@ -53,6 +60,27 @@ public class DataConfig {
             this.mysqlBase = JOption.create(path + "MySQL.Database", "minecraft",
                 "MySQL database name, where plugin tables will be created.")
                 .read(cfg);
+            this.mysqlParameters = JOption.create(path + "MySQL.Parameters", "?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8",
+                            "The parameters for the connection.")
+                    .read(cfg);
+            path = "Database.connection_pool.";
+            this.mysqlSize = JOption.create(path + "size", 10,
+                            "Sets the maximum size of the MySQL connection pool.")
+                    .read(cfg);
+            this.mysqlIdle = JOption.create(path + "idle", 10,
+                            "Sets the minimum number of idle connections that the pool will try to maintain.")
+                    .read(cfg);
+            this.mysqlLifetime = JOption.create(path + "lifetime", 1800000,
+                            "This setting controls the maximum lifetime of a connection in the pool in milliseconds.")
+                    .read(cfg);
+            this.mysqlKeepalive = JOption.create(path + "keepalive", 30000,
+                            "This setting controls how frequently the pool will 'ping' a connection in order to prevent it",
+                            "from being timed out by the database or network infrastructure, measured in milliseconds.")
+                    .read(cfg);
+            this.mysqlTimeout = JOption.create(path + "timeout", 20000,
+                            "This setting controls the maximum number of milliseconds that the plugin will wait for a",
+                            "connection from the pool, before timing out.")
+                    .read(cfg);
         }
         else {
             this.sqliteFilename = JOption.create(path + "SQLite.FileName", "data.db",

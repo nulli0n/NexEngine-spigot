@@ -15,7 +15,13 @@ public class JOption<T> {
     public static final Reader<Integer>      READER_INT         = JYML::getInt;
     public static final Reader<Double>       READER_DOUBLE      = JYML::getDouble;
     public static final Reader<Long>         READER_LONG        = JYML::getLong;
-    public static final Reader<String>       READER_STRING      = (cfg, path, def) -> StringUtil.color(cfg.getString(path, def));
+    public static final Reader<String>       READER_STRING      = (cfg, path, def) -> {
+        if (!path.startsWith("Database.")) {
+            return StringUtil.color(cfg.getString(path, def));
+        } else {
+            return cfg.getString(path, def);
+        }
+    };
     public static final Reader<Set<String>>  READER_SET_STRING  = (cfg, path, def) -> StringUtil.color(cfg.getStringSet(path));
     public static final Reader<List<String>> READER_LIST_STRING = (cfg, path, def) -> StringUtil.color(cfg.getStringList(path));
     public static final Reader<ItemStack>    READER_ITEM        = JYML::getItem;

@@ -7,12 +7,8 @@ import su.nexmedia.engine.api.data.config.DataConfig;
 public class ConnectorMySQL extends AbstractDataConnector {
 
     public ConnectorMySQL(@NotNull NexPlugin<?> plugin, @NotNull DataConfig config) {
-        this(plugin, config.mysqlHost, config.mysqlBase, config.mysqlUser, config.mysqlPassword);
-    }
-
-    public ConnectorMySQL(@NotNull NexPlugin<?> plugin,
-                          @NotNull String host, @NotNull String base,
-                          @NotNull String userName, @NotNull String password) {
-        super(plugin, "jdbc:mysql://" + host + "/" + base + "?allowPublicKeyRetrieval=true&useSSL=false", userName, password);
+        super(plugin, "jdbc:mysql://" + config.mysqlHost + "/" + config.mysqlBase + config.mysqlParameters,
+                config.mysqlUser, config.mysqlPassword, config.mysqlSize, config.mysqlIdle,
+                config.mysqlLifetime, config.mysqlKeepalive, config.mysqlTimeout);
     }
 }
