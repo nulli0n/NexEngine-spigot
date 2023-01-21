@@ -55,7 +55,7 @@ public class TrackListener<P extends NexPlugin<P>> extends AbstractListener<P> {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
-        this.plugin.runTask(c -> PlayerBlockTracker.unTrack(event.getBlock()), false);
+        PlayerBlockTracker.unTrack(event.getBlock());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

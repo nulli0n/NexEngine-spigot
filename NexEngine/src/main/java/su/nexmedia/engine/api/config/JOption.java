@@ -25,7 +25,8 @@ public class JOption<T> {
     protected final T         defaultValue;
     protected final String[]  description;
     protected       T         value;
-    protected       Writer    writer;
+    @Deprecated protected Writer     writer;
+    protected IWriter<T> writerNew;
 
     public JOption(@NotNull String path, @NotNull Reader<T> reader, @NotNull Supplier<T> defaultValue, @NotNull String... description) {
         this(path, reader, defaultValue.get(), description);
@@ -96,6 +97,9 @@ public class JOption<T> {
         if (this.getWriter() != null) {
             this.getWriter().write(cfg, this.getPath());
         }
+        else if (this.getWriterNew() != null) {
+            this.getWriterNew().write(cfg, this.getPath(), this.get());
+        }
         else {
             cfg.set(this.getPath(), this.get());
         }
@@ -135,13 +139,26 @@ public class JOption<T> {
     }
 
     @Nullable
+    @Deprecated
     public Writer getWriter() {
         return writer;
     }
 
     @NotNull
+    @Deprecated
     public JOption<T> setWriter(@Nullable Writer writer) {
         this.writer = writer;
+        return this;
+    }
+
+    @Nullable
+    public JOption.IWriter<T> getWriterNew() {
+        return writerNew;
+    }
+
+    @NotNull
+    public JOption<T> setWriter(@Nullable JOption.IWriter<T> writer) {
+        this.writerNew = writer;
         return this;
     }
 
@@ -150,8 +167,14 @@ public class JOption<T> {
         @NotNull T read(@NotNull JYML cfg, @NotNull String path, @NotNull T def);
     }
 
+    @Deprecated
     public interface Writer {
 
         void write(@NotNull JYML cfg, @NotNull String path);
+    }
+
+    public interface IWriter<T> {
+
+        void write(@NotNull JYML cfg, @NotNull String path, @NotNull T obj);
     }
 }

@@ -153,6 +153,9 @@ public class JYML extends YamlConfiguration {
             else if (value instanceof Location location) {
                 value = LocationUtil.serialize(location);
             }
+            else if (value instanceof Enum<?> en) {
+                value = en.name();
+            }
             super.set(path, value);
         }
         this.isChanged = true;
@@ -290,10 +293,10 @@ public class JYML extends YamlConfiguration {
     public ItemStack getItem(@NotNull String path) {
         if (!path.isEmpty() && !path.endsWith(".")) path = path + ".";
 
-        if (this.getBoolean(path + "Encoded.Use")) {
+        /*if (this.getBoolean(path + "Encoded.Use")) {
             ItemStack item = this.getItemEncoded(path + "Encoded.Value");
             return item == null ? new ItemStack(Material.AIR) : item;
-        }
+        }*/
 
         Material material = Material.getMaterial(this.getString(path + "Material", "").toUpperCase());
         if (material == null || material == Material.AIR) return new ItemStack(Material.AIR);
@@ -416,7 +419,7 @@ public class JYML extends YamlConfiguration {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
 
-        boolean hasNbt = !meta.getPersistentDataContainer().isEmpty();
+        /*boolean hasNbt = !meta.getPersistentDataContainer().isEmpty();
         if (hasNbt) {
             this.set(path + "Encoded.Use", true);
             this.setItemEncoded(path + "Encoded.Value", item);
@@ -428,7 +431,7 @@ public class JYML extends YamlConfiguration {
             else {
                 this.remove(path + "Encoded");
             }
-        }
+        }*/
 
         if (meta instanceof Damageable damageable) {
             this.set(path + "Durability", damageable.getDamage() <= 0 ? null : damageable.getDamage());

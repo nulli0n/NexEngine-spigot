@@ -300,11 +300,11 @@ public class StringUtil {
             String sub = token.substring(lastIndex, lastIndex + partSize);
             lastIndex += partSize;
 
-            builder.append(sub).append("(?:.*)");
+            builder.append(Pattern.quote(sub)).append("(?:.*)");
         }
 
         Pattern pattern = Pattern.compile(builder.toString());
-        List<String> list = new ArrayList<>(originals.stream().filter(orig -> pattern.matcher(orig.toLowerCase()).matches()).toList());
+        List<String> list = new ArrayList<>(originals.stream().filter(orig -> pattern.matcher(orig.toLowerCase()).find()).toList());
         /*for (String src : originals) {
             if (src.toLowerCase().startsWith(token.toLowerCase())) {
                 list.add(src);

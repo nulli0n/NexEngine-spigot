@@ -39,6 +39,6 @@ public class ReloadSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P>
     @Override
     protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
         plugin.reload();
-        plugin.getMessage(EngineLang.CORE_COMMAND_RELOAD_DESC).send(sender);
+        plugin.getMessage(EngineLang.CORE_COMMAND_RELOAD_DONE).send(sender);
     }
 }

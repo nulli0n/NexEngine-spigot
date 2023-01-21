@@ -46,6 +46,11 @@ public class NexEngine extends NexPlugin<NexEngine> {
             return false;
         }
 
+        if (!this.getServer().getVersion().contains("Spigot")) {
+            isPaper = true;
+            this.info("Seems like we have Paper based fork here...");
+        }
+
         this.editorManager = new EditorManager(this);
         this.editorManager.setup();
 

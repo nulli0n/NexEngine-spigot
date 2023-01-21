@@ -1,5 +1,7 @@
 package su.nexmedia.engine.api.menu;
 
+import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -10,10 +12,12 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexPlugin;
+import su.nexmedia.engine.api.config.JOption;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractListener;
 import su.nexmedia.engine.api.manager.ICleanable;
 import su.nexmedia.engine.api.type.ClickType;
+import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.utils.ItemUtil;
 import su.nexmedia.engine.utils.PlayerUtil;
 import su.nexmedia.engine.utils.StringUtil;
@@ -34,11 +38,15 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
     protected int    size;
     protected JYML   cfg;
 
+    private boolean useMiniMessage;
+
     private MenuListener<P> listener;
 
     public AbstractMenu(@NotNull P plugin, @NotNull JYML cfg, @NotNull String path) {
         this(plugin, cfg.getString(path + "Title", ""), cfg.getInt(path + "Size"));
         this.cfg = cfg;
+        this.useMiniMessage = JOption.create("Use_Mini_Message", false,
+            "Sets whether to use Paper's MiniMessage API for the GUI Title.").read(cfg);
     }
 
     public AbstractMenu(@NotNull P plugin, @NotNull String title, int size) {
@@ -113,7 +121,7 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
             inventory.clear();
         }
         else {
-            inventory = this.createInventory();
+            inventory = this.createInventory(player);
         }
 
         this.setPage(player, page, page);
@@ -197,8 +205,17 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
     }
 
     @NotNull
-    public Inventory createInventory() {
-        return this.plugin.getServer().createInventory(null, this.getSize(), this.getTitle());
+    public Inventory createInventory(@NotNull Player player) {
+        String title = this.getTitle();
+        if (Hooks.hasPlaceholderAPI()) {
+            title = PlaceholderAPI.setPlaceholders(player, title);
+        }
+        if (NexPlugin.isPaper && this.useMiniMessage) {
+            return this.plugin.getServer().createInventory(null, this.getSize(), MiniMessage.miniMessage().deserialize(title));
+        }
+        else {
+            return this.plugin.getServer().createInventory(null, this.getSize(), title);
+        }
     }
 
     @NotNull
