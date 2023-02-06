@@ -13,6 +13,7 @@ import su.nexmedia.engine.api.manager.AbstractManager;
 import su.nexmedia.engine.hooks.Hooks;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends AbstractUser<P>> extends AbstractManager<P> {
 
@@ -107,6 +108,14 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         }
 
         return user;
+    }
+
+    public final CompletableFuture<U> getUserDataAsync(@NotNull String name) {
+        return CompletableFuture.supplyAsync(() -> this.getUserData(name));
+    }
+
+    public final CompletableFuture<U> getUserDataAsync(@NotNull UUID uuid) {
+        return CompletableFuture.supplyAsync(() -> this.getUserData(uuid));
     }
 
     public final void unloadUser(@NotNull Player player) {

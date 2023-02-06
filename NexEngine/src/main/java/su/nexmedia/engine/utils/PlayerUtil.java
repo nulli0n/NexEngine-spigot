@@ -12,6 +12,7 @@ import org.geysermc.floodgate.api.FloodgateApi;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.hooks.Hooks;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -37,8 +38,9 @@ public class PlayerUtil {
     }
 
     @NotNull
+    @Deprecated
     public static List<String> getPlayerNames() {
-        return Bukkit.getServer().getOnlinePlayers().stream().map(Player::getName).toList();
+        return CollectionsUtil.playerNames();
     }
 
     public static boolean hasEmptyInventory(@NotNull Player player) {
@@ -121,7 +123,7 @@ public class PlayerUtil {
     }
 
     public static void addItem(@NotNull Player player, @NotNull ItemStack... items) {
-        Stream.of(items).forEach(item -> addItem(player, item, item.getAmount()));
+        Arrays.asList(items).forEach(item -> addItem(player, item, item.getAmount()));
     }
 
     public static void addItem(@NotNull Player player, @NotNull ItemStack item2, int amount) {

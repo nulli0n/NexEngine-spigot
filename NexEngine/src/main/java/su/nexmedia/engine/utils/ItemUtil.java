@@ -13,18 +13,16 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.config.EngineConfig;
 import su.nexmedia.engine.hooks.Hooks;
+import su.nexmedia.engine.lang.LangManager;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 public class ItemUtil {
 
-    private static final NexEngine ENGINE;
-
-    static {
-        ENGINE = NexEngine.get();
-    }
+    private static final NexEngine ENGINE = NexEngine.get();
 
     public static int addToLore(@NotNull List<String> lore, int pos, @NotNull String value) {
         if (pos >= lore.size() || pos < 0) {
@@ -39,7 +37,15 @@ public class ItemUtil {
     @NotNull
     public static String getItemName(@NotNull ItemStack item) {
         ItemMeta meta = item.getItemMeta();
-        return (meta == null || !meta.hasDisplayName()) ? ENGINE.getLangManager().getEnum(item.getType()) : meta.getDisplayName();
+        return (meta == null || !meta.hasDisplayName()) ? LangManager.getMaterial(item.getType()) : meta.getDisplayName();
+    }
+
+    public static void mapMeta(@NotNull ItemStack item, @NotNull Consumer<ItemMeta> function) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) return;
+
+        function.accept(meta);
+        item.setItemMeta(meta);
     }
 
     @NotNull

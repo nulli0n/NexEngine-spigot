@@ -6,12 +6,11 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
-import org.bukkit.generator.WorldInfo;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexEngine;
-import su.nexmedia.engine.config.EngineConfig;
+import su.nexmedia.engine.lang.LangManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,19 +58,21 @@ public class LocationUtil {
     }
 
     @NotNull
-    public static String getWorldName(@NotNull Location loc) {
-        World world = loc.getWorld();
-        return world == null ? "null" : getWorldName(world);
+    public static String getWorldName(@NotNull Location location) {
+        World world = location.getWorld();
+        return world == null ? "null" : world.getName();
     }
 
     @NotNull
+    @Deprecated
     public static String getWorldName(@NotNull World world) {
-        return EngineConfig.getWorldName(world.getName());
+        return LangManager.getWorld(world);
     }
 
     @NotNull
+    @Deprecated
     public static List<String> getWorldNames() {
-        return Bukkit.getWorlds().stream().map(WorldInfo::getName).toList();
+        return CollectionsUtil.worldNames();
     }
 
     @NotNull

@@ -2,7 +2,6 @@ package su.nexmedia.engine.utils;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.Version;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -58,12 +57,6 @@ public class Reflex {
             e.printStackTrace();
         }
         return obj;
-    }
-
-    @Nullable
-    @Deprecated
-    public static Class<?> getNMSClass(@NotNull String name) {
-        return getClass("net.minecraft.server." + Version.CURRENT.name().toLowerCase(), name);
     }
 
     @NotNull

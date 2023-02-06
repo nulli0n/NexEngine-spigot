@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 public class EffectUtil {
 
     @Nullable
+    @Deprecated
     private static Object getParticleData(@NotNull Particle particle, @NotNull String dataRaw) {
         if (particle == Particle.REDSTONE || particle == Particle.SPELL_MOB || particle == Particle.SPELL_MOB_AMBIENT) {
             Color color = dataRaw.isEmpty() ? Color.WHITE : StringUtil.parseColor(dataRaw);
@@ -32,6 +33,7 @@ public class EffectUtil {
         return null;
     }
 
+    @Deprecated
     public static void playEffect(@NotNull Location location, @NotNull String nameRaw, @NotNull String dataRaw,
                                   double xOffset, double yOffset, double zOffset, double speed, int amount) {
 
@@ -44,6 +46,7 @@ public class EffectUtil {
         playEffect(location, particle, dataRaw, xOffset, yOffset, zOffset, speed, amount);
     }
 
+    @Deprecated
     public static void playEffect(@NotNull Player player, @NotNull Location location, @NotNull String nameRaw, @NotNull String dataRaw,
                                   double xOffset, double yOffset, double zOffset, double speed, int amount) {
 
@@ -53,6 +56,7 @@ public class EffectUtil {
         playEffect(player, location, particle, dataRaw, xOffset, yOffset, zOffset, speed, amount);
     }
 
+    @Deprecated
     public static void playEffect(@NotNull Player player, @NotNull Location location, @Nullable Particle particle, @NotNull String dataRaw,
                                   double xOffset, double yOffset, double zOffset, double speed, int amount) {
         if (particle == null) return;
@@ -78,6 +82,7 @@ public class EffectUtil {
         player.spawnParticle(particle, location, amount, xOffset, yOffset, zOffset, speed, data);
     }
 
+    @Deprecated
     public static void playEffect(@NotNull Location location, @Nullable Particle particle, @NotNull String dataRaw,
                                   double xOffset, double yOffset, double zOffset, double speed, int amount) {
         if (particle == null) return;
@@ -104,6 +109,25 @@ public class EffectUtil {
             zOffset = 0D;
         }
         world.spawnParticle(particle, location, amount, xOffset, yOffset, zOffset, speed, data);
+    }
+
+    public static void playParticle(@NotNull Location location, @NotNull Particle particle, @Nullable Object data,
+                                  double xOffset, double yOffset, double zOffset, double speed, int amount) {
+        World world = location.getWorld();
+        if (world == null) return;
+
+        if (data == null) {
+            world.spawnParticle(particle, location, amount, xOffset, yOffset, zOffset, speed);
+        }
+        else world.spawnParticle(particle, location, amount, xOffset, yOffset, zOffset, speed, data);
+    }
+
+    public static void playParticle(@NotNull Player player, @NotNull Location location, @NotNull Particle particle, @Nullable Object data,
+                                  double xOffset, double yOffset, double zOffset, double speed, int amount) {
+        if (data == null) {
+            player.spawnParticle(particle, location, amount, xOffset, yOffset, zOffset, speed);
+        }
+        else player.spawnParticle(particle, location, amount, xOffset, yOffset, zOffset, speed, data);
     }
 
     public static void drawLine(@NotNull Location from, @NotNull Location to,

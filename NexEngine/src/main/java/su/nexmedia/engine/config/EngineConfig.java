@@ -11,9 +11,11 @@ import java.util.UUID;
 
 public class EngineConfig {
 
+    @Deprecated
     private static Map<String, String> LOCALE_WORLD_NAMES;
 
     @NotNull
+    @Deprecated
     public static String getWorldName(@NotNull String world) {
         return LOCALE_WORLD_NAMES.getOrDefault(world, world);
     }

@@ -58,48 +58,19 @@ public class StringUtil {
         return Color.fromRGB(red, green, blue);
     }
 
-    private static ChatColor[] createGradient(@NotNull java.awt.Color start, @NotNull java.awt.Color end, int step) {
-        ChatColor[] colors = new ChatColor[step];
-        int stepR = Math.abs(start.getRed() - end.getRed()) / (step - 1);
-        int stepG = Math.abs(start.getGreen() - end.getGreen()) / (step - 1);
-        int stepB = Math.abs(start.getBlue() - end.getBlue()) / (step - 1);
-        int[] direction = new int[] {
-            start.getRed() < end.getRed() ? +1 : -1,
-            start.getGreen() < end.getGreen() ? +1 : -1,
-            start.getBlue() < end.getBlue() ? +1 : -1
-        };
+    private static ChatColor[] createGradient(@NotNull java.awt.Color start, @NotNull java.awt.Color end, int length) {
+        ChatColor[] colors = new ChatColor[length];
+        for (int index = 0; index < length; index++) {
+            double percent = (double) index / (double) length;
 
-        for (int i = 0; i < step; i++) {
-            java.awt.Color color = new java.awt.Color(start.getRed() + ((stepR * i) * direction[0]), start.getGreen() + ((stepG * i) * direction[1]), start.getBlue() + ((stepB * i) * direction[2]));
-            colors[i] = ChatColor.of(color);
+            int red = (int) (start.getRed() + percent * (end.getRed() - start.getRed()));
+            int green = (int) (start.getGreen() + percent * (end.getGreen() - start.getGreen()));
+            int blue = (int) (start.getBlue() + percent * (end.getBlue() - start.getBlue()));
+
+            java.awt.Color color = new java.awt.Color(red, green, blue);
+            colors[index] = ChatColor.of(color);
         }
-
         return colors;
-    }
-
-    @NotNull
-    private static String injectColors(@NotNull String source, ChatColor[] colors) {
-        StringBuilder specialColors = new StringBuilder();
-        StringBuilder stringBuilder = new StringBuilder();
-        String[] characters = source.split("");
-        int outIndex = 0;
-        for (int i = 0; i < characters.length; i++) {
-            if (characters[i].equals("&") || characters[i].equals("§")) {
-                if (i + 1 < characters.length) {
-                    if (characters[i + 1].equals("r")) {
-                        specialColors.setLength(0);
-                    }
-                    else {
-                        specialColors.append(characters[i]);
-                        specialColors.append(characters[i + 1]);
-                    }
-                    i++;
-                }
-                else stringBuilder.append(colors[outIndex++]).append(specialColors).append(characters[i]);
-            }
-            else stringBuilder.append(colors[outIndex++]).append(specialColors).append(characters[i]);
-        }
-        return stringBuilder.toString();
     }
 
     @NotNull
@@ -112,9 +83,30 @@ public class StringUtil {
 
             java.awt.Color colorStart = new java.awt.Color(Integer.parseInt(start, 16));
             java.awt.Color colorEnd = new java.awt.Color(Integer.parseInt(end, 16));
-            ChatColor[] colors = createGradient(colorStart, colorEnd, string.length());
+            ChatColor[] colors = createGradient(colorStart, colorEnd, StringUtil.colorOff(content).length());
 
-            string = string.replace(matcher.group(0), injectColors(content, colors));
+            StringBuilder gradiented = new StringBuilder();
+            StringBuilder specialColors = new StringBuilder();
+            char[] characters = content.toCharArray();
+            int outIndex = 0;
+            for (int index = 0; index < characters.length; index++) {
+                if (characters[index] == ChatColor.COLOR_CHAR) {
+                    if (index + 1 < characters.length) {
+                        if (characters[index + 1] == 'r') {
+                            specialColors.setLength(0);
+                        }
+                        else {
+                            specialColors.append(characters[index]);
+                            specialColors.append(characters[index + 1]);
+                        }
+                        index++;
+                    }
+                    else gradiented.append(colors[outIndex++]).append(specialColors).append(characters[index]);
+                }
+                else gradiented.append(colors[outIndex++]).append(specialColors).append(characters[index]);
+            }
+
+            string = string.replace(matcher.group(0), gradiented.toString());
         }
         return string;
     }
@@ -228,6 +220,21 @@ public class StringUtil {
             }
         }
         return array;
+    }
+
+    @NotNull
+    public static <T extends Enum<T>> Optional<T> getEnum(@NotNull String str, @NotNull Class<T> clazz) {
+        try {
+            return Optional.of(Enum.valueOf(clazz, str.toUpperCase()));
+        }
+        catch (Exception ex) {
+            return Optional.empty();
+        }
+    }
+
+    @NotNull
+    public static String capitalizeUnderscored(@NotNull String str) {
+        return capitalizeFully(str.replace("_", " "));
     }
 
     @NotNull

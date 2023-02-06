@@ -15,10 +15,10 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.utils.random.Rnd;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class EntityUtil {
 
@@ -43,7 +43,7 @@ public class EntityUtil {
         if (equipment == null) return Collections.emptyMap();
 
         Map<EquipmentSlot, ItemStack> map = new HashMap<>();
-        Stream.of(slots).forEach(slot -> {
+        Arrays.asList(slots).forEach(slot -> {
             map.put(slot, equipment.getItem(slot));
         });
         return map;
@@ -60,6 +60,7 @@ public class EntityUtil {
     }
 
     @NotNull
+    @Deprecated
     public static String getName(@NotNull Entity entity) {
         if (entity instanceof Player) {
             return entity.getName();
@@ -75,6 +76,7 @@ public class EntityUtil {
     }
 
     @NotNull
+    @Deprecated
     public static Firework spawnRandomFirework(@NotNull Location location) {
         World world = location.getWorld();
         if (world == null) throw new IllegalStateException("World is null!");

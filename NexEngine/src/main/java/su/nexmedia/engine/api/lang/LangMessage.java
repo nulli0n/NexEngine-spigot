@@ -14,6 +14,7 @@ import su.nexmedia.engine.utils.message.NexParser;
 import su.nexmedia.engine.utils.regex.RegexUtil;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
@@ -39,7 +40,6 @@ public class LangMessage {
         PREFIX("prefix"),
         SOUND("sound"),
         TYPE("type"),
-        PLACEHOLDER_API("papi")
         ;
 
         private final Pattern pattern;
@@ -168,6 +168,7 @@ public class LangMessage {
     }
 
     @NotNull
+    @Deprecated
     public LangMessage replace(@NotNull String var, @NotNull List<Object> replacer) {
         if (this.isEmpty()) return this;
         return this.replace(str -> str.replace(var, String.join("\\n", replacer.stream().map(Object::toString).toList())));
@@ -179,6 +180,23 @@ public class LangMessage {
 
         LangMessage msgCopy = new LangMessage(this);
         msgCopy.setLocalized(replacer.apply(msgCopy.getLocalized()));
+        return msgCopy;
+    }
+
+    @NotNull
+    public LangMessage replace(@NotNull Predicate<String> predicate, @NotNull BiConsumer<String, List<String>> replacer) {
+        if (this.isEmpty()) return this;
+
+        LangMessage msgCopy = new LangMessage(this);
+        List<String> replaced = new ArrayList<>();
+        msgCopy.asList().forEach(line -> {
+            if (predicate.test(line)) {
+                replacer.accept(line, replaced);
+                return;
+            }
+            replaced.add(line);
+        });
+        msgCopy.setLocalized(String.join("\\n", replaced));
         return msgCopy;
     }
 
@@ -231,8 +249,8 @@ public class LangMessage {
     }
 
     /**
-     * Replaces a raw '\n' new line splitter with a system one.
-     * @return A string with a system new line splitters.
+     * Replaces plain '\n' line breaker with a system one.
+     * @return A string with a system lin breakers.
      */
     @NotNull
     public String normalizeLines() {
@@ -242,10 +260,9 @@ public class LangMessage {
     @NotNull
     private UnaryOperator<String> replaceDefaults() {
         return str -> {
-            /*for (Map.Entry<String, String> entry : this.template.getCustomPlaceholders().entrySet()) {
-                if (entry.getKey().isEmpty() || entry.getValue().isEmpty()) continue;
+            for (Map.Entry<String, String> entry : this.plugin.getLangManager().getPlaceholders().entrySet()) {
                 str = str.replace(entry.getKey(), entry.getValue());
-            }*/
+            }
             return Placeholders.Plugin.replacer(plugin).apply(str);
         };
     }

@@ -11,14 +11,17 @@ import su.nexmedia.engine.api.data.connection.AbstractDataConnector;
 import su.nexmedia.engine.api.data.connection.ConnectorMySQL;
 import su.nexmedia.engine.api.data.connection.ConnectorSQLite;
 import su.nexmedia.engine.api.data.serialize.ItemStackSerializer;
+import su.nexmedia.engine.api.data.sql.SQLColumn;
+import su.nexmedia.engine.api.data.sql.SQLCondition;
+import su.nexmedia.engine.api.data.sql.SQLQueries;
+import su.nexmedia.engine.api.data.sql.SQLValue;
+import su.nexmedia.engine.api.data.sql.executor.*;
 import su.nexmedia.engine.api.data.task.DataSaveTask;
 import su.nexmedia.engine.api.data.task.DataSynchronizationTask;
 import su.nexmedia.engine.api.manager.AbstractManager;
 
 import java.sql.*;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -129,6 +132,64 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
         return this.getConnector().getConnection();
     }
 
+    public boolean createTable(@NotNull String table, @NotNull List<SQLColumn> columns) {
+        return CreateTableExecutor.builder(table, this.getDataType()).columns(columns).execute(this.getConnector());
+    }
+
+    public boolean renameTable2(@NotNull String from, @NotNull String to) {
+        return RenameTableExecutor.builder(from, this.getDataType()).renameTo(to).execute(this.getConnector());
+    }
+
+    public boolean addColumn(@NotNull String table, @NotNull SQLValue... columns) {
+        return AlterTableExecutor.builder(table, this.getDataType()).addColumn(columns).execute(this.getConnector());
+    }
+
+    public boolean renameColumn(@NotNull String table, @NotNull SQLValue... columns) {
+        return AlterTableExecutor.builder(table, this.getDataType()).renameColumn(columns).execute(this.getConnector());
+    }
+
+    public boolean dropColumn(@NotNull String table, @NotNull SQLColumn... columns) {
+        return AlterTableExecutor.builder(table, this.getDataType()).dropColumn(columns).execute(this.getConnector());
+    }
+
+    public boolean hasColumn(@NotNull String table, @NotNull SQLColumn column) {
+        return SQLQueries.hasColumn(this.getConnector(), table, column);
+    }
+
+    public boolean insert(@NotNull String table, @NotNull List<SQLValue> values) {
+        return InsertQueryExecutor.builder(table).values(values).execute(this.getConnector());
+    }
+
+    public boolean update(@NotNull String table, @NotNull List<SQLValue> values, @NotNull SQLCondition... conditions) {
+        return UpdateQueryExecutor.builder(table).values(values).where(conditions).execute(this.getConnector());
+    }
+
+    public boolean delete(@NotNull String table, @NotNull SQLCondition... conditions) {
+        return DeleteQueryExecutor.builder(table).where(conditions).execute(this.getConnector());
+    }
+
+    public boolean contains(@NotNull String table, @NotNull SQLCondition... conditions) {
+        return this.load(table, (resultSet -> true), Collections.emptyList(), Arrays.asList(conditions)).isPresent();
+    }
+
+    @NotNull
+    public <T> Optional<T> load(@NotNull String table, @NotNull Function<ResultSet, T> function,
+                                @NotNull List<SQLColumn> columns,
+                                @NotNull List<SQLCondition> conditions) {
+        List<T> list = this.load(table, function, columns, conditions, 1);
+        return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
+    }
+
+    @NotNull
+    public <T> List<T> load(@NotNull String table, @NotNull Function<ResultSet, T> dataFunction,
+                            @NotNull List<SQLColumn> columns,
+                            @NotNull List<SQLCondition> conditions,
+                            int amount) {
+        return SelectQueryExecutor.builder(table, dataFunction).columns(columns).where(conditions).execute(this.getConnector());
+    }
+
+
+    @Deprecated
     protected final void createTable(@NotNull String table, @NotNull LinkedHashMap<String, String> valMap) {
         StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS " + table + "(");
         StringBuilder columns = new StringBuilder();
@@ -149,6 +210,7 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
         DataQueries.executeStatement(this.getConnector(), sql.toString());
     }
 
+    @Deprecated
     protected final void renameTable(@NotNull String from, @NotNull String to) {
         if (!this.hasTable(from)) return;
 
@@ -162,8 +224,11 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
         DataQueries.executeStatement(this.getConnector(), sql.toString());
     }
 
+    @Deprecated
     protected final boolean hasTable(@NotNull String table) {
-        boolean has = false;
+        return SQLQueries.hasTable(this.getConnector(), table);
+
+        /*boolean has = false;
         try (Connection connection = this.getConnection()) {
             DatabaseMetaData metaData = connection.getMetaData();
             ResultSet tables = metaData.getTables(null, null, table, null);
@@ -173,13 +238,15 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
         catch (SQLException e) {
             e.printStackTrace();
         }
-        return has;
+        return has;*/
     }
 
+    @Deprecated
     protected final void addColumn(@NotNull String table, @NotNull String column, @NotNull String type) {
         this.addColumn(table, column, type, "");
     }
 
+    @Deprecated
     protected final void addColumn(@NotNull String table, @NotNull String column,
                                    @NotNull String type, @NotNull String def) {
         if (this.hasColumn(table, column)) return;
@@ -192,6 +259,7 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
         DataQueries.executeStatement(this.getConnector(), sql.toString());
     }
 
+    @Deprecated
     protected final void removeColumn(@NotNull String table, @NotNull String column) {
         if (!this.hasColumn(table, column)) return;
 
@@ -199,6 +267,7 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
         DataQueries.executeStatement(this.getConnector(), sql);
     }
 
+    @Deprecated
     protected final void renameColumn(@NotNull String table, @NotNull String from, @NotNull String to) {
         if (!this.hasColumn(table, from)) return;
 
@@ -206,7 +275,9 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
         DataQueries.executeStatement(this.getConnector(), sql);
     }
 
+    @Deprecated
     public final boolean hasColumn(@NotNull String table, @NotNull String columnName) {
+
         String sql = "SELECT * FROM " + table;
         try (Connection connection = this.getConnection();
             Statement statement = connection.createStatement()) {
@@ -227,25 +298,30 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
         }
     }
 
+    @Deprecated
     protected final void addData(@NotNull String table, @NotNull LinkedHashMap<String, String> keys) {
         DataQueries.executeInsert(this.getConnector(), table, keys);
     }
 
+    @Deprecated
     protected final void saveData(@NotNull String table,
                                   @NotNull LinkedHashMap<String, String> valuesMap,
                                   @NotNull Map<String, String> whereMap) {
         DataQueries.executeUpdate(this.getConnector(), table, valuesMap, whereMap);
     }
 
+    @Deprecated
     public final boolean hasData(@NotNull String table, @NotNull Map<String, String> whereMap) {
         return getData(table, whereMap, (resultSet -> true)) != null;
     }
 
+    @Deprecated
     protected final void deleteData(@NotNull String table, @NotNull Map<String, String> whereMap) {
         DataQueries.executeDelete(this.getConnector(), table, whereMap);
     }
 
     @Nullable
+    @Deprecated
     protected final <T> T getData(@NotNull String table,
                                   @NotNull Map<String, String> whereMap,
                                   @NotNull Function<ResultSet, T> function) {
@@ -253,6 +329,7 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
     }
 
     @NotNull
+    @Deprecated
     protected final <T> List<@NotNull T> getDatas(@NotNull String table,
                                                   @NotNull Map<String, String> whereMap,
                                                   @NotNull Function<ResultSet, T> dataFunction,

@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +37,7 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
 
     protected String title;
     protected int    size;
+    protected InventoryType inventoryType;
     protected JYML   cfg;
 
     private boolean useMiniMessage;
@@ -45,6 +47,9 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
     public AbstractMenu(@NotNull P plugin, @NotNull JYML cfg, @NotNull String path) {
         this(plugin, cfg.getString(path + "Title", ""), cfg.getInt(path + "Size"));
         this.cfg = cfg;
+        this.setInventoryType(JOption.create("Inventory_Type", InventoryType.class, InventoryType.CHEST,
+            "Sets Inventory Type for the GUI.",
+            "https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/inventory/InventoryType.html").read(cfg));
         this.useMiniMessage = JOption.create("Use_Mini_Message", false,
             "Sets whether to use Paper's MiniMessage API for the GUI Title.").read(cfg);
     }
@@ -54,6 +59,7 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
         this.id = UUID.randomUUID();
         this.setTitle(title);
         this.setSize(size);
+        this.setInventoryType(InventoryType.CHEST);
 
         this.items = new LinkedHashMap<>();
         this.userItems = new WeakHashMap<>();
@@ -206,15 +212,22 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
 
     @NotNull
     public Inventory createInventory(@NotNull Player player) {
-        String title = this.getTitle();
-        if (Hooks.hasPlaceholderAPI()) {
-            title = PlaceholderAPI.setPlaceholders(player, title);
-        }
+        String title = this.getTitle(player);
         if (NexPlugin.isPaper && this.useMiniMessage) {
-            return this.plugin.getServer().createInventory(null, this.getSize(), MiniMessage.miniMessage().deserialize(title));
+            if (this.getInventoryType() == InventoryType.CHEST) {
+                return this.plugin.getServer().createInventory(null, this.getSize(), MiniMessage.miniMessage().deserialize(title));
+            }
+            else {
+                return this.plugin.getServer().createInventory(null, this.getInventoryType(), MiniMessage.miniMessage().deserialize(title));
+            }
         }
         else {
-            return this.plugin.getServer().createInventory(null, this.getSize(), title);
+            if (this.getInventoryType() == InventoryType.CHEST) {
+                return this.plugin.getServer().createInventory(null, this.getSize(), title);
+            }
+            else {
+                return this.plugin.getServer().createInventory(null, this.getInventoryType(), title);
+            }
         }
     }
 
@@ -282,6 +295,15 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
         return title;
     }
 
+    @NotNull
+    public String getTitle(@NotNull Player player) {
+        String title = this.getTitle();
+        if (Hooks.hasPlaceholderAPI()) {
+            title = PlaceholderAPI.setPlaceholders(player, title);
+        }
+        return title;
+    }
+
     public void setTitle(@NotNull String title) {
         this.title = StringUtil.color(title);
     }
@@ -292,6 +314,15 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
 
     public void setSize(int size) {
         this.size = size;
+    }
+
+    @NotNull
+    public InventoryType getInventoryType() {
+        return inventoryType;
+    }
+
+    public void setInventoryType(@NotNull InventoryType inventoryType) {
+        this.inventoryType = inventoryType;
     }
 
     @NotNull

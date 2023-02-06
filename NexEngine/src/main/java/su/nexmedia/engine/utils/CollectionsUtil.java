@@ -1,6 +1,9 @@
 package su.nexmedia.engine.utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,7 +13,22 @@ import java.util.stream.Stream;
 
 public class CollectionsUtil {
 
-    public static final boolean[] BOOLEANS = new boolean[]{true, false};
+    @Deprecated public static final boolean[] BOOLEANS = new boolean[]{true, false};
+
+    @NotNull
+    public static List<String> playerNames() {
+        return Bukkit.getServer().getOnlinePlayers().stream().map(Player::getName).toList();
+    }
+
+    @NotNull
+    public static List<String> playerNames(@NotNull Player viewer) {
+        return Bukkit.getServer().getOnlinePlayers().stream().filter(viewer::canSee).map(Player::getName).toList();
+    }
+
+    @NotNull
+    public static List<String> worldNames() {
+        return Bukkit.getServer().getWorlds().stream().map(WorldInfo::getName).toList();
+    }
 
     @NotNull
     public static <T> List<List<T>> split(@NotNull List<T> list, int targetSize) {
@@ -40,13 +58,14 @@ public class CollectionsUtil {
     }
 
     @NotNull
+    @Deprecated
     public static String getEnums(@NotNull Class<?> clazz) {
         return String.join(ChatColor.GRAY + ", " + ChatColor.WHITE, getEnumsList(clazz));
     }
 
     @NotNull
     public static List<String> getEnumsList(@NotNull Class<?> clazz) {
-        return new ArrayList<>(Stream.of(clazz.getEnumConstants()).filter(Objects::nonNull).map(Object::toString).toList());
+        return new ArrayList<>(Stream.of(clazz.getEnumConstants()).map(Object::toString).toList());
     }
 
     @NotNull
@@ -57,12 +76,8 @@ public class CollectionsUtil {
     }
 
     @Nullable
+    @Deprecated
     public static <T extends Enum<T>> T getEnum(@NotNull String str, @NotNull Class<T> clazz) {
-        try {
-            return Enum.valueOf(clazz, str.toUpperCase());
-        }
-        catch (Exception ex) {
-            return null;
-        }
+        return StringUtil.getEnum(str, clazz).orElse(null);
     }
 }

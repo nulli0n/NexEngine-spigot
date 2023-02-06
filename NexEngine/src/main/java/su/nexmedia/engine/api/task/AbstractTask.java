@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import su.nexmedia.engine.NexPlugin;
 
+@Deprecated
 public abstract class AbstractTask<P extends NexPlugin<P>> {
 
     @NotNull

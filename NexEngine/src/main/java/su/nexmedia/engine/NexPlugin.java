@@ -292,6 +292,7 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         return this.getClassLoader();
     }
 
+    @Deprecated
     public final void runTask(@NotNull Consumer<BukkitTask> consume, boolean async) {
         if (async) {
             this.getServer().getScheduler().runTaskAsynchronously(this, consume);
@@ -299,5 +300,34 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         else {
             this.getServer().getScheduler().runTask(this, consume);
         }
+    }
+
+    public void runTask(@NotNull Consumer<BukkitTask> consumer) {
+        this.getScheduler().runTask(this, consumer);
+    }
+
+    @Deprecated
+    public void runTaskAsynchronously(@NotNull Consumer<BukkitTask> consumer) {
+        this.runTaskAsync(consumer);
+    }
+
+    public void runTaskAsync(@NotNull Consumer<BukkitTask> consumer) {
+        this.getScheduler().runTaskAsynchronously(this, consumer);
+    }
+
+    public void runTaskLater(@NotNull Consumer<BukkitTask> consumer, long delay) {
+        this.getScheduler().runTaskLater(this, consumer, delay);
+    }
+
+    public void runTaskLaterAsync(@NotNull Consumer<BukkitTask> consumer, long delay) {
+        this.getScheduler().runTaskLaterAsynchronously(this, consumer, delay);
+    }
+
+    public void runTaskTimer(@NotNull Consumer<BukkitTask> consumer, long delay, long interval) {
+        this.getScheduler().runTaskTimer(this, consumer, delay, interval);
+    }
+
+    public void runTaskTimerAsync(@NotNull Consumer<BukkitTask> consumer, long delay, long interval) {
+        this.getScheduler().runTaskTimerAsynchronously(this, consumer, delay, interval);
     }
 }

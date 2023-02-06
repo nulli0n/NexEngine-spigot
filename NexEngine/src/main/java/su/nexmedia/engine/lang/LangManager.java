@@ -2,11 +2,11 @@ package su.nexmedia.engine.lang;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.config.JYML;
@@ -18,26 +18,31 @@ import su.nexmedia.engine.utils.Reflex;
 import su.nexmedia.engine.utils.StringUtil;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     protected JYML config;
-    protected Map<String, LangMessage> messages;
+    protected final Map<String, LangMessage> messages;
+    protected final Map<String, String> placeholders;
 
     public static final String DIR_LANG = "/lang/";
     
     public LangManager(@NotNull P plugin) {
         super(plugin);
+        this.messages = new HashMap<>();
+        this.placeholders = new HashMap<>();
     }
 
     @Override
     protected void onLoad() {
         this.plugin.getConfigManager().extractResources(DIR_LANG);
-        this.messages = new HashMap<>();
+        this.config = JYML.loadOrExtract(plugin, DIR_LANG + "messages_" + plugin.getConfigManager().languageCode + ".yml");
+        this.plugin.info("Using '" + plugin.getConfigManager().languageCode + "' language.");
+
+        this.getConfig().getSection("Placeholders").forEach(placeholder -> {
+            this.placeholders.put(placeholder, this.getConfig().getString("Placeholders." + placeholder, ""));
+        });
 
         if (this.plugin.isEngine()) {
             this.setupEnum(EntityType.class);
@@ -45,11 +50,13 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
             this.setupEnum(GameMode.class);
 
             for (PotionEffectType type : PotionEffectType.values()) {
-                this.getConfig().addMissing("PotionEffectType." + type.getName(), StringUtil.capitalizeFully(type.getName().replace("_", " ")));
+                this.getConfig().addMissing("PotionEffectType." + type.getName(), StringUtil.capitalizeUnderscored(type.getName()));
             }
-
-            for (Enchantment e : Enchantment.values()) {
-                this.getConfig().addMissing("Enchantment." + e.getKey().getKey(), StringUtil.capitalizeFully(e.getKey().getKey().replace("_", " ")));
+            for (Enchantment enchantment : Enchantment.values()) {
+                getEnchantment(enchantment);
+            }
+            for (World world : this.plugin.getServer().getWorlds()) {
+                getWorld(world);
             }
             this.getConfig().saveChanges();
         }
@@ -63,19 +70,22 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
     @Override
     protected void onShutdown() {
         this.messages.clear();
+        this.placeholders.clear();
     }
 
     @NotNull
     public JYML getConfig() {
-        if (this.config == null) {
-            this.config = JYML.loadOrExtract(plugin, "lang/messages_" + plugin.getConfig().getString("Plugin.Language", "en") + ".yml");
-        }
         return config;
     }
 
     @NotNull
     public Map<String, LangMessage> getMessages() {
         return messages;
+    }
+
+    @NotNull
+    public Map<String, String> getPlaceholders() {
+        return placeholders;
     }
 
     @NotNull
@@ -87,18 +97,14 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         return message;
     }
 
-    @Nullable
-    public String getMessage(@NotNull String path) {
-        String str = this.getConfig().getString(path);
-        return str == null ? null : StringUtil.color(str);
+    @NotNull
+    public Optional<String> getMessage(@NotNull String path) {
+        return Optional.ofNullable(this.getConfig().getString(path)).map(StringUtil::color);
     }
 
     @NotNull
     private LangMessage loadMessage(@NotNull LangKey key) {
-        if (!this.getConfig().contains(key.getPath())) {
-            String textDefault = key.getDefaultText();
-            String[] textSplit = textDefault.split("\n");
-            this.getConfig().set(key.getPath(), textSplit.length > 1 ? Arrays.asList(textSplit) : textDefault);
+        if (this.write(key)) {
             this.getConfig().saveChanges();
         }
 
@@ -134,24 +140,39 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
             if (!field.getDeclaringClass().equals(clazz)) {
                 continue;
             }
-            if (!this.plugin.isEngine() && this.getConfig().contains(langKey.getPath())) {
-                continue;
-            }
 
-            this.loadMessage(langKey);
+            // Clear old loaded messages.
+            this.getMessages().remove(langKey.getPath());
+
+            // For engine, we have to preload the message, so it can be added to child plugin's messages.
+            if (this.plugin.isEngine()) {
+                this.loadMessage(langKey);
+            }
+            else { // For child plugins, we can only write it to the config and not precache it.
+                this.write(langKey);
+            }
         }
+        this.getConfig().saveChanges();
+    }
+
+    private boolean write(@NotNull LangKey key) {
+        if (!this.getConfig().contains(key.getPath())) {
+            String textDefault = key.getDefaultText();
+            String[] textSplit = textDefault.split("\n");
+            this.getConfig().set(key.getPath(), textSplit.length > 1 ? Arrays.asList(textSplit) : textDefault);
+            return true;
+        }
+        return false;
     }
 
     public void setupEnum(@NotNull Class<? extends Enum<?>> clazz) {
         if (!clazz.isEnum()) return;
         for (Object eName : clazz.getEnumConstants()) {
-            if (eName == null) continue;
-
             String name = eName.toString();
             if (clazz == Material.class && name.startsWith("LEGACY")) continue;
 
             String path = clazz.getSimpleName() + "." + name;
-            String val = StringUtil.capitalizeFully(name.replace("_", " "));
+            String val = StringUtil.capitalizeUnderscored(name);
             this.getConfig().addMissing(path, val);
         }
     }
@@ -159,7 +180,7 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
     @NotNull
     public String getEnum(@NotNull Enum<?> e) {
         String path = e.getDeclaringClass().getSimpleName() + "." + e.name();
-        String locEnum = this.getMessage(path);
+        String locEnum = this.getMessage(path).orElse(null);
         if (locEnum == null && !this.plugin.isEngine()) {
             return NexPlugin.getEngine().getLangManager().getEnum(e);
         }
@@ -185,24 +206,46 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     @NotNull
     public static String getPotionType(@NotNull PotionEffectType type) {
-        String name = NexEngine.get().getLangManager().getMessage("PotionEffectType." + type.getName());
-        return name == null ? type.getName() : name;
+        return NexEngine.get().getLangManager().getMessage("PotionEffectType." + type.getName()).orElse(type.getName());
+    }
+
+    @NotNull
+    public static String getEntityType(@NotNull EntityType type) {
+        return NexEngine.get().getLangManager().getEnum(type);
+    }
+
+    @NotNull
+    public static String getMaterial(@NotNull Material type) {
+        return NexEngine.get().getLangManager().getEnum(type);
+    }
+
+    @NotNull
+    public static String getWorld(@NotNull World world) {
+        return getByObject(world.getName(), "World");
     }
 
     @NotNull
     public static String getEnchantment(@NotNull Enchantment enchantment) {
-        String key = enchantment.getKey().getKey();
+        return getByObject(enchantment.getKey().getKey(), "Enchantment");
+    }
+
+    @NotNull
+    private static String getByObject(@NotNull String nameRaw, @NotNull String path) {
         LangManager<NexEngine> manager = NexEngine.get().getLangManager();
 
-        manager.getConfig().addMissing("Enchantment." + key, StringUtil.capitalizeFully(key.replace("_", " ")));
+        manager.getConfig().addMissing(path + "." + nameRaw, StringUtil.capitalizeUnderscored(nameRaw));
         manager.getConfig().saveChanges();
 
-        String name = manager.getMessage("Enchantment." + key);
-        return name == null ? key : name;
+        return manager.getMessage(path + "." + nameRaw).orElse(nameRaw);
     }
 
     @NotNull
     public static String getBoolean(boolean b) {
         return NexEngine.get().getLangManager().getMessage(b ? EngineLang.OTHER_YES : EngineLang.OTHER_NO).getLocalized();
+    }
+
+    @NotNull
+    public static String getPlain(@NotNull LangKey key) {
+        return NexEngine.get().getLangManager().getMessage(key).getLocalized();
     }
 }

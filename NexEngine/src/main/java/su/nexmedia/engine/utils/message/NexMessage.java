@@ -10,13 +10,17 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.utils.Reflex;
 import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.regex.RegexUtil;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class NexMessage {
+
+    private static final Pattern URL = Pattern.compile("(?:(https?)://)?([-\\w_\\.]{2,}\\.[a-z]{2,4})(/\\S*)?$");
 
     private String message;
     private final Map<String, NexComponent> components;
@@ -24,6 +28,15 @@ public class NexMessage {
     public NexMessage(@NotNull String message) {
         this.message = StringUtil.color(message);
         this.components = new HashMap<>();
+
+        // Originally was in 'fromLegacyText' method of the TextComponent class.
+        Matcher matcher = RegexUtil.getMatcher(URL, StringUtil.colorOff(this.message));
+        while (RegexUtil.matcherFind(matcher)) {
+            String url = matcher.group(0);
+            String link = url.startsWith("http") ? url : "http://" + url;
+
+            this.addComponent(url, url).openURL(link);
+        }
     }
 
     @NotNull
@@ -73,6 +86,7 @@ public class NexMessage {
         if (!text.isEmpty()) {
             append(builder, fromLegacyText(text.toString()), ComponentBuilder.FormatRetention.ALL);
         }
+        TO_RETAIN.clear();
         return builder.create();
     }
 

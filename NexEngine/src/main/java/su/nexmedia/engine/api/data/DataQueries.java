@@ -3,6 +3,7 @@ package su.nexmedia.engine.api.data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.data.connection.AbstractDataConnector;
+import su.nexmedia.engine.api.data.sql.SQLQueries;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +14,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class DataQueries {
 
     @Nullable
@@ -114,35 +116,18 @@ public class DataQueries {
         return executeStatement(connector, sql, Collections.emptySet());
     }
 
-    private static boolean executeStatement(@NotNull AbstractDataConnector connector, @NotNull String sql,
+    public static boolean executeStatement(@NotNull AbstractDataConnector connector, @NotNull String sql,
                                             @NotNull Collection<String> values1) {
         return executeStatement(connector, sql, values1, Collections.emptySet());
     }
 
-    private static boolean executeStatement(@NotNull AbstractDataConnector connector, @NotNull String sql,
+    public static boolean executeStatement(@NotNull AbstractDataConnector connector, @NotNull String sql,
                                             @NotNull Collection<String> values1, @NotNull Collection<String> values2) {
-
-        try (Connection connection = connector.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            int count = 1;
-            for (String columnName : values1) {
-                statement.setString(count++, columnName);
-            }
-            for (String columnValue : values2) {
-                statement.setString(count++, columnValue);
-            }
-
-            statement.executeUpdate();
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
+        return SQLQueries.executeStatement(connector, sql, values1, values2);
     }
 
     @NotNull
+    @Deprecated
     public static <T> List<@NotNull T> executeQuery(@NotNull AbstractDataConnector connector, @NotNull String sql,
                                                     @NotNull String table,
                                                     @NotNull Collection<String> values1,
@@ -170,6 +155,14 @@ public class DataQueries {
         list.removeIf(Objects::isNull);
 
         return list;
+    }
+
+    @NotNull
+    public static <T> List<@NotNull T> executeQuery(@NotNull AbstractDataConnector connector, @NotNull String sql,
+                                                    @NotNull Collection<String> values1,
+                                                    @NotNull Function<ResultSet, T> dataFunction,
+                                                    int amount) {
+        return SQLQueries.executeQuery(connector, sql, values1, dataFunction, amount);
     }
 
     public static <T> void executeQuery(@NotNull AbstractDataConnector connector,

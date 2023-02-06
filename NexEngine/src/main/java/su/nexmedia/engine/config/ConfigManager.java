@@ -6,6 +6,7 @@ import su.nexmedia.engine.api.config.JOption;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractManager;
 import su.nexmedia.engine.api.module.AbstractModule;
+import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.Placeholders;
 import su.nexmedia.engine.utils.ResourceExtractor;
 import su.nexmedia.engine.utils.StringUtil;
@@ -28,26 +29,27 @@ public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     @Override
     protected void onLoad() {
-        JYML cfg = this.getConfig();
+        this.config = JYML.loadOrExtract(this.plugin, "config.yml");
+        //JYML config = this.getConfig();
 
         this.pluginName = JOption.create("Plugin.Name", plugin.getName(),
             "Localized plugin name. It's used in messages and with internal placeholders.")
-            .read(cfg);
+            .read(config);
         this.pluginPrefix = JOption.create("Plugin.Prefix", "&e" + Placeholders.Plugin.NAME + " &8» &7",
             "Plugin prefix. Used in messages.",
             "You can use " + Placeholders.Plugin.NAME_LOCALIZED + " placeholder for a plugin name.")
-            .read(cfg).replace(Placeholders.Plugin.NAME, this.pluginName);
+            .read(config).replace(Placeholders.Plugin.NAME, this.pluginName);
         this.commandAliases = JOption.create("Plugin.Command_Aliases", plugin.getName().toLowerCase(),
             "Command names that will be registered as main plugin commands.",
             "Do not leave this empty. Split multiple names with a comma.")
-            .read(cfg).split(",");
+            .read(config).split(",");
         this.languageCode = JOption.create("Plugin.Language", "en",
             "Sets the plugin language.",
-            "It will use language config from the '/lang/' sub-folder for specified language code.",
+            "It will use language config from the '" + LangManager.DIR_LANG + "' sub-folder for specified language code.",
             "By default it's 'en', so 'messages_en.yml' will be used.")
-            .read(cfg).toLowerCase();
+            .read(config).toLowerCase();
 
-        this.getConfig().saveChanges();
+        this.config.saveChanges();
     }
 
     @Override
@@ -57,9 +59,9 @@ public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     @NotNull
     public JYML getConfig() {
-        if (this.config == null) {
+        /*if (this.config == null) {
             this.config = JYML.loadOrExtract(this.plugin, "config.yml");
-        }
+        }*/
         return this.config;
     }
 

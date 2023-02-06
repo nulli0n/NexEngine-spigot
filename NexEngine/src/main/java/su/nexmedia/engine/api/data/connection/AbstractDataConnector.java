@@ -16,8 +16,6 @@ public abstract class AbstractDataConnector {
     protected final HikariConfig config;
     protected final HikariDataSource dataSource;
 
-    // хочу сказать спасибо всем с stackoverflow, cyberforum, spigotmc и остальным!!
-
     public AbstractDataConnector(@NotNull NexPlugin<?> plugin, @NotNull String url) {
         this(plugin, url, null, null);
     }

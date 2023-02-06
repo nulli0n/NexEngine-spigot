@@ -3,6 +3,7 @@ package su.nexmedia.engine.api.config;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import su.nexmedia.engine.api.particle.SimpleParticle;
 import su.nexmedia.engine.utils.StringUtil;
 
 import java.util.List;
@@ -81,7 +82,14 @@ public class JOption<T> {
 
     @NotNull
     public static <E extends Enum<E>> JOption<E> create(@NotNull String path, @NotNull Class<E> clazz, @NotNull E defaultValue, @NotNull String... description) {
-        return new JOption<>(path, ((cfg, path1, def) -> cfg.getEnum(path1, clazz, defaultValue)), defaultValue, description);
+        return new JOption<>(path, ((cfg, path1, def) -> cfg.getEnum(path1, clazz, defaultValue)), defaultValue, description)
+            .setWriter((cfg, path1, type) -> cfg.set(path1, type.name()));
+    }
+
+    @NotNull
+    public static JOption<SimpleParticle> create(@NotNull String path, @NotNull SimpleParticle defaulValue, @NotNull String... description) {
+        return new JOption<>(path, (cfg, path1, def) -> SimpleParticle.read(cfg, path1), defaulValue, description)
+            .setWriter((cfg, path1, particle) -> SimpleParticle.write(particle, cfg, path1));
     }
 
     @NotNull

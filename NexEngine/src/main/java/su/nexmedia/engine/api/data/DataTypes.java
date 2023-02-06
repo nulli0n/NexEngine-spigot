@@ -2,6 +2,7 @@ package su.nexmedia.engine.api.data;
 
 import org.jetbrains.annotations.NotNull;
 
+@Deprecated
 public class DataTypes {
 
     public static final DataString  STRING  = new DataString();

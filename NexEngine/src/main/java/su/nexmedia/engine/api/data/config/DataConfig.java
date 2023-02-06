@@ -40,26 +40,23 @@ public class DataConfig {
             "Table prefix to use when plugin create tables. Do not leave this empty.")
             .read(cfg);
 
-        if (this.storageType == StorageType.MYSQL) {
-            this.mysqlUser = JOption.create(path + "MySQL.Username", "root",
-                "Database user name.")
-                .read(cfg);
-            this.mysqlPassword = JOption.create(path + "MySQL.Password", "root",
-                "Database user password.")
-                .read(cfg);
-            this.mysqlHost = JOption.create(path + "MySQL.Host", "localhost:3306",
-                "Database host address. Like http://127.0.0.1:3306/")
-                .read(cfg);
-            this.mysqlBase = JOption.create(path + "MySQL.Database", "minecraft",
-                "MySQL database name, where plugin tables will be created.")
-                .read(cfg);
-        }
-        else {
-            this.sqliteFilename = JOption.create(path + "SQLite.FileName", "data.db",
-                "File name for the database file.",
-                "Actually it's a path to the file, so you can use directories here.")
-                .read(cfg);
-        }
+        this.mysqlUser = JOption.create(path + "MySQL.Username", "root",
+            "Database user name.")
+            .read(cfg);
+        this.mysqlPassword = JOption.create(path + "MySQL.Password", "root",
+            "Database user password.")
+            .read(cfg);
+        this.mysqlHost = JOption.create(path + "MySQL.Host", "localhost:3306",
+            "Database host address. Like http://127.0.0.1:3306/")
+            .read(cfg);
+        this.mysqlBase = JOption.create(path + "MySQL.Database", "minecraft",
+            "MySQL database name, where plugin tables will be created.")
+            .read(cfg);
+
+        this.sqliteFilename = JOption.create(path + "SQLite.FileName", "data.db",
+            "File name for the database file.",
+            "Actually it's a path to the file, so you can use directories here.")
+            .read(cfg);
 
         path = "Database.Purge.";
         this.purgeEnabled = JOption.create(path + "Enabled", false,
