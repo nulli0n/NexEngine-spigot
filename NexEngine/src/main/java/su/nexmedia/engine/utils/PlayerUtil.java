@@ -129,21 +129,11 @@ public class PlayerUtil {
     public static void addItem(@NotNull Player player, @NotNull ItemStack item2, int amount) {
         if (amount <= 0 || item2.getType().isAir()) return;
 
-        Inventory inventory = player.getInventory();
         World world = player.getWorld();
-
         ItemStack item = new ItemStack(item2);
-        item.setAmount(1);
-
-        int space = countItemSpace(player, item);
-        int toAdd = Math.min(space, amount);
-        int toDrop = amount - toAdd;
-
-        for (int count = 0; count < toAdd; count++) {
-            inventory.addItem(item);
-        }
-        for (int count = 0; count < toDrop; count++) {
-            world.dropItem(player.getLocation(), item);
-        }
+        item.setAmount(amount);
+        player.getInventory().addItem(item).values().forEach(left -> {
+            world.dropItem(player.getLocation(), left);
+        });
     }
 }

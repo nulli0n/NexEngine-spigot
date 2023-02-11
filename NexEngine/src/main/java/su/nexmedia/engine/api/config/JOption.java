@@ -9,6 +9,7 @@ import su.nexmedia.engine.utils.StringUtil;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 public class JOption<T> {
 
@@ -21,13 +22,13 @@ public class JOption<T> {
     public static final Reader<List<String>> READER_LIST_STRING = (cfg, path, def) -> StringUtil.color(cfg.getStringList(path));
     public static final Reader<ItemStack>    READER_ITEM        = JYML::getItem;
 
-    protected final Reader<T> reader;
     protected final String    path;
     protected final T         defaultValue;
     protected final String[]  description;
     protected       T         value;
     @Deprecated protected Writer     writer;
     protected IWriter<T> writerNew;
+    protected Reader<T> reader;
 
     public JOption(@NotNull String path, @NotNull Reader<T> reader, @NotNull Supplier<T> defaultValue, @NotNull String... description) {
         this(path, reader, defaultValue.get(), description);
@@ -128,8 +129,23 @@ public class JOption<T> {
     }
 
     @NotNull
+    @Deprecated
     public JOption.Reader<T> getValueLoader() {
+        return this.getReader();
+    }
+
+    @NotNull
+    public Reader<T> getReader() {
         return reader;
+    }
+
+    @NotNull
+    public JOption<T> mapReader(@NotNull UnaryOperator<T> operator) {
+        if (this.reader == null) return this;
+
+        Reader<T> readerHas = this.reader;
+        this.reader = (cfg, path1, def) -> operator.apply(readerHas.read(cfg, path1, def));
+        return this;
     }
 
     @NotNull

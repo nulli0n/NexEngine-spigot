@@ -43,7 +43,7 @@ public class EngineLang {
     public static final LangKey ERROR_COMMAND_SENDER  = new LangKey("Error.Command.Sender", "This command is for players only.");
     public static final LangKey ERROR_INTERNAL        = new LangKey("Error.Internal", "&cInternal error!");
 
-    public static final LangKey EDITOR_TIP_EXIT             = new LangKey("Editor.Tip.Exit", "{json: ~text: &bClick to exit the &dEdit Mode; ~showText: &7Click me or type &f#exit; ~runCommand: /#exit;}");
+    public static final LangKey EDITOR_TIP_EXIT             = LangKey.of("Editor.Tip.Exit", "<! prefix:\"false\" !> <? showText:\"&7Click me or type &f#exit\" run_command:\"/#exit\" ?>&bClick to exit the &dEdit Mode</>");
     public static final LangKey EDITOR_TITLE_DONE             = LangKey.of("Editor.Title.Done", "&a&lDone!");
     public static final LangKey EDITOR_TITLE_EDIT           = LangKey.of("Editor.Title.Edit", "&a&lEditing...");
     public static final LangKey EDITOR_TITLE_ERROR          = LangKey.of("Editor.Title.Error", "&c&lError!");

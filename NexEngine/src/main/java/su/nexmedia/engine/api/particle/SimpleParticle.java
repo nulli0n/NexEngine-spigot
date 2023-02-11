@@ -98,10 +98,32 @@ public class SimpleParticle {
         return data;
     }
 
-    public void play(@NotNull Location location, double xOffset, double yOffset, double zOffset, double speed, int amount) {
-        EffectUtil.playParticle(location, this.getParticle(), this.getData(), xOffset, yOffset, zOffset, speed, amount);
+    public void play(@NotNull Location location, double speed, int amount) {
+        this.play(location, 0D, speed, amount);
     }
-    public void play(@NotNull Player player, @NotNull Location location, double xOffset, double yOffset, double zOffset, double speed, int amount) {
-        EffectUtil.playParticle(player, location, this.getParticle(), this.getData(), xOffset, yOffset, zOffset, speed, amount);
+
+    public void play(@NotNull Location location, double offsetAll, double speed, int amount) {
+        this.play(location, offsetAll, offsetAll, offsetAll, speed, amount);
+    }
+
+    public void play(@NotNull Location location, double xOffset, double yOffset, double zOffset, double speed, int amount) {
+        this.play(null, location, xOffset, yOffset, zOffset, speed, amount);
+    }
+
+    public void play(@NotNull Player player, @NotNull Location location, double speed, int amount) {
+        this.play(player, location, 0D, speed, amount);
+    }
+
+    public void play(@NotNull Player player, @NotNull Location location, double offsetAll, double speed, int amount) {
+        this.play(player, location, offsetAll, offsetAll, offsetAll, speed, amount);
+    }
+
+    public void play(@Nullable Player player, @NotNull Location location, double xOffset, double yOffset, double zOffset, double speed, int amount) {
+        if (player == null) {
+            EffectUtil.playParticle(location, this.getParticle(), this.getData(), xOffset, yOffset, zOffset, speed, amount);
+        }
+        else {
+            EffectUtil.playParticle(player, location, this.getParticle(), this.getData(), xOffset, yOffset, zOffset, speed, amount);
+        }
     }
 }

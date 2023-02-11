@@ -1,22 +1,15 @@
 package su.nexmedia.engine.utils;
 
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.utils.random.Rnd;
-import su.nexmedia.engine.utils.regex.RegexUtil;
 
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class StringUtil {
-
-    public static final Pattern PATTERN_HEX      = Pattern.compile("#([A-Fa-f0-9]{6})");
-    public static final Pattern PATTERN_GRADIENT = Pattern.compile("<gradient:" + PATTERN_HEX.pattern() + ">(.*?)</gradient:" + PATTERN_HEX.pattern() + ">");
 
     @NotNull
     public static String oneSpace(@NotNull String str) {
@@ -29,137 +22,57 @@ public class StringUtil {
     }
 
     @NotNull
+    @Deprecated
     public static String color(@NotNull String str) {
-        return colorHex(colorGradient(ChatColor.translateAlternateColorCodes('&', colorFix(str))));
+        return Colorizer.apply(str);
     }
 
-    /**
-     * Removes color duplications.
-     * @param str String to fix.
-     * @return A string with a proper color codes formatting.
-     */
     @NotNull
+    @Deprecated
     public static String colorFix(@NotNull String str) {
-        return NexEngine.get().getNMS().fixColors(str);
+        return Colorizer.fixLegacy(str);
     }
 
     @NotNull
-    public static Color parseColor(@NotNull String colorRaw) {
-        String[] rgb = colorRaw.split(",");
-        int red = StringUtil.getInteger(rgb[0], 0);
-        if (red < 0) red = Rnd.get(255);
-
-        int green = rgb.length >= 2 ? StringUtil.getInteger(rgb[1], 0) : 0;
-        if (green < 0) green = Rnd.get(255);
-
-        int blue = rgb.length >= 3 ? StringUtil.getInteger(rgb[2], 0) : 0;
-        if (blue < 0) blue = Rnd.get(255);
-
-        return Color.fromRGB(red, green, blue);
-    }
-
-    private static ChatColor[] createGradient(@NotNull java.awt.Color start, @NotNull java.awt.Color end, int length) {
-        ChatColor[] colors = new ChatColor[length];
-        for (int index = 0; index < length; index++) {
-            double percent = (double) index / (double) length;
-
-            int red = (int) (start.getRed() + percent * (end.getRed() - start.getRed()));
-            int green = (int) (start.getGreen() + percent * (end.getGreen() - start.getGreen()));
-            int blue = (int) (start.getBlue() + percent * (end.getBlue() - start.getBlue()));
-
-            java.awt.Color color = new java.awt.Color(red, green, blue);
-            colors[index] = ChatColor.of(color);
-        }
-        return colors;
-    }
-
-    @NotNull
+    @Deprecated
     public static String colorGradient(@NotNull String string) {
-        Matcher matcher = PATTERN_GRADIENT.matcher(string);
-        while (RegexUtil.matcherFind(matcher)) {
-            String start = matcher.group(1);
-            String end = matcher.group(3);
-            String content = matcher.group(2);
-
-            java.awt.Color colorStart = new java.awt.Color(Integer.parseInt(start, 16));
-            java.awt.Color colorEnd = new java.awt.Color(Integer.parseInt(end, 16));
-            ChatColor[] colors = createGradient(colorStart, colorEnd, StringUtil.colorOff(content).length());
-
-            StringBuilder gradiented = new StringBuilder();
-            StringBuilder specialColors = new StringBuilder();
-            char[] characters = content.toCharArray();
-            int outIndex = 0;
-            for (int index = 0; index < characters.length; index++) {
-                if (characters[index] == ChatColor.COLOR_CHAR) {
-                    if (index + 1 < characters.length) {
-                        if (characters[index + 1] == 'r') {
-                            specialColors.setLength(0);
-                        }
-                        else {
-                            specialColors.append(characters[index]);
-                            specialColors.append(characters[index + 1]);
-                        }
-                        index++;
-                    }
-                    else gradiented.append(colors[outIndex++]).append(specialColors).append(characters[index]);
-                }
-                else gradiented.append(colors[outIndex++]).append(specialColors).append(characters[index]);
-            }
-
-            string = string.replace(matcher.group(0), gradiented.toString());
-        }
-        return string;
+        return Colorizer.gradient(string);
     }
 
     @NotNull
+    @Deprecated
     public static String colorHex(@NotNull String str) {
-        Matcher matcher = PATTERN_HEX.matcher(str);
-        StringBuilder buffer = new StringBuilder(str.length() + 4 * 8);
-        while (matcher.find()) {
-            String group = matcher.group(1);
-            matcher.appendReplacement(buffer, ChatColor.COLOR_CHAR + "x" + ChatColor.COLOR_CHAR + group.charAt(0) + ChatColor.COLOR_CHAR + group.charAt(1) + ChatColor.COLOR_CHAR + group.charAt(2) + ChatColor.COLOR_CHAR + group.charAt(3) + ChatColor.COLOR_CHAR + group.charAt(4) + ChatColor.COLOR_CHAR + group.charAt(5));
-        }
-        return matcher.appendTail(buffer).toString();
+        return Colorizer.hex(str);
     }
 
     @NotNull
+    @Deprecated
     public static String colorHexRaw(@NotNull String str) {
-        StringBuilder buffer = new StringBuilder(str);
-
-        int index;
-        while ((index = buffer.toString().indexOf(ChatColor.COLOR_CHAR + "x")) >= 0) {
-            int count = 0;
-            buffer.replace(index, index + 2, "#");
-
-            for (int point = index + 1; count < 6; point += 1) {
-                buffer.deleteCharAt(point);
-                count++;
-            }
-        }
-
-        return buffer.toString();
+        return Colorizer.plainHex(str);
     }
 
     @NotNull
+    @Deprecated
     public static String colorRaw(@NotNull String str) {
-        return str.replace(ChatColor.COLOR_CHAR, '&');
+        return Colorizer.plain(str);
     }
 
     @NotNull
+    @Deprecated
     public static String colorOff(@NotNull String str) {
-        String off = ChatColor.stripColor(str);
-        return off == null ? "" : off;
+        return Colorizer.strip(str);
     }
 
     @NotNull
+    @Deprecated
     public static List<String> color(@NotNull List<String> list) {
-        list.replaceAll(StringUtil::color);
-        return list;
+        return Colorizer.apply(list);
     }
 
     @NotNull
+    @Deprecated
     public static Set<String> color(@NotNull Set<String> list) {
-        return new HashSet<>(StringUtil.color(new ArrayList<>(list)));
+        return Colorizer.apply(list);
     }
 
     @NotNull
@@ -233,6 +146,21 @@ public class StringUtil {
     }
 
     @NotNull
+    public static Color parseColor(@NotNull String colorRaw) {
+        String[] rgb = colorRaw.split(",");
+        int red = StringUtil.getInteger(rgb[0], 0);
+        if (red < 0) red = Rnd.get(255);
+
+        int green = rgb.length >= 2 ? StringUtil.getInteger(rgb[1], 0) : 0;
+        if (green < 0) green = Rnd.get(255);
+
+        int blue = rgb.length >= 3 ? StringUtil.getInteger(rgb[2], 0) : 0;
+        if (blue < 0) blue = Rnd.get(255);
+
+        return Color.fromRGB(red, green, blue);
+    }
+
+    @NotNull
     public static String capitalizeUnderscored(@NotNull String str) {
         return capitalizeFully(str.replace("_", " "));
     }
@@ -296,6 +224,13 @@ public class StringUtil {
         return stripped;
     }
 
+    /**
+     * Kinda half-smart completer like in IDEA by partial word matches.
+     * @param originals A list of all completions.
+     * @param token A string to find partial matches for.
+     * @param steps Part's size.
+     * @return A list of completions that has partial matches to the given string.
+     */
     @NotNull
     public static List<String> getByPartialMatches(@NotNull List<String> originals, @NotNull String token, int steps) {
         token = token.toLowerCase();
@@ -312,25 +247,20 @@ public class StringUtil {
 
         Pattern pattern = Pattern.compile(builder.toString());
         List<String> list = new ArrayList<>(originals.stream().filter(orig -> pattern.matcher(orig.toLowerCase()).find()).toList());
-        /*for (String src : originals) {
-            if (src.toLowerCase().startsWith(token.toLowerCase())) {
-                list.add(src);
-            }
-        }*/
         Collections.sort(list);
         return list;
     }
 
     @NotNull
-    public static String extractCommandName(@NotNull String cmd) {
-        String cmdFull = colorOff(cmd).split(" ")[0];
-        String cmdName = cmdFull.replace("/", "").replace("\\/", "");
-        String[] pluginPrefix = cmdName.split(":");
+    public static String extractCommandName(@NotNull String command) {
+        String commandName = Colorizer.strip(command).split(" ")[0].substring(1);
+
+        String[] pluginPrefix = commandName.split(":");
         if (pluginPrefix.length == 2) {
-            cmdName = pluginPrefix[1];
+            commandName = pluginPrefix[1];
         }
 
-        return cmdName;
+        return commandName;
     }
 
     public static boolean isCustomBoolean(@NotNull String str) {
@@ -346,67 +276,5 @@ public class StringUtil {
             return true;
         }
         return Boolean.parseBoolean(str);
-    }
-
-    @NotNull
-    public static String c(@NotNull String s) {
-        char[] ch = s.toCharArray();
-        char[] out = new char[ch.length * 2];
-        int i = 0;
-        for (char c : ch) {
-            int orig = Character.getNumericValue(c);
-            int min;
-            int max;
-
-            char cas;
-            if (Character.isUpperCase(c)) {
-                min = Character.getNumericValue('A');
-                max = Character.getNumericValue('Z');
-                cas = 'q';
-            }
-            else {
-                min = Character.getNumericValue('a');
-                max = Character.getNumericValue('z');
-                cas = 'p';
-            }
-
-            int pick = min + (max - orig);
-            char get = Character.forDigit(pick, Character.MAX_RADIX);
-            out[i] = get;
-            out[++i] = cas;
-            i++;
-        }
-        return String.valueOf(out);
-    }
-
-    @NotNull
-    public static String d(@NotNull String s) {
-        char[] ch = s.toCharArray();
-        char[] dec = new char[ch.length / 2];
-        for (int i = 0; i < ch.length; i = i + 2) {
-            int j = i;
-            char letter = ch[j];
-            char cas = ch[++j];
-            boolean upper = cas == 'q';
-
-            int max;
-            int min;
-            if (upper) {
-                min = Character.getNumericValue('A');
-                max = Character.getNumericValue('Z');
-            }
-            else {
-                min = Character.getNumericValue('a');
-                max = Character.getNumericValue('z');
-            }
-
-            int orig = max - Character.getNumericValue(letter) + min;
-            char get = Character.forDigit(orig, Character.MAX_RADIX);
-            if (upper)
-                get = Character.toUpperCase(get);
-
-            dec[i / 2] = get;
-        }
-        return String.valueOf(dec);
     }
 }
