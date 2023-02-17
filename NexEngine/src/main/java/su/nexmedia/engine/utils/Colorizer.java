@@ -33,8 +33,28 @@ public class Colorizer {
     }
 
     @NotNull
+    public static String legacyHex(@NotNull String str) {
+        return hex(legacy(str));
+    }
+
+    @NotNull
     public static String legacy(@NotNull String str) {
         return ChatColor.translateAlternateColorCodes('&', Colorizer.fixLegacy(str));
+    }
+
+    @NotNull
+    public static String hex(@NotNull String str) {
+        Matcher matcher = PATTERN_HEX.matcher(str);
+        StringBuilder buffer = new StringBuilder(str.length() + 4 * 8);
+        while (RegexUtil.matcherFind(matcher)) {
+            String group = matcher.group(1);
+            matcher.appendReplacement(buffer,
+                ChatColor.COLOR_CHAR + "x" + ChatColor.COLOR_CHAR + group.charAt(0) +
+                    ChatColor.COLOR_CHAR + group.charAt(1) + ChatColor.COLOR_CHAR + group.charAt(2) +
+                    ChatColor.COLOR_CHAR + group.charAt(3) + ChatColor.COLOR_CHAR + group.charAt(4) +
+                    ChatColor.COLOR_CHAR + group.charAt(5));
+        }
+        return matcher.appendTail(buffer).toString();
     }
 
     /**
@@ -98,21 +118,6 @@ public class Colorizer {
             string = string.replace(matcher.group(0), gradiented.toString());
         }
         return string;
-    }
-
-    @NotNull
-    public static String hex(@NotNull String str) {
-        Matcher matcher = PATTERN_HEX.matcher(str);
-        StringBuilder buffer = new StringBuilder(str.length() + 4 * 8);
-        while (RegexUtil.matcherFind(matcher)) {
-            String group = matcher.group(1);
-            matcher.appendReplacement(buffer,
-                ChatColor.COLOR_CHAR + "x" + ChatColor.COLOR_CHAR + group.charAt(0) +
-                    ChatColor.COLOR_CHAR + group.charAt(1) + ChatColor.COLOR_CHAR + group.charAt(2) +
-                    ChatColor.COLOR_CHAR + group.charAt(3) + ChatColor.COLOR_CHAR + group.charAt(4) +
-                    ChatColor.COLOR_CHAR + group.charAt(5));
-        }
-        return matcher.appendTail(buffer).toString();
     }
 
     @NotNull

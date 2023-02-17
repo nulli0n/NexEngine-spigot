@@ -72,5 +72,6 @@ public class MenuListener<P extends NexPlugin<P>> extends AbstractListener<P> {
         if (menu == null || !menu.getId().equals(this.menu.getId())) return;
 
         this.menu.onClose(player, e);
+        FAST_CLICK.remove(player);
     }
 }

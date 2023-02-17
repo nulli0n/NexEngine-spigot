@@ -3,6 +3,7 @@ package su.nexmedia.engine.api.menu;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.commons.lang.ArrayUtils;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -19,9 +20,10 @@ import su.nexmedia.engine.api.manager.AbstractListener;
 import su.nexmedia.engine.api.manager.ICleanable;
 import su.nexmedia.engine.api.type.ClickType;
 import su.nexmedia.engine.hooks.Hooks;
+import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.ItemUtil;
+import su.nexmedia.engine.utils.Pair;
 import su.nexmedia.engine.utils.PlayerUtil;
-import su.nexmedia.engine.utils.StringUtil;
 
 import java.util.*;
 
@@ -29,11 +31,9 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
 
     private static final Map<Player, AbstractMenu<?>> PLAYER_MENUS = new WeakHashMap<>();
 
-    protected final UUID                        id;
-    protected final Set<Player>                 viewers;
-    protected final Map<String, MenuItem>       items;
-    protected final Map<Player, List<MenuItem>> userItems;
-    protected final Map<Player, int[]>          userPage;
+    protected final UUID                                    id;
+    protected final Map<String, MenuItem>                   items;
+    protected final Map<Player, Pair<Integer, Integer>> viewersMap;
 
     protected String title;
     protected int    size;
@@ -62,9 +62,7 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
         this.setInventoryType(InventoryType.CHEST);
 
         this.items = new LinkedHashMap<>();
-        this.userItems = new WeakHashMap<>();
-        this.userPage = new WeakHashMap<>();
-        this.viewers = new HashSet<>();
+        this.viewersMap = new WeakHashMap<>();
 
         this.listener = new MenuListener<>(this);
         this.listener.registerListeners();
@@ -73,11 +71,9 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
 
     @Override
     public void clear() {
-        this.viewers.forEach(Player::closeInventory);
-        this.viewers.clear();
+        this.viewersMap.keySet().forEach(HumanEntity::closeInventory);
+        this.viewersMap.clear();
         this.items.clear();
-        this.userItems.clear();
-        this.userPage.clear();
         this.unregisterListeners();
         this.listener.unregisterListeners();
         this.listener = null;
@@ -121,20 +117,28 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
         if (player.isSleeping()) return false;
 
         Inventory inventory;
+        boolean freshOpen = false;
         if (this.isViewer(player)) {
-            this.getUserItemsMap().remove(player);
+            this.resetItemsVisibility(player);
             inventory = player.getOpenInventory().getTopInventory();
             inventory.clear();
         }
         else {
             inventory = this.createInventory(player);
+            freshOpen = true;
         }
 
         this.setPage(player, page, page);
-        if (!this.onPrepare(player, inventory)) return false;
+        if (!this.onPrepare(player, inventory)) {
+            this.getViewersMap().remove(player);
+            return false;
+        }
         this.setItems(player, inventory);
-        if (!this.onReady(player, inventory)) return false;
-        if (this.getViewers().add(player)) {
+        if (!this.onReady(player, inventory)) {
+            this.getViewersMap().remove(player);
+            return false;
+        }
+        if (freshOpen) {
             player.openInventory(inventory);
         }
         PLAYER_MENUS.put(player, this);
@@ -150,9 +154,9 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
         int page = this.getPage(player);
         int pages = this.getPageMax(player);
 
-        List<MenuItem> items = new ArrayList<>(this.getItemsMap().values());
-        items.sort(Comparator.comparingInt(MenuItem::getPriority));
-        items.addAll(this.getUserItems(player));
+        List<MenuItem> items = this.getItemsMap().values().stream()
+            .filter(menuItem -> menuItem.isVisible(player))
+            .sorted(Comparator.comparingInt(MenuItem::getPriority)).toList();
 
         for (MenuItem menuItem : items) {
             if (menuItem.getType() == MenuItemType.PAGE_NEXT) {
@@ -195,9 +199,8 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
     }
 
     public void onClose(@NotNull Player player, @NotNull InventoryCloseEvent e) {
-        this.getUserPageMap().remove(player);
-        this.getUserItemsMap().remove(player);
-        this.getViewers().remove(player);
+        this.getViewersMap().remove(player);
+        this.resetItemsVisibility(player);
 
         PLAYER_MENUS.remove(player);
 
@@ -206,8 +209,15 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
         }
     }
 
+    protected void resetItemsVisibility(@NotNull Player player) {
+        this.getItemsMap().values().removeIf(menuItem -> {
+            return menuItem instanceof WeakMenuItem weakMenuItem && weakMenuItem.getWeakPolicy().test(player);
+        });
+        this.getItemsMap().values().forEach(menuItem -> menuItem.resetVisibility(player));
+    }
+
     public boolean isViewer(@NotNull Player player) {
-        return this.getViewers().contains(player);
+        return this.getViewersMap().containsKey(player);
     }
 
     @NotNull
@@ -231,11 +241,6 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
         }
     }
 
-    @NotNull
-    public List<MenuItem> getUserItems(@NotNull Player player) {
-        return this.getUserItemsMap().computeIfAbsent(player, p -> new ArrayList<>());
-    }
-
     @Nullable
     public MenuItem getItem(@NotNull String id) {
         return this.getItemsMap().get(id.toLowerCase());
@@ -250,8 +255,8 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
 
     @Nullable
     public MenuItem getItem(@NotNull Player player, int slot) {
-        return this.getUserItems(player).stream()
-            .filter(item -> ArrayUtils.contains(item.getSlots(), slot))
+        return this.getItemsMap().values().stream()
+            .filter(menuItem -> ArrayUtils.contains(menuItem.getSlots(), slot) && menuItem.isVisible(player))
             .max(Comparator.comparingInt(MenuItem::getPriority)).orElse(this.getItem(slot));
     }
 
@@ -259,30 +264,40 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
         this.addItem(new MenuItem(item, slots));
     }
 
+    @Deprecated
     public void addItem(@NotNull Player player, @NotNull ItemStack item, int... slots) {
-        this.addItem(player, new MenuItem(item, slots));
+        //this.addItem(player, new MenuItem(item, slots));
+        this.addWeakItem(player, item, slots);
     }
 
     public void addItem(@NotNull MenuItem menuItem) {
         this.getItemsMap().put(menuItem.getId(), menuItem);
     }
 
+    @Deprecated
     public void addItem(@NotNull Player player, @NotNull MenuItem menuItem) {
-        this.getUserItems(player).add(menuItem);
+        WeakMenuItem weakMenuItem = new WeakMenuItem(player, menuItem.getItem(), menuItem.getSlots());
+        weakMenuItem.setClickHandler(menuItem.getClickHandler());
+        weakMenuItem.clickCommands = menuItem.clickCommands;
+        this.addItem(weakMenuItem);
+    }
+
+    public void addWeakItem(@NotNull Player player, @NotNull ItemStack item, int... slots) {
+        this.addItem(new WeakMenuItem(player, item, slots));
     }
 
     public int getPage(@NotNull Player player) {
-        return this.getUserPageMap().getOrDefault(player, new int[]{-1, -1})[0];
+        return this.getViewersMap().getOrDefault(player, Pair.of(-1,-1)).getFirst();
     }
 
     public int getPageMax(@NotNull Player player) {
-        return this.getUserPageMap().getOrDefault(player, new int[]{-1, -1})[1];
+        return this.getViewersMap().getOrDefault(player, Pair.of(-1,-1)).getSecond();
     }
 
     public void setPage(@NotNull Player player, int pageCurrent, int pageMax) {
         pageCurrent = Math.max(1, pageCurrent);
         pageMax = Math.max(1, pageMax);
-        this.getUserPageMap().put(player, new int[]{Math.min(pageCurrent, pageMax), pageMax});
+        this.getViewersMap().put(player, Pair.of(Math.min(pageCurrent, pageMax), pageMax));
     }
 
     @NotNull
@@ -305,7 +320,7 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
     }
 
     public void setTitle(@NotNull String title) {
-        this.title = StringUtil.color(title);
+        this.title = Colorizer.apply(title);
     }
 
     public int getSize() {
@@ -331,18 +346,13 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
     }
 
     @NotNull
-    public Map<Player, List<MenuItem>> getUserItemsMap() {
-        return userItems;
-    }
-
-    @NotNull
-    public Map<Player, int[]> getUserPageMap() {
-        return userPage;
-    }
-
-    @NotNull
     public Set<Player> getViewers() {
-        return viewers;
+        return this.getViewersMap().keySet();
+    }
+
+    @NotNull
+    public Map<Player, Pair<Integer, Integer>> getViewersMap() {
+        return viewersMap;
     }
 
     public boolean destroyWhenNoViewers() {

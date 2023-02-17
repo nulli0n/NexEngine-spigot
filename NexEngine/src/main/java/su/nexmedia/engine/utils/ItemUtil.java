@@ -1,5 +1,6 @@
 package su.nexmedia.engine.utils;
 
+import com.google.common.base.Splitter;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -24,6 +25,7 @@ public class ItemUtil {
 
     private static final NexEngine ENGINE = NexEngine.get();
 
+    @Deprecated
     public static int addToLore(@NotNull List<String> lore, int pos, @NotNull String value) {
         if (pos >= lore.size() || pos < 0) {
             lore.add(value);
@@ -96,20 +98,25 @@ public class ItemUtil {
     }
 
     public static void replace(@NotNull ItemStack item, @NotNull UnaryOperator<String> replacer) {
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return;
+        mapMeta(item, meta -> replace(meta, replacer));
+    }
 
-        String name = replacer.apply(meta.hasDisplayName() ? meta.getDisplayName() : "");
-        meta.setDisplayName(name);
+    public static void replace(@NotNull ItemMeta meta, @NotNull UnaryOperator<String> replacer) {
+        if (meta.hasDisplayName()) {
+            meta.setDisplayName(replacer.apply(meta.getDisplayName()));
+        }
 
         List<String> loreHas = meta.getLore();
-        List<String> loreReplaced = new ArrayList<>();
+        //List<String> loreReplaced = new ArrayList<>();
         if (loreHas != null) {
-            loreHas.replaceAll(replacer);
-            loreHas.forEach(line -> loreReplaced.addAll(Arrays.asList(line.split("\\n"))));
-            meta.setLore(StringUtil.stripEmpty(loreReplaced));
+            // Should perform much faster
+            String single = replacer.apply(String.join("\n", loreHas));
+            meta.setLore(StringUtil.stripEmpty(Splitter.on("\n").splitToList(single)));
+
+            //loreHas.replaceAll(replacer);
+            //loreHas.forEach(line -> loreReplaced.addAll(Arrays.asList(line.split("\\n"))));
+            //meta.setLore(StringUtil.stripEmpty(loreReplaced));
         }
-        item.setItemMeta(meta);
     }
 
     public static void replaceLore(@NotNull ItemStack item, @NotNull String placeholder, @NotNull List<String> replacer) {

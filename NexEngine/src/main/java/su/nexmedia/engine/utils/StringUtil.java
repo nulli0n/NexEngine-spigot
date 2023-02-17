@@ -99,6 +99,103 @@ public class StringUtil {
         return replaced;
     }
 
+    @NotNull
+    public static String replaceEach(@NotNull String text, final String[] searchList, final String[] replacementList) {
+        if (text.isEmpty() || replacementList.length == 0 || searchList.length != replacementList.length) {
+            return text;
+        }
+
+        final int searchLength = searchList.length;
+        final int replacementLength = replacementList.length;
+
+        // keep track of which still have matches
+        final boolean[] noMoreMatchesForReplIndex = new boolean[searchLength];
+
+        // index on index that the match was found
+        int textIndex = -1;
+        int replaceIndex = -1;
+        int tempIndex;
+
+        // index of replace array that will replace the search string found
+        // NOTE: logic duplicated below START
+        for (int i = 0; i < searchLength; i++) {
+            if (noMoreMatchesForReplIndex[i] || searchList[i] == null || replacementList[i] == null) {
+                continue;
+            }
+            tempIndex = text.indexOf(searchList[i]);
+
+            // see if we need to keep searching for this
+            if (tempIndex == -1) {
+                noMoreMatchesForReplIndex[i] = true;
+            }
+            else if (textIndex == -1 || tempIndex < textIndex) {
+                textIndex = tempIndex;
+                replaceIndex = i;
+            }
+        }
+        // NOTE: logic mostly below END
+
+        // no search strings found, we are done
+        if (textIndex == -1) {
+            return text;
+        }
+
+        int start = 0;
+
+        // get a good guess on the size of the result buffer so it doesn't have to double if it goes over a bit
+        int increase = 0;
+
+        // count the replacement text elements that are larger than their corresponding text being replaced
+        for (int i = 0; i < searchList.length; i++) {
+            if (searchList[i] == null || replacementList[i] == null) {
+                continue;
+            }
+            final int greater = replacementList[i].length() - searchList[i].length();
+            if (greater > 0) {
+                increase += 3 * greater; // assume 3 matches
+            }
+        }
+        // have upper-bound at 20% increase, then let Java take over
+        increase = Math.min(increase, text.length() / 5);
+
+        final StringBuilder buf = new StringBuilder(text.length() + increase);
+
+        while (textIndex != -1) {
+            for (int i = start; i < textIndex; i++) {
+                buf.append(text.charAt(i));
+            }
+            buf.append(replacementList[replaceIndex]);
+
+            start = textIndex + searchList[replaceIndex].length();
+
+            textIndex = -1;
+            replaceIndex = -1;
+            // find the next earliest match
+            // NOTE: logic mostly duplicated above START
+            for (int i = 0; i < searchLength; i++) {
+                if (noMoreMatchesForReplIndex[i] || searchList[i] == null || replacementList[i] == null) {
+                    continue;
+                }
+                tempIndex = text.indexOf(searchList[i], start);
+
+                // see if we need to keep searching for this
+                if (tempIndex == -1) {
+                    noMoreMatchesForReplIndex[i] = true;
+                } else if (textIndex == -1 || tempIndex < textIndex) {
+                    textIndex = tempIndex;
+                    replaceIndex = i;
+                }
+            }
+            // NOTE: logic duplicated above END
+
+        }
+        final int textLength = text.length();
+        for (int i = start; i < textLength; i++) {
+            buf.append(text.charAt(i));
+        }
+        return buf.toString();
+    }
+
     public static double getDouble(@NotNull String input, double def) {
         return getDouble(input, def, false);
     }
@@ -226,27 +323,20 @@ public class StringUtil {
 
     /**
      * Kinda half-smart completer like in IDEA by partial word matches.
-     * @param originals A list of all completions.
-     * @param token A string to find partial matches for.
+     * @param results A list of all completions.
+     * @param input A string to find partial matches for.
      * @param steps Part's size.
      * @return A list of completions that has partial matches to the given string.
      */
     @NotNull
-    public static List<String> getByPartialMatches(@NotNull List<String> originals, @NotNull String token, int steps) {
-        token = token.toLowerCase();
-
-        int[] parts = NumberUtil.splitIntoParts(token.length(), steps);
-        int lastIndex = 0;
+    public static List<String> getByPartialMatches(@NotNull List<String> results, @NotNull String input, int steps) {
         StringBuilder builder = new StringBuilder();
-        for (int partSize: parts) {
-            String sub = token.substring(lastIndex, lastIndex + partSize);
-            lastIndex += partSize;
-
-            builder.append(Pattern.quote(sub)).append("(?:.*)");
+        for (char letter : input.toLowerCase().toCharArray()) {
+            builder.append(Pattern.quote(String.valueOf(letter))).append("(?:.*)");
         }
 
         Pattern pattern = Pattern.compile(builder.toString());
-        List<String> list = new ArrayList<>(originals.stream().filter(orig -> pattern.matcher(orig.toLowerCase()).find()).toList());
+        List<String> list = new ArrayList<>(results.stream().filter(orig -> pattern.matcher(orig.toLowerCase()).find()).toList());
         Collections.sort(list);
         return list;
     }
