@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.utils.random.Rnd;
 
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -100,14 +101,12 @@ public class StringUtil {
     }
 
     @NotNull
-    public static String replaceEach(@NotNull String text, final String[] searchList, final String[] replacementList) {
-        if (text.isEmpty() || replacementList.length == 0 || searchList.length != replacementList.length) {
+    public static String replaceEach(@NotNull String text, @NotNull List<Pair<String, Supplier<String>>> replacements) {
+        if (text.isEmpty() || replacements.isEmpty()) {
             return text;
         }
 
-        final int searchLength = searchList.length;
-        final int replacementLength = replacementList.length;
-
+        final int searchLength = replacements.size();
         // keep track of which still have matches
         final boolean[] noMoreMatchesForReplIndex = new boolean[searchLength];
 
@@ -119,10 +118,10 @@ public class StringUtil {
         // index of replace array that will replace the search string found
         // NOTE: logic duplicated below START
         for (int i = 0; i < searchLength; i++) {
-            if (noMoreMatchesForReplIndex[i] || searchList[i] == null || replacementList[i] == null) {
+            if (noMoreMatchesForReplIndex[i]) {
                 continue;
             }
-            tempIndex = text.indexOf(searchList[i]);
+            tempIndex = text.indexOf(replacements.get(i).getFirst());
 
             // see if we need to keep searching for this
             if (tempIndex == -1) {
@@ -141,42 +140,24 @@ public class StringUtil {
         }
 
         int start = 0;
-
-        // get a good guess on the size of the result buffer so it doesn't have to double if it goes over a bit
-        int increase = 0;
-
-        // count the replacement text elements that are larger than their corresponding text being replaced
-        for (int i = 0; i < searchList.length; i++) {
-            if (searchList[i] == null || replacementList[i] == null) {
-                continue;
-            }
-            final int greater = replacementList[i].length() - searchList[i].length();
-            if (greater > 0) {
-                increase += 3 * greater; // assume 3 matches
-            }
-        }
-        // have upper-bound at 20% increase, then let Java take over
-        increase = Math.min(increase, text.length() / 5);
-
-        final StringBuilder buf = new StringBuilder(text.length() + increase);
-
+        final StringBuilder buf = new StringBuilder();
         while (textIndex != -1) {
             for (int i = start; i < textIndex; i++) {
                 buf.append(text.charAt(i));
             }
-            buf.append(replacementList[replaceIndex]);
+            buf.append(replacements.get(replaceIndex).getSecond().get());
 
-            start = textIndex + searchList[replaceIndex].length();
+            start = textIndex + replacements.get(replaceIndex).getFirst().length();
 
             textIndex = -1;
             replaceIndex = -1;
             // find the next earliest match
             // NOTE: logic mostly duplicated above START
             for (int i = 0; i < searchLength; i++) {
-                if (noMoreMatchesForReplIndex[i] || searchList[i] == null || replacementList[i] == null) {
+                if (noMoreMatchesForReplIndex[i]) {
                     continue;
                 }
-                tempIndex = text.indexOf(searchList[i], start);
+                tempIndex = text.indexOf(replacements.get(i).getFirst(), start);
 
                 // see if we need to keep searching for this
                 if (tempIndex == -1) {

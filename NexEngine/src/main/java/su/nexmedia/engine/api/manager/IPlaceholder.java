@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.UnaryOperator;
 
+@Deprecated
 public interface IPlaceholder {
 
     String DELIMITER_DEFAULT = "\n" + ChatColor.GREEN;

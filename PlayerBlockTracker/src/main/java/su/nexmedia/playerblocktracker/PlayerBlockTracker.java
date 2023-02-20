@@ -33,6 +33,7 @@ public final class PlayerBlockTracker {
         if (listener != null) {
             terminateCurrentlyLoadedWorlds();
             listener.unregisterListeners();
+            listener = null;
             BLOCK_FILTERS.clear();
         }
     }
