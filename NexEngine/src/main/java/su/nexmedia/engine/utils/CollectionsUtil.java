@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -69,10 +70,63 @@ public class CollectionsUtil {
     }
 
     @NotNull
+    @Deprecated
     public static <T extends Enum<T>> T switchEnum(@NotNull Enum<T> en) {
-        @NotNull T[] values = en.getDeclaringClass().getEnumConstants();
-        int next = en.ordinal() + 1;
-        return values[next >= values.length ? 0 : next];
+        return next(en);
+    }
+
+    @NotNull
+    public static <T extends Enum<T>> T next(@NotNull Enum<T> numeration) {
+        return shifted(numeration, 1);
+    }
+
+    @NotNull
+    public static <T extends Enum<T>> T next(@NotNull Enum<T> numeration, @NotNull Predicate<T> predicate) {
+        return shifted(numeration, 1, predicate);
+    }
+
+    @NotNull
+    public static <T extends Enum<T>> T previous(@NotNull Enum<T> numeration) {
+        return shifted(numeration, -1);
+    }
+
+    @NotNull
+    public static <T extends Enum<T>> T previous(@NotNull Enum<T> numeration, @NotNull Predicate<T> predicate) {
+        return shifted(numeration, -1, predicate);
+    }
+
+    @NotNull
+    public static <T extends Enum<T>> T shifted(@NotNull Enum<T> numeration, int shift) {
+        return shifted(numeration, shift, null);
+    }
+
+    @NotNull
+    private static <T extends Enum<T>> T shifted(@NotNull Enum<T> numeration, int shift, @Nullable Predicate<T> predicate) {
+        T[] values = numeration.getDeclaringClass().getEnumConstants();
+        return shifted(values, numeration.ordinal(), shift, predicate);
+    }
+
+    @NotNull
+    private static <T extends Enum<T>> T shifted(T[] values, int currentIndex, int shift, @Nullable Predicate<T> predicate) {
+        if (predicate != null) {
+            List<T> filtered = Stream.of(values).filter(predicate).toList();
+            if (filtered.isEmpty()) return values[currentIndex];
+
+            return shifted(filtered, currentIndex, shift);
+        }
+        return shifted(values, currentIndex, shift);
+    }
+
+    @NotNull
+    public static <T> T shifted(T[] values, int currentIndex, int shift) {
+        int index = currentIndex + shift;
+        return values[index >= values.length || index < 0 ? 0 : index];
+    }
+
+    @NotNull
+    public static <T> T shifted(@NotNull List<T> values, int currentIndex, int shift) {
+        int index = currentIndex + shift;
+        return values.get(index >= values.size() || index < 0 ? 0 : index);
     }
 
     @Nullable

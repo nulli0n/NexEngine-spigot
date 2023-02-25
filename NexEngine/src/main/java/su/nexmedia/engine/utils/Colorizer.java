@@ -92,7 +92,7 @@ public class Colorizer {
 
             java.awt.Color colorStart = new java.awt.Color(Integer.parseInt(start, 16));
             java.awt.Color colorEnd = new java.awt.Color(Integer.parseInt(end, 16));
-            ChatColor[] colors = createGradient(colorStart, colorEnd, StringUtil.colorOff(content).length());
+            ChatColor[] colors = createGradient(colorStart, colorEnd, Colorizer.strip(content).length());
 
             StringBuilder gradiented = new StringBuilder();
             StringBuilder specialColors = new StringBuilder();
