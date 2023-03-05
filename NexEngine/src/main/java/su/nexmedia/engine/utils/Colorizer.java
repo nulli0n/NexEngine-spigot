@@ -60,6 +60,7 @@ public class Colorizer {
      * Removes color duplications.
      * @param str String to fix.
      * @return A string with a proper color codes formatting.
+     * @deprecated This is a huge performance killer actually.
      */
     @NotNull
     @Deprecated
