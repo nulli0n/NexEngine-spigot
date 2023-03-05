@@ -18,6 +18,12 @@ public class PlaceholderMap {
     }
 
     @NotNull
+    public PlaceholderMap add(@NotNull String key, @NotNull String replacer) {
+        this.add(key, () -> replacer);
+        return this;
+    }
+
+    @NotNull
     public PlaceholderMap add(@NotNull String key, @NotNull Supplier<String> replacer) {
         this.keys.add(Pair.of(key, replacer));
         return this;

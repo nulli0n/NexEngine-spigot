@@ -160,6 +160,7 @@ public class ItemUtil {
         return ENGINE.getNMS().isSword(item);
     }
 
+    // TODO Use the Tag class instead, when 1.19.4 is out. finally get rid of NMS there.
     public static boolean isAxe(@NotNull ItemStack item) {
         return ENGINE.getNMS().isAxe(item);
     }
@@ -205,6 +206,7 @@ public class ItemUtil {
     }
 
     @NotNull
+    @Deprecated
     public static String toJson(@NotNull ItemStack item) {
         return ENGINE.getNMS().toJSON(item);
     }

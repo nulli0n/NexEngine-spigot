@@ -3,6 +3,7 @@ package su.nexmedia.engine.api.menu;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -31,6 +32,11 @@ public class MenuListener<P extends NexPlugin<P>> extends AbstractListener<P> {
         Player player = (Player) e.getWhoClicked();
         AbstractMenu<?> menu = AbstractMenu.getMenu(player);
         if (menu == null || !menu.getId().equals(this.menu.getId())) return;
+
+        // Fix visual glitch when item goes in player's offhand.
+        if (e.getClick() == ClickType.SWAP_OFFHAND) {
+            this.plugin.runTask(task -> player.updateInventory());
+        }
 
         long lastClick = FAST_CLICK.getOrDefault(player, 0L);
         if (System.currentTimeMillis() - lastClick < 150) {

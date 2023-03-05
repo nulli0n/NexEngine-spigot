@@ -11,6 +11,7 @@ import java.util.List;
 
 public interface NMS {
 
+    @Deprecated
     @NotNull String toJSON(@NotNull ItemStack item);
 
     @NotNull String getNBTTag(@NotNull ItemStack item);
@@ -23,6 +24,7 @@ public interface NMS {
      * @param player
      * @param i 0 = main hand, 3 = off hand.
      */
+    @Deprecated
     void sendAttackPacket(@NotNull Player player, int i);
 
     boolean breakBlock(@NotNull Player player, @NotNull Block block);
@@ -43,21 +45,28 @@ public interface NMS {
 
     @NotNull List<ItemStack> getBlockDrops(@NotNull Block block, @NotNull Player player, @NotNull ItemStack item);
 
+    @Deprecated
     @NotNull Channel getChannel(@NotNull Player player);
 
+    @Deprecated
     void sendPacket(@NotNull Player player, @NotNull Object packet);
 
     @NotNull ItemStack damageItem(@NotNull ItemStack item, int amount, @Nullable Player player);
 
+    @Deprecated
     @NotNull String fixColors(@NotNull String str);
 
 
+    @Deprecated
     double getDefaultDamage(@NotNull ItemStack itemStack);
 
+    @Deprecated
     double getDefaultSpeed(@NotNull ItemStack itemStack);
 
+    @Deprecated
     double getDefaultArmor(@NotNull ItemStack itemStack);
 
+    @Deprecated
     double getDefaultToughness(@NotNull ItemStack itemStack);
 
 

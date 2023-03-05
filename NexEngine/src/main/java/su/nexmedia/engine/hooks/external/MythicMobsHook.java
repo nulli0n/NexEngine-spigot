@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class MythicMobsHook {
 
     static MythicBukkit mythicMobs = MythicBukkit.inst();

@@ -14,6 +14,7 @@ import su.nexmedia.engine.api.manager.AbstractListener;
 
 import java.util.*;
 
+@Deprecated
 public final class CitizensHook extends AbstractListener<NexEngine> {
 
     private static final Map<NexPlugin<?>, Set<TraitInfo>>        TRAITS    = new HashMap<>();

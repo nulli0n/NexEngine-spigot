@@ -5,23 +5,23 @@ Core:
       List:
         - '&6&m              &6&l[ &e&l%plugin_name% &7- &e&l命令 &6&l]&6&m              &7'
         - '&7'
-        - '&7          &4&l<> &7- 必需的, &2&l[] &7- 可选的.'
+        - '&7          &4&l<> &7- 必需的, &2&l[] &7- 可选的'
         - '&7'
         - '&6▪ &e/%command_label% &6%command_usage% &7- %command_description%'
         - '&7'
-      Desc: 显示帮助页面.
+      Desc: 显示帮助页面
     Editor:
-      Desc: 打开GUI编辑器.
+      Desc: 打开GUI编辑器
     About:
-      Desc: 显示插件信息.
+      Desc: 显示插件信息
     Reload:
-      Desc: 重载插件.
+      Desc: 重载插件，&b汉化者：&c氿雾
       Done: 已重载!
 Time:
-  Day: '%s%天.'
-  Hour: '%s%小时.'
-  Min: '%s%分钟.'
-  Sec: '%s%秒.'
+  Day: '%s%天'
+  Hour: '%s%小时'
+  Min: '%s%分钟'
+  Sec: '%s%秒'
 Other:
   'Yes': '&a是'
   'No': '&c否'
@@ -33,11 +33,11 @@ Other:
   Infinity: ∞
 Error:
   Player:
-    Invalid: '&c找不到玩家.'
+    Invalid: '&c找不到玩家'
   World:
-    Invalid: '&c未找到世界.'
+    Invalid: '&c未找到世界'
   Number:
-    Invalid: '&7%num% &c不是有效数字.'
+    Invalid: '&7%num% &c不是有效数字'
   Permission:
     Deny: '&c您无权执行此操作!'
   Item:
@@ -45,8 +45,8 @@ Error:
   Type:
     Invalid: '无效类型。有效类型: %types%'
   Command:
-    Self: 不能用在自己身上.
-    Sender: 此命令仅供玩家使用.
+    Self: 不能用在自己身上
+    Sender: 此命令仅供玩家使用
   Internal: '&c内部错误!'
 EntityType:
   DROPPED_ITEM: 掉落的物品
@@ -169,6 +169,7 @@ EntityType:
   PLAYER: 玩家
   UNKNOWN: 未知的实体
   ZOMBIFIED_PIGLIN: Zombified Piglin
+  CAMEL: Camel
 Material:
   ACACIA_BOAT: 金合欢木船
   ACACIA_BUTTON: 金合欢木按钮
@@ -1454,6 +1455,52 @@ Material:
   BIG_DRIPLEAF_STEM: 大型垂滴叶茎
   POTTED_AZALEA_BUSH: 盆栽杜鹃花丛
   POTTED_FLOWERING_AZALEA_BUSH: 盆栽开花杜鹃花灌木
+  BAMBOO_PLANKS: 竹板
+  BAMBOO_MOSAIC: Bamboo Mosaic
+  BAMBOO_BLOCK: 竹块
+  STRIPPED_BAMBOO_BLOCK: 剥皮竹块
+  BAMBOO_SLAB: 竹板
+  BAMBOO_MOSAIC_SLAB: Bamboo Mosaic Slab
+  CHISELED_BOOKSHELF: Chiseled Bookshelf
+  BAMBOO_FENCE: Bamboo Fence
+  BAMBOO_STAIRS: Bamboo Stairs
+  BAMBOO_MOSAIC_STAIRS: Bamboo Mosaic Stairs
+  BAMBOO_BUTTON: Bamboo Button
+  BAMBOO_PRESSURE_PLATE: Bamboo Pressure Plate
+  BAMBOO_DOOR: Bamboo Door
+  BAMBOO_TRAPDOOR: Bamboo Trapdoor
+  BAMBOO_FENCE_GATE: Bamboo Fence Gate
+  BAMBOO_RAFT: Bamboo Raft
+  BAMBOO_CHEST_RAFT: Bamboo Chest Raft
+  BAMBOO_SIGN: Bamboo Sign
+  OAK_HANGING_SIGN: Oak Hanging Sign
+  SPRUCE_HANGING_SIGN: Spruce Hanging Sign
+  BIRCH_HANGING_SIGN: Birch Hanging Sign
+  JUNGLE_HANGING_SIGN: Jungle Hanging Sign
+  ACACIA_HANGING_SIGN: Acacia Hanging Sign
+  DARK_OAK_HANGING_SIGN: Dark Oak Hanging Sign
+  MANGROVE_HANGING_SIGN: Mangrove Hanging Sign
+  BAMBOO_HANGING_SIGN: Bamboo Hanging Sign
+  CRIMSON_HANGING_SIGN: Crimson Hanging Sign
+  WARPED_HANGING_SIGN: Warped Hanging Sign
+  CAMEL_SPAWN_EGG: Camel Spawn Egg
+  ENDER_DRAGON_SPAWN_EGG: Ender Dragon Spawn Egg
+  IRON_GOLEM_SPAWN_EGG: Iron Golem Spawn Egg
+  SNOW_GOLEM_SPAWN_EGG: Snow Golem Spawn Egg
+  WITHER_SPAWN_EGG: Wither Spawn Egg
+  PIGLIN_HEAD: Piglin Head
+  BAMBOO_WALL_SIGN: Bamboo Wall Sign
+  OAK_WALL_HANGING_SIGN: Oak Wall Hanging Sign
+  SPRUCE_WALL_HANGING_SIGN: Spruce Wall Hanging Sign
+  BIRCH_WALL_HANGING_SIGN: Birch Wall Hanging Sign
+  ACACIA_WALL_HANGING_SIGN: Acacia Wall Hanging Sign
+  JUNGLE_WALL_HANGING_SIGN: Jungle Wall Hanging Sign
+  DARK_OAK_WALL_HANGING_SIGN: Dark Oak Wall Hanging Sign
+  MANGROVE_WALL_HANGING_SIGN: Mangrove Wall Hanging Sign
+  CRIMSON_WALL_HANGING_SIGN: Crimson Wall Hanging Sign
+  WARPED_WALL_HANGING_SIGN: Warped Wall Hanging Sign
+  BAMBOO_WALL_HANGING_SIGN: Bamboo Wall Hanging Sign
+  PIGLIN_WALL_HEAD: Piglin Wall Head
 GameMode:
   CREATIVE: 创造
   SURVIVAL: 生存
@@ -1541,3 +1588,114 @@ Enchantment:
   poisoned_arrows: 剧毒箭头
   withered_arrows: 凋零箭头
   blast_mining: 爆破采矿
+  vanish: 消失
+  veinminer: 矿脉矿工
+  ninja: 忍者
+  haunting: 困扰
+  goliath: 巨人
+  feather_step: 羽毛步法
+  caffeinated: 含咖啡因
+  end_affinity: 结束亲和力
+  finishing: 完成
+  wound: 伤口
+  sparks: 火花
+  poison_ivy: 毒藤
+  arcane_defence: 法术防御
+  rumble: 隆隆声
+  ender_slayer: 末影杀手
+  confusion: 混乱
+  replenish: 补充
+  lifesteal: 生命值
+  hunger_curse: 饥饿诅咒
+  misfortune_curse: 不幸诅咒
+  nether_prospector: 下界探矿者
+  jumpshot: 跳投
+  metabolism: 新陈代谢
+  ascend: 提升
+  telekinesis: Telekinesis
+  permanence_curse: Permanence Curse
+  rebounding: Rebounding
+  wisdom: Wisdom
+  boss_hunter: Boss Hunter
+  lumberjack: Lumberjack
+  block_breather: Block Breather
+  thor: Thor
+  slipstream: Slipstream
+  cubism: Cubism
+  transmission: Transmission
+  getaway: Getaway
+  introversion: Introversion
+  snipe: Snipe
+  shulker_harvest: Shulker Harvest
+  vitality: Vitality
+  first_strike: First Strike
+  shura: Shura
+  aura: Aura
+  rapid: Rapid
+  rocket_saver: Rocket Saver
+  contagion: Contagion
+  tripleshot: Tripleshot
+  wyvern: Wyvern
+  skull_puncture: Skull Puncture
+  foraging: Foraging
+  breaklessness_curse: 不破诅咒
+  one_for_all: 一体
+  warp_drive: 传送器
+  xray: 透视
+  soul_storm: Soul Storm
+  stun: Stun
+  frost: Frost
+  carve: Carve
+  repairing: Repairing
+  flashbang: Flashbang
+  dynamite: Dynamite
+  criticals: Criticals
+  infernal_touch: Infernal Touch
+  slaughter: Slaughter
+  blackout: Blackout
+  nether_affinity: Nether Affinity
+  streamlining: Streamlining
+  fortitude: Fortitude
+  brightness: Brightness
+  soulbound: Soulbound
+  charge: Charge
+  bleed: Bleed
+  excavation: Excavation
+  harmlessness_curse: Harmlessness Curse
+  dexterity: Dexterity
+  abrasion: Abrasion
+  adrenaline: Adrenaline
+  escape: Escape
+  thrive: Thrive
+  stamina: Stamina
+Editor:
+  Tip:
+    Exit: '{json: ~text: &b点击以退出 &d编辑模式; ~showText: &7点击或者输入 &f#exit; ~runCommand: /#exit;}'
+  Title:
+    Done: '&a&l完成!'
+    Edit: '&a&l编辑'
+    Error: '&c&l错误!'
+  Error:
+    Number:
+      Generic: '&7无效的数字!'
+      NotInt: '&7数字必须是 &c整数&7!'
+    Enum: '&7无效类型！在聊天中查看'
+  MenuItemType:
+    PAGE_NEXT:
+      Name: '&6&l下一页'
+      Lore: []
+    PAGE_PREVIOUS:
+      Name: '&6&l上一页'
+      Lore: []
+    CLOSE:
+      Name: '&c&l关闭'
+      Lore: []
+    RETURN:
+      Name: '&c&l返回'
+      Lore: []
+    CONFIRMATION_ACCEPT:
+      Name: '&a&l接受'
+      Lore: []
+    CONFIRMATION_DECLINE:
+      Name: '&c&l拒绝'
+      Lore: []

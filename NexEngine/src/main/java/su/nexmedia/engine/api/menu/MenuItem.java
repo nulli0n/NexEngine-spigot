@@ -12,8 +12,8 @@ import java.util.function.Predicate;
 public class MenuItem {
 
     protected final String  id;
-    protected final Enum<?> type;
 
+    protected Enum<?> type;
     protected int       priority;
     protected ItemStack item;
     protected int[]     slots;
@@ -53,7 +53,7 @@ public class MenuItem {
         @NotNull ItemStack item,
         @NotNull Map<ClickType, List<String>> clickCommands) {
         this.id = id.toLowerCase();
-        this.type = type;
+        this.setType(type);
         this.setPriority(priority);
         this.setSlots(slots);
         this.setItem(item);
@@ -71,6 +71,10 @@ public class MenuItem {
     @Nullable
     public Enum<?> getType() {
         return type;
+    }
+
+    public void setType(@Nullable Enum<?> type) {
+        this.type = type;
     }
 
     public int[] getSlots() {

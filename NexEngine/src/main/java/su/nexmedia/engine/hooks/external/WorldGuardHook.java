@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
+@Deprecated
 public class WorldGuardHook {
 
     static WorldGuard worldGuard = WorldGuard.getInstance();

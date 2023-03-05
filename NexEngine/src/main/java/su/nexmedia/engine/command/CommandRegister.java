@@ -63,18 +63,26 @@ public class CommandRegister extends Command implements PluginIdentifiableComman
     }
 
     @NotNull
+    public static Set<String> getAliases(@NotNull String name) {
+        return getAliases(name, false);
+    }
+
+    @NotNull
     public static Set<String> getAliases(@NotNull String name, boolean inclusive) {
-        SimpleCommandMap map = getCommandMap();
-        Command match = map.getCommands().stream()
-            .filter(command -> command.getLabel().equalsIgnoreCase(name) || command.getAliases().contains(name))
-            .findFirst().orElse(null);
+        Command command = getCommand(name).orElse(null);
+        if (command == null) return Collections.emptySet();
 
-        if (match == null) return Collections.emptySet();
-
-        Set<String> aliases = new HashSet<>(match.getAliases());
-        if (inclusive) aliases.add(match.getName());
-
+        Set<String> aliases = new HashSet<>(command.getAliases());
+        if (inclusive) aliases.add(command.getName());
         return aliases;
+    }
+
+    @NotNull
+    public static Optional<Command> getCommand(@NotNull String name) {
+        SimpleCommandMap map = getCommandMap();
+        return map.getCommands().stream()
+            .filter(command -> command.getLabel().equalsIgnoreCase(name) || command.getAliases().contains(name))
+            .findFirst();
     }
 
     @Override

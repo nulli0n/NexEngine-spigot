@@ -7,6 +7,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+@Deprecated
 public class EffectUtil {
 
     @Nullable
@@ -111,25 +112,22 @@ public class EffectUtil {
         world.spawnParticle(particle, location, amount, xOffset, yOffset, zOffset, speed, data);
     }
 
+    @Deprecated
     public static void playParticle(@NotNull Location location, @NotNull Particle particle, @Nullable Object data,
                                   double xOffset, double yOffset, double zOffset, double speed, int amount) {
         World world = location.getWorld();
         if (world == null) return;
 
-        if (data == null) {
-            world.spawnParticle(particle, location, amount, xOffset, yOffset, zOffset, speed);
-        }
-        else world.spawnParticle(particle, location, amount, xOffset, yOffset, zOffset, speed, data);
+        world.spawnParticle(particle, location, amount, xOffset, yOffset, zOffset, speed, data);
     }
 
+    @Deprecated
     public static void playParticle(@NotNull Player player, @NotNull Location location, @NotNull Particle particle, @Nullable Object data,
                                   double xOffset, double yOffset, double zOffset, double speed, int amount) {
-        if (data == null) {
-            player.spawnParticle(particle, location, amount, xOffset, yOffset, zOffset, speed);
-        }
-        else player.spawnParticle(particle, location, amount, xOffset, yOffset, zOffset, speed, data);
+        player.spawnParticle(particle, location, amount, xOffset, yOffset, zOffset, speed, data);
     }
 
+    @Deprecated
     public static void drawLine(@NotNull Location from, @NotNull Location to,
                                 @NotNull String nameRaw, @NotNull String dataRaw,
                                 float offX, float offY, float offZ, float speed, int amount) {
@@ -139,6 +137,7 @@ public class EffectUtil {
         drawLine(from, to, particle, dataRaw, offX, offY, offZ, speed, amount);
     }
 
+    @Deprecated
     public static void drawLine(@NotNull Location from, @NotNull Location to,
                                 @NotNull Particle particle, @NotNull String dataRaw,
                                 float offX, float offY, float offZ, float speed, int amount) {

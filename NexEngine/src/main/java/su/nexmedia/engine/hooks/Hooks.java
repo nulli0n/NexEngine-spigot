@@ -24,8 +24,8 @@ public class Hooks {
     public static final String VAULT           = "Vault";
     public static final String CITIZENS        = "Citizens";
     public static final String PLACEHOLDER_API = "PlaceholderAPI";
-    public static final String MYTHIC_MOBS     = "MythicMobs";
-    public static final String WORLD_GUARD     = "WorldGuard";
+    @Deprecated public static final String MYTHIC_MOBS     = "MythicMobs";
+    @Deprecated public static final String WORLD_GUARD     = "WorldGuard";
     public static final String FLOODGATE = "floodgate";
 
     private static final NexEngine ENGINE = NexEngine.get();
@@ -104,10 +104,12 @@ public class Hooks {
         return hasPlugin(CITIZENS);
     }
 
+    @Deprecated
     public static boolean hasMythicMobs() {
         return hasPlugin(MYTHIC_MOBS);
     }
 
+    @Deprecated
     public static boolean hasWorldGuard() {
         return hasPlugin(WORLD_GUARD);
     }

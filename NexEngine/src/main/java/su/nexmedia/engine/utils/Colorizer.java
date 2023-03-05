@@ -2,7 +2,6 @@ package su.nexmedia.engine.utils;
 
 import net.md_5.bungee.api.ChatColor;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.utils.regex.RegexUtil;
 
 import java.util.List;
@@ -63,8 +62,9 @@ public class Colorizer {
      * @return A string with a proper color codes formatting.
      */
     @NotNull
+    @Deprecated
     public static String fixLegacy(@NotNull String str) {
-        return NexEngine.get().getNMS().fixColors(str);
+        return str;//NexEngine.get().getNMS().fixColors(str);
     }
 
     private static ChatColor[] createGradient(@NotNull java.awt.Color start, @NotNull java.awt.Color end, int length) {

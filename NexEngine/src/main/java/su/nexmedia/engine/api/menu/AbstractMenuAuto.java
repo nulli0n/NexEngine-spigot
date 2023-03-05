@@ -28,6 +28,11 @@ public abstract class AbstractMenuAuto<P extends NexPlugin<P>, I> extends Abstra
     protected abstract List<I> getObjects(@NotNull Player player);
 
     @NotNull
+    protected List<I> fineObjects(@NotNull List<I> objects, @NotNull Player player) {
+        return objects;
+    }
+
+    @NotNull
     protected abstract ItemStack getObjectStack(@NotNull Player player, @NotNull I object);
 
     @NotNull
@@ -43,6 +48,8 @@ public abstract class AbstractMenuAuto<P extends NexPlugin<P>, I> extends Abstra
         int page = Math.min(pages, this.getPage(player));
         if (pages < 1) list = Collections.emptyList();
         else list = split.get(page - 1);
+
+        list = this.fineObjects(list, player);
 
         int count = 0;
         for (I object : list) {
