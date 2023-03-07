@@ -24,7 +24,7 @@ public interface ColumnFormer {
     };
 
     ColumnFormer LONG = (storageType, length) -> {
-        return storageType == StorageType.SQLITE ? "BIGINT NOT NULL" : "bigint(" + length + ") NOT NULL";
+        return length < 1 || storageType == StorageType.SQLITE ? "BIGINT NOT NULL" : "bigint(" + length + ") NOT NULL";
     };
 
     ColumnFormer BOOLEAN = (storageType, length) -> {

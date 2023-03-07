@@ -56,7 +56,7 @@ public final class CreateTableExecutor extends SQLExecutor<Boolean> {
 
         String columns = id + "," + this.columns.stream()
             .map(column -> column.getNameEscaped() + " " + column.formatType(this.storageType))
-            .collect(Collectors.joining(","));
+            .collect(Collectors.joining(", "));
 
         String sql = "CREATE TABLE IF NOT EXISTS " + this.table + "(" + columns + ");";
 
