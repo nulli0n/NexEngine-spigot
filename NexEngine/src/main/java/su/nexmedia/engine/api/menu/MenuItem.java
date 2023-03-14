@@ -149,15 +149,15 @@ public class MenuItem {
     public boolean isVisible(@NotNull Player player) {
         MenuItemVisibility personal = this.getPersonalVisibility(player);
         MenuItemVisibility global = this.getVisibility();
-        if (global == MenuItemVisibility.HIDDEN && personal == MenuItemVisibility.VISIBLE) {
-            return true;
-        }
-        else if (global == MenuItemVisibility.VISIBLE && personal == MenuItemVisibility.HIDDEN) {
-            return false;
-        }
-
         Predicate<Player> policy = this.getVisibilityPolicy();
-        return policy == null || policy.test(player);
+
+        if (global == MenuItemVisibility.HIDDEN) {
+            return personal == MenuItemVisibility.VISIBLE || (policy != null && policy.test(player));
+        }
+        else if (global == MenuItemVisibility.VISIBLE) {
+            return personal != MenuItemVisibility.HIDDEN && (policy == null || policy.test(player));
+        }
+        return false;
     }
 
     @Nullable

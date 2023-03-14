@@ -76,29 +76,29 @@ public final class AlterTableExecutor extends SQLExecutor<Boolean> {
         if (this.columns.isEmpty()) return false;
 
         if (this.type == Type.ADD_COLUMN) {
-            return this.columns.stream().allMatch(value -> {
-                if (SQLQueries.hasColumn(connector, this.table, value.getColumn())) return false;
+            this.columns.forEach(value -> {
+                if (SQLQueries.hasColumn(connector, this.table, value.getColumn())) return;
 
                 String sql = "ALTER TABLE " + this.table + " ADD "
                     + value.getColumn().getName() + " " + value.getColumn().formatType(this.storageType)
                     + " DEFAULT '" + value.getValue() + "'";
-                return SQLQueries.executeStatement(connector, sql);
+                SQLQueries.executeStatement(connector, sql);
             });
         }
         else if (this.type == Type.RENAME_COLUMN) {
-            return this.columns.stream().allMatch(value -> {
-                if (!SQLQueries.hasColumn(connector, this.table, value.getColumn())) return false;
+            this.columns.forEach(value -> {
+                if (!SQLQueries.hasColumn(connector, this.table, value.getColumn())) return;
 
                 String sql = "ALTER TABLE " + this.table + " RENAME COLUMN " + value.getColumn().getName() + " TO " + value.getValue();
-                return SQLQueries.executeStatement(connector, sql);
+                SQLQueries.executeStatement(connector, sql);
             });
         }
         else if (this.type == Type.DROP_COLUMN) {
-            return this.columns.stream().allMatch(value -> {
-                if (!SQLQueries.hasColumn(connector, this.table, value.getColumn())) return false;
+            this.columns.forEach(value -> {
+                if (!SQLQueries.hasColumn(connector, this.table, value.getColumn())) return;
 
                 String sql = "ALTER TABLE " + this.table + " DROP COLUMN " + value.getColumn().getName();
-                return SQLQueries.executeStatement(connector, sql);
+                SQLQueries.executeStatement(connector, sql);
             });
         }
 
