@@ -5,13 +5,16 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexEngine;
+import su.nexmedia.engine.Version;
 import su.nexmedia.engine.config.EngineConfig;
 import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.lang.LangManager;
@@ -24,17 +27,6 @@ import java.util.function.UnaryOperator;
 public class ItemUtil {
 
     private static final NexEngine ENGINE = NexEngine.get();
-
-    @Deprecated
-    public static int addToLore(@NotNull List<String> lore, int pos, @NotNull String value) {
-        if (pos >= lore.size() || pos < 0) {
-            lore.add(value);
-        }
-        else {
-            lore.add(pos, value);
-        }
-        return pos < 0 ? pos : pos + 1;
-    }
 
     @NotNull
     public static String getItemName(@NotNull ItemStack item) {
@@ -94,7 +86,7 @@ public class ItemUtil {
 
     public static void setPlaceholderAPI(@NotNull Player player, @NotNull ItemStack item) {
         if (!Hooks.hasPlaceholderAPI()) return;
-        replace(item, str -> StringUtil.color(PlaceholderAPI.setPlaceholders(player, str)));
+        replace(item, str -> Colorizer.apply(PlaceholderAPI.setPlaceholders(player, str)));
     }
 
     public static void replace(@NotNull ItemStack item, @NotNull UnaryOperator<String> replacer) {
@@ -140,16 +132,17 @@ public class ItemUtil {
         item.setItemMeta(meta);
     }
 
+    @Deprecated
     public static boolean isWeapon(@NotNull ItemStack item) {
         return isSword(item) || isAxe(item) || isTrident(item);
     }
 
     public static boolean isTool(@NotNull ItemStack item) {
-        return ENGINE.getNMS().isTool(item);
+        return isAxe(item) || isHoe(item) || isPickaxe(item) || isShovel(item);
     }
 
     public static boolean isArmor(@NotNull ItemStack item) {
-        return ENGINE.getNMS().isArmor(item);
+        return isHelmet(item) || isChestplate(item) || isLeggings(item) || isBoots(item);
     }
 
     public static boolean isBow(@NotNull ItemStack item) {
@@ -157,12 +150,25 @@ public class ItemUtil {
     }
 
     public static boolean isSword(@NotNull ItemStack item) {
-        return ENGINE.getNMS().isSword(item);
+        if (Version.isAtLeast(Version.V1_19_R3)) {
+            return Tag.ITEMS_SWORDS.isTagged(item.getType());
+        }
+
+        Material material = item.getType();
+        return material == Material.DIAMOND_SWORD || material == Material.GOLDEN_SWORD
+            || material == Material.IRON_SWORD || material == Material.NETHERITE_SWORD
+            || material == Material.STONE_SWORD || material == Material.WOODEN_SWORD;
     }
 
-    // TODO Use the Tag class instead, when 1.19.4 is out. finally get rid of NMS there.
     public static boolean isAxe(@NotNull ItemStack item) {
-        return ENGINE.getNMS().isAxe(item);
+        if (Version.isAtLeast(Version.V1_19_R3)) {
+            return Tag.ITEMS_AXES.isTagged(item.getType());
+        }
+
+        Material material = item.getType();
+        return material == Material.DIAMOND_AXE || material == Material.GOLDEN_AXE
+            || material == Material.IRON_AXE || material == Material.NETHERITE_AXE
+            || material == Material.STONE_AXE || material == Material.WOODEN_AXE;
     }
 
     public static boolean isTrident(@NotNull ItemStack item) {
@@ -170,15 +176,36 @@ public class ItemUtil {
     }
 
     public static boolean isPickaxe(@NotNull ItemStack item) {
-        return ENGINE.getNMS().isPickaxe(item);
+        if (Version.isAtLeast(Version.V1_19_R3)) {
+            return Tag.ITEMS_PICKAXES.isTagged(item.getType());
+        }
+
+        Material material = item.getType();
+        return material == Material.DIAMOND_PICKAXE || material == Material.GOLDEN_PICKAXE
+            || material == Material.IRON_PICKAXE || material == Material.NETHERITE_PICKAXE
+            || material == Material.STONE_PICKAXE || material == Material.WOODEN_PICKAXE;
     }
 
     public static boolean isShovel(@NotNull ItemStack item) {
-        return ENGINE.getNMS().isShovel(item);
+        if (Version.isAtLeast(Version.V1_19_R3)) {
+            return Tag.ITEMS_SHOVELS.isTagged(item.getType());
+        }
+
+        Material material = item.getType();
+        return material == Material.DIAMOND_SHOVEL || material == Material.GOLDEN_SHOVEL
+            || material == Material.IRON_SHOVEL || material == Material.NETHERITE_SHOVEL
+            || material == Material.STONE_SHOVEL || material == Material.WOODEN_SHOVEL;
     }
 
     public static boolean isHoe(@NotNull ItemStack item) {
-        return ENGINE.getNMS().isHoe(item);
+        if (Version.isAtLeast(Version.V1_19_R3)) {
+            return Tag.ITEMS_HOES.isTagged(item.getType());
+        }
+
+        Material material = item.getType();
+        return material == Material.DIAMOND_HOE || material == Material.GOLDEN_HOE
+            || material == Material.IRON_HOE || material == Material.NETHERITE_HOE
+            || material == Material.STONE_HOE || material == Material.WOODEN_HOE;
     }
 
     public static boolean isElytra(@NotNull ItemStack item) {
@@ -190,25 +217,25 @@ public class ItemUtil {
     }
 
     public static boolean isHelmet(@NotNull ItemStack item) {
-        return ENGINE.getNMS().isHelmet(item);
+        return getEquipmentSlot(item) == EquipmentSlot.HEAD;
     }
 
     public static boolean isChestplate(@NotNull ItemStack item) {
-        return ENGINE.getNMS().isChestplate(item);
+        return getEquipmentSlot(item) == EquipmentSlot.CHEST;
     }
 
     public static boolean isLeggings(@NotNull ItemStack item) {
-        return ENGINE.getNMS().isLeggings(item);
+        return getEquipmentSlot(item) == EquipmentSlot.LEGS;
     }
 
     public static boolean isBoots(@NotNull ItemStack item) {
-        return ENGINE.getNMS().isBoots(item);
+        return getEquipmentSlot(item) == EquipmentSlot.FEET;
     }
 
     @NotNull
-    @Deprecated
-    public static String toJson(@NotNull ItemStack item) {
-        return ENGINE.getNMS().toJSON(item);
+    public static EquipmentSlot getEquipmentSlot(@NotNull ItemStack item) {
+        Material material = item.getType();
+        return material.isItem() ? material.getEquipmentSlot() : EquipmentSlot.HAND;
     }
 
     @NotNull

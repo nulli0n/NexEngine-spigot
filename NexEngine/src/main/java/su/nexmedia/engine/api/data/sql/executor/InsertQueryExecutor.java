@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class InsertQueryExecutor extends SQLExecutor<Boolean> {
+public final class InsertQueryExecutor extends SQLExecutor<Void> {
 
     private final List<SQLValue> values;
 
@@ -40,8 +40,8 @@ public final class InsertQueryExecutor extends SQLExecutor<Boolean> {
 
     @Override
     @NotNull
-    public Boolean execute(@NotNull AbstractDataConnector connector) {
-        if (this.values.isEmpty()) return false;
+    public Void execute(@NotNull AbstractDataConnector connector) {
+        if (this.values.isEmpty()) return null;
 
         String columns = this.values.stream().map(SQLValue::getColumn).map(SQLColumn::getNameEscaped).collect(Collectors.joining(","));
         String values = this.values.stream().map(value -> "?").collect(Collectors.joining(","));
@@ -49,6 +49,6 @@ public final class InsertQueryExecutor extends SQLExecutor<Boolean> {
         List<String> values2 = this.values.stream().map(SQLValue::getValue).toList();
 
         SQLQueries.executeStatement(connector, sql, values2);
-        return true;
+        return null;
     }
 }

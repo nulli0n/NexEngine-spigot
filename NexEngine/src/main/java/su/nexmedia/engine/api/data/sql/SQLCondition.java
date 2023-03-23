@@ -16,6 +16,18 @@ public class SQLCondition {
         return new SQLCondition(value, type);
     }
 
+    public static SQLCondition equal(@NotNull SQLValue value) {
+        return of(value, Type.EQUAL);
+    }
+
+    public static SQLCondition smaller(@NotNull SQLValue value) {
+        return of(value, Type.SMALLER);
+    }
+
+    public static SQLCondition greater(@NotNull SQLValue value) {
+        return of(value, Type.GREATER);
+    }
+
     @NotNull
     public Type getType() {
         return type;

@@ -131,7 +131,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
 
     public void unloadUser(@NotNull U user) {
         user.onUnload();
-        this.plugin.runTask(c -> this.dataHolder.getData().saveUser(user), true);
+        user.saveData(this.dataHolder);
     }
 
     @NotNull

@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.jetbrains.annotations.NotNull;
 
+@Deprecated
 public class EditorObject<T,E extends Enum<E>> {
 
     private final E      type;

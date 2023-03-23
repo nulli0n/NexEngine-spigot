@@ -8,8 +8,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.Reflex;
-import su.nexmedia.engine.utils.StringUtil;
 import su.nexmedia.engine.utils.regex.RegexUtil;
 
 import java.lang.reflect.Method;
@@ -26,11 +26,11 @@ public class NexMessage {
     private final Map<String, NexComponent> components;
 
     public NexMessage(@NotNull String message) {
-        this.message = StringUtil.color(message);
+        this.message = Colorizer.apply(message);
         this.components = new HashMap<>();
 
         // Originally was in 'fromLegacyText' method of the TextComponent class.
-        Matcher matcher = RegexUtil.getMatcher(URL, StringUtil.colorOff(this.message));
+        Matcher matcher = RegexUtil.getMatcher(URL, Colorizer.strip(this.message));
         while (RegexUtil.matcherFind(matcher)) {
             String url = matcher.group(0);
             String link = url.startsWith("http") ? url : "http://" + url;

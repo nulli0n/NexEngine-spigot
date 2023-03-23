@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.hooks.Hooks;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -35,12 +34,6 @@ public class PlayerUtil {
             command = PlaceholderAPI.setPlaceholders(player, command);
         }
         Bukkit.dispatchCommand(sender, command);
-    }
-
-    @NotNull
-    @Deprecated
-    public static List<String> getPlayerNames() {
-        return CollectionsUtil.playerNames();
     }
 
     public static boolean hasEmptyInventory(@NotNull Player player) {

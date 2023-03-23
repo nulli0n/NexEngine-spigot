@@ -22,7 +22,7 @@ public class Colorizer {
 
     @NotNull
     public static List<String> apply(@NotNull List<String> list) {
-        list.replaceAll(StringUtil::color);
+        list.replaceAll(Colorizer::apply);
         return list;
     }
 
@@ -38,7 +38,7 @@ public class Colorizer {
 
     @NotNull
     public static String legacy(@NotNull String str) {
-        return ChatColor.translateAlternateColorCodes('&', Colorizer.fixLegacy(str));
+        return ChatColor.translateAlternateColorCodes('&', str);
     }
 
     @NotNull
@@ -54,18 +54,6 @@ public class Colorizer {
                     ChatColor.COLOR_CHAR + group.charAt(5));
         }
         return matcher.appendTail(buffer).toString();
-    }
-
-    /**
-     * Removes color duplications.
-     * @param str String to fix.
-     * @return A string with a proper color codes formatting.
-     * @deprecated This is a huge performance killer actually.
-     */
-    @NotNull
-    @Deprecated
-    public static String fixLegacy(@NotNull String str) {
-        return str;//NexEngine.get().getNMS().fixColors(str);
     }
 
     private static ChatColor[] createGradient(@NotNull java.awt.Color start, @NotNull java.awt.Color end, int length) {
@@ -153,5 +141,10 @@ public class Colorizer {
     public static String strip(@NotNull String str) {
         String stripped = ChatColor.stripColor(str);
         return stripped == null ? "" : stripped;
+    }
+
+    @NotNull
+    public static String restrip(@NotNull String str) {
+        return strip(apply(str));
     }
 }

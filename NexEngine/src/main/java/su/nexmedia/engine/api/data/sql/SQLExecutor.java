@@ -6,7 +6,7 @@ import su.nexmedia.engine.api.data.connection.AbstractDataConnector;
 public abstract class SQLExecutor<T> {
 
     protected static final String SELECT      = "SELECT";
-    protected static final String FROM = "FROM";
+    protected static final String FROM        = "FROM";
     protected static final String UPDATE      = "UPDATE";
     protected static final String SET         = "SET";
     protected static final String WHERE       = "WHERE";

@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class DeleteQueryExecutor extends SQLExecutor<Boolean> {
+public final class DeleteQueryExecutor extends SQLExecutor<Void> {
 
     private final List<SQLCondition> wheres;
 
@@ -40,8 +40,8 @@ public final class DeleteQueryExecutor extends SQLExecutor<Boolean> {
 
     @Override
     @NotNull
-    public Boolean execute(@NotNull AbstractDataConnector connector) {
-        if (this.wheres.isEmpty()) return false;
+    public Void execute(@NotNull AbstractDataConnector connector) {
+        if (this.wheres.isEmpty()) return null;
 
         String whereCols = this.wheres.stream()
             .map(where -> where.getValue().getColumn().getNameEscaped() + " " + where.getType().getOperator() + " ?")
@@ -50,6 +50,7 @@ public final class DeleteQueryExecutor extends SQLExecutor<Boolean> {
 
         List<String> whereVals = this.wheres.stream().map(SQLCondition::getValue).map(SQLValue::getValue).toList();
 
-        return SQLQueries.executeStatement(connector, sql, whereVals);
+        SQLQueries.executeStatement(connector, sql, whereVals);
+        return null;
     }
 }

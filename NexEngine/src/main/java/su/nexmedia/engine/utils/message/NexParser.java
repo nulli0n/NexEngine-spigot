@@ -4,7 +4,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.regex.RegexUtil;
 
 import java.util.HashMap;
@@ -70,7 +70,7 @@ public class NexParser {
 
     @NotNull
     public static NexMessage toMessage(@NotNull String message) {
-        message = StringUtil.color(message);
+        message = Colorizer.apply(message);
 
         Matcher matcher = RegexUtil.getMatcher(PATTERN_OPTIONS, message);
         Map<String, String> parameters = new HashMap<>();

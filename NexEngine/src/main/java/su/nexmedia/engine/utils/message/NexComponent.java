@@ -7,8 +7,8 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.StringUtil;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class NexComponent {
     private String insertion;
 
     public NexComponent(@NotNull String text) {
-        this.text = StringUtil.color(text);
+        this.text = Colorizer.apply(text);
     }
 
     @NotNull
@@ -94,7 +94,7 @@ public class NexComponent {
 
     @NotNull
     public NexComponent showText(@NotNull String... text) {
-        BaseComponent[] base = NexMessage.fromLegacyText(StringUtil.color(String.join("\n", text)));
+        BaseComponent[] base = NexMessage.fromLegacyText(Colorizer.apply(String.join("\n", text)));
         this.hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(base));
         return this;
     }

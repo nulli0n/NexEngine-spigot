@@ -8,8 +8,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.Reflex;
-import su.nexmedia.engine.utils.StringUtil;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -26,7 +26,7 @@ public class ClickText {
     private final Map<String, ClickWord> components;
 
     public ClickText(@NotNull String text) {
-        this.text = StringUtil.color(text);
+        this.text = Colorizer.apply(text);
         this.components = new HashMap<>();
     }
 
@@ -34,7 +34,7 @@ public class ClickText {
 
     @NotNull
     public ClickWord addComponent(@NotNull String placeholder, @NotNull String text) {
-        text = StringUtil.colorFix(text); // Remove color duplications
+        text = Colorizer.apply(text); // Remove color duplications
 
         ClickWord clickWord = new ClickWord(text);
         String placeholder2 = "{@" + this.components.size() + "}";

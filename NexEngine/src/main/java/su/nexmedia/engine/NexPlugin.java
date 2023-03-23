@@ -21,7 +21,6 @@ import su.nexmedia.engine.config.ConfigManager;
 import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.hooks.external.citizens.CitizensHook;
 import su.nexmedia.engine.lang.LangManager;
-import su.nexmedia.engine.nms.NMS;
 import su.nexmedia.engine.utils.Reflex;
 
 import java.io.File;
@@ -66,6 +65,10 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
 
         NexEngine engine = getEngine();
         if (this.isEngine()) {
+            if (!this.getServer().getVersion().contains("Spigot")) {
+                isPaper = true;
+                this.info("Seems like we have Paper based fork here...");
+            }
             if (!engine.loadCore()) {
                 this.getPluginManager().disablePlugin(this);
                 return;
@@ -74,6 +77,20 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         else {
             engine.addChildren(this);
             this.info("Powered by: " + engine.getName());
+        }
+        if (Version.V1_17_R1.isCurrent()) {
+            this.warn("==================================");
+            this.warn("WARNING: You're running an outdated server version (" + Version.CURRENT.name() + ")!");
+            this.warn("Support for this version will be dropped soon.");
+            this.warn("Please, upgrade your server.");
+            this.warn("==================================");
+        }
+        else if (Version.isAtLeast(Version.V1_19_R1) && Version.isBehind(Version.V1_19_R3)) {
+            this.warn("==================================");
+            this.warn("WARNING: You're running an outdated server version (" + Version.CURRENT.name() + ")!");
+            this.warn("Support for this version will be dropped soon.");
+            this.warn("Please, upgrade your server to " + Version.V1_19_R3.name() + ".");
+            this.warn("==================================");
         }
         this.loadManagers();
         this.info("Plugin loaded in " + (System.currentTimeMillis() - loadTook) + " ms!");
@@ -247,11 +264,6 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
     @NotNull
     public final String[] getLabels() {
         return this.getConfigManager().commandAliases;
-    }
-
-    @NotNull
-    public final NMS getNMS() {
-        return getEngine().nms;
     }
 
     public final PluginMainCommand<P> getMainCommand() {

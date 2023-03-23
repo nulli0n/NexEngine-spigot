@@ -94,6 +94,36 @@ public class SimpleParticle {
         return data;
     }
 
+    @NotNull
+    public SimpleParticle parseData(@NotNull String from) {
+        String[] split = from.split(" ");
+        Class<?> dataType = this.getParticle().getDataType();
+        Object data = null;
+        if (dataType == BlockData.class) {
+            Material material = Material.getMaterial(from.toUpperCase());
+            data = material != null ? material.createBlockData() : Material.STONE.createBlockData();
+        }
+        else if (dataType == Particle.DustOptions.class) {
+            Color color = StringUtil.parseColor(split[0]);
+            double size = split.length >= 2 ? StringUtil.getDouble(split[1], 1D) : 1D;
+            data = new Particle.DustOptions(color, (float) size);
+        }
+        else if (dataType == Particle.DustTransition.class) {
+            Color colorStart = StringUtil.parseColor(split[0]);
+            Color colorEnd = split.length >= 2 ? StringUtil.parseColor(split[1]) : colorStart;
+            double size = split.length >= 3 ? StringUtil.getDouble(split[2], 1D) : 1D;
+            data = new Particle.DustTransition(colorStart, colorEnd, 1.0f);
+        }
+        else if (dataType == ItemStack.class) {
+            Material material = Material.getMaterial(from.toUpperCase());
+            if (material != null && !material.isAir()) data = new ItemStack(material);
+            else data = new ItemStack(Material.STONE);
+        }
+        else if (dataType != Void.class) return SimpleParticle.of(Particle.REDSTONE);
+
+        return SimpleParticle.of(this.getParticle(), data);
+    }
+
     public void play(@NotNull Location location, double speed, int amount) {
         this.play(location, 0D, speed, amount);
     }

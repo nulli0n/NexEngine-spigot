@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class CreateTableExecutor extends SQLExecutor<Boolean> {
+public final class CreateTableExecutor extends SQLExecutor<Void> {
 
     private final StorageType storageType;
     private final List<SQLColumn> columns;
@@ -43,8 +43,8 @@ public final class CreateTableExecutor extends SQLExecutor<Boolean> {
 
     @Override
     @NotNull
-    public Boolean execute(@NotNull AbstractDataConnector connector) {
-        if (this.columns.isEmpty()) return false;
+    public Void execute(@NotNull AbstractDataConnector connector) {
+        if (this.columns.isEmpty()) return null;
 
         String id = "`id` " + ColumnFormer.INTEGER.build(this.storageType, 11);
         if (this.storageType == StorageType.SQLITE) {
@@ -60,6 +60,7 @@ public final class CreateTableExecutor extends SQLExecutor<Boolean> {
 
         String sql = "CREATE TABLE IF NOT EXISTS " + this.table + "(" + columns + ");";
 
-        return SQLQueries.executeStatement(connector, sql);
+        SQLQueries.executeStatement(connector, sql);
+        return null;
     }
 }

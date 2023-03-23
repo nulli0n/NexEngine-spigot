@@ -6,7 +6,7 @@ import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.lang.EngineLang;
-import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.Colorizer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,7 +37,7 @@ public class AboutSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> 
 
     @Override
     protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
-        List<String> info = StringUtil.color(Arrays.asList(
+        List<String> info = Colorizer.apply(Arrays.asList(
             "&7",
             "&e" + plugin.getName() + " &6v" + plugin.getDescription().getVersion() + " &ecreated by &6" + plugin.getDescription().getAuthors(),
             "&eType &6/" + plugin.getLabel() + " help&e to list plugin commands.",

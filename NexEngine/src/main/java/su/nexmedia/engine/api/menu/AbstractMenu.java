@@ -1,7 +1,6 @@
 package su.nexmedia.engine.api.menu;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -27,6 +26,7 @@ import su.nexmedia.engine.utils.PlayerUtil;
 
 import java.util.*;
 
+@Deprecated
 public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListener<P> implements ICleanable {
 
     private static final Map<Player, AbstractMenu<?>> PLAYER_MENUS = new WeakHashMap<>();
@@ -223,7 +223,8 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
     @NotNull
     public Inventory createInventory(@NotNull Player player) {
         String title = this.getTitle(player);
-        if (NexPlugin.isPaper && this.useMiniMessage) {
+        // TODO
+        /*if (NexPlugin.isPaper && this.useMiniMessage) {
             if (this.getInventoryType() == InventoryType.CHEST) {
                 return this.plugin.getServer().createInventory(null, this.getSize(), MiniMessage.miniMessage().deserialize(title));
             }
@@ -231,14 +232,14 @@ public abstract class AbstractMenu<P extends NexPlugin<P>> extends AbstractListe
                 return this.plugin.getServer().createInventory(null, this.getInventoryType(), MiniMessage.miniMessage().deserialize(title));
             }
         }
-        else {
+        else {*/
             if (this.getInventoryType() == InventoryType.CHEST) {
                 return this.plugin.getServer().createInventory(null, this.getSize(), title);
             }
             else {
                 return this.plugin.getServer().createInventory(null, this.getInventoryType(), title);
             }
-        }
+        //}
     }
 
     @Nullable

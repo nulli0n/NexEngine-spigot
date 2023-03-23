@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.manager.IPlaceholder;
 import su.nexmedia.engine.lang.EngineLang;
-import su.nexmedia.engine.utils.CollectionsUtil;
+import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.StringUtil;
 import su.nexmedia.engine.utils.message.NexParser;
 import su.nexmedia.engine.utils.regex.RegexUtil;
@@ -26,11 +26,12 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
     public static final String PLACEHOLDER_LABEL       = "%command_label%";
 
     private final Map<String, Pattern> flags;
-    protected     P                    plugin;
-    protected     String[]                        aliases;
-    protected     String                          permission;
-    protected     Map<String, AbstractCommand<P>> childrens;
-    protected     AbstractCommand<P>              parent;
+
+    protected P                               plugin;
+    protected String[]                        aliases;
+    protected String                          permission;
+    protected Map<String, AbstractCommand<P>> childrens;
+    protected AbstractCommand<P>              parent;
 
     public AbstractCommand(@NotNull P plugin, @NotNull List<String> aliases) {
         this(plugin, aliases.toArray(new String[0]));
@@ -159,7 +160,7 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
 
                 Matcher matcher = RegexUtil.getMatcher(pattern, argLine);
                 if (RegexUtil.matcherFind(matcher)) {
-                    flags.put(flag, StringUtil.color(matcher.group(1)));
+                    flags.put(flag, Colorizer.legacyHex(matcher.group(1)));
                     argLine = StringUtil.oneSpace(argLine.replace(matcher.group(0), ""));
                 }
             }
@@ -204,10 +205,6 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
 
     protected final void errorSender(@NotNull CommandSender sender) {
         plugin.getMessage(EngineLang.ERROR_COMMAND_SENDER).send(sender);
-    }
-
-    protected final void errorType(@NotNull CommandSender sender, @NotNull Class<?> clazz) {
-        plugin.getMessage(EngineLang.ERROR_TYPE_INVALID).replace("%types%", CollectionsUtil.getEnums(clazz)).send(sender);
     }
 
     protected final void errorNumber(@NotNull CommandSender sender, @NotNull String from) {

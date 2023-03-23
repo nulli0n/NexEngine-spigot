@@ -10,7 +10,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexEngine;
-import su.nexmedia.engine.lang.LangManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -61,18 +60,6 @@ public class LocationUtil {
     public static String getWorldName(@NotNull Location location) {
         World world = location.getWorld();
         return world == null ? "null" : world.getName();
-    }
-
-    @NotNull
-    @Deprecated
-    public static String getWorldName(@NotNull World world) {
-        return LangManager.getWorld(world);
-    }
-
-    @NotNull
-    @Deprecated
-    public static List<String> getWorldNames() {
-        return CollectionsUtil.worldNames();
     }
 
     @NotNull

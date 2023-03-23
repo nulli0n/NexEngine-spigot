@@ -6,8 +6,8 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.ItemUtil;
-import su.nexmedia.engine.utils.StringUtil;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class ClickWord {
     public  ClickEvent clickEvent;
 
     public ClickWord(@NotNull String text) {
-        this.text = StringUtil.color(text);
+        this.text = Colorizer.apply(text);
     }
 
     @NotNull
@@ -50,7 +50,7 @@ public class ClickWord {
 
     @NotNull
     public ClickWord showText(@NotNull String... text) {
-        BaseComponent[] base = ClickText.fromLegacyText(StringUtil.color(String.join("\n", text)));
+        BaseComponent[] base = ClickText.fromLegacyText(Colorizer.apply(String.join("\n", text)));
         this.hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(base));
         return this;
     }

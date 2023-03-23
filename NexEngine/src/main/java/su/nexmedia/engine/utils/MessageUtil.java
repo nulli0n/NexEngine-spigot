@@ -133,14 +133,14 @@ public class MessageUtil {
 
     @Deprecated
     public static String[] extractNonJson(@NotNull String message) {
-        message = StringUtil.color(message.replace("\n", " "));
+        message = Colorizer.apply(message.replace("\n", " "));
         message = toNewFormat(message);
         return PATTERN_JSON_FULL.split(message);
     }
 
     @Deprecated
     public static void sendWithJson(@NotNull CommandSender sender, @NotNull String message) {
-        message = StringUtil.color(message.replace("\n", " "));
+        message = Colorizer.apply(message.replace("\n", " "));
         message = toNewFormat(message);
         if (!(sender instanceof Player player)) {
             sender.sendMessage(toSimpleText(message));
@@ -178,7 +178,7 @@ public class MessageUtil {
                     case "hint", "hover", "showText" -> clickWord.showText(paramValue.split("\\|"));
                     case "chat-type", "runCommand" -> clickWord.runCommand(paramValue);
                     case "chat-suggest", "suggestCommand" -> clickWord.suggestCommand(paramValue);
-                    case "url", "openUrl" -> clickWord.openURL(StringUtil.colorOff(paramValue));
+                    case "url", "openUrl" -> clickWord.openURL(Colorizer.strip(paramValue));
                     case "copyToClipboard" -> clickWord.copyToClipboard(paramValue);
                     case "showItem" -> {
                         ItemStack item = ItemUtil.fromBase64(paramValue);

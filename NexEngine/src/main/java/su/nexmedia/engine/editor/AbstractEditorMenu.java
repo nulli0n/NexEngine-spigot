@@ -13,6 +13,7 @@ import su.nexmedia.engine.api.menu.MenuItem;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public abstract class AbstractEditorMenu<P extends NexPlugin<P>, T> extends AbstractMenu<P> {
 
     protected final T object;

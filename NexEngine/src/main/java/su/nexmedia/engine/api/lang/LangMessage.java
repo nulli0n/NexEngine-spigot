@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
-import su.nexmedia.engine.utils.CollectionsUtil;
+import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.MessageUtil;
 import su.nexmedia.engine.utils.Placeholders;
 import su.nexmedia.engine.utils.StringUtil;
@@ -95,9 +95,9 @@ public class LangMessage {
             String paramName = entryParams.getKey();
             String paramValue = matcherParam.group(2).stripLeading();
             switch (paramName) {
-                case "type" -> this.type = CollectionsUtil.getEnum(paramValue, OutputType.class);
+                case "type" -> this.type = StringUtil.getEnum(paramValue, OutputType.class).orElse(OutputType.CHAT);
                 case "prefix" -> this.hasPrefix = Boolean.parseBoolean(paramValue);
-                case "sound" -> this.sound = CollectionsUtil.getEnum(paramValue, Sound.class);
+                case "sound" -> this.sound = StringUtil.getEnum(paramValue, Sound.class).orElse(null);
                 case "fadeIn" -> this.titleTimes[0] = StringUtil.getInteger(paramValue, -1);
                 case "stay" -> {
                     this.titleTimes[1] = StringUtil.getInteger(paramValue, -1);
@@ -125,7 +125,7 @@ public class LangMessage {
             switch (option) {
                 case TYPE -> {
                     String[] split = optionValue.split(":");
-                    this.type = CollectionsUtil.getEnum(split[0], OutputType.class);
+                    this.type = StringUtil.getEnum(split[0], OutputType.class).orElse(OutputType.CHAT);
                     if (this.type == OutputType.TITLES) {
                         this.titleTimes[0] = split.length >= 2 ? StringUtil.getInteger(split[1], -1) : -1;
                         this.titleTimes[1] = split.length >= 3 ? StringUtil.getInteger(split[2], -1) : -1;
@@ -133,7 +133,7 @@ public class LangMessage {
                     }
                 }
                 case PREFIX -> this.hasPrefix = Boolean.parseBoolean(optionValue);
-                case SOUND -> this.sound = CollectionsUtil.getEnum(optionValue, Sound.class);
+                case SOUND -> this.sound = StringUtil.getEnum(optionValue, Sound.class).orElse(null);
             }
         }
     }
@@ -156,22 +156,13 @@ public class LangMessage {
     }
 
     private void setLocalized(@NotNull String msgLocalized) {
-        this.msgLocalized = StringUtil.color(msgLocalized);
+        this.msgLocalized = Colorizer.apply(msgLocalized);
     }
 
-    @SuppressWarnings("unchecked")
     @NotNull
     public LangMessage replace(@NotNull String var, @NotNull Object replacer) {
         if (this.isEmpty()) return this;
-        if (replacer instanceof List) return this.replace(var, (List<Object>) replacer);
         return this.replace(str -> str.replace(var, String.valueOf(replacer)));
-    }
-
-    @NotNull
-    @Deprecated
-    public LangMessage replace(@NotNull String var, @NotNull List<Object> replacer) {
-        if (this.isEmpty()) return this;
-        return this.replace(str -> str.replace(var, String.join("\\n", replacer.stream().map(Object::toString).toList())));
     }
 
     @NotNull
@@ -263,7 +254,7 @@ public class LangMessage {
             for (Map.Entry<String, String> entry : this.plugin.getLangManager().getPlaceholders().entrySet()) {
                 str = str.replace(entry.getKey(), entry.getValue());
             }
-            return Placeholders.Plugin.replacer(plugin).apply(str);
+            return Placeholders.PLUGIN.replacer(plugin).apply(str);
         };
     }
 

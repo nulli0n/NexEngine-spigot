@@ -1,6 +1,9 @@
 package su.nexmedia.engine.api.config;
 
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -138,26 +141,21 @@ public class JYML extends YamlConfiguration {
 
     @Override
     public void set(@NotNull String path, @Nullable Object value) {
-        if (value instanceof JOption.Writer writer) {
-            writer.write(this, path);
+        if (value instanceof String str) {
+            value = Colorizer.plain(str);
         }
-        else {
-            if (value instanceof String str) {
-                value = StringUtil.colorRaw(str);
-            }
-            else if (value instanceof Collection<?> collection) {
-                List<Object> list = new ArrayList<>(collection);
-                list.replaceAll(obj -> obj instanceof String str ? StringUtil.colorRaw(str) : obj);
-                value = list;
-            }
-            else if (value instanceof Location location) {
-                value = LocationUtil.serialize(location);
-            }
-            else if (value instanceof Enum<?> en) {
-                value = en.name();
-            }
-            super.set(path, value);
+        else if (value instanceof Collection<?> collection) {
+            List<Object> list = new ArrayList<>(collection);
+            list.replaceAll(obj -> obj instanceof String str ? Colorizer.plain(str) : obj);
+            value = list;
         }
+        else if (value instanceof Location location) {
+            value = LocationUtil.serialize(location);
+        }
+        else if (value instanceof Enum<?> en) {
+            value = en.name();
+        }
+        super.set(path, value);
         this.isChanged = true;
     }
 
@@ -239,18 +237,17 @@ public class JYML extends YamlConfiguration {
 
     @Nullable
     public <T extends Enum<T>> T getEnum(@NotNull String path, @NotNull Class<T> clazz) {
-        return CollectionsUtil.getEnum(this.getString(path, ""), clazz);
+        return StringUtil.getEnum(this.getString(path, ""), clazz).orElse(null);
     }
 
     @NotNull
     public <T extends Enum<T>> T getEnum(@NotNull String path, @NotNull Class<T> clazz, @NotNull T def) {
-        @Nullable T val = this.getEnum(path, clazz);
-        return val == null ? def : val;
+        return StringUtil.getEnum(this.getString(path, ""), clazz).orElse(def);
     }
 
     @NotNull
     public <T extends Enum<T>> List<T> getEnumList(@NotNull String path, @NotNull Class<T> clazz) {
-        return this.getStringSet(path).stream().map(str -> CollectionsUtil.getEnum(str, clazz))
+        return this.getStringSet(path).stream().map(str -> StringUtil.getEnum(str, clazz).orElse(null))
             .filter(Objects::nonNull).toList();
     }
 
@@ -293,11 +290,6 @@ public class JYML extends YamlConfiguration {
     public ItemStack getItem(@NotNull String path) {
         if (!path.isEmpty() && !path.endsWith(".")) path = path + ".";
 
-        /*if (this.getBoolean(path + "Encoded.Use")) {
-            ItemStack item = this.getItemEncoded(path + "Encoded.Value");
-            return item == null ? new ItemStack(Material.AIR) : item;
-        }*/
-
         Material material = Material.getMaterial(this.getString(path + "Material", "").toUpperCase());
         if (material == null || material == Material.AIR) return new ItemStack(Material.AIR);
 
@@ -318,8 +310,8 @@ public class JYML extends YamlConfiguration {
         }
 
         String name = this.getString(path + "Name");
-        meta.setDisplayName(name != null ? StringUtil.color(name) : null);
-        meta.setLore(StringUtil.color(this.getStringList(path + "Lore")));
+        meta.setDisplayName(name != null ? Colorizer.apply(name) : null);
+        meta.setLore(Colorizer.apply(this.getStringList(path + "Lore")));
 
         for (String sKey : this.getSection(path + "Enchants")) {
             Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(sKey.toLowerCase()));
@@ -339,7 +331,7 @@ public class JYML extends YamlConfiguration {
             meta.addItemFlags(ItemFlag.values());
         }
         else {
-            flags.stream().map(str -> CollectionsUtil.getEnum(str, ItemFlag.class)).filter(Objects::nonNull).forEach(meta::addItemFlags);
+            flags.stream().map(str -> StringUtil.getEnum(str, ItemFlag.class).orElse(null)).filter(Objects::nonNull).forEach(meta::addItemFlags);
         }
 
         String colorRaw = this.getString(path + "Color");
@@ -360,11 +352,13 @@ public class JYML extends YamlConfiguration {
     }
 
     @NotNull
+    @Deprecated
     public MenuItem getMenuItem(@NotNull String path) {
         return this.getMenuItem(path, MenuItemType.class);
     }
 
     @NotNull
+    @Deprecated
     public <T extends Enum<T>> MenuItem getMenuItem(@NotNull String path, @Nullable Class<T> clazzEnum) {
         if (!path.endsWith(".")) path = path + ".";
 
@@ -392,7 +386,7 @@ public class JYML extends YamlConfiguration {
 
         Map<ClickType, List<String>> clickCommands = new HashMap<>();
         for (String sType : this.getSection(path + "Click_Actions")) {
-            ClickType clickType = CollectionsUtil.getEnum(sType, ClickType.class);
+            ClickType clickType = StringUtil.getEnum(sType, ClickType.class).orElse(null);
             if (clickType == null) continue;
 
             clickCommands.put(clickType, this.getStringList(path + "Click_Actions." + sType));
@@ -418,20 +412,6 @@ public class JYML extends YamlConfiguration {
 
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
-
-        /*boolean hasNbt = !meta.getPersistentDataContainer().isEmpty();
-        if (hasNbt) {
-            this.set(path + "Encoded.Use", true);
-            this.setItemEncoded(path + "Encoded.Value", item);
-        }
-        else {
-            if (this.contains(path + "Encoded.Value")) {
-                this.set(path + "Encoded.Use", false);
-            }
-            else {
-                this.remove(path + "Encoded");
-            }
-        }*/
 
         if (meta instanceof Damageable damageable) {
             this.set(path + "Durability", damageable.getDamage() <= 0 ? null : damageable.getDamage());

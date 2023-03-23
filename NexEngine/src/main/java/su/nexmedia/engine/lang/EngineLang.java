@@ -38,14 +38,13 @@ public class EngineLang {
     public static final LangKey ERROR_NUMBER_INVALID  = new LangKey("Error.Number.Invalid", "&7%num% &cis not a valid number.");
     public static final LangKey ERROR_PERMISSION_DENY = new LangKey("Error.Permission.Deny", "&cYou don't have permissions to do that!");
     public static final LangKey ERROR_ITEM_INVALID    = new LangKey("Error.Item.Invalid", "&cYou must hold an item!");
-    public static final LangKey ERROR_TYPE_INVALID    = new LangKey("Error.Type.Invalid", "Invalid type. Available: %types%");
     public static final LangKey ERROR_COMMAND_SELF    = new LangKey("Error.Command.Self", "Can not be used on yourself.");
     public static final LangKey ERROR_COMMAND_SENDER  = new LangKey("Error.Command.Sender", "This command is for players only.");
-    public static final LangKey ERROR_INTERNAL        = new LangKey("Error.Internal", "&cInternal error!");
+    @Deprecated public static final LangKey ERROR_INTERNAL        = new LangKey("Error.Internal", "&cInternal error!");
 
     public static final LangKey EDITOR_TIP_EXIT             = LangKey.of("Editor.Tip.Exit", "<! prefix:\"false\" !> <? showText:\"&7Click me or type &f#exit\" run_command:\"/#exit\" ?>&bClick to exit the &dEdit Mode</>");
     public static final LangKey EDITOR_TITLE_DONE             = LangKey.of("Editor.Title.Done", "&a&lDone!");
-    public static final LangKey EDITOR_TITLE_EDIT           = LangKey.of("Editor.Title.Edit", "&a&lEditing...");
+    public static final LangKey EDITOR_TITLE_EDIT           = LangKey.of("Editor.Title.Edit", "&a&l< Edit Mode >");
     public static final LangKey EDITOR_TITLE_ERROR          = LangKey.of("Editor.Title.Error", "&c&lError!");
     public static final LangKey EDITOR_ERROR_NUMBER_GENERIC = LangKey.of("Editor.Error.Number.Generic", "&7Invalid number!");
     public static final LangKey EDITOR_ERROR_NUMBER_NOT_INT = LangKey.of("Editor.Error.Number.NotInt", "&7Number must be &cInteger&7!");

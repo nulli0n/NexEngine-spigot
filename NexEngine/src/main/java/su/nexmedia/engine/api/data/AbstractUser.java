@@ -38,7 +38,7 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
 
     @SuppressWarnings("unchecked")
     public <U extends AbstractUser<P>> void saveData(@NotNull UserDataHolder<P, U> dataHolder) {
-        this.plugin.runTask(c -> dataHolder.getData().saveUser((U) this), true);
+        this.plugin.runTaskAsync(task -> dataHolder.getData().saveUser((U) this));
     }
 
     public boolean isRecentlyCreated() {
@@ -47,12 +47,6 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
 
     public void setRecentlyCreated(boolean recent) {
         isRecent = recent;
-    }
-
-    @NotNull
-    @Deprecated
-    public final UUID getUUID() {
-        return this.getId();
     }
 
     @NotNull

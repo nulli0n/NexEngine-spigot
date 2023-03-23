@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public final class AlterTableExecutor extends SQLExecutor<Boolean> {
+public final class AlterTableExecutor extends SQLExecutor<Void> {
 
     private final StorageType    storageType;
     private final List<SQLValue> columns;
@@ -72,8 +72,8 @@ public final class AlterTableExecutor extends SQLExecutor<Boolean> {
 
     @Override
     @NotNull
-    public Boolean execute(@NotNull AbstractDataConnector connector) {
-        if (this.columns.isEmpty()) return false;
+    public Void execute(@NotNull AbstractDataConnector connector) {
+        if (this.columns.isEmpty()) return null;
 
         if (this.type == Type.ADD_COLUMN) {
             this.columns.forEach(value -> {
@@ -101,7 +101,6 @@ public final class AlterTableExecutor extends SQLExecutor<Boolean> {
                 SQLQueries.executeStatement(connector, sql);
             });
         }
-
-        return true;
+        return null;
     }
 }

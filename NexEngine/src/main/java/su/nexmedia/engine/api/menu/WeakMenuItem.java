@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
 
+@Deprecated
 public class WeakMenuItem extends MenuItem {
 
     protected Predicate<Player> weakPolicy;

@@ -6,13 +6,14 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.entity.*;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.utils.random.Rnd;
 
 import java.util.Arrays;
@@ -57,22 +58,6 @@ public class EntityUtil {
     @NotNull
     public static Map<EquipmentSlot, ItemStack> getEquippedArmor(@NotNull LivingEntity entity) {
         return getEquippedItems(entity, EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD);
-    }
-
-    @NotNull
-    @Deprecated
-    public static String getName(@NotNull Entity entity) {
-        if (entity instanceof Player) {
-            return entity.getName();
-        }
-        if (entity instanceof LivingEntity) {
-            String cName = entity.getCustomName();
-            if (cName != null) {
-                return cName;
-            }
-        }
-
-        return NexEngine.get().getLangManager().getEnum(entity.getType());
     }
 
     @NotNull

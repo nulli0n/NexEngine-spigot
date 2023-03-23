@@ -1,7 +1,6 @@
 package su.nexmedia.engine.utils;
 
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.BlockState;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataAdapterContext;
@@ -25,12 +24,6 @@ public class PDCUtil {
     public static final PersistentDataType<byte[], String[]> STRING_ARRAY = new StringArray(StandardCharsets.UTF_8);
     public static final PersistentDataType<byte[], UUID>     UUID         = new UUIDDataType();
 
-    @Nullable
-    @Deprecated
-    public static <Z> Z getData(@NotNull PersistentDataHolder holder, @NotNull PersistentDataType<?, Z> type, @NotNull NamespacedKey key) {
-        return get(holder, type, key).orElse(null);
-    }
-
     @NotNull
     public static <Z> Optional<Z> get(@NotNull ItemStack holder, @NotNull PersistentDataType<?, Z> type, @NotNull NamespacedKey key) {
         ItemMeta meta = holder.getItemMeta();
@@ -46,41 +39,6 @@ public class PDCUtil {
             return Optional.ofNullable(container.get(key, type));
         }
         return Optional.empty();
-    }
-
-    @Deprecated
-    public static void setData(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key, @NotNull Object value) {
-        PersistentDataContainer container = holder.getPersistentDataContainer();
-
-        if (value instanceof Boolean i) {
-            container.set(key, PersistentDataType.INTEGER, i ? 1 : 0);
-        }
-        else if (value instanceof Double i) {
-            container.set(key, PersistentDataType.DOUBLE, i);
-        }
-        else if (value instanceof Integer i) {
-            container.set(key, PersistentDataType.INTEGER, i);
-        }
-        else if (value instanceof Long i) {
-            container.set(key, PersistentDataType.LONG, i);
-        }
-        else if (value instanceof String[] i) {
-            container.set(key, STRING_ARRAY, i);
-        }
-        else if (value instanceof double[] i) {
-            container.set(key, DOUBLE_ARRAY, i);
-        }
-        else if (value instanceof UUID i) {
-            container.set(key, UUID, i);
-        }
-        else {
-            String i = value.toString();
-            container.set(key, PersistentDataType.STRING, i);
-        }
-
-        if (holder instanceof BlockState state) {
-            state.update();
-        }
     }
 
     public static void set(@NotNull ItemStack holder, @NotNull NamespacedKey key, boolean value) {
@@ -170,14 +128,9 @@ public class PDCUtil {
         PersistentDataContainer container = holder.getPersistentDataContainer();
         container.set(key, dataType, value);
 
-        if (holder instanceof BlockState state) {
+        /*if (holder instanceof BlockState state) {
             state.update();
-        }
-    }
-
-    @Deprecated
-    public static void removeData(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key) {
-        remove(holder, key);
+        }*/
     }
 
     public static void remove(@NotNull ItemStack holder, @NotNull NamespacedKey key) {
@@ -191,15 +144,9 @@ public class PDCUtil {
         PersistentDataContainer container = holder.getPersistentDataContainer();
         container.remove(key);
 
-        if (holder instanceof BlockState state) {
+        /*if (holder instanceof BlockState state) {
             state.update();
-        }
-    }
-
-    @Nullable
-    @Deprecated
-    public static String getStringData(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key) {
-        return getData(holder, PersistentDataType.STRING, key);
+        }*/
     }
 
     @NotNull
@@ -212,12 +159,6 @@ public class PDCUtil {
         return get(holder, PersistentDataType.STRING, key);
     }
 
-    @Nullable
-    @Deprecated
-    public static String[] getStringArrayData(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key) {
-        return getData(holder, STRING_ARRAY, key);
-    }
-
     @NotNull
     public static Optional<String[]> getStringArray(@NotNull ItemStack holder, @NotNull NamespacedKey key) {
         return get(holder, STRING_ARRAY, key);
@@ -226,11 +167,6 @@ public class PDCUtil {
     @NotNull
     public static Optional<String[]> getStringArray(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key) {
         return get(holder, STRING_ARRAY, key);
-    }
-
-    @Deprecated
-    public static double[] getDoubleArrayData(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key) {
-        return getData(holder, DOUBLE_ARRAY, key);
     }
 
     @NotNull
@@ -243,12 +179,6 @@ public class PDCUtil {
         return get(holder, DOUBLE_ARRAY, key);
     }
 
-    @Deprecated
-    public static int getIntData(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key) {
-        Integer value = getData(holder, PersistentDataType.INTEGER, key);
-        return value == null ? 0 : value;
-    }
-
     @NotNull
     public static Optional<Integer> getInt(@NotNull ItemStack holder, @NotNull NamespacedKey key) {
         return get(holder, PersistentDataType.INTEGER, key);
@@ -257,12 +187,6 @@ public class PDCUtil {
     @NotNull
     public static Optional<Integer> getInt(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key) {
         return get(holder, PersistentDataType.INTEGER, key);
-    }
-
-    @Deprecated
-    public static long getLongData(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key) {
-        Long value = getData(holder, PersistentDataType.LONG, key);
-        return value == null ? 0 : value;
     }
 
     @NotNull
@@ -275,12 +199,6 @@ public class PDCUtil {
         return get(holder, PersistentDataType.LONG, key);
     }
 
-    @Deprecated
-    public static double getDoubleData(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key) {
-        Double value = getData(holder, PersistentDataType.DOUBLE, key);
-        return value == null ? 0D : value;
-    }
-
     @NotNull
     public static Optional<Double> getDouble(@NotNull ItemStack holder, @NotNull NamespacedKey key) {
         return get(holder, PersistentDataType.DOUBLE, key);
@@ -289,12 +207,6 @@ public class PDCUtil {
     @NotNull
     public static Optional<Double> getDouble(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key) {
         return get(holder, PersistentDataType.DOUBLE, key);
-    }
-
-    @Deprecated
-    public static boolean getBooleanData(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key) {
-        int value = getIntData(holder, key);
-        return value == 1;
     }
 
     @NotNull
@@ -307,11 +219,6 @@ public class PDCUtil {
         return get(holder, PersistentDataType.INTEGER, key).map(i -> i != 0);
     }
 
-    @Nullable
-    public static UUID getUniqueIdData(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key) {
-        return getData(holder, UUID, key);
-    }
-
     @NotNull
     public static Optional<UUID> getUUID(@NotNull ItemStack holder, @NotNull NamespacedKey key) {
         return get(holder, UUID, key);
@@ -320,84 +227,6 @@ public class PDCUtil {
     @NotNull
     public static Optional<UUID> getUUID(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key) {
         return get(holder, UUID, key);
-    }
-
-    @Nullable
-    @Deprecated
-    public static <Z> Z getData(@NotNull ItemStack item, @NotNull PersistentDataType<?, Z> type, @NotNull NamespacedKey key) {
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return null;
-
-        return getData(meta, type, key);
-    }
-
-    @Deprecated
-    public static void setData(@NotNull ItemStack item, @NotNull NamespacedKey key, @NotNull Object value) {
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return;
-
-        setData(meta, key, value);
-        item.setItemMeta(meta);
-    }
-
-    @Deprecated
-    public static void removeData(@NotNull ItemStack item, @NotNull NamespacedKey key) {
-        ItemMeta meta = item.getItemMeta();
-        if (meta == null) return;
-
-        removeData(meta, key);
-        item.setItemMeta(meta);
-    }
-
-    @Nullable
-    @Deprecated
-    public static String getStringData(@NotNull ItemStack item, @NotNull NamespacedKey key) {
-        ItemMeta meta = item.getItemMeta();
-        return meta == null ? null : getStringData(meta, key);
-    }
-
-    @Deprecated
-    public static int getIntData(@NotNull ItemStack item, @NotNull NamespacedKey key) {
-        ItemMeta meta = item.getItemMeta();
-        return meta == null ? 0 : getIntData(meta, key);
-    }
-
-    @Deprecated
-    public static long getLongData(@NotNull ItemStack item, @NotNull NamespacedKey key) {
-        ItemMeta meta = item.getItemMeta();
-        return meta == null ? 0 : getLongData(meta, key);
-    }
-
-    @Nullable
-    @Deprecated
-    public static String[] getStringArrayData(@NotNull ItemStack item, @NotNull NamespacedKey key) {
-        ItemMeta meta = item.getItemMeta();
-        return meta == null ? null : getStringArrayData(meta, key);
-    }
-
-    @Deprecated
-    public static double[] getDoubleArrayData(@NotNull ItemStack item, @NotNull NamespacedKey key) {
-        ItemMeta meta = item.getItemMeta();
-        return meta == null ? null : getDoubleArrayData(meta, key);
-    }
-
-    @Deprecated
-    public static double getDoubleData(@NotNull ItemStack item, @NotNull NamespacedKey key) {
-        ItemMeta meta = item.getItemMeta();
-        return meta == null ? 0 : getDoubleData(meta, key);
-    }
-
-    @Deprecated
-    public static boolean getBooleanData(@NotNull ItemStack item, @NotNull NamespacedKey key) {
-        ItemMeta meta = item.getItemMeta();
-        return meta != null && getBooleanData(meta, key);
-    }
-
-    @Nullable
-    @Deprecated
-    public static UUID getUniqueIdData(@NotNull ItemStack item, @NotNull NamespacedKey key) {
-        ItemMeta meta = item.getItemMeta();
-        return meta == null ? null : getUniqueIdData(meta, key);
     }
 
     public static class DoubleArray implements PersistentDataType<byte[], double[]> {

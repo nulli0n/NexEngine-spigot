@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Deprecated
 public abstract class AbstractMenuAuto<P extends NexPlugin<P>, I> extends AbstractMenu<P> {
 
     public AbstractMenuAuto(@NotNull P plugin, @NotNull JYML cfg, @NotNull String path) {

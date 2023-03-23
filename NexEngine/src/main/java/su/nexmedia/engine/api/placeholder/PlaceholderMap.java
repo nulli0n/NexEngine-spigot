@@ -17,6 +17,15 @@ public class PlaceholderMap {
         this.keys = new ArrayList<>();
     }
 
+    public PlaceholderMap(@NotNull PlaceholderMap other) {
+        this.keys = new ArrayList<>(other.getKeys());
+    }
+
+    @NotNull
+    public List<Pair<String, Supplier<String>>> getKeys() {
+        return keys;
+    }
+
     @NotNull
     public PlaceholderMap add(@NotNull String key, @NotNull String replacer) {
         this.add(key, () -> replacer);
@@ -25,16 +34,16 @@ public class PlaceholderMap {
 
     @NotNull
     public PlaceholderMap add(@NotNull String key, @NotNull Supplier<String> replacer) {
-        this.keys.add(Pair.of(key, replacer));
+        this.getKeys().add(Pair.of(key, replacer));
         return this;
     }
 
     public void clear() {
-        this.keys.clear();
+        this.getKeys().clear();
     }
 
     @NotNull
     public UnaryOperator<String> replacer() {
-        return str -> StringUtil.replaceEach(str, this.keys);
+        return str -> StringUtil.replaceEach(str, this.getKeys());
     }
 }

@@ -10,7 +10,6 @@ public class Placeholders {
 
     public static final String DEFAULT = "default";
     public static final String NONE = "none";
-    @Deprecated public static final String MASK_ANY = "*";
     public static final String WILDCARD = "*";
 
     public static final Placeholder<org.bukkit.Location> LOCATION = new Location();
@@ -27,11 +26,6 @@ public class Placeholders {
         public static final String NAME           = "%plugin_name%";
         public static final String NAME_LOCALIZED = "%plugin_name_localized%";
 
-        @NotNull
-        @Deprecated
-        public static UnaryOperator<String> replacer(@NotNull NexPlugin<?> plugin) {
-            return PLUGIN.replacer(plugin);
-        }
     }
 
     public static class Player {

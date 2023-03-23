@@ -5,13 +5,14 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.Colorizer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+@Deprecated
 public interface EditorButtonType {
 
     String PREFIX_INFO = "&6&l[?] Description:";
@@ -90,7 +91,7 @@ public interface EditorButtonType {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return item;
 
-        meta.setDisplayName(StringUtil.color("&e&l") + this.getName());
+        meta.setDisplayName(Colorizer.apply("&e&l") + this.getName());
         meta.setLore(this.getLore());
         meta.addItemFlags(ItemFlag.values());
         item.setItemMeta(meta);

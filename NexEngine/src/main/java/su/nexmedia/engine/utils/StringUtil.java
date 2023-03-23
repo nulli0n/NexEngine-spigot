@@ -23,60 +23,6 @@ public class StringUtil {
     }
 
     @NotNull
-    @Deprecated
-    public static String color(@NotNull String str) {
-        return Colorizer.apply(str);
-    }
-
-    @NotNull
-    @Deprecated
-    public static String colorFix(@NotNull String str) {
-        return Colorizer.fixLegacy(str);
-    }
-
-    @NotNull
-    @Deprecated
-    public static String colorGradient(@NotNull String string) {
-        return Colorizer.gradient(string);
-    }
-
-    @NotNull
-    @Deprecated
-    public static String colorHex(@NotNull String str) {
-        return Colorizer.hex(str);
-    }
-
-    @NotNull
-    @Deprecated
-    public static String colorHexRaw(@NotNull String str) {
-        return Colorizer.plainHex(str);
-    }
-
-    @NotNull
-    @Deprecated
-    public static String colorRaw(@NotNull String str) {
-        return Colorizer.plain(str);
-    }
-
-    @NotNull
-    @Deprecated
-    public static String colorOff(@NotNull String str) {
-        return Colorizer.strip(str);
-    }
-
-    @NotNull
-    @Deprecated
-    public static List<String> color(@NotNull List<String> list) {
-        return Colorizer.apply(list);
-    }
-
-    @NotNull
-    @Deprecated
-    public static Set<String> color(@NotNull Set<String> list) {
-        return Colorizer.apply(list);
-    }
-
-    @NotNull
     public static List<String> replace(@NotNull List<String> orig, @NotNull String placeholder, boolean keep, String... replacer) {
         return StringUtil.replace(orig, placeholder, keep, Arrays.asList(replacer));
     }
@@ -239,6 +185,11 @@ public class StringUtil {
     }
 
     @NotNull
+    public static String lowerCaseUnderscore(@NotNull String str) {
+        return Colorizer.restrip(str).toLowerCase().replace(" ", "_");
+    }
+
+    @NotNull
     public static String capitalizeUnderscored(@NotNull String str) {
         return capitalizeFully(str.replace("_", " "));
     }
@@ -334,11 +285,13 @@ public class StringUtil {
         return commandName;
     }
 
+    @Deprecated
     public static boolean isCustomBoolean(@NotNull String str) {
         String[] customs = new String[]{"0","1","on","off","true","false","yes","no"};
         return Stream.of(customs).collect(Collectors.toSet()).contains(str.toLowerCase());
     }
 
+    @Deprecated
     public static boolean parseCustomBoolean(@NotNull String str) {
         if (str.equalsIgnoreCase("0") || str.equalsIgnoreCase("off") || str.equalsIgnoreCase("no")) {
             return false;

@@ -9,6 +9,7 @@ import su.nexmedia.engine.api.type.ClickType;
 import java.util.*;
 import java.util.function.Predicate;
 
+@Deprecated
 public class MenuItem {
 
     protected final String  id;

@@ -6,7 +6,7 @@ import su.nexmedia.engine.api.data.connection.AbstractDataConnector;
 import su.nexmedia.engine.api.data.sql.SQLExecutor;
 import su.nexmedia.engine.api.data.sql.SQLQueries;
 
-public final class RenameTableExecutor extends SQLExecutor<Boolean> {
+public final class RenameTableExecutor extends SQLExecutor<Void> {
 
     private final StorageType     storageType;
     private String renameTo;
@@ -29,9 +29,9 @@ public final class RenameTableExecutor extends SQLExecutor<Boolean> {
 
     @Override
     @NotNull
-    public Boolean execute(@NotNull AbstractDataConnector connector) {
-        if (this.renameTo == null || this.renameTo.isEmpty()) return false;
-        if (!SQLQueries.hasTable(connector, this.table)) return false;
+    public Void execute(@NotNull AbstractDataConnector connector) {
+        if (this.renameTo == null || this.renameTo.isEmpty()) return null;
+        if (!SQLQueries.hasTable(connector, this.table)) return null;
 
         StringBuilder sql = new StringBuilder();
         if (this.storageType == StorageType.MYSQL) {
@@ -40,6 +40,7 @@ public final class RenameTableExecutor extends SQLExecutor<Boolean> {
         else {
             sql.append("ALTER TABLE ").append(this.table).append(" RENAME TO ").append(this.renameTo);
         }
-        return SQLQueries.executeStatement(connector, sql.toString());
+        SQLQueries.executeStatement(connector, sql.toString());
+        return null;
     }
 }

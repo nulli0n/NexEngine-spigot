@@ -1,7 +1,6 @@
 package su.nexmedia.engine.utils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
@@ -13,8 +12,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CollectionsUtil {
-
-    @Deprecated public static final boolean[] BOOLEANS = new boolean[]{true, false};
 
     @NotNull
     public static List<String> playerNames() {
@@ -59,20 +56,8 @@ public class CollectionsUtil {
     }
 
     @NotNull
-    @Deprecated
-    public static String getEnums(@NotNull Class<?> clazz) {
-        return String.join(ChatColor.GRAY + ", " + ChatColor.WHITE, getEnumsList(clazz));
-    }
-
-    @NotNull
     public static List<String> getEnumsList(@NotNull Class<?> clazz) {
         return new ArrayList<>(Stream.of(clazz.getEnumConstants()).map(Object::toString).toList());
-    }
-
-    @NotNull
-    @Deprecated
-    public static <T extends Enum<T>> T switchEnum(@NotNull Enum<T> en) {
-        return next(en);
     }
 
     @NotNull

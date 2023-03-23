@@ -4,7 +4,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.particle.SimpleParticle;
-import su.nexmedia.engine.utils.StringUtil;
 
 import java.util.List;
 import java.util.Set;
@@ -17,17 +16,16 @@ public class JOption<T> {
     public static final Reader<Integer>      READER_INT         = JYML::getInt;
     public static final Reader<Double>       READER_DOUBLE      = JYML::getDouble;
     public static final Reader<Long>         READER_LONG        = JYML::getLong;
-    public static final Reader<String>       READER_STRING      = (cfg, path, def) -> StringUtil.color(cfg.getString(path, def));
-    public static final Reader<Set<String>>  READER_SET_STRING  = (cfg, path, def) -> StringUtil.color(cfg.getStringSet(path));
-    public static final Reader<List<String>> READER_LIST_STRING = (cfg, path, def) -> StringUtil.color(cfg.getStringList(path));
+    public static final Reader<String>       READER_STRING      = JYML::getString;
+    public static final Reader<Set<String>>  READER_SET_STRING  = (cfg, path, def) -> cfg.getStringSet(path);
+    public static final Reader<List<String>> READER_LIST_STRING = (cfg, path, def) -> cfg.getStringList(path);
     public static final Reader<ItemStack>    READER_ITEM        = JYML::getItem;
 
     protected final String    path;
     protected final T         defaultValue;
     protected final String[]  description;
-    protected       T         value;
-    @Deprecated protected Writer     writer;
-    protected IWriter<T> writerNew;
+    protected T         value;
+    protected Writer<T> writer;
     protected Reader<T> reader;
 
     public JOption(@NotNull String path, @NotNull Reader<T> reader, @NotNull Supplier<T> defaultValue, @NotNull String... description) {
@@ -104,10 +102,7 @@ public class JOption<T> {
 
     public void write(@NotNull JYML cfg) {
         if (this.getWriter() != null) {
-            this.getWriter().write(cfg, this.getPath());
-        }
-        else if (this.getWriterNew() != null) {
-            this.getWriterNew().write(cfg, this.getPath(), this.get());
+            this.getWriter().write(cfg, this.getPath(), this.get());
         }
         else {
             cfg.set(this.getPath(), this.get());
@@ -163,26 +158,13 @@ public class JOption<T> {
     }
 
     @Nullable
-    @Deprecated
-    public Writer getWriter() {
+    public JOption.Writer<T> getWriter() {
         return writer;
     }
 
     @NotNull
-    @Deprecated
-    public JOption<T> setWriter(@Nullable Writer writer) {
+    public JOption<T> setWriter(@Nullable JOption.Writer<T> writer) {
         this.writer = writer;
-        return this;
-    }
-
-    @Nullable
-    public JOption.IWriter<T> getWriterNew() {
-        return writerNew;
-    }
-
-    @NotNull
-    public JOption<T> setWriter(@Nullable JOption.IWriter<T> writer) {
-        this.writerNew = writer;
         return this;
     }
 
@@ -191,13 +173,7 @@ public class JOption<T> {
         @NotNull T read(@NotNull JYML cfg, @NotNull String path, @NotNull T def);
     }
 
-    @Deprecated
-    public interface Writer {
-
-        void write(@NotNull JYML cfg, @NotNull String path);
-    }
-
-    public interface IWriter<T> {
+    public interface Writer<T> {
 
         void write(@NotNull JYML cfg, @NotNull String path, @NotNull T obj);
     }

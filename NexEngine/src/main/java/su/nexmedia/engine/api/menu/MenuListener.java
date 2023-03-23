@@ -16,6 +16,7 @@ import su.nexmedia.engine.api.manager.AbstractListener;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+@Deprecated
 public class MenuListener<P extends NexPlugin<P>> extends AbstractListener<P> {
 
     private static final Map<Player, Long> FAST_CLICK = new WeakHashMap<>();

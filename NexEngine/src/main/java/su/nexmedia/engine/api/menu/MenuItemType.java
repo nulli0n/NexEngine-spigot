@@ -3,7 +3,7 @@ package su.nexmedia.engine.api.menu;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.editor.EditorButtonType;
-import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.Colorizer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +47,7 @@ public enum MenuItemType implements EditorButtonType {
 
     @Override
     public void setName(@NotNull String name) {
-        this.name = StringUtil.color(name);
+        this.name = Colorizer.apply(name);
     }
 
     @Override
@@ -58,6 +58,6 @@ public enum MenuItemType implements EditorButtonType {
 
     @Override
     public void setLore(@NotNull List<String> lore) {
-        this.lore = StringUtil.color(new ArrayList<>(lore));
+        this.lore = Colorizer.apply(new ArrayList<>(lore));
     }
 }
