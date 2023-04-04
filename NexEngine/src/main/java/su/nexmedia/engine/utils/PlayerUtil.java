@@ -124,9 +124,12 @@ public class PlayerUtil {
 
         World world = player.getWorld();
         ItemStack item = new ItemStack(item2);
-        item.setAmount(amount);
+        item.setAmount(Math.min(item.getMaxStackSize(), amount));
         player.getInventory().addItem(item).values().forEach(left -> {
             world.dropItem(player.getLocation(), left);
         });
+
+        amount -= item.getAmount();
+        if (amount > 0) addItem(player, item2, amount);
     }
 }

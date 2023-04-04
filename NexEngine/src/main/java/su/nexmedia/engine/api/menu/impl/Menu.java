@@ -200,18 +200,22 @@ public abstract class Menu<P extends NexPlugin<P>> implements ICleanable {
             .max(Comparator.comparingInt(MenuItem::getPriority)).orElse(this.getItem(slot));
     }
 
-    public void addItem(@NotNull ItemStack item, int... slots) {
-        this.addItem(new MenuItem(item, slots));
+    @NotNull
+    public MenuItem addItem(@NotNull ItemStack item, int... slots) {
+        return this.addItem(new MenuItem(item, slots));
     }
 
-    public void addWeakItem(@NotNull Player player, @NotNull ItemStack item, int... slots) {
+    @NotNull
+    public MenuItem addWeakItem(@NotNull Player player, @NotNull ItemStack item, int... slots) {
         MenuItem menuItem = new MenuItem(item, slots);
         menuItem.setOptions(ItemOptions.personalWeak(player));
-        this.addItem(menuItem);
+        return this.addItem(menuItem);
     }
 
-    public void addItem(@NotNull MenuItem menuItem) {
+    @NotNull
+    public MenuItem addItem(@NotNull MenuItem menuItem) {
         this.getItems().add(menuItem);
+        return menuItem;
     }
 
     @NotNull

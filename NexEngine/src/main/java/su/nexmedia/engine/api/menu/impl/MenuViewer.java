@@ -6,7 +6,8 @@ import org.jetbrains.annotations.NotNull;
 public class MenuViewer {
 
     private final Player player;
-    private       int    page;
+
+    private int page;
     private int pages;
 
     public MenuViewer(@NotNull Player player) {
@@ -25,7 +26,11 @@ public class MenuViewer {
     }
 
     public void setPage(int page) {
-        this.page = Math.max(1, Math.min(page, this.getPages()));
+        this.page = Math.max(1, page);
+    }
+
+    public void finePage() {
+        this.page = Math.max(1, Math.min(this.getPage(), this.getPages()));
     }
 
     public int getPages() {

@@ -17,8 +17,8 @@ public class EditorLocale {
 
     public EditorLocale(@NotNull String key, @NotNull String name, @NotNull List<String> lore) {
         this.key = key;
-        this.name = name;
-        this.lore = lore;
+        this.name = Colorizer.apply(name);
+        this.lore = Colorizer.apply(lore);
     }
 
     @NotNull

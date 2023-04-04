@@ -48,6 +48,13 @@ public class ItemUtil {
         return (meta == null || meta.getLore() == null) ? new ArrayList<>() : meta.getLore();
     }
 
+    @NotNull
+    public static ItemStack createCustomHead(@NotNull String texture) {
+        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
+        setSkullTexture(item, texture);
+        return item;
+    }
+
     public static void setSkullTexture(@NotNull ItemStack item, @NotNull String value) {
         if (item.getType() != Material.PLAYER_HEAD) return;
         if (!(item.getItemMeta() instanceof SkullMeta meta)) return;

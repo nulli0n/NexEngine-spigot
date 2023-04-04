@@ -2,6 +2,7 @@ package su.nexmedia.engine.utils.random;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import su.nexmedia.engine.utils.Pair;
 
 import java.util.*;
 
@@ -55,12 +56,27 @@ public class Rnd {
     }
 
     @Nullable
+    @Deprecated
     public static <T> T get(@NotNull Map<@NotNull T, Double> map) {
         List<T> list = get(map, 1);
         return list.isEmpty() ? null : list.get(0);
     }
 
     @NotNull
+    public static <T> T getByWeight(@NotNull Map<T, Double> itemsMap) {
+        List<Pair<T, Double>> items = itemsMap.entrySet().stream().map(e -> Pair.of(e.getKey(), e.getValue())).toList();
+        double totalWeight = items.stream().mapToDouble(Pair::getSecond).sum();
+
+        int index = 0;
+        for (double chance = Rnd.nextDouble() * totalWeight; index < items.size() - 1; ++index) {
+            chance -= items.get(index).getSecond();
+            if (chance <= 0D) break;
+        }
+        return items.get(index).getFirst();
+    }
+
+    @NotNull
+    @Deprecated
     public static <T> List<T> get(@NotNull Map<@NotNull T, Double> map, int amount) {
         map.values().removeIf(chance -> chance <= 0D);
         if (map.isEmpty()) return Collections.emptyList();

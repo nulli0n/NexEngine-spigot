@@ -62,8 +62,10 @@ public class ItemOptions {
         return visibilityPolicy;
     }
 
-    public void setVisibilityPolicy(@Nullable Predicate<MenuViewer> visibilityPolicy) {
+    @NotNull
+    public ItemOptions setVisibilityPolicy(@Nullable Predicate<MenuViewer> visibilityPolicy) {
         this.visibilityPolicy = visibilityPolicy;
+        return this;
     }
 
     @Nullable
@@ -71,8 +73,10 @@ public class ItemOptions {
         return weakPolicy;
     }
 
-    public void setWeakPolicy(@Nullable Predicate<MenuViewer> weakPolicy) {
+    @NotNull
+    public ItemOptions setWeakPolicy(@Nullable Predicate<MenuViewer> weakPolicy) {
         this.weakPolicy = weakPolicy;
+        return this;
     }
 
     @Nullable
@@ -80,7 +84,9 @@ public class ItemOptions {
         return displayModifier;
     }
 
-    public void setDisplayModifier(@Nullable BiConsumer<MenuViewer, ItemStack> displayModifier) {
+    @NotNull
+    public ItemOptions setDisplayModifier(@Nullable BiConsumer<MenuViewer, ItemStack> displayModifier) {
         this.displayModifier = displayModifier;
+        return this;
     }
 }

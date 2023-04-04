@@ -31,9 +31,11 @@ public interface AutoPaged<I> {
         List<I> origin = this.getObjects(player);
 
         int limit = this.getObjectSlots().length;
-        int skip = (viewer.getPage() - 1) * limit;
         int pages = (int) Math.ceil((double) origin.size() / (double) limit);
         viewer.setPages(pages);
+        viewer.finePage();
+
+        int skip = (viewer.getPage() - 1) * limit;
 
         List<I> list = new ArrayList<>(origin.stream().skip(skip).limit(limit).sorted(this.getObjectSorter()).toList());
         int count = 0;
