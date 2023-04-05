@@ -2,6 +2,7 @@ package su.nexmedia.engine.utils.random;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.Pair;
 
 import java.util.*;
@@ -64,7 +65,7 @@ public class Rnd {
 
     @NotNull
     public static <T> T getByWeight(@NotNull Map<T, Double> itemsMap) {
-        List<Pair<T, Double>> items = itemsMap.entrySet().stream().map(e -> Pair.of(e.getKey(), e.getValue())).toList();
+        List<Pair<T, Double>> items = CollectionsUtil.sortAscent(itemsMap).entrySet().stream().map(e -> Pair.of(e.getKey(), e.getValue())).toList();
         double totalWeight = items.stream().mapToDouble(Pair::getSecond).sum();
 
         int index = 0;
