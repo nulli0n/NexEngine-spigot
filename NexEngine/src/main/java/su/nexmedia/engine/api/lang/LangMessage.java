@@ -128,8 +128,10 @@ public class LangMessage {
                     this.type = StringUtil.getEnum(split[0], OutputType.class).orElse(OutputType.CHAT);
                     if (this.type == OutputType.TITLES) {
                         this.titleTimes[0] = split.length >= 2 ? StringUtil.getInteger(split[1], -1) : -1;
-                        this.titleTimes[1] = split.length >= 3 ? StringUtil.getInteger(split[2], -1) : -1;
+                        this.titleTimes[1] = split.length >= 3 ? StringUtil.getInteger(split[2], -1, true) : -1;
                         this.titleTimes[2] = split.length >= 4 ? StringUtil.getInteger(split[3], -1) : -1;
+
+                        if (this.titleTimes[1] < 0) this.titleTimes[1] = Short.MAX_VALUE;
                     }
                 }
                 case PREFIX -> this.hasPrefix = Boolean.parseBoolean(optionValue);

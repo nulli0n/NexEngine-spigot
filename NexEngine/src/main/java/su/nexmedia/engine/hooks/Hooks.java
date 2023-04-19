@@ -1,16 +1,13 @@
 package su.nexmedia.engine.hooks;
 
-import net.citizensnpcs.api.CitizensAPI;
-import net.citizensnpcs.api.npc.NPC;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.hooks.external.MythicMobsHook;
 import su.nexmedia.engine.hooks.external.VaultHook;
-import su.nexmedia.engine.hooks.external.WorldGuardHook;
+import su.nexmedia.engine.utils.EntityUtil;
 import su.nexmedia.engine.utils.Placeholders;
 
 import java.util.Collections;
@@ -22,7 +19,7 @@ import java.util.stream.Collectors;
 public class Hooks {
 
     public static final String VAULT           = "Vault";
-    public static final String CITIZENS        = "Citizens";
+    @Deprecated public static final String CITIZENS        = "Citizens";
     public static final String PLACEHOLDER_API = "PlaceholderAPI";
     @Deprecated public static final String MYTHIC_MOBS     = "MythicMobs";
     @Deprecated public static final String WORLD_GUARD     = "WorldGuard";
@@ -79,10 +76,13 @@ public class Hooks {
         return hasVault() ? VaultHook.getSuffix(player) : "";
     }
 
+    @Deprecated
     public static boolean isCitizensNPC(@NotNull Entity entity) {
-        return hasPlugin(CITIZENS) && CitizensAPI.getNPCRegistry().isNPC(entity);
+        return EntityUtil.isNPC(entity);
+        //return hasPlugin(CITIZENS) && CitizensAPI.getNPCRegistry().isNPC(entity);
     }
 
+    @Deprecated
     public static boolean isMythicMob(@NotNull Entity entity) {
         return hasMythicMobs() && MythicMobsHook.isMythicMob(entity);
     }
@@ -100,6 +100,7 @@ public class Hooks {
         return hasPlugin(VAULT);
     }
 
+    @Deprecated
     public static boolean hasCitizens() {
         return hasPlugin(CITIZENS);
     }
@@ -116,28 +117,5 @@ public class Hooks {
 
     public static boolean hasFloodgate() {
         return hasPlugin(FLOODGATE);
-    }
-
-    @Deprecated
-    public static boolean canFights(@NotNull Entity attacker, @NotNull Entity victim) {
-        if (attacker.equals(victim)) return false;
-        if (victim.isInvulnerable() || !(victim instanceof LivingEntity)) return false;
-
-        if (isCitizensNPC(victim)) {
-            if (!hasPlugin("Sentinel")) {
-                return false;
-            }
-
-            NPC npc = CitizensAPI.getNPCRegistry().getNPC(victim);
-            /*if (!npc.hasTrait(SentinelTrait.class)) {
-                return false;
-            }*/
-        }
-
-        if (hasWorldGuard() && !WorldGuardHook.canFights(attacker, victim)) {
-            return false;
-        }
-
-        return true;
     }
 }

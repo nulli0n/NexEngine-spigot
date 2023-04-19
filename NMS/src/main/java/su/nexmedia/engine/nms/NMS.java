@@ -14,4 +14,6 @@ public interface NMS {
     @Nullable ItemStack fromBase64(@NotNull String data);
 
     @NotNull ItemStack damageItem(@NotNull ItemStack item, int amount, @Nullable Player player);
+
+    void updateMenuTitle(@NotNull Player player, @NotNull String title);
 }

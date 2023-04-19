@@ -6,9 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Firework;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -22,6 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EntityUtil {
+
+    public static boolean isNPC(@NotNull Entity entity) {
+        return entity.hasMetadata("NPC");
+    }
 
     public static double getAttribute(@NotNull LivingEntity entity, @NotNull Attribute attribute) {
         AttributeInstance instance = entity.getAttribute(attribute);

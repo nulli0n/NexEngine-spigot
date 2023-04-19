@@ -12,18 +12,27 @@ public class SQLCondition {
         this.type = type;
     }
 
+    @NotNull
     public static SQLCondition of(@NotNull SQLValue value, @NotNull Type type) {
         return new SQLCondition(value, type);
     }
 
+    @NotNull
     public static SQLCondition equal(@NotNull SQLValue value) {
         return of(value, Type.EQUAL);
     }
 
+    @NotNull
+    public static SQLCondition not(@NotNull SQLValue value) {
+        return of(value, Type.NOT_EQUAL);
+    }
+
+    @NotNull
     public static SQLCondition smaller(@NotNull SQLValue value) {
         return of(value, Type.SMALLER);
     }
 
+    @NotNull
     public static SQLCondition greater(@NotNull SQLValue value) {
         return of(value, Type.GREATER);
     }
@@ -41,7 +50,8 @@ public class SQLCondition {
     public enum Type {
         GREATER(">"),
         SMALLER("<"),
-        EQUAL("=");
+        EQUAL("="),
+        NOT_EQUAL("!=");
 
         private final String operator;
 

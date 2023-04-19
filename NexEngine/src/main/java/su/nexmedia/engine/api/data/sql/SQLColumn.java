@@ -27,12 +27,19 @@ public class SQLColumn {
     }
 
     @NotNull
+    public SQLColumn asLowerCase() {
+        return of("LOWER(" + this.getName() + ")", this.getType(), this.getLength());
+    }
+
+    @NotNull
     public String getName() {
         return name;
     }
 
     @NotNull
     public String getNameEscaped() {
+        if (this.getName().startsWith("LOWER(")) return this.getName();
+
         return this.getName().equalsIgnoreCase("*") ? this.getName() : "`" + this.getName() + "`";
     }
 

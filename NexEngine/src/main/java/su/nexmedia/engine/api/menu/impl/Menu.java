@@ -10,6 +10,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.manager.ICleanable;
 import su.nexmedia.engine.api.menu.MenuItemType;
@@ -108,6 +109,9 @@ public abstract class Menu<P extends NexPlugin<P>> implements ICleanable {
         if (isFresh) {
             player.openInventory(inventory);
             this.getViewersMap().put(player.getUniqueId(), viewer);
+        }
+        else {
+            NexEngine.get().getNMS().updateMenuTitle(viewer.getPlayer(), options.getTitle());
         }
 
         PLAYER_MENUS.put(player.getUniqueId(), this);

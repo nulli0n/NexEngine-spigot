@@ -80,16 +80,16 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         }
         if (Version.V1_17_R1.isCurrent()) {
             this.warn("==================================");
-            this.warn("WARNING: You're running an outdated server version (" + Version.CURRENT.name() + ")!");
+            this.warn("WARNING: You're running an outdated server version (" + Version.CURRENT.getLocalized() + ")!");
             this.warn("Support for this version will be dropped soon.");
             this.warn("Please, upgrade your server.");
             this.warn("==================================");
         }
         else if (Version.isAtLeast(Version.V1_19_R1) && Version.isBehind(Version.V1_19_R3)) {
             this.warn("==================================");
-            this.warn("WARNING: You're running an outdated server version (" + Version.CURRENT.name() + ")!");
+            this.warn("WARNING: You're running an outdated server version (" + Version.CURRENT.getLocalized() + ")!");
             this.warn("Support for this version will be dropped soon.");
-            this.warn("Please, upgrade your server to " + Version.V1_19_R3.name() + ".");
+            this.warn("Please, upgrade your server to " + Version.V1_19_R3.getLocalized() + ".");
             this.warn("==================================");
         }
         this.loadManagers();
