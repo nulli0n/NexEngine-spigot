@@ -46,12 +46,14 @@ public class Rnd {
         return list[get(list.length)];
     }
 
-    @Nullable
+    @NotNull
     public static <E> E get(@NotNull List<E> list) {
-        return list.isEmpty() ? null : list.get(get(list.size()));
+        if (list.isEmpty()) throw new NoSuchElementException("Empty list provided!");
+
+        return list.get(get(list.size()));
     }
 
-    @Nullable
+    @NotNull
     public static <E> E get(@NotNull Set<E> list) {
         return get(new ArrayList<>(list));
     }

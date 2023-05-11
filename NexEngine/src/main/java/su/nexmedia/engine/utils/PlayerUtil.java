@@ -4,7 +4,6 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -22,18 +21,20 @@ public class PlayerUtil {
         return Hooks.hasFloodgate() && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId());
     }
 
-    public static void dispatchCommand(@NotNull Player player, @NotNull String command) {
-        CommandSender sender = player;
-        if (command.startsWith("[CONSOLE]")) {
-            command = command.replace("[CONSOLE]", "");
-            sender = Bukkit.getConsoleSender();
+    public static void dispatchCommands(@NotNull Player player, @NotNull String... commands) {
+        for (String command : commands) {
+            dispatchCommand(player, command);
         }
+    }
+
+    public static void dispatchCommand(@NotNull Player player, @NotNull String command) {
+        command = command.replace("[CONSOLE]", "");
         command = command.trim().replace("%player%", player.getName());
         command = Placeholders.Player.replacer(player).apply(command);
         if (Hooks.hasPlaceholderAPI()) {
             command = PlaceholderAPI.setPlaceholders(player, command);
         }
-        Bukkit.dispatchCommand(sender, command);
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
     }
 
     public static boolean hasEmptyInventory(@NotNull Player player) {

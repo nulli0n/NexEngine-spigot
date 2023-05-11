@@ -111,7 +111,7 @@ public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends 
     @Nullable
     public final U getUser(@NotNull String name) {
         return this.load(this.tableUsers, this.getFunctionToUser(), this.getReadColumns(),
-            Collections.singletonList(SQLCondition.equal(COLUMN_USER_NAME.asLowerCase().toValue(name)))
+            Collections.singletonList(SQLCondition.equal(COLUMN_USER_NAME.asLowerCase().toValue(name.toLowerCase())))
         ).orElse(null);
     }
 

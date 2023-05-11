@@ -18,6 +18,7 @@ import java.util.List;
 
 public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCommand<P> implements CommandExecutor, TabExecutor {
 
+    private Command fallback;
     private AbstractCommand<P> defaultCommand;
 
     public GeneralCommand(@NotNull P plugin, @NotNull List<String> aliases) {
@@ -47,6 +48,14 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
     public void addDefaultCommand(@NotNull AbstractCommand<P> command) {
         this.addChildren(command);
         this.defaultCommand = command;
+    }
+
+    public Command getFallback() {
+        return fallback;
+    }
+
+    public void setFallback(@NotNull Command fallback) {
+        this.fallback = fallback;
     }
 
     @NotNull

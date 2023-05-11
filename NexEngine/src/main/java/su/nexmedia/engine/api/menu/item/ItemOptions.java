@@ -89,4 +89,15 @@ public class ItemOptions {
         this.displayModifier = displayModifier;
         return this;
     }
+
+    @NotNull
+    public ItemOptions addDisplayModifier(@NotNull BiConsumer<MenuViewer, ItemStack> displayModifier) {
+        if (this.displayModifier == null) {
+            this.displayModifier = displayModifier;
+        }
+        else {
+            this.displayModifier = this.displayModifier.andThen(displayModifier);
+        }
+        return this;
+    }
 }

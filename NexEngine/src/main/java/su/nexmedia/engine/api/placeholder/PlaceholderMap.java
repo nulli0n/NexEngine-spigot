@@ -27,6 +27,12 @@ public class PlaceholderMap {
     }
 
     @NotNull
+    public PlaceholderMap add(@NotNull PlaceholderMap other) {
+        this.getKeys().addAll(other.getKeys());
+        return this;
+    }
+
+    @NotNull
     public PlaceholderMap add(@NotNull String key, @NotNull String replacer) {
         this.add(key, () -> replacer);
         return this;

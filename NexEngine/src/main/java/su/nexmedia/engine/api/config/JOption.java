@@ -4,11 +4,13 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.particle.SimpleParticle;
+import su.nexmedia.engine.utils.TriFunction;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 public class JOption<T> {
 
@@ -89,6 +91,62 @@ public class JOption<T> {
     public static JOption<SimpleParticle> create(@NotNull String path, @NotNull SimpleParticle defaulValue, @NotNull String... description) {
         return new JOption<>(path, (cfg, path1, def) -> SimpleParticle.read(cfg, path1), defaulValue, description)
             .setWriter((cfg, path1, particle) -> SimpleParticle.write(particle, cfg, path1));
+    }
+
+    @NotNull
+    public static <V> JOption<Set<V>> forSet(@NotNull String path, @NotNull Function<String, V> valFun,
+                                             @NotNull Supplier<Set<V>> defaultValue, @NotNull String... description) {
+        return forSet(path, valFun, defaultValue.get(), description);
+    }
+
+    @NotNull
+    public static <V> JOption<Set<V>> forSet(@NotNull String path, @NotNull Function<String, V> valFun,
+                                             @NotNull Set<V> defaultValue, @NotNull String... description) {
+        return new JOption<>(path,
+            (cfg, path1, def) -> cfg.getStringSet(path1).stream().map(valFun).filter(Objects::nonNull).collect(Collectors.toCollection(HashSet::new)),
+            defaultValue,
+            description);
+    }
+
+    @NotNull
+    public static <K, V> JOption<Map<K, V>> forMap(@NotNull String path,
+                                                   @NotNull Function<String, K> keyFun,
+                                                   @NotNull TriFunction<JYML, String, String, V> valFun,
+                                                   @NotNull Supplier<Map<K, V>> defaultValue, @NotNull String... description) {
+        return forMap(path, keyFun, valFun, defaultValue.get(), description);
+    }
+
+    @NotNull
+    public static <K, V> JOption<Map<K, V>> forMap(@NotNull String path,
+                                                   @NotNull Function<String, K> keyFun,
+                                                   @NotNull TriFunction<JYML, String, String, V> valFun,
+                                                   @NotNull Map<K, V> defaultValue, @NotNull String... description) {
+        return new JOption<>(path,
+            (cfg, path1, def) -> {
+                Map<K, V> map = new HashMap<>();
+                for (String id : cfg.getSection(path1)) {
+                    K key = keyFun.apply(id);
+                    V val = valFun.apply(cfg, path1, id);
+                    if (key == null || val == null) continue;
+
+                    map.put(key, val);
+                }
+                return map;
+            },
+            defaultValue,
+            description);
+    }
+
+    @NotNull
+    public static <V> JOption<Map<String, V>> forMap(@NotNull String path, @NotNull TriFunction<JYML, String, String, V> function,
+                                                     @NotNull Supplier<Map<String, V>> defaultValue, @NotNull String... description) {
+        return forMap(path, String::toLowerCase, function, defaultValue.get(), description);
+    }
+
+    @NotNull
+    public static <V> JOption<Map<String, V>> forMap(@NotNull String path, @NotNull TriFunction<JYML, String, String, V> function,
+                                                     @NotNull Map<String, V> defaultValue, @NotNull String... description) {
+        return forMap(path, String::toLowerCase, function, defaultValue, description);
     }
 
     @NotNull

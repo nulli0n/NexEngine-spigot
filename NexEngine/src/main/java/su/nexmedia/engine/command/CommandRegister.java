@@ -33,7 +33,9 @@ public class CommandRegister extends Command implements PluginIdentifiableComman
         CommandRegister register = new CommandRegister(plugin, command, command, command.getAliases(), command.getDescription(), command.getUsage());
         register.setPermission(command.getPermission());
 
-        getCommandMap().register(plugin.getDescription().getName(), register);
+        if (getCommandMap().register(plugin.getDescription().getName(), register)) {
+            command.setFallback(register);
+        }
     }
 
     public static void syncCommands() {
