@@ -9,6 +9,8 @@ import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.editor.EditorHandler;
 import su.nexmedia.engine.api.editor.EditorLocale;
 import su.nexmedia.engine.api.editor.EditorLocales;
+import su.nexmedia.engine.api.editor.InputHandler;
+import su.nexmedia.engine.api.lang.LangKey;
 import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.api.menu.click.ClickHandler;
@@ -86,7 +88,22 @@ public class EditorMenu<P extends NexPlugin<P>, T> extends Menu<P> {
         return menuItem;
     }
 
+    @Deprecated
     protected void startEdit(@NotNull Player player, @NotNull LangMessage prompt, @NotNull EditorHandler handler) {
+        EditorManager.prompt(player, prompt.getLocalized());
+        EditorManager.startEdit(player, handler);
+        this.plugin.runTask(task -> player.closeInventory());
+    }
+
+    protected void handleInput(@NotNull MenuViewer viewer, @NotNull LangKey prompt, @NotNull InputHandler handler) {
+        this.handleInput(viewer.getPlayer(), prompt, handler);
+    }
+
+    protected void handleInput(@NotNull Player player, @NotNull LangKey prompt, @NotNull InputHandler handler) {
+        this.handleInput(player, this.plugin.getMessage(prompt), handler);
+    }
+
+    protected void handleInput(@NotNull Player player, @NotNull LangMessage prompt, @NotNull InputHandler handler) {
         EditorManager.prompt(player, prompt.getLocalized());
         EditorManager.startEdit(player, handler);
         this.plugin.runTask(task -> player.closeInventory());

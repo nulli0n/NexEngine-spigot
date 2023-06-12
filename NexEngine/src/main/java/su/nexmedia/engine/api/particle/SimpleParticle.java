@@ -30,6 +30,36 @@ public class SimpleParticle {
     }
 
     @NotNull
+    public static SimpleParticle itemCrack(@NotNull Material material) {
+        return new SimpleParticle(Particle.ITEM_CRACK, new ItemStack(material));
+    }
+
+    @NotNull
+    public static SimpleParticle blockCrack(@NotNull Material material) {
+        return new SimpleParticle(Particle.BLOCK_CRACK, material.createBlockData());
+    }
+
+    @NotNull
+    public static SimpleParticle blockDust(@NotNull Material material) {
+        return new SimpleParticle(Particle.BLOCK_DUST, material.createBlockData());
+    }
+
+    @NotNull
+    public static SimpleParticle blockMarker(@NotNull Material material) {
+        return new SimpleParticle(Particle.BLOCK_MARKER, material.createBlockData());
+    }
+
+    @NotNull
+    public static SimpleParticle fallingDust(@NotNull Material material) {
+        return new SimpleParticle(Particle.FALLING_DUST, material.createBlockData());
+    }
+
+    @NotNull
+    public static SimpleParticle redstone(@NotNull Color color, float size) {
+        return new SimpleParticle(Particle.REDSTONE, new Particle.DustOptions(color, size));
+    }
+
+    @NotNull
     public static SimpleParticle read(@NotNull JYML cfg, @NotNull String path) {
         String name = cfg.getString(path + ".Name", "");
         Particle particle = StringUtil.getEnum(name, Particle.class).orElse(Particle.REDSTONE);

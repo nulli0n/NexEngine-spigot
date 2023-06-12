@@ -15,17 +15,20 @@ import su.nexmedia.engine.api.lang.LangKey;
 import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.api.manager.ILogger;
 import su.nexmedia.engine.api.menu.AbstractMenu;
+import su.nexmedia.engine.api.menu.impl.Menu;
 import su.nexmedia.engine.command.CommandManager;
 import su.nexmedia.engine.command.PluginMainCommand;
 import su.nexmedia.engine.config.ConfigManager;
 import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.hooks.external.citizens.CitizensHook;
 import su.nexmedia.engine.lang.LangManager;
+import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.Reflex;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin implements ILogger {
@@ -78,18 +81,12 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
             engine.addChildren(this);
             this.info("Powered by: " + engine.getName());
         }
-        if (Version.V1_17_R1.isCurrent()) {
+
+        if (Version.CURRENT.isDeprecated()) {
             this.warn("==================================");
-            this.warn("WARNING: You're running an outdated server version (" + Version.CURRENT.getLocalized() + ")!");
+            this.warn("WARNING: You're running an outdated/deprecated server version (" + Version.CURRENT.getLocalized() + ")!");
             this.warn("Support for this version will be dropped soon.");
-            this.warn("Please, upgrade your server.");
-            this.warn("==================================");
-        }
-        else if (Version.isAtLeast(Version.V1_19_R1) && Version.isBehind(Version.V1_19_R3)) {
-            this.warn("==================================");
-            this.warn("WARNING: You're running an outdated server version (" + Version.CURRENT.getLocalized() + ")!");
-            this.warn("Support for this version will be dropped soon.");
-            this.warn("Please, upgrade your server to " + Version.V1_19_R3.getLocalized() + ".");
+            this.warn("Please, upgrade your server to at least " + CollectionsUtil.next(Version.CURRENT, Predicate.not(Version::isDeprecated)).getLocalized() + ".");
             this.warn("==================================");
         }
         this.loadManagers();
@@ -182,6 +179,11 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
     private void unregisterListeners() {
         for (Player player : this.getServer().getOnlinePlayers()) {
             AbstractMenu<?> menu = AbstractMenu.getMenu(player);
+            if (menu != null) {
+                player.closeInventory();
+            }
+
+            Menu<?> menu2 = Menu.getMenu(player);
             if (menu != null) {
                 player.closeInventory();
             }

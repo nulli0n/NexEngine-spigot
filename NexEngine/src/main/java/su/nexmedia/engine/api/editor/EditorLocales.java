@@ -54,6 +54,11 @@ public class EditorLocales {
         }
 
         @NotNull
+        public Builder textRaw(@NotNull String... text) {
+            return this.addLore("", text);
+        }
+
+        @NotNull
         public Builder currentHeader() {
             return this.addLore(YELLOW + "&l", "Current:");
         }

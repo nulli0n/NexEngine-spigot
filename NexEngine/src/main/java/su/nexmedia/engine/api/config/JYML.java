@@ -78,6 +78,11 @@ public class JYML extends YamlConfiguration {
     }
 
     @NotNull
+    public static List<JYML> loadAll(@NotNull String path) {
+        return loadAll(path, false);
+    }
+
+    @NotNull
     public static List<JYML> loadAll(@NotNull String path, boolean deep) {
         return FileUtil.getFiles(path, deep).stream().filter(file -> file.getName().endsWith(".yml")).map(JYML::new).toList();
     }

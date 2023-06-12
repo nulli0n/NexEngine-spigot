@@ -67,6 +67,18 @@ public abstract class Menu<P extends NexPlugin<P>> implements ICleanable {
         this.getViewers().forEach(viewer -> this.open(viewer.getPlayer(), viewer.getPage()));
     }
 
+    public void openNextTick(@NotNull MenuViewer viewer, int page) {
+        this.plugin.runTask(task -> this.open(viewer, page));
+    }
+
+    public void openNextTick(@NotNull Player player, int page) {
+        this.plugin.runTask(task -> this.open(player, page));
+    }
+
+    public boolean open(@NotNull MenuViewer viewer, int page) {
+        return this.open(viewer.getPlayer(), page);
+    }
+
     public boolean open(@NotNull Player player, int page) {
         if (!this.canOpen(player, page)) {
             this.plugin.runTask(task -> player.closeInventory());

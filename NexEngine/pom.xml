@@ -72,7 +72,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.19.4-R0.1-SNAPSHOT</version>
+            <version>1.20-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>
@@ -87,7 +87,7 @@
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
-            <version>3.32.3</version>
+            <version>3.41.2.2</version>
         </dependency>
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
@@ -154,6 +154,11 @@
         <dependency>
             <groupId>su.nexmedia</groupId>
             <artifactId>NexEngineCompat_V1_19_R3</artifactId>
+            <version>2.2.10</version>
+        </dependency>
+        <dependency>
+            <groupId>su.nexmedia</groupId>
+            <artifactId>NexEngineCompat_V1_20_R1</artifactId>
             <version>2.2.10</version>
         </dependency>
     </dependencies>

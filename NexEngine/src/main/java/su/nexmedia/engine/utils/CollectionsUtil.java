@@ -88,18 +88,23 @@ public class CollectionsUtil {
     @NotNull
     private static <T extends Enum<T>> T shifted(@NotNull Enum<T> numeration, int shift, @Nullable Predicate<T> predicate) {
         T[] values = numeration.getDeclaringClass().getEnumConstants();
-        return shifted(values, numeration.ordinal(), shift, predicate);
+        return shifted(values, numeration/*.ordinal()*/, shift, predicate);
     }
 
     @NotNull
-    private static <T extends Enum<T>> T shifted(T[] values, int currentIndex, int shift, @Nullable Predicate<T> predicate) {
+    private static <T extends Enum<T>> T shifted(T[] values, @NotNull Enum<T> origin, int shift, @Nullable Predicate<T> predicate) {
         if (predicate != null) {
-            List<T> filtered = Stream.of(values).filter(predicate).toList();
-            if (filtered.isEmpty()) return values[currentIndex];
+            T source = origin.getDeclaringClass().cast(origin);
+            List<T> filtered = new ArrayList<>(Arrays.asList(values));
+            filtered.removeIf(num -> !predicate.test(num) && num != source);
+
+            int currentIndex = filtered.indexOf(source);
+            //List<T> filtered = Stream.of(values).filter(predicate).toList();
+            if (currentIndex < 0 | filtered.isEmpty()) return source;//values[currentIndex];
 
             return shifted(filtered, currentIndex, shift);
         }
-        return shifted(values, currentIndex, shift);
+        return shifted(values, origin.ordinal(), shift);
     }
 
     @NotNull
