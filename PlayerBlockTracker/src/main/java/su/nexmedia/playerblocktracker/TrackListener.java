@@ -75,6 +75,7 @@ public class TrackListener<P extends NexPlugin<P>> extends AbstractListener<P> {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onFade(BlockFadeEvent event) {
+        if (event.getBlock().getBlockData() instanceof Lightable) return;
         PlayerBlockTracker.unTrack(event.getBlock());
     }
 
