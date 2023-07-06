@@ -5,11 +5,9 @@ import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.config.JOption;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.manager.AbstractManager;
-import su.nexmedia.engine.api.module.AbstractModule;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.Placeholders;
 import su.nexmedia.engine.utils.ResourceExtractor;
-import su.nexmedia.engine.utils.StringUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,36 +57,7 @@ public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     @NotNull
     public JYML getConfig() {
-        /*if (this.config == null) {
-            this.config = JYML.loadOrExtract(this.plugin, "config.yml");
-        }*/
         return this.config;
-    }
-
-    @Deprecated
-    public final boolean isModuleEnabled(@NotNull AbstractModule<?> module) {
-        return this.isModuleEnabled(module.getId());
-    }
-
-    @Deprecated
-    public final boolean isModuleEnabled(@NotNull String module) {
-        this.getConfig().addMissing("Modules." + module + ".Enabled", true);
-        this.getConfig().saveChanges();
-        return this.getConfig().getBoolean("Modules." + module + ".Enabled");
-    }
-
-    @Deprecated
-    public final void disableModule(@NotNull AbstractModule<?> module) {
-        this.getConfig().set("Modules." + module.getId() + ".Enabled", false);
-        this.getConfig().saveChanges();
-    }
-
-    @NotNull
-    @Deprecated
-    public final String getModuleName(@NotNull AbstractModule<?> module) {
-        this.getConfig().addMissing("Modules." + module.getId() + ".Name", StringUtil.capitalizeFully(module.getId().replace("_", " ")));
-        this.getConfig().saveChanges();
-        return this.getConfig().getString("Modules." + module.getId() + ".Name", module.getId());
     }
 
     public void extractResources(@NotNull String folder) {

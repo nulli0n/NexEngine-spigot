@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.manager.AbstractListener;
 import su.nexmedia.engine.api.manager.AbstractManager;
-import su.nexmedia.engine.hooks.Hooks;
+import su.nexmedia.engine.utils.EntityUtil;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -51,7 +51,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
      */
     @NotNull
     public final U getUserData(@NotNull Player player) {
-        if (Hooks.isCitizensNPC(player)) {
+        if (EntityUtil.isNPC(player)) {
             throw new IllegalStateException("Could not load user data from an NPC!");
         }
 
