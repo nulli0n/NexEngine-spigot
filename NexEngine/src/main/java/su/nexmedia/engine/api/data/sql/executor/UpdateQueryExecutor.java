@@ -61,7 +61,7 @@ public final class UpdateQueryExecutor extends SQLExecutor<Void> {
             .collect(Collectors.joining(","));
         String wheres = this.wheres.stream().map(where -> where.getValue().getColumn().getNameEscaped() + " " + where.getType().getOperator() + " ?")
             .collect(Collectors.joining(" AND "));
-        String sql = "UPDATE " + this.table + " SET " + values + (wheres.isEmpty() ? "" : " WHERE " + wheres);
+        String sql = "UPDATE " + this.getTable() + " SET " + values + (wheres.isEmpty() ? "" : " WHERE " + wheres);
 
         List<String> values2 = this.values.stream().map(SQLValue::getValue).toList();
         List<String> whers2 = this.wheres.stream().map(SQLCondition::getValue).map(SQLValue::getValue).toList();

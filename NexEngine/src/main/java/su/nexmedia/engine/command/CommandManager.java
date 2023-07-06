@@ -76,9 +76,18 @@ public class CommandManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         }
     }
 
-    public void unregisterCommand(@NotNull GeneralCommand<P> command) {
-        if (this.commands.remove(command)) {
-            CommandRegister.unregister(command.getAliases()[0]);
+    public boolean unregisterCommand(@NotNull String alias) {
+        GeneralCommand<P> command = this.getCommand(alias);
+        if (command != null) {
+            return this.unregisterCommand(command);
         }
+        return false;
+    }
+
+    public boolean unregisterCommand(@NotNull GeneralCommand<P> command) {
+        if (this.commands.remove(command)) {
+            return CommandRegister.unregister(command.getAliases()[0]);
+        }
+        return false;
     }
 }

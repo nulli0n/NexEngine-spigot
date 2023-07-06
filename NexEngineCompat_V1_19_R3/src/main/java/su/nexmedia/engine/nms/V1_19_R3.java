@@ -56,8 +56,9 @@ public class V1_19_R3 implements NMS {
         CompoundTag nbtTagCompoundRoot;
         try {
             nbtTagCompoundRoot = NbtIo.read(new DataInputStream(inputStream));
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+        catch (IOException e) {
+            //e.printStackTrace();
             return null;
         }
 

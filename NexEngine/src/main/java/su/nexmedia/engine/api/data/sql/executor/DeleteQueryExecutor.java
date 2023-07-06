@@ -46,7 +46,7 @@ public final class DeleteQueryExecutor extends SQLExecutor<Void> {
         String whereCols = this.wheres.stream()
             .map(where -> where.getValue().getColumn().getNameEscaped() + " " + where.getType().getOperator() + " ?")
             .collect(Collectors.joining(" AND "));
-        String sql = "DELETE FROM " + this.table + (whereCols.isEmpty() ? "" : " WHERE " + whereCols);
+        String sql = "DELETE FROM " + this.getTable() + (whereCols.isEmpty() ? "" : " WHERE " + whereCols);
 
         List<String> whereVals = this.wheres.stream().map(SQLCondition::getValue).map(SQLValue::getValue).toList();
 

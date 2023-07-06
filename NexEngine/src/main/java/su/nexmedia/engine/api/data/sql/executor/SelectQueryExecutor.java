@@ -78,7 +78,7 @@ public final class SelectQueryExecutor<T> extends SQLExecutor<List<T>> {
         String columns = this.columns.stream().map(SQLColumn::getNameEscaped).collect(Collectors.joining(","));
         String wheres = this.wheres.stream().map(where -> where.getValue().getColumn().getNameEscaped() + " " + where.getType().getOperator() + " ?")
             .collect(Collectors.joining(" AND "));
-        String sql = "SELECT " + columns + " FROM " + this.table + (wheres.isEmpty() ? "" : " WHERE " + wheres);
+        String sql = "SELECT " + columns + " FROM " + this.getTable() + (wheres.isEmpty() ? "" : " WHERE " + wheres);
 
         //List<String> values2 = this.columns.stream().map(SQLColumn::getName).toList();
         List<String> whers2 = this.wheres.stream().map(SQLCondition::getValue).map(SQLValue::getValue).toList();

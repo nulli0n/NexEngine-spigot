@@ -20,5 +20,10 @@ public abstract class SQLExecutor<T> {
     }
 
     @NotNull
+    public String getTable() {
+        return "`" + this.table + "`";
+    }
+
+    @NotNull
     public abstract T execute(@NotNull AbstractDataConnector connector);
 }

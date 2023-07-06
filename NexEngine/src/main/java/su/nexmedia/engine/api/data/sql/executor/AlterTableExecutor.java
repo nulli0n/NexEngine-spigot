@@ -79,9 +79,9 @@ public final class AlterTableExecutor extends SQLExecutor<Void> {
 
         if (this.type == Type.ADD_COLUMN) {
             this.columns.forEach(value -> {
-                if (SQLQueries.hasColumn(connector, this.table, value.getColumn())) return;
+                if (SQLQueries.hasColumn(connector, this.getTable(), value.getColumn())) return;
 
-                String sql = "ALTER TABLE " + this.table + " ADD "
+                String sql = "ALTER TABLE " + this.getTable() + " ADD "
                     + value.getColumn().getName() + " " + value.getColumn().formatType(this.storageType);
 
                 if (connector instanceof ConnectorSQLite || value.getColumn().getType() != ColumnType.STRING) {
@@ -93,17 +93,17 @@ public final class AlterTableExecutor extends SQLExecutor<Void> {
         }
         else if (this.type == Type.RENAME_COLUMN) {
             this.columns.forEach(value -> {
-                if (!SQLQueries.hasColumn(connector, this.table, value.getColumn())) return;
+                if (!SQLQueries.hasColumn(connector, this.getTable(), value.getColumn())) return;
 
-                String sql = "ALTER TABLE " + this.table + " RENAME COLUMN " + value.getColumn().getName() + " TO " + value.getValue();
+                String sql = "ALTER TABLE " + this.getTable() + " RENAME COLUMN " + value.getColumn().getName() + " TO " + value.getValue();
                 SQLQueries.executeStatement(connector, sql);
             });
         }
         else if (this.type == Type.DROP_COLUMN) {
             this.columns.forEach(value -> {
-                if (!SQLQueries.hasColumn(connector, this.table, value.getColumn())) return;
+                if (!SQLQueries.hasColumn(connector, this.getTable(), value.getColumn())) return;
 
-                String sql = "ALTER TABLE " + this.table + " DROP COLUMN " + value.getColumn().getName();
+                String sql = "ALTER TABLE " + this.getTable() + " DROP COLUMN " + value.getColumn().getName();
                 SQLQueries.executeStatement(connector, sql);
             });
         }

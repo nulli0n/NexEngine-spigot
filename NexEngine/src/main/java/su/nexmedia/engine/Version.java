@@ -8,8 +8,8 @@ public enum Version {
     // KEEP VERSIONS LIST FROM LOWER TO HIGHER
     V1_17_R1("1.17.1", true),
     V1_18_R2("1.18.2"),
-    V1_19_R1("1.19.2", true),
-    V1_19_R2("1.19.3", true),
+    @Deprecated V1_19_R1("1.19.2", true),
+    @Deprecated V1_19_R2("1.19.3", true),
     V1_19_R3("1.19.4"),
     V1_20_R1("1.20")
     ;

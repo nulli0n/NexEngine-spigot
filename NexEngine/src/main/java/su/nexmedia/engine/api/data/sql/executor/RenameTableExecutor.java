@@ -31,14 +31,14 @@ public final class RenameTableExecutor extends SQLExecutor<Void> {
     @NotNull
     public Void execute(@NotNull AbstractDataConnector connector) {
         if (this.renameTo == null || this.renameTo.isEmpty()) return null;
-        if (!SQLQueries.hasTable(connector, this.table)) return null;
+        if (!SQLQueries.hasTable(connector, this.getTable())) return null;
 
         StringBuilder sql = new StringBuilder();
         if (this.storageType == StorageType.MYSQL) {
-            sql.append("RENAME TABLE ").append(this.table).append(" TO ").append(this.renameTo).append(";");
+            sql.append("RENAME TABLE ").append(this.getTable()).append(" TO ").append(this.renameTo).append(";");
         }
         else {
-            sql.append("ALTER TABLE ").append(this.table).append(" RENAME TO ").append(this.renameTo);
+            sql.append("ALTER TABLE ").append(this.getTable()).append(" RENAME TO ").append(this.renameTo);
         }
         SQLQueries.executeStatement(connector, sql.toString());
         return null;

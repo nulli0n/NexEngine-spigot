@@ -45,7 +45,7 @@ public final class InsertQueryExecutor extends SQLExecutor<Void> {
 
         String columns = this.values.stream().map(SQLValue::getColumn).map(SQLColumn::getNameEscaped).collect(Collectors.joining(","));
         String values = this.values.stream().map(value -> "?").collect(Collectors.joining(","));
-        String sql = INSERT_INTO + " " + this.table + "(" + columns + ") " + VALUES + "(" + values + ")";
+        String sql = INSERT_INTO + " " + this.getTable() + "(" + columns + ") " + VALUES + "(" + values + ")";
         List<String> values2 = this.values.stream().map(SQLValue::getValue).toList();
 
         SQLQueries.executeStatement(connector, sql, values2);
