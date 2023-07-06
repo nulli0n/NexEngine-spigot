@@ -1,6 +1,5 @@
 package su.nexmedia.engine.utils;
 
-import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -12,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.utils.json.text.ClickText;
 import su.nexmedia.engine.utils.json.text.ClickWord;
-import su.nexmedia.engine.utils.message.NexParser;
 import su.nexmedia.engine.utils.regex.RegexUtil;
 
 import java.util.HashMap;
@@ -20,6 +18,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Deprecated
 public class MessageUtil {
 
     @Deprecated private static final Pattern  PATTERN_LEGACY_JSON_FULL = Pattern.compile("((\\{json:)+(.*?)(\\})+(.*?))(\\{end-json\\})");
@@ -34,21 +33,17 @@ public class MessageUtil {
         }
     }
 
+    @Deprecated
     public static void sendCustom(@NotNull CommandSender sender, @NotNull String message) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(NexParser.toPlainText(message));
-            return;
-        }
-        NexParser.toMessage(message).send(sender);
+        PlayerUtil.sendRichMessage(sender, message);
     }
 
     public static void sendActionBar(@NotNull Player player, @NotNull String msg) {
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, NexParser.toMessage(msg).build());
+        PlayerUtil.sendActionBar(player, msg);
     }
 
     public static void sound(@NotNull Player player, @Nullable Sound sound) {
-        if (sound == null) return;
-        player.playSound(player.getLocation(), sound, 0.9f, 0.9f);
+        PlayerUtil.sound(player, sound);
     }
 
     public static void sound(@NotNull Location location, @Nullable Sound sound) {

@@ -14,13 +14,10 @@ import su.nexmedia.engine.api.data.UserDataHolder;
 import su.nexmedia.engine.api.lang.LangKey;
 import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.api.manager.ILogger;
-import su.nexmedia.engine.api.menu.AbstractMenu;
 import su.nexmedia.engine.api.menu.impl.Menu;
 import su.nexmedia.engine.command.CommandManager;
 import su.nexmedia.engine.command.PluginMainCommand;
 import su.nexmedia.engine.config.ConfigManager;
-import su.nexmedia.engine.hooks.Hooks;
-import su.nexmedia.engine.hooks.external.citizens.CitizensHook;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.Reflex;
@@ -82,11 +79,11 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
             this.info("Powered by: " + engine.getName());
         }
 
-        if (Version.CURRENT.isDeprecated()) {
+        if (Version.getCurrent().isDeprecated()) {
             this.warn("==================================");
-            this.warn("WARNING: You're running an outdated/deprecated server version (" + Version.CURRENT.getLocalized() + ")!");
+            this.warn("WARNING: You're running an outdated/deprecated server version (" + Version.getCurrent().getLocalized() + ")!");
             this.warn("Support for this version will be dropped soon.");
-            this.warn("Please, upgrade your server to at least " + CollectionsUtil.next(Version.CURRENT, Predicate.not(Version::isDeprecated)).getLocalized() + ".");
+            this.warn("Please, upgrade your server to at least " + CollectionsUtil.next(Version.getCurrent(), Predicate.not(Version::isDeprecated)).getLocalized() + ".");
             this.warn("==================================");
         }
         this.loadManagers();
@@ -178,12 +175,7 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
 
     private void unregisterListeners() {
         for (Player player : this.getServer().getOnlinePlayers()) {
-            AbstractMenu<?> menu = AbstractMenu.getMenu(player);
-            if (menu != null) {
-                player.closeInventory();
-            }
-
-            Menu<?> menu2 = Menu.getMenu(player);
+            Menu<?> menu = Menu.getMenu(player);
             if (menu != null) {
                 player.closeInventory();
             }
@@ -237,12 +229,6 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         this.disable();
         if (this.commandManager != null) {
             this.commandManager.shutdown();
-        }
-
-        // Unregister all plugin traits and NPC listeners.
-        if (Hooks.hasCitizens()) {
-            CitizensHook.unregisterTraits(this);
-            CitizensHook.unregisterListeners(this);
         }
 
         // Unregister ALL plugin listeners.
@@ -306,23 +292,8 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         return this.getClassLoader();
     }
 
-    @Deprecated
-    public final void runTask(@NotNull Consumer<BukkitTask> consume, boolean async) {
-        if (async) {
-            this.getServer().getScheduler().runTaskAsynchronously(this, consume);
-        }
-        else {
-            this.getServer().getScheduler().runTask(this, consume);
-        }
-    }
-
     public void runTask(@NotNull Consumer<BukkitTask> consumer) {
         this.getScheduler().runTask(this, consumer);
-    }
-
-    @Deprecated
-    public void runTaskAsynchronously(@NotNull Consumer<BukkitTask> consumer) {
-        this.runTaskAsync(consumer);
     }
 
     public void runTaskAsync(@NotNull Consumer<BukkitTask> consumer) {

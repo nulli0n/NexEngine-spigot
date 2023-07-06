@@ -131,7 +131,7 @@ public abstract class Menu<P extends NexPlugin<P>> implements ICleanable {
     }
 
     public boolean canOpen(@NotNull Player player, int page) {
-        return true;
+        return !player.isSleeping();
     }
 
     public void onPrepare(@NotNull MenuViewer viewer, @NotNull MenuOptions options) {

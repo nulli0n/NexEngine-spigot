@@ -46,9 +46,9 @@ public class CommandManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     @Override
     public void onShutdown() {
-        for (GeneralCommand<P> cmd : new HashSet<>(this.commands)) {
-            this.unregisterCommand(cmd);
-            cmd.getChildrens().clear();
+        for (GeneralCommand<P> command : new HashSet<>(this.commands)) {
+            this.unregisterCommand(command);
+            command.getChildrens().clear();
         }
         this.commands.clear();
     }

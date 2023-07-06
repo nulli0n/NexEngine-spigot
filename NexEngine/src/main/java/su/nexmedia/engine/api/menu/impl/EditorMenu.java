@@ -6,7 +6,6 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
-import su.nexmedia.engine.api.editor.EditorHandler;
 import su.nexmedia.engine.api.editor.EditorLocale;
 import su.nexmedia.engine.api.editor.EditorLocales;
 import su.nexmedia.engine.api.editor.InputHandler;
@@ -86,13 +85,6 @@ public class EditorMenu<P extends NexPlugin<P>, T> extends Menu<P> {
         MenuItem menuItem = new MenuItem(item, 100, slots);
         this.addItem(menuItem);
         return menuItem;
-    }
-
-    @Deprecated
-    protected void startEdit(@NotNull Player player, @NotNull LangMessage prompt, @NotNull EditorHandler handler) {
-        EditorManager.prompt(player, prompt.getLocalized());
-        EditorManager.startEdit(player, handler);
-        this.plugin.runTask(task -> player.closeInventory());
     }
 
     protected void handleInput(@NotNull MenuViewer viewer, @NotNull LangKey prompt, @NotNull InputHandler handler) {

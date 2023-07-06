@@ -3,15 +3,12 @@ package su.nexmedia.engine;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.GeneralCommand;
 import su.nexmedia.engine.api.editor.EditorLocales;
-import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.api.menu.impl.MenuListener;
 import su.nexmedia.engine.editor.EditorManager;
-import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.hooks.external.VaultHook;
-import su.nexmedia.engine.hooks.external.citizens.CitizensHook;
 import su.nexmedia.engine.lang.EngineLang;
 import su.nexmedia.engine.nms.*;
-import su.nexmedia.engine.utils.CollectionsUtil;
+import su.nexmedia.engine.utils.EngineUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -43,28 +40,22 @@ public class NexEngine extends NexPlugin<NexEngine> {
 
     final boolean loadCore() {
         if (!this.setupNMS()) {
-            this.error("Your server version is unsupported! Please, upgrade to the one of followings: " + CollectionsUtil.getEnumsList(Version.class));
+            this.error("Your server version is unsupported!");
             return false;
         }
+        this.info("Loaded NMS version: " + Version.getCurrent().name());
         return true;
     }
 
     private boolean setupNMS() {
-        try {
-            this.nms = switch (Version.CURRENT) {
-                case V1_17_R1 -> new V1_17_R1();
-                case V1_18_R2 -> new V1_18_R2();
-                case V1_19_R1 -> new V1_19_R1();
-                case V1_19_R2 -> new V1_19_R2();
-                case V1_19_R3 -> new V1_19_R3();
-                case V1_20_R1 -> new V1_20_R1();
-            };
-            this.info("Loaded NMS version: " + Version.CURRENT.name());
-            return true;
-        }
-        catch (Exception e) {
-            return false;
-        }
+        this.nms = switch (Version.getCurrent()) {
+            case V1_19_R1, V1_19_R2, UNKNOWN -> null;
+            case V1_17_R1 -> new V1_17_R1();
+            case V1_18_R2 -> new V1_18_R2();
+            case V1_19_R3 -> new V1_19_R3();
+            case V1_20_R1 -> new V1_20_R1();
+        };
+        return this.nms != null;
     }
 
     @Override
@@ -87,13 +78,12 @@ public class NexEngine extends NexPlugin<NexEngine> {
             this.menuListener = null;
         }
 
-        if (Hooks.hasCitizens()) CitizensHook.shutdown();
-        if (Hooks.hasVault()) VaultHook.shutdown();
+        if (EngineUtils.hasVault()) VaultHook.shutdown();
     }
 
     @Override
     public void registerHooks() {
-        if (Hooks.hasVault()) {
+        if (EngineUtils.hasVault()) {
             VaultHook.setup();
         }
     }
@@ -117,7 +107,6 @@ public class NexEngine extends NexPlugin<NexEngine> {
     public void loadLang() {
         this.getLangManager().loadMissing(EngineLang.class);
         this.getLangManager().loadEditor(EditorLocales.class);
-        this.getLangManager().setupEditorEnum(MenuItemType.class);
         this.getLang().saveChanges();
     }
 

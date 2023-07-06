@@ -7,30 +7,26 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.lang.LangMessage;
-import su.nexmedia.engine.api.manager.IPlaceholder;
+import su.nexmedia.engine.api.placeholder.Placeholder;
+import su.nexmedia.engine.api.placeholder.PlaceholderMap;
 import su.nexmedia.engine.lang.EngineLang;
-import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.regex.RegexUtil;
 
 import java.util.*;
-import java.util.function.UnaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceholder {
+public abstract class AbstractCommand<P extends NexPlugin<P>> implements Placeholder {
 
     public static final String PLACEHOLDER_USAGE       = "%command_usage%";
     public static final String PLACEHOLDER_DESCRIPTION = "%command_description%";
     public static final String PLACEHOLDER_LABEL       = "%command_label%";
 
-    @Deprecated private static final String FLAG_PATTERN = "(.*?)(?:-|$)";
-
-    @Deprecated private final Map<String, Pattern> flags;
-
     protected final P                               plugin;
     protected final Map<String, AbstractCommand<P>> childrens;
     protected final Set<CommandFlag<?>>             commandFlags;
+    protected final PlaceholderMap placeholderMap;
 
     protected AbstractCommand<P> parent;
     protected String[]           aliases;
@@ -65,26 +61,51 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
         this.permission = permission;
         this.childrens = new TreeMap<>();
         this.commandFlags = new HashSet<>();
-        this.flags = new HashMap<>();
+        this.placeholderMap = new PlaceholderMap()
+            .add(PLACEHOLDER_DESCRIPTION, this::getDescription)
+            .add(PLACEHOLDER_USAGE, this::getUsage)
+            .add(PLACEHOLDER_LABEL, this::getLabelFull);
+
     }
 
     @Override
     @NotNull
-    public UnaryOperator<String> replacePlaceholders() {
-        return str -> str
-            .replace(PLACEHOLDER_DESCRIPTION, this.getDescription())
-            .replace(PLACEHOLDER_USAGE, this.getUsage())
-            .replace(PLACEHOLDER_LABEL, this.getLabelFull())
-            ;
+    public PlaceholderMap getPlaceholders() {
+        return this.placeholderMap;
     }
 
-    @Nullable
-    public AbstractCommand<P> getParent() {
-        return parent;
+    protected abstract void onExecute(@NotNull CommandSender sender, @NotNull CommandResult result);
+
+    @NotNull
+    public List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
+        return this.getFlags().stream().map(CommandFlag::getNamePrefixed).toList();
     }
 
-    public void setParent(@Nullable AbstractCommand<P> parent) {
-        this.parent = parent;
+    public final void execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
+        if (this.isPlayerOnly() && !(sender instanceof Player)) {
+            this.errorSender(sender);
+            return;
+        }
+        if (!this.hasPermission(sender)) {
+            this.errorPermission(sender);
+            return;
+        }
+
+        CommandResult result = new CommandResult(label, args, new HashMap<>());
+        String argLine = String.join(" ", args);
+        for (CommandFlag<?> flag : this.getFlags()) {
+            String name = flag.getName();
+            Pattern pattern = flag.getPattern();
+
+            Matcher matcher = RegexUtil.getMatcher(pattern, argLine);
+            if (RegexUtil.matcherFind(matcher)) {
+                result.getFlags().put(flag, matcher.group(2).trim());
+                argLine = argLine.replace(matcher.group(0), "");
+            }
+        }
+        result.setArgs(argLine.isEmpty() ? new String[0] : argLine.trim().split(" "));
+
+        this.onExecute(sender, result);
     }
 
     public final void addChildren(@NotNull AbstractCommand<P> children) {
@@ -96,13 +117,47 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
         children.setParent(this);
     }
 
+    public final void removeChildren(@NotNull String alias) {
+        this.childrens.keySet().removeIf(key -> key.equalsIgnoreCase(alias));
+    }
+
+    public final void addFlag(@NotNull CommandFlag<?>... flags) {
+        for (CommandFlag<?> flag : flags) this.addFlag(flag);
+    }
+
+    public final void addFlag(@NotNull CommandFlag<?> flag) {
+        this.getFlags().add(flag);
+    }
+
+    public final boolean hasPermission(@NotNull CommandSender sender) {
+        return this.permission == null || sender.hasPermission(this.permission);
+    }
+
+    @NotNull
+    public String getLabelFull() {
+        StringBuilder labels = new StringBuilder();
+        AbstractCommand<P> parent = this.getParent();
+        while (parent != null) {
+            //labels.append(" ");
+            labels.insert(0, parent.getAliases()[0] + " ");
+            parent = parent.getParent();
+        }
+        labels.append(this.getAliases()[0]);
+        return labels.toString();
+    }
+
+    @Nullable
+    public AbstractCommand<P> getParent() {
+        return parent;
+    }
+
+    public void setParent(@Nullable AbstractCommand<P> parent) {
+        this.parent = parent;
+    }
+
     @Nullable
     public final AbstractCommand<P> getChildren(@NotNull String alias) {
         return this.childrens.get(alias);
-    }
-
-    public final void removeChildren(@NotNull String alias) {
-        this.childrens.keySet().removeIf(key -> key.equalsIgnoreCase(alias));
     }
 
     @NotNull
@@ -130,35 +185,13 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
 
     @NotNull
     @Deprecated
-    public Set<String> getFlags() {
-        return new HashSet<>(this.flags.keySet());
+    public Set<CommandFlag<?>> getCommandFlags() {
+        return this.getFlags();
     }
 
     @NotNull
-    public Set<CommandFlag<?>> getCommandFlags() {
-        return commandFlags;
-    }
-
-    public final void addFlag(@NotNull CommandFlag<?>... flags) {
-        for (CommandFlag<?> flag : flags) this.addFlag(flag);
-    }
-
-    public final void addFlag(@NotNull CommandFlag<?> flag) {
-        this.getCommandFlags().add(flag);
-    }
-
-    @Deprecated
-    public final void registerFlag(@NotNull String... flags) {
-        for (String flag : flags) this.registerFlag(flag);
-    }
-
-    @Deprecated
-    public final void registerFlag(@NotNull String flag) {
-        this.flags.put(flag, Pattern.compile("-" + flag + FLAG_PATTERN));//NexParser.OPTION_PATTERN));
-    }
-
-    public final void unregisterFlag(@NotNull String flag) {
-        this.flags.remove(flag);
+    public Set<CommandFlag<?>> getFlags() {
+        return this.commandFlags;
     }
 
     @NotNull
@@ -195,83 +228,6 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
         this.playerOnly = playerOnly;
     }
 
-    public final boolean hasPermission(@NotNull CommandSender sender) {
-        return this.permission == null || sender.hasPermission(this.permission);
-    }
-
-    @NotNull
-    public List<String> getTab(@NotNull Player player, int arg, @NotNull String[] args) {
-        return this.getCommandFlags().stream().map(CommandFlag::getNamePrefixed).toList();
-    }
-
-    @Deprecated
-    protected void onExecute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args, @NotNull Map<String, String> flags) {
-
-    }
-
-    protected void onExecute(@NotNull CommandSender sender, @NotNull CommandResult result) {
-
-    }
-
-    public final void execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
-        if (this.isPlayerOnly() && !(sender instanceof Player)) {
-            this.errorSender(sender);
-            return;
-        }
-        if (!this.hasPermission(sender)) {
-            this.errorPermission(sender);
-            return;
-        }
-
-        Map<String, String> flags = new HashMap<>();
-        if (!this.getFlags().isEmpty()) {
-            String argLine = String.join(" ", args);
-            for (Map.Entry<String, Pattern> entry : this.flags.entrySet()) {
-                String flag = entry.getKey();
-                Pattern pattern = entry.getValue();
-
-                Matcher matcher = RegexUtil.getMatcher(pattern, argLine);
-                if (RegexUtil.matcherFind(matcher)) {
-                    flags.put(flag, Colorizer.legacyHex(matcher.group(2)));
-                    argLine = /*StringUtil.oneSpace(*/argLine.replace(matcher.group(1), "")/*)*/;
-                }
-            }
-            args = argLine.split(" ");
-        }
-
-        this.onExecute(sender, label, args, flags);
-
-        // API UPGRADE
-        CommandResult result = new CommandResult(label, args, new HashMap<>());
-        String argLine = String.join(" ", args);
-        for (CommandFlag<?> flag : this.getCommandFlags()) {
-            String name = flag.getName();
-            Pattern pattern = flag.getPattern();
-
-            Matcher matcher = RegexUtil.getMatcher(pattern, argLine);
-            if (RegexUtil.matcherFind(matcher)) {
-                result.getFlags().put(flag, matcher.group(2).trim());
-                argLine = argLine.replace(matcher.group(0), "");
-            }
-        }
-        result.setArgs(argLine.isEmpty() ? new String[0] : argLine.trim().split(" "));
-
-        this.onExecute(sender, result);
-    }
-
-    @NotNull
-    public String getLabelFull() {
-        StringBuilder labels = new StringBuilder();
-        AbstractCommand<P> parent = this.getParent();
-        while (parent != null) {
-            //labels.append(" ");
-            labels.insert(0, parent.getAliases()[0] + " ");
-            parent = parent.getParent();
-        }
-        labels.append(this.getAliases()[0]);
-        return labels.toString();
-    }
-
     protected final void printUsage(@NotNull CommandSender sender) {
         plugin.getMessage(EngineLang.CORE_COMMAND_USAGE).replace(this.replacePlaceholders()).send(sender);
     }
@@ -280,6 +236,7 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements IPlaceh
         plugin.getMessage(EngineLang.ERROR_PERMISSION_DENY).send(sender);
     }
 
+    @Deprecated
     protected final void errorItem(@NotNull CommandSender sender) {
         plugin.getMessage(EngineLang.ERROR_ITEM_INVALID).send(sender);
     }

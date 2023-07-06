@@ -6,10 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
-import su.nexmedia.engine.utils.Colorizer;
-import su.nexmedia.engine.utils.MessageUtil;
-import su.nexmedia.engine.utils.Placeholders;
-import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.*;
 import su.nexmedia.engine.utils.message.NexParser;
 import su.nexmedia.engine.utils.regex.RegexUtil;
 
@@ -23,17 +20,10 @@ import java.util.stream.Stream;
 
 public class LangMessage {
 
-    @Deprecated private static final Pattern              PATTERN_MESSAGE_FULL   = Pattern.compile("((\\{message:)+(.+?)\\}+(.*?))");
-    @Deprecated private static final Map<String, Pattern> PATTERN_MESSAGE_PARAMS = new HashMap<>();
-
     private static final Pattern PATTERN_OPTIONS = Pattern.compile("<\\!(.*?)\\!>");
-    //private static final Pattern PATTERN_NO_PREFIX = Pattern.compile("<noprefix>");
-    //private static final Pattern PATTERN_SOUND = Pattern.compile("sound" + OPTION_PATTERN);
 
-    static {
-        for (String parameter : new String[]{"type", "prefix", "sound", "fadeIn", "stay", "fadeOut"}) {
-            PATTERN_MESSAGE_PARAMS.put(parameter, Pattern.compile("~+(" + parameter + ")+?:+(.*?);"));
-        }
+    public enum OutputType {
+        CHAT, ACTION_BAR, TITLES, NONE,
     }
 
     enum Option {
@@ -78,36 +68,6 @@ public class LangMessage {
         this.titleTimes = Arrays.copyOf(from.titleTimes, from.titleTimes.length);
     }
 
-    @Deprecated
-    void setArguments(@NotNull String msg) {
-        Matcher matcher = RegexUtil.getMatcher(PATTERN_MESSAGE_FULL, msg);
-        if (!RegexUtil.matcherFind(matcher)) return;
-
-        // String with only args
-        String msgRaw = matcher.group(0);
-        String msgParams = matcher.group(3).trim();
-        this.msgLocalized = msg.replace(msgRaw, "");
-
-        for (Map.Entry<String, Pattern> entryParams : PATTERN_MESSAGE_PARAMS.entrySet()) {
-            Matcher matcherParam = RegexUtil.getMatcher(entryParams.getValue(), msgParams);
-            if (!RegexUtil.matcherFind(matcherParam)) continue;
-
-            String paramName = entryParams.getKey();
-            String paramValue = matcherParam.group(2).stripLeading();
-            switch (paramName) {
-                case "type" -> this.type = StringUtil.getEnum(paramValue, OutputType.class).orElse(OutputType.CHAT);
-                case "prefix" -> this.hasPrefix = Boolean.parseBoolean(paramValue);
-                case "sound" -> this.sound = StringUtil.getEnum(paramValue, Sound.class).orElse(null);
-                case "fadeIn" -> this.titleTimes[0] = StringUtil.getInteger(paramValue, -1);
-                case "stay" -> {
-                    this.titleTimes[1] = StringUtil.getInteger(paramValue, -1);
-                    if (this.titleTimes[1] < 0) this.titleTimes[1] = Short.MAX_VALUE;
-                }
-                case "fadeOut" -> this.titleTimes[2] = StringUtil.getInteger(paramValue, -1);
-            }
-        }
-    }
-
     void setOptions(@NotNull String msg) {
         Matcher matcher = RegexUtil.getMatcher(PATTERN_OPTIONS, msg);
         if (!RegexUtil.matcherFind(matcher)) return;
@@ -148,7 +108,6 @@ public class LangMessage {
     public void setRaw(@NotNull String msgRaw) {
         this.msgRaw = msgRaw;
         this.setLocalized(this.replaceDefaults().apply(this.getRaw()));
-        this.setArguments(this.getLocalized());
         this.setOptions(this.getLocalized());
     }
 
@@ -208,23 +167,20 @@ public class LangMessage {
         if (this.isEmpty()) return;
 
         if (this.sound != null && sender instanceof Player player) {
-            MessageUtil.sound(player, this.sound);
+            PlayerUtil.sound(player, this.sound);
         }
 
         if (this.type == LangMessage.OutputType.CHAT) {
             String prefix = hasPrefix ? plugin.getConfigManager().pluginPrefix : "";
             this.asList().forEach(line -> {
-                if (NexParser.contains(line)) {
-                    MessageUtil.sendCustom(sender, prefix + line);
-                }
-                else MessageUtil.sendWithJson(sender, prefix + line);
+                PlayerUtil.sendRichMessage(sender, prefix + line);
             });
             return;
         }
 
         if (sender instanceof Player player) {
             if (this.type == LangMessage.OutputType.ACTION_BAR) {
-                MessageUtil.sendActionBar(player, this.getLocalized());
+                PlayerUtil.sendActionBar(player, this.getLocalized());
             }
             else if (this.type == LangMessage.OutputType.TITLES) {
                 List<String> list = this.asList();
@@ -258,9 +214,5 @@ public class LangMessage {
             }
             return Placeholders.PLUGIN.replacer(plugin).apply(str);
         };
-    }
-
-    public enum OutputType {
-        CHAT, ACTION_BAR, TITLES, NONE,
     }
 }

@@ -1,16 +1,21 @@
 package su.nexmedia.engine.utils;
 
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.hooks.external.VaultHook;
+import su.nexmedia.engine.utils.message.NexParser;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -20,17 +25,17 @@ import java.util.stream.Stream;
 public class PlayerUtil {
 
     public static boolean isBedrockPlayer(@NotNull Player player) {
-        return Hooks.hasFloodgate() && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId());
+        return EngineUtils.hasFloodgate() && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId());
     }
 
     @NotNull
     public static String getPermissionGroup(@NotNull Player player) {
-        return Hooks.hasVault() && VaultHook.hasPermissions() ? VaultHook.getPermissionGroup(player).toLowerCase() : "";
+        return EngineUtils.hasVault() ? VaultHook.getPermissionGroup(player).toLowerCase() : "";
     }
 
     @NotNull
     public static Set<String> getPermissionGroups(@NotNull Player player) {
-        return Hooks.hasVault() && VaultHook.hasPermissions() ? VaultHook.getPermissionGroups(player) : Collections.emptySet();
+        return EngineUtils.hasVault() ? VaultHook.getPermissionGroups(player) : Collections.emptySet();
     }
 
     @Deprecated
@@ -67,12 +72,29 @@ public class PlayerUtil {
 
     @NotNull
     public static String getPrefix(@NotNull Player player) {
-        return Hooks.hasVault() ? VaultHook.getPrefix(player) : "";
+        return EngineUtils.hasVault() ? VaultHook.getPrefix(player) : "";
     }
 
     @NotNull
     public static String getSuffix(@NotNull Player player) {
-        return Hooks.hasVault() ? VaultHook.getSuffix(player) : "";
+        return EngineUtils.hasVault() ? VaultHook.getSuffix(player) : "";
+    }
+
+    public static void sendRichMessage(@NotNull CommandSender sender, @NotNull String message) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage(NexParser.toPlainText(message));
+            return;
+        }
+        NexParser.toMessage(message).send(sender);
+    }
+
+    public static void sendActionBar(@NotNull Player player, @NotNull String msg) {
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, NexParser.toMessage(msg).build());
+    }
+
+    public static void sound(@NotNull Player player, @Nullable Sound sound) {
+        if (sound == null) return;
+        player.playSound(player.getLocation(), sound, 0.9f, 0.9f);
     }
 
     public static void dispatchCommands(@NotNull Player player, @NotNull String... commands) {
@@ -85,7 +107,7 @@ public class PlayerUtil {
         command = command.replace("[CONSOLE]", "");
         command = command.trim().replace("%player%", player.getName());
         command = Placeholders.Player.replacer(player).apply(command);
-        if (Hooks.hasPlaceholderAPI()) {
+        if (EngineUtils.hasPlaceholderAPI()) {
             command = PlaceholderAPI.setPlaceholders(player, command);
         }
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);

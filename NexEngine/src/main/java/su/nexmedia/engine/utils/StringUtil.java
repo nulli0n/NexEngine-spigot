@@ -7,8 +7,6 @@ import su.nexmedia.engine.utils.random.Rnd;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class StringUtil {
 
@@ -283,22 +281,5 @@ public class StringUtil {
         }
 
         return commandName;
-    }
-
-    @Deprecated
-    public static boolean isCustomBoolean(@NotNull String str) {
-        String[] customs = new String[]{"0","1","on","off","true","false","yes","no"};
-        return Stream.of(customs).collect(Collectors.toSet()).contains(str.toLowerCase());
-    }
-
-    @Deprecated
-    public static boolean parseCustomBoolean(@NotNull String str) {
-        if (str.equalsIgnoreCase("0") || str.equalsIgnoreCase("off") || str.equalsIgnoreCase("no")) {
-            return false;
-        }
-        if (str.equalsIgnoreCase("1") || str.equalsIgnoreCase("on") || str.equalsIgnoreCase("yes")) {
-            return true;
-        }
-        return Boolean.parseBoolean(str);
     }
 }

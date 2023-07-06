@@ -43,7 +43,6 @@ public class MenuListener extends AbstractListener<NexEngine> {
         if (viewer == null) return;
 
         // Fix visual glitch when item goes in player's offhand.
-        // Or classic "DUPE BUG SHIFT CLICK AND CLOSE GUI!!!"
         if (e.getClick() == ClickType.SWAP_OFFHAND || e.isShiftClick()) {
             this.plugin.runTask(task -> player.updateInventory());
         }

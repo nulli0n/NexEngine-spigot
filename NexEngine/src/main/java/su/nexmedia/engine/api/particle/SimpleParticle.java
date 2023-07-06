@@ -90,10 +90,15 @@ public class SimpleParticle {
         return SimpleParticle.of(particle, data);
     }
 
+    @Deprecated
     public static void write(@NotNull SimpleParticle particle, @NotNull JYML cfg, @NotNull String path) {
-        cfg.set(path + ".Name", particle.getParticle().name());
+        particle.write(cfg, path);
+    }
 
-        Object data = particle.getData();
+    public void write(@NotNull JYML cfg, @NotNull String path) {
+        cfg.set(path + ".Name", this.getParticle().name());
+
+        Object data = this.getData();
         if (data instanceof BlockData blockData) {
             cfg.set(path + ".Material", blockData.getMaterial().name());
         }

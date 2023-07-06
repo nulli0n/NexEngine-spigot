@@ -118,10 +118,4 @@ public class CollectionsUtil {
         int index = currentIndex + shift;
         return values.get(index >= values.size() || index < 0 ? 0 : index);
     }
-
-    @Nullable
-    @Deprecated
-    public static <T extends Enum<T>> T getEnum(@NotNull String str, @NotNull Class<T> clazz) {
-        return StringUtil.getEnum(str, clazz).orElse(null);
-    }
 }

@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.editor.EditorButtonType;
 import su.nexmedia.engine.api.editor.EditorLocale;
 import su.nexmedia.engine.api.lang.LangKey;
 import su.nexmedia.engine.api.lang.LangMessage;
@@ -47,9 +46,9 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         });
 
         if (this.plugin.isEngine()) {
-            this.setupEnum(EntityType.class);
-            this.setupEnum(Material.class);
-            this.setupEnum(GameMode.class);
+            this.loadEnum(EntityType.class);
+            this.loadEnum(Material.class);
+            this.loadEnum(GameMode.class);
 
             for (PotionEffectType type : PotionEffectType.values()) {
                 this.getConfig().addMissing("PotionEffectType." + type.getName(), StringUtil.capitalizeUnderscored(type.getName()));
@@ -182,6 +181,18 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         this.getConfig().saveChanges();
     }
 
+    public void loadEnum(@NotNull Class<? extends Enum<?>> clazz) {
+        if (!clazz.isEnum()) return;
+        for (Object eName : clazz.getEnumConstants()) {
+            String name = eName.toString();
+            if (clazz == Material.class && name.startsWith("LEGACY")) continue;
+
+            String path = clazz.getSimpleName() + "." + name;
+            String val = StringUtil.capitalizeUnderscored(name);
+            this.getConfig().addMissing(path, val);
+        }
+    }
+
     private boolean write(@NotNull LangKey key) {
         if (!this.getConfig().contains(key.getPath())) {
             String textDefault = key.getDefaultText();
@@ -201,16 +212,9 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         locale.setLocalizedLore(this.getConfig().getStringList(locale.getKey() + ".Lore"));
     }
 
+    @Deprecated
     public void setupEnum(@NotNull Class<? extends Enum<?>> clazz) {
-        if (!clazz.isEnum()) return;
-        for (Object eName : clazz.getEnumConstants()) {
-            String name = eName.toString();
-            if (clazz == Material.class && name.startsWith("LEGACY")) continue;
-
-            String path = clazz.getSimpleName() + "." + name;
-            String val = StringUtil.capitalizeUnderscored(name);
-            this.getConfig().addMissing(path, val);
-        }
+        this.loadEnum(clazz);
     }
 
     @NotNull
@@ -221,24 +225,6 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
             return NexPlugin.getEngine().getLangManager().getEnum(e);
         }
         return locEnum == null ? "null" : locEnum;
-    }
-
-    @Deprecated
-    public void setupEditorEnum(@NotNull Class<? extends Enum<? extends EditorButtonType>> clazz) {
-        if (!clazz.isEnum()) return;
-        for (Object eName : clazz.getEnumConstants()) {
-            if (!(eName instanceof EditorButtonType buttonType)) continue;
-            if (buttonType.getMaterial().isAir()) continue;
-
-            String nameRaw = buttonType.name();
-            String path = "Editor." + clazz.getSimpleName() + "." + nameRaw + ".";
-
-            this.getConfig().addMissing(path + "Name", buttonType.getName());
-            this.getConfig().addMissing(path + "Lore", buttonType.getLore());
-
-            buttonType.setName(this.getConfig().getString(path + "Name", nameRaw));
-            buttonType.setLore(this.getConfig().getStringList(path + "Lore"));
-        }
     }
 
     @NotNull

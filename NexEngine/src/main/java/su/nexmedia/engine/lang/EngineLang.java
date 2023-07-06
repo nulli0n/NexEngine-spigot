@@ -1,8 +1,9 @@
 package su.nexmedia.engine.lang;
 
+import su.nexmedia.engine.api.lang.LangColors;
 import su.nexmedia.engine.api.lang.LangKey;
 
-public class EngineLang {
+public class EngineLang implements LangColors {
 
     public static final LangKey CORE_COMMAND_USAGE       = new LangKey("Core.Command.Usage", "&cUsage: &e/%command_label% &6%command_usage%");
     public static final LangKey CORE_COMMAND_HELP_LIST   = new LangKey("Core.Command.Help.List", """
@@ -14,7 +15,6 @@ public class EngineLang {
         &7
         """);
     public static final LangKey CORE_COMMAND_HELP_DESC   = new LangKey("Core.Command.Help.Desc", "Show help page.");
-    public static final LangKey CORE_COMMAND_EDITOR_DESC = new LangKey("Core.Command.Editor.Desc", "Opens GUI Editor.");
     public static final LangKey CORE_COMMAND_ABOUT_DESC  = new LangKey("Core.Command.About.Desc", "Some info about the plugin.");
     public static final LangKey CORE_COMMAND_RELOAD_DESC = new LangKey("Core.Command.Reload.Desc", "Reload the plugin.");
     public static final LangKey CORE_COMMAND_RELOAD_DONE = new LangKey("Core.Command.Reload.Done", "Reloaded!");
@@ -33,17 +33,16 @@ public class EngineLang {
     public static final LangKey OTHER_UNLIMITED = new LangKey("Other.Unlimited", "Unlimited");
     public static final LangKey OTHER_INFINITY  = new LangKey("Other.Infinity", "∞");
 
-    public static final LangKey ERROR_PLAYER_INVALID  = new LangKey("Error.Player.Invalid", "&cPlayer not found.");
-    public static final LangKey ERROR_WORLD_INVALID   = new LangKey("Error.World.Invalid", "&cWorld not found.");
-    public static final LangKey ERROR_NUMBER_INVALID  = new LangKey("Error.Number.Invalid", "&7%num% &cis not a valid number.");
-    public static final LangKey ERROR_PERMISSION_DENY = new LangKey("Error.Permission.Deny", "&cYou don't have permissions to do that!");
-    public static final LangKey ERROR_ITEM_INVALID    = new LangKey("Error.Item.Invalid", "&cYou must hold an item!");
-    public static final LangKey ERROR_COMMAND_SELF    = new LangKey("Error.Command.Self", "Can not be used on yourself.");
-    public static final LangKey ERROR_COMMAND_SENDER  = new LangKey("Error.Command.Sender", "This command is for players only.");
-    @Deprecated public static final LangKey ERROR_INTERNAL        = new LangKey("Error.Internal", "&cInternal error!");
+    public static final LangKey ERROR_PLAYER_INVALID  = LangKey.of("Error.Player.Invalid", RED + "Player not found.");
+    public static final LangKey ERROR_WORLD_INVALID   = LangKey.of("Error.World.Invalid", RED + "World not found.");
+    public static final LangKey ERROR_NUMBER_INVALID  = LangKey.of("Error.Number.Invalid", "&7%num% &cis not a valid number.");
+    public static final LangKey ERROR_PERMISSION_DENY = LangKey.of("Error.Permission.Deny", RED + "You don't have permissions to do that!");
+    @Deprecated public static final LangKey ERROR_ITEM_INVALID    = LangKey.of("Error.Item.Invalid", RED + "You must hold an item!");
+    public static final LangKey ERROR_COMMAND_SELF    = LangKey.of("Error.Command.Self", RED + "This command is not applicable to yourself.");
+    public static final LangKey ERROR_COMMAND_SENDER  = LangKey.of("Error.Command.Sender", RED + "This command is for players only.");
 
     public static final LangKey EDITOR_TIP_EXIT             = LangKey.of("Editor.Tip.Exit", "<! prefix:\"false\" !> <? showText:\"&7Click me or type &f#exit\" run_command:\"/#exit\" ?>&bClick to exit the &dEdit Mode</>");
-    public static final LangKey EDITOR_TITLE_DONE             = LangKey.of("Editor.Title.Done", "&a&lDone!");
+    public static final LangKey EDITOR_TITLE_DONE           = LangKey.of("Editor.Title.Done", "&a&lDone!");
     public static final LangKey EDITOR_TITLE_EDIT           = LangKey.of("Editor.Title.Edit", "&a&l< Edit Mode >");
     public static final LangKey EDITOR_TITLE_ERROR          = LangKey.of("Editor.Title.Error", "&c&lError!");
     public static final LangKey EDITOR_ERROR_NUMBER_GENERIC = LangKey.of("Editor.Error.Number.Generic", "&7Invalid number!");

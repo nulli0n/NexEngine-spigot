@@ -90,7 +90,7 @@ public class JOption<T> {
     @NotNull
     public static JOption<SimpleParticle> create(@NotNull String path, @NotNull SimpleParticle defaulValue, @NotNull String... description) {
         return new JOption<>(path, (cfg, path1, def) -> SimpleParticle.read(cfg, path1), defaulValue, description)
-            .setWriter((cfg, path1, particle) -> SimpleParticle.write(particle, cfg, path1));
+            .setWriter((cfg, path1, particle) -> particle.write(cfg, path1));
     }
 
     @NotNull
@@ -179,12 +179,6 @@ public class JOption<T> {
     @NotNull
     public String[] getDescription() {
         return description;
-    }
-
-    @NotNull
-    @Deprecated
-    public JOption.Reader<T> getValueLoader() {
-        return this.getReader();
     }
 
     @NotNull

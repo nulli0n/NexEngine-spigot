@@ -19,9 +19,6 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.Version;
-import su.nexmedia.engine.api.menu.MenuItem;
-import su.nexmedia.engine.api.menu.MenuItemType;
-import su.nexmedia.engine.api.type.ClickType;
 import su.nexmedia.engine.utils.*;
 
 import java.io.File;
@@ -362,51 +359,6 @@ public class JYML extends YamlConfiguration {
         item.setItemMeta(meta);
 
         return item;
-    }
-
-    @NotNull
-    @Deprecated
-    public MenuItem getMenuItem(@NotNull String path) {
-        return this.getMenuItem(path, MenuItemType.class);
-    }
-
-    @NotNull
-    @Deprecated
-    public <T extends Enum<T>> MenuItem getMenuItem(@NotNull String path, @Nullable Class<T> clazzEnum) {
-        if (!path.endsWith(".")) path = path + ".";
-
-        String[] pathSplit = path.split("\\.");
-        String id = pathSplit[pathSplit.length - 1];
-        if (id == null || id.isEmpty()) id = UUID.randomUUID().toString();
-
-        for (String displayId : this.getSection(path + "Display")) {
-            String path2 = path + "Display." + displayId + ".";
-            ItemStack dItem = this.getItem(path2 + "Item");
-            this.setItem(path + "Item", dItem);
-            break;
-        }
-        this.remove(path + "Display");
-
-
-        Enum<?> type = clazzEnum == null ? MenuItemType.NONE : this.getEnum(path + "Type", clazzEnum, clazzEnum.getEnumConstants()[0]);
-        if (type != MenuItemType.NONE) {
-            this.addMissing(path + "Priority", 5);
-        }
-
-        ItemStack item = this.getItem(path + "Item");
-        int[] slots = this.getIntArray(path + "Slots");
-        int priority = this.getInt(path + "Priority");
-
-        Map<ClickType, List<String>> clickCommands = new HashMap<>();
-        for (String sType : this.getSection(path + "Click_Actions")) {
-            ClickType clickType = StringUtil.getEnum(sType, ClickType.class).orElse(null);
-            if (clickType == null) continue;
-
-            clickCommands.put(clickType, this.getStringList(path + "Click_Actions." + sType));
-        }
-
-        this.saveChanges();
-        return new MenuItem(id, type, slots, priority, item, clickCommands);
     }
 
     public void setItem(@NotNull String path, @Nullable ItemStack item) {

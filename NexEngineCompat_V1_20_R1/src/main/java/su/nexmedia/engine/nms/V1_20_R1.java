@@ -74,42 +74,6 @@ public class V1_20_R1 implements NMS {
     }
 
     public void updateMenuTitle(@NotNull Player player, @NotNull String title) {
-        //Inventory menu = player.getOpenInventory().getTopInventory();
         player.getOpenInventory().setTitle(title);
-        /*MenuType<?> type = switch (menu.getType()) {
-            case DISPENSER, DROPPER, WORKBENCH -> MenuType.GENERIC_3x3;
-            case FURNACE -> MenuType.FURNACE;
-            case ENCHANTING -> MenuType.ENCHANTMENT;
-            case BREWING -> MenuType.BREWING_STAND;
-            case MERCHANT -> MenuType.MERCHANT;
-            case ENDER_CHEST, BARREL -> MenuType.GENERIC_9x3;
-            case ANVIL -> MenuType.ANVIL;
-            case SMITHING -> MenuType.SMITHING;
-            case BEACON -> MenuType.BEACON;
-            case HOPPER -> MenuType.HOPPER;
-            case SHULKER_BOX -> MenuType.SHULKER_BOX;
-            case BLAST_FURNACE -> MenuType.BLAST_FURNACE;
-            case LECTERN -> MenuType.LECTERN;
-            case SMOKER -> MenuType.SMOKER;
-            case LOOM -> MenuType.LOOM;
-            case CARTOGRAPHY -> MenuType.CARTOGRAPHY_TABLE;
-            case GRINDSTONE -> MenuType.GRINDSTONE;
-            case STONECUTTER -> MenuType.STONECUTTER;
-            case COMPOSTER, PLAYER, CREATIVE, CRAFTING, CHISELED_BOOKSHELF, JUKEBOX -> null;
-            default -> switch (menu.getSize()) {
-                case 9 -> MenuType.GENERIC_9x1;
-                case 18 -> MenuType.GENERIC_9x2;
-                case 36 -> MenuType.GENERIC_9x4;
-                case 45 -> MenuType.GENERIC_9x5;
-                case 54 -> MenuType.GENERIC_9x6;
-                default -> MenuType.GENERIC_9x3;
-            };
-        };
-        if (type == null) return;
-
-        ServerPlayer serverPlayer = ((CraftPlayer)player).getHandle();
-        ClientboundOpenScreenPacket packet = new ClientboundOpenScreenPacket(serverPlayer.containerMenu.containerId, type, CraftChatMessage.fromStringOrNull(title));
-        serverPlayer.connection.send(packet);
-        player.updateInventory();*/
     }
 }

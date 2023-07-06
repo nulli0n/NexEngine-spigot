@@ -24,6 +24,7 @@ public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
 
     protected final JYML                                           cfg;
     protected final Map<Class<? extends Enum<?>>, ClickHandler<?>> handlers;
+    protected String itemSection = "Content";
 
     public ConfigMenu(@NotNull P plugin, @NotNull JYML cfg) {
         super(plugin, "", 27);
@@ -45,8 +46,8 @@ public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
         this.getOptions().setSize(size);
         this.getOptions().setType(type);
 
-        this.cfg.getSection("Content").forEach(sId -> {
-            MenuItem menuItem = this.readItem("Content." + sId);
+        this.cfg.getSection(this.itemSection).forEach(sId -> {
+            MenuItem menuItem = this.readItem(this.itemSection + "." + sId);
             this.addItem(menuItem);
         });
 
@@ -66,17 +67,6 @@ public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
         this.handlers.put(clazz, handler);
         return handler;
     }
-
-    /*@Nullable
-    public ItemClick getClick(@NotNull MenuItem menuItem) {
-        Enum<?> type = menuItem.getType();
-        if (type == MenuItemType.NONE) return null;
-
-        ClickHandler<?> handler = this.handlers.get(type.getClass());
-        if (handler == null) return null;
-
-        return handler.getClick(Enum.valueOf(type.getClass().asSubclass(Enum.class), type.name()));
-    }*/
 
     @NotNull
     public Set<Class<? extends Enum<?>>> getHandlerTypes() {

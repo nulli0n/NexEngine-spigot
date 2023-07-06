@@ -1,7 +1,6 @@
 package su.nexmedia.engine.utils.random;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.utils.CollectionsUtil;
 import su.nexmedia.engine.utils.Pair;
 
@@ -58,13 +57,6 @@ public class Rnd {
         return get(new ArrayList<>(list));
     }
 
-    @Nullable
-    @Deprecated
-    public static <T> T get(@NotNull Map<@NotNull T, Double> map) {
-        List<T> list = get(map, 1);
-        return list.isEmpty() ? null : list.get(0);
-    }
-
     @NotNull
     public static <T> T getByWeight(@NotNull Map<T, Double> itemsMap) {
         List<Pair<T, Double>> items = CollectionsUtil.sortAscent(itemsMap).entrySet().stream()
@@ -78,30 +70,6 @@ public class Rnd {
             if (chance <= 0D) break;
         }
         return items.get(index).getFirst();
-    }
-
-    @NotNull
-    @Deprecated
-    public static <T> List<T> get(@NotNull Map<@NotNull T, Double> map, int amount) {
-        map.values().removeIf(chance -> chance <= 0D);
-        if (map.isEmpty()) return Collections.emptyList();
-
-        List<T> list = new ArrayList<>();
-        double total = map.values().stream().mapToDouble(d -> d).sum();
-
-        for (int count = 0; count < amount; count++) {
-            double index = Rnd.getDouble(0D, total);// Math.random() * total;
-            double countWeight = 0D;
-
-            for (Map.Entry<T, Double> en : map.entrySet()) {
-                countWeight += en.getValue();
-                if (countWeight >= index) {
-                    list.add(en.getKey());
-                    break;
-                }
-            }
-        }
-        return list;
     }
 
     public static boolean chance(int chance) {
