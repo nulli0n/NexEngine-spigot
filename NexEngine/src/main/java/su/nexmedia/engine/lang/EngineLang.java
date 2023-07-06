@@ -7,6 +7,7 @@ public class EngineLang implements LangColors {
 
     public static final LangKey CORE_COMMAND_USAGE       = new LangKey("Core.Command.Usage", "&cUsage: &e/%command_label% &6%command_usage%");
     public static final LangKey CORE_COMMAND_HELP_LIST   = new LangKey("Core.Command.Help.List", """
+        <! prefix:"false" !>
         &6&m              &6&l[ &e&l%plugin_name_localized% &7- &e&lCommands &6&l]&6&m              &7
         &7
         &7          &4&l<> &7- Required, &2&l[] &7- Optional.

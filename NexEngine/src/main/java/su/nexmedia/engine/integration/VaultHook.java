@@ -1,4 +1,4 @@
-package su.nexmedia.engine.hooks.external;
+package su.nexmedia.engine.integration;
 
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.economy.Economy;

@@ -15,8 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.Version;
-import su.nexmedia.engine.config.EngineConfig;
-import su.nexmedia.engine.hooks.Hooks;
 import su.nexmedia.engine.lang.LangManager;
 
 import java.lang.reflect.Method;
@@ -59,7 +57,8 @@ public class ItemUtil {
         if (item.getType() != Material.PLAYER_HEAD) return;
         if (!(item.getItemMeta() instanceof SkullMeta meta)) return;
 
-        GameProfile profile = new GameProfile(EngineConfig.getIdForSkullTexture(value), null);
+        UUID uuid = UUID.nameUUIDFromBytes(value.getBytes());
+        GameProfile profile = new GameProfile(uuid, null);
         profile.getProperties().put("textures", new Property("textures", value));
 
         Method method = Reflex.getMethod(meta.getClass(), "setProfile", GameProfile.class);
@@ -92,7 +91,7 @@ public class ItemUtil {
     }
 
     public static void setPlaceholderAPI(@NotNull Player player, @NotNull ItemStack item) {
-        if (!Hooks.hasPlaceholderAPI()) return;
+        if (!EngineUtils.hasPlaceholderAPI()) return;
         replace(item, str -> Colorizer.apply(PlaceholderAPI.setPlaceholders(player, str)));
     }
 

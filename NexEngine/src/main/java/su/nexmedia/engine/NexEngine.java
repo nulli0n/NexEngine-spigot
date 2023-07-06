@@ -5,7 +5,7 @@ import su.nexmedia.engine.api.command.GeneralCommand;
 import su.nexmedia.engine.api.editor.EditorLocales;
 import su.nexmedia.engine.api.menu.impl.MenuListener;
 import su.nexmedia.engine.editor.EditorManager;
-import su.nexmedia.engine.hooks.external.VaultHook;
+import su.nexmedia.engine.integration.VaultHook;
 import su.nexmedia.engine.lang.EngineLang;
 import su.nexmedia.engine.nms.*;
 import su.nexmedia.engine.utils.EngineUtils;
