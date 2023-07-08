@@ -2,10 +2,8 @@ package su.nexmedia.engine.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,20 +60,11 @@ public class LocationUtil {
         return world == null ? "null" : world.getName();
     }
 
-    @NotNull
-    public static Location getFirstGroundBlock(@NotNull Location loc) {
-        float yaw = loc.getYaw();
-        float pitch = loc.getPitch();
+    public static void sound(@NotNull Location location, @Nullable Sound sound) {
+        World world = location.getWorld();
+        if (world == null || sound == null) return;
 
-        Block under = loc.getBlock();
-        while ((under.isEmpty() || !under.getType().isSolid()) && under.getY() > 0) {
-            under = under.getRelative(BlockFace.DOWN);
-        }
-
-        loc = under.getRelative(BlockFace.UP).getLocation();
-        loc.setYaw(yaw);
-        loc.setPitch(pitch);
-        return loc;
+        world.playSound(location, sound, 0.9f, 0.9f);
     }
 
     @NotNull
@@ -85,58 +74,17 @@ public class LocationUtil {
 
     @NotNull
     public static Location getCenter(@NotNull Location location, boolean doVertical) {
-        float yaw = location.getYaw();
-        float pitch = location.getPitch();
-
-        double x = getRelativeCoord(location.getBlockX());
-        double y = doVertical ? getRelativeCoord(location.getBlockY()) : location.getBlockY();
-        double z = getRelativeCoord(location.getBlockZ());
-
-        location = new Location(location.getWorld(), x, y, z);
-        location.setYaw(yaw);
-        location.setPitch(pitch);
+        Location centered = location.clone();
+        location.setX(location.getBlockX() + 0.5);
+        location.setY(location.getBlockY() + (doVertical ? 0.5 : 0));
+        location.setZ(location.getBlockZ() + 0.5);
         return location;
     }
 
-    private static double getRelativeCoord(double cord) {
-        return cord < 0 ? cord + 0.5 : cord + 0.5;
-    }
-
     @NotNull
-    public static Location getPointOnCircle(@NotNull Location loc, double n, double n2, double n3) {
-        return getPointOnCircle(loc, true, n, n2, n3);
-    }
-
-    @NotNull
-    public static Location getPointOnCircle(@NotNull Location loc, boolean doCopy, double n, double n2, double n3) {
-        return (doCopy ? loc.clone() : loc).add(Math.cos(n) * n2, n3, Math.sin(n) * n2);
-    }
-
-    @Nullable
-    public static BlockFace getDirection(@NotNull Entity entity) {
-        float yaw = Math.round(entity.getLocation().getYaw() / 90F);
-
-        if ((yaw == -4.0F) || (yaw == 0.0F) || (yaw == 4.0F)) {
-            return BlockFace.SOUTH;
-        }
-        if ((yaw == -1.0F) || (yaw == 3.0F)) {
-            return BlockFace.EAST;
-        }
-        if ((yaw == -2.0F) || (yaw == 2.0F)) {
-            return BlockFace.NORTH;
-        }
-        if ((yaw == -3.0F) || (yaw == 1.0F)) {
-            return BlockFace.WEST;
-        }
-        return null;
-    }
-
-    @NotNull
-    public static Vector getDirectionTo(@NotNull Location from, @NotNull Location to) {
+    public static Vector getDirection(@NotNull Location from, @NotNull Location to) {
         Location origin = from.clone();
-        Vector target = to.clone().toVector();
-        origin.setDirection(target.subtract(origin.toVector()));
-
+        origin.setDirection(to.toVector().subtract(origin.toVector()));
         return origin.getDirection();
     }
 }

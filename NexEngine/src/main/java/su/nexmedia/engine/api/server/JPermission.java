@@ -19,6 +19,12 @@ public class JPermission extends Permission {
         super(name, description, defaultValue);
     }
 
+    @NotNull
+    public JPermission description(String... desc) {
+        this.setDescription(String.join(" ", desc));
+        return this;
+    }
+
     public void addChildren(@NotNull Permission... childrens) {
         for (Permission children : childrens) {
             children.addParent(this, true);

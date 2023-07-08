@@ -6,10 +6,10 @@ import su.nexmedia.engine.NexPlugin;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class AbstractManager<P extends NexPlugin<P>> implements ILoadable {
+public abstract class AbstractManager<P extends NexPlugin<P>> implements Loadable {
 
-    protected final P              plugin;
-    protected final Set<IListener> listeners;
+    protected final P                  plugin;
+    protected final Set<EventListener> listeners;
 
     public AbstractManager(@NotNull P plugin) {
         this.plugin = plugin;
@@ -23,7 +23,7 @@ public abstract class AbstractManager<P extends NexPlugin<P>> implements ILoadab
 
     @Override
     public void shutdown() {
-        this.listeners.forEach(IListener::unregisterListeners);
+        this.listeners.forEach(EventListener::unregisterListeners);
         this.listeners.clear();
         this.onShutdown();
     }
@@ -37,7 +37,7 @@ public abstract class AbstractManager<P extends NexPlugin<P>> implements ILoadab
      *
      * @param listener Listener to add.
      */
-    protected void addListener(@NotNull IListener listener) {
+    protected void addListener(@NotNull EventListener listener) {
         if (this.listeners.add(listener)) {
             listener.registerListeners();
         }

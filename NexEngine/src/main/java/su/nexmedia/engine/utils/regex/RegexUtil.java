@@ -9,11 +9,12 @@ import java.util.regex.Pattern;
 
 public class RegexUtil {
 
-    public static final Pattern PATTERN_EN = Pattern.compile("[a-zA-Z0-9_]*");
+    @Deprecated public static final Pattern PATTERN_EN = Pattern.compile("[a-zA-Z0-9_]*");
     @Deprecated public static final Pattern PATTERN_RU = Pattern.compile("[a-zA-Zа-яА-Я0-9_]*");
-    public static final Pattern PATTERN_IP = Pattern.compile(
+    @Deprecated public static final Pattern PATTERN_IP = Pattern.compile(
         "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)");
 
+    @Deprecated
     public static boolean matchesEn(@NotNull String msg) {
         return matches(PATTERN_EN, msg);
     }
@@ -23,6 +24,7 @@ public class RegexUtil {
         return matches(PATTERN_RU, msg);
     }
 
+    @Deprecated
     public static boolean isIpAddress(@NotNull String str) {
         return matches(PATTERN_IP, str);
     }

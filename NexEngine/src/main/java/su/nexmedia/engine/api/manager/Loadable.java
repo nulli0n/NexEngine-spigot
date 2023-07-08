@@ -1,6 +1,6 @@
 package su.nexmedia.engine.api.manager;
 
-public interface ILoadable {
+public interface Loadable {
 
     void setup();
 

@@ -44,7 +44,9 @@ public abstract class AbstractTask<P extends NexPlugin<P>> {
 
     public boolean stop() {
         if (this.taskId < 0) return false;
+
         this.plugin.getServer().getScheduler().cancelTask(this.taskId);
+        this.taskId = -1;
         return true;
     }
 }

@@ -103,9 +103,9 @@ public class PlayerUtil {
     }
 
     public static void dispatchCommand(@NotNull Player player, @NotNull String command) {
-        command = command.replace("[CONSOLE]", "");
-        command = command.trim().replace("%player%", player.getName());
-        command = Placeholders.Player.replacer(player).apply(command);
+        //command = command.replace("[CONSOLE]", "");
+        //command = command.trim().replace("%player%", player.getName());
+        command = Placeholders.forPlayer(player).apply(command);
         if (EngineUtils.hasPlaceholderAPI()) {
             command = PlaceholderAPI.setPlaceholders(player, command);
         }

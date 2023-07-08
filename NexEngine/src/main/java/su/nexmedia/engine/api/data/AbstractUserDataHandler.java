@@ -141,7 +141,7 @@ public abstract class AbstractUserDataHandler<P extends NexPlugin<P>, U extends 
     }
 
     public void addUser(@NotNull U user) {
-        if (this.isUserExists(user.getId())) return;
+        //if (this.isUserExists(user.getId())) return;
 
         List<SQLValue> values = new ArrayList<>();
         values.add(COLUMN_USER_ID.toValue(user.getId()));

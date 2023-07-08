@@ -14,7 +14,7 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
     private transient boolean isRecent = false;
 
     protected final UUID uuid;
-    protected final String name;
+    protected String name;
     protected long dateCreated;
     protected long lastOnline;
 
@@ -31,7 +31,9 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
     }
 
     public void onUnload() {
-        if (this.isOnline()) {
+        Player player = this.getPlayer();
+        if (player != null) {
+            this.name = player.getName();
             this.setLastOnline(System.currentTimeMillis());
         }
     }

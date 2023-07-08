@@ -14,11 +14,15 @@ public class PlaceholderMap {
     private final List<Pair<String, Supplier<String>>> keys;
 
     public PlaceholderMap() {
-        this.keys = new ArrayList<>();
+        this(new ArrayList<>());
     }
 
     public PlaceholderMap(@NotNull PlaceholderMap other) {
-        this.keys = new ArrayList<>(other.getKeys());
+        this(other.getKeys());
+    }
+
+    public PlaceholderMap(@NotNull List<Pair<String, Supplier<String>>> keys) {
+        this.keys = new ArrayList<>(keys);
     }
 
     @NotNull

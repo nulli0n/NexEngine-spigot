@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.NexPlugin;
-import su.nexmedia.engine.api.manager.ICleanable;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.api.menu.click.ItemClick;
 import su.nexmedia.engine.api.menu.item.ItemOptions;
@@ -21,7 +20,7 @@ import su.nexmedia.engine.api.menu.item.MenuItem;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class Menu<P extends NexPlugin<P>> implements ICleanable {
+public abstract class Menu<P extends NexPlugin<P>> {
 
     static final Map<UUID, Menu<?>> PLAYER_MENUS = new HashMap<>();
 
@@ -47,7 +46,6 @@ public abstract class Menu<P extends NexPlugin<P>> implements ICleanable {
         this.items = new HashSet<>();
     }
 
-    @Override
     public void clear() {
         this.getItems().clear();
         new HashSet<>(this.getViewers()).forEach(viewer -> viewer.getPlayer().closeInventory());

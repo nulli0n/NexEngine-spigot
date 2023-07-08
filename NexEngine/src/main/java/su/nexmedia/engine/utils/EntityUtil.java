@@ -2,12 +2,14 @@ package su.nexmedia.engine.utils;
 
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,5 +57,24 @@ public class EntityUtil {
     @NotNull
     public static Map<EquipmentSlot, ItemStack> getEquippedArmor(@NotNull LivingEntity entity) {
         return getEquippedItems(entity, EquipmentSlot.FEET, EquipmentSlot.LEGS, EquipmentSlot.CHEST, EquipmentSlot.HEAD);
+    }
+
+    @Nullable
+    public static BlockFace getDirection(@NotNull Entity entity) {
+        float yaw = Math.round(entity.getLocation().getYaw() / 90F);
+
+        if ((yaw == -4.0F) || (yaw == 0.0F) || (yaw == 4.0F)) {
+            return BlockFace.SOUTH;
+        }
+        if ((yaw == -1.0F) || (yaw == 3.0F)) {
+            return BlockFace.EAST;
+        }
+        if ((yaw == -2.0F) || (yaw == 2.0F)) {
+            return BlockFace.NORTH;
+        }
+        if ((yaw == -3.0F) || (yaw == 1.0F)) {
+            return BlockFace.WEST;
+        }
+        return null;
     }
 }

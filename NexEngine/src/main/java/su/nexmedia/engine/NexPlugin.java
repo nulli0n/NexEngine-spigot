@@ -13,7 +13,6 @@ import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.data.UserDataHolder;
 import su.nexmedia.engine.api.lang.LangKey;
 import su.nexmedia.engine.api.lang.LangMessage;
-import su.nexmedia.engine.api.manager.ILogger;
 import su.nexmedia.engine.api.menu.impl.Menu;
 import su.nexmedia.engine.command.CommandManager;
 import su.nexmedia.engine.command.PluginMainCommand;
@@ -28,7 +27,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
-public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin implements ILogger {
+public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
 
     public static boolean isPaper = false;
 
@@ -158,17 +157,14 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin imple
         return this.getLangManager().getConfig();
     }
 
-    @Override
     public final void info(@NotNull String msg) {
         this.logger.info(msg);
     }
 
-    @Override
     public final void warn(@NotNull String msg) {
         this.logger.warning(msg);
     }
 
-    @Override
     public final void error(@NotNull String msg) {
         this.logger.severe(msg);
     }

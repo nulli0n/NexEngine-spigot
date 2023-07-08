@@ -1,19 +1,12 @@
 package su.nexmedia.engine.api.editor;
 
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.api.lang.LangColors;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EditorLocales {
-
-    //protected static final String HEADER = "#fffd7f&l";
-    protected static final String RED = "#ff6a6a";
-    protected static final String GREEN = "#bbff6a";
-    protected static final String BLUE = "#6adbff";
-    protected static final String ORANGE = "#ffa76a";
-    protected static final String YELLOW = "#ffed6a";
-    protected static final String GRAY = "#bdc8c9";
+public class EditorLocales implements LangColors {
 
     public static final EditorLocale CLOSE = EditorLocale.of("Editor.Generic.Close", "#FF5733(✕) &lExit");
     public static final EditorLocale RETURN = EditorLocale.of("Editor.Generic.Return", "#ffee9a(↓) &fReturn");

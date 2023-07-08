@@ -212,7 +212,7 @@ public class LangMessage {
             for (Map.Entry<String, String> entry : this.plugin.getLangManager().getPlaceholders().entrySet()) {
                 str = str.replace(entry.getKey(), entry.getValue());
             }
-            return Placeholders.PLUGIN.replacer(plugin).apply(str);
+            return Placeholders.forPlugin(plugin).apply(str);
         };
     }
 }

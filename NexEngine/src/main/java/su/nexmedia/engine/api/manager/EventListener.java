@@ -3,7 +3,7 @@ package su.nexmedia.engine.api.manager;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
-public interface IListener extends Listener {
+public interface EventListener extends Listener {
 
     void registerListeners();
 

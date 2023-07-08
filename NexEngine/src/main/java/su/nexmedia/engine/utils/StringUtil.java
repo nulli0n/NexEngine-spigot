@@ -21,11 +21,13 @@ public class StringUtil {
     }
 
     @NotNull
+    @Deprecated
     public static List<String> replace(@NotNull List<String> orig, @NotNull String placeholder, boolean keep, String... replacer) {
         return StringUtil.replace(orig, placeholder, keep, Arrays.asList(replacer));
     }
 
     @NotNull
+    @Deprecated
     public static List<String> replace(@NotNull List<String> orig, @NotNull String placeholder, boolean keep, List<String> replacer) {
         List<String> replaced = new ArrayList<>();
         for (String line : orig) {
@@ -41,6 +43,23 @@ public class StringUtil {
             replaced.add(line);
         }
 
+        return replaced;
+    }
+
+    @NotNull
+    public static List<String> replaceInList(@NotNull List<String> orig, @NotNull String placeholder, String... replacer) {
+        return StringUtil.replaceInList(orig, placeholder, Arrays.asList(replacer));
+    }
+
+    @NotNull
+    public static List<String> replaceInList(@NotNull List<String> orig, @NotNull String placeholder, @NotNull List<String> replacer) {
+        List<String> replaced = new ArrayList<>();
+        for (String line : orig) {
+            if (line.equalsIgnoreCase(placeholder)) {
+                replaced.addAll(replacer);
+            }
+            else replaced.add(line);
+        }
         return replaced;
     }
 

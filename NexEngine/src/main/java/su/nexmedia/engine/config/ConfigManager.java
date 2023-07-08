@@ -14,7 +14,8 @@ import java.io.IOException;
 
 public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
-    private JYML config;
+    private JYML     config;
+    protected String filePath;
 
     public String   pluginName;
     public String   pluginPrefix;
@@ -23,24 +24,27 @@ public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     public ConfigManager(@NotNull P plugin) {
         super(plugin);
+        this.filePath = "config.yml";
     }
 
     @Override
     protected void onLoad() {
-        this.config = JYML.loadOrExtract(this.plugin, "config.yml");
-        //JYML config = this.getConfig();
+        this.config = JYML.loadOrExtract(this.plugin, this.filePath);
 
         this.pluginName = JOption.create("Plugin.Name", plugin.getName(),
             "Localized plugin name. It's used in messages and with internal placeholders.")
             .read(config);
-        this.pluginPrefix = JOption.create("Plugin.Prefix", "&e" + Placeholders.Plugin.NAME + " &8» &7",
+
+        this.pluginPrefix = JOption.create("Plugin.Prefix", "&e" + Placeholders.PLUGIN_NAME + " &8» &7",
             "Plugin prefix. Used in messages.",
-            "You can use " + Placeholders.Plugin.NAME_LOCALIZED + " placeholder for a plugin name.")
-            .read(config).replace(Placeholders.Plugin.NAME, this.pluginName);
+            "You can use " + Placeholders.PLUGIN_NAME_LOCALIZED + " placeholder for a plugin name.")
+            .read(config).replace(Placeholders.PLUGIN_NAME, this.pluginName);
+
         this.commandAliases = JOption.create("Plugin.Command_Aliases", plugin.getName().toLowerCase(),
             "Command names that will be registered as main plugin commands.",
             "Do not leave this empty. Split multiple names with a comma.")
             .read(config).split(",");
+
         this.languageCode = JOption.create("Plugin.Language", "en",
             "Sets the plugin language.",
             "It will use language config from the '" + LangManager.DIR_LANG + "' sub-folder for specified language code.",
