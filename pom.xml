@@ -10,12 +10,7 @@
     <version>2.2.11</version>
     <modules>
         <module>NexEngine</module>
-        <module>NMS</module>
-        <module>NexEngineCompat_V1_17_R1</module>
-        <module>NexEngineCompat_V1_18_R2</module>
         <module>PlayerBlockTracker</module>
-        <module>NexEngineCompat_V1_19_R3</module>
-        <module>NexEngineCompat_V1_20_R1</module>
     </modules>
 
     <properties>

@@ -10,8 +10,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.NexPlugin;
+import su.nexmedia.engine.Version;
 import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.api.menu.click.ItemClick;
 import su.nexmedia.engine.api.menu.item.ItemOptions;
@@ -121,7 +121,9 @@ public abstract class Menu<P extends NexPlugin<P>> {
             this.getViewersMap().put(player.getUniqueId(), viewer);
         }
         else {
-            NexEngine.get().getNMS().updateMenuTitle(viewer.getPlayer(), options.getTitle());
+            if (Version.isAtLeast(Version.V1_19_R3)) {
+                viewer.getPlayer().getOpenInventory().setTitle(options.getTitle());
+            }
         }
 
         PLAYER_MENUS.put(player.getUniqueId(), this);

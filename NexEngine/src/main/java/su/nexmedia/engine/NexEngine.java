@@ -7,7 +7,6 @@ import su.nexmedia.engine.api.menu.impl.MenuListener;
 import su.nexmedia.engine.editor.EditorManager;
 import su.nexmedia.engine.integration.VaultHook;
 import su.nexmedia.engine.lang.EngineLang;
-import su.nexmedia.engine.nms.*;
 import su.nexmedia.engine.utils.EngineUtils;
 
 import java.util.HashSet;
@@ -19,7 +18,6 @@ public class NexEngine extends NexPlugin<NexEngine> {
 
     private final Set<NexPlugin<?>> childrens = new HashSet<>();
 
-    private NMS nms;
     private EditorManager editorManager;
     private MenuListener menuListener;
 
@@ -36,26 +34,6 @@ public class NexEngine extends NexPlugin<NexEngine> {
     @NotNull
     protected NexEngine getSelf() {
         return this;
-    }
-
-    final boolean loadCore() {
-        if (!this.setupNMS()) {
-            this.error("Your server version is unsupported!");
-            return false;
-        }
-        this.info("Loaded NMS version: " + Version.getCurrent().name());
-        return true;
-    }
-
-    private boolean setupNMS() {
-        this.nms = switch (Version.getCurrent()) {
-            case V1_19_R1, V1_19_R2, UNKNOWN -> null;
-            case V1_17_R1 -> new V1_17_R1();
-            case V1_18_R2 -> new V1_18_R2();
-            case V1_19_R3 -> new V1_19_R3();
-            case V1_20_R1 -> new V1_20_R1();
-        };
-        return this.nms != null;
     }
 
     @Override
@@ -117,10 +95,5 @@ public class NexEngine extends NexPlugin<NexEngine> {
     @NotNull
     public Set<NexPlugin<?>> getChildrens() {
         return this.childrens;
-    }
-
-    @NotNull
-    public NMS getNMS() {
-        return nms;
     }
 }

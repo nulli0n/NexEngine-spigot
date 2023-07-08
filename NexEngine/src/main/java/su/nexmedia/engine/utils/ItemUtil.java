@@ -13,18 +13,36 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.Version;
 import su.nexmedia.engine.lang.LangManager;
 
+import java.io.*;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
 
 public class ItemUtil {
 
-    private static final NexEngine ENGINE = NexEngine.get();
+    private static final String VERSION = Version.getProtocol();
+
+    private static final Class<?> NBT_TAG_COMPOUND = Reflex.getClass("net.minecraft.nbt", "NBTTagCompound");
+    private static final Class<?> NMS_ITEM         = Reflex.getClass("net.minecraft.world.item", "ItemStack");
+    private static final Class<?> CRAFT_ITEM_STACK = Reflex.getClass("org.bukkit.craftbukkit." + VERSION + ".inventory", "CraftItemStack");
+    private static final Class<?> NBT_IO           = Reflex.getClass("net.minecraft.nbt", "NBTCompressedStreamTools");
+
+    private static final Constructor<?> NBT_TAG_COMPOUND_NEW = Reflex.getConstructor(NBT_TAG_COMPOUND);
+
+    private static final Method AS_NMS_COPY    = Reflex.getMethod(CRAFT_ITEM_STACK, "asNMSCopy", ItemStack.class);
+    private static final Method AS_BUKKIT_COPY = Reflex.getMethod(CRAFT_ITEM_STACK, "asBukkitCopy", NMS_ITEM);
+
+    private static final Method NMS_ITEM_OF = Reflex.getMethod(NMS_ITEM, "a", NBT_TAG_COMPOUND);
+    private static final Method NMS_SAVE    = Reflex.getMethod(NMS_ITEM, "b", NBT_TAG_COMPOUND);
+
+    private static final Method NBT_IO_WRITE = Reflex.getMethod(NBT_IO, "a", NBT_TAG_COMPOUND, DataOutput.class);
+    private static final Method NBT_IO_READ  = Reflex.getMethod(NBT_IO, "a", DataInput.class);
 
     @NotNull
     public static String getItemName(@NotNull ItemStack item) {
@@ -244,34 +262,60 @@ public class ItemUtil {
         return material.isItem() ? material.getEquipmentSlot() : EquipmentSlot.HAND;
     }
 
-    @NotNull
-    public static String getNBTTag(@NotNull ItemStack item) {
-        return ENGINE.getNMS().getNBTTag(item);
+    @Nullable
+    public static String compress(@NotNull ItemStack item) {
+        if (NBT_TAG_COMPOUND_NEW == null || AS_NMS_COPY == null || NMS_SAVE == null || NBT_IO_WRITE == null) {
+            throw new UnsupportedOperationException("Unsupported server version!");
+        }
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        DataOutputStream dataOutput = new DataOutputStream(outputStream);
+
+        try {
+            Object nbtTagCompoundItem = NBT_TAG_COMPOUND_NEW.newInstance();
+            Object nmsItem = AS_NMS_COPY.invoke(null, item);
+            NMS_SAVE.invoke(nmsItem, nbtTagCompoundItem);
+            NBT_IO_WRITE.invoke(null, nbtTagCompoundItem, dataOutput);
+            return new BigInteger(1, outputStream.toByteArray()).toString(32);
+        }
+        catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Nullable
-    public static String toBase64(@NotNull ItemStack item) {
-        return ENGINE.getNMS().toBase64(item);
+    public static ItemStack decompress(@NotNull String compressed) {
+        if (NBT_IO_READ == null || NMS_ITEM_OF == null || AS_BUKKIT_COPY == null) {
+            throw new UnsupportedOperationException("Unsupported server version!");
+        }
+
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(new BigInteger(compressed, 32).toByteArray());
+
+        Object nbtTagCompoundRoot;
+        try {
+            nbtTagCompoundRoot = NBT_IO_READ.invoke(null, new DataInputStream(inputStream));
+            Object nmsItem = NMS_ITEM_OF.invoke(null, nbtTagCompoundRoot);
+            return (ItemStack) AS_BUKKIT_COPY.invoke(null, nmsItem);
+        }
+        catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @NotNull
-    public static List<String> toBase64(@NotNull ItemStack[] item) {
-        return toBase64(Arrays.asList(item));
+    public static List<String> compress(@NotNull ItemStack[] items) {
+        return compress(Arrays.asList(items));
     }
 
     @NotNull
-    public static List<String> toBase64(@NotNull List<ItemStack> items) {
-        return new ArrayList<>(items.stream().map(ItemUtil::toBase64).filter(Objects::nonNull).toList());
+    public static List<String> compress(@NotNull List<ItemStack> items) {
+        return new ArrayList<>(items.stream().map(ItemUtil::compress).filter(Objects::nonNull).toList());
     }
 
-    @Nullable
-    public static ItemStack fromBase64(@NotNull String data) {
-        return ENGINE.getNMS().fromBase64(data);
-    }
-
-    @NotNull
-    public static ItemStack[] fromBase64(@NotNull List<String> list) {
-        List<ItemStack> items = list.stream().map(ItemUtil::fromBase64).filter(Objects::nonNull).toList();
+    public static ItemStack[] decompress(@NotNull List<String> list) {
+        List<ItemStack> items = list.stream().map(ItemUtil::decompress).filter(Objects::nonNull).toList();
         return items.toArray(new ItemStack[list.size()]);
     }
 }

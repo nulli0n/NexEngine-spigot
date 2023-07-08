@@ -5,6 +5,7 @@ import net.md_5.bungee.api.chat.hover.content.Item;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.utils.Colorizer;
@@ -74,7 +75,7 @@ public class NexComponent {
     public NexComponent addHoverEvent(@NotNull HoverEvent.Action action, @NotNull String value) {
         return switch (action) {
             case SHOW_ITEM -> {
-                ItemStack item = ItemUtil.fromBase64(value);
+                ItemStack item = ItemUtil.decompress(value);
                 yield this.showItem(item == null ? new ItemStack(Material.AIR) : item);
             }
             case SHOW_TEXT -> this.showText(value);
@@ -100,9 +101,10 @@ public class NexComponent {
     }
 
     @NotNull
-    public NexComponent showItem(@NotNull ItemStack item) {
-        Item item1 = new Item(item.getType().getKey().getKey(), item.getAmount(), ItemTag.ofNbt(ItemUtil.getNBTTag(item)));
-        this.hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_ITEM, item1);
+    public NexComponent showItem(@NotNull ItemStack is) {
+        ItemMeta meta = is.getItemMeta();
+        Item item = new Item(is.getType().getKey().getKey(), is.getAmount(), ItemTag.ofNbt(meta == null ? null : meta.getAsString()));
+        this.hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_ITEM, item);
         return this;
     }
 

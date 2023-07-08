@@ -68,10 +68,6 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
                 isPaper = true;
                 this.info("Seems like we have Paper based fork here...");
             }
-            if (!engine.loadCore()) {
-                this.getPluginManager().disablePlugin(this);
-                return;
-            }
         }
         else {
             engine.addChildren(this);

@@ -14,17 +14,14 @@ import java.util.List;
 
 public class Reflex {
 
-    @Nullable
     public static Class<?> getClass(@NotNull String path, @NotNull String name) {
         return getClass(path + "." + name);
     }
 
-    @Nullable
     public static Class<?> getInnerClass(@NotNull String path, @NotNull String name) {
         return getClass(path + "$" + name);
     }
 
-    @Nullable
     private static Class<?> getClass(@NotNull String path) {
         try {
             return Class.forName(path);
@@ -35,7 +32,6 @@ public class Reflex {
         }
     }
 
-    @Nullable
     public static Constructor<?> getConstructor(@NotNull Class<?> clazz, Class<?>... types) {
         try {
             Constructor<?> constructor = clazz.getDeclaredConstructor(types);
@@ -48,7 +44,6 @@ public class Reflex {
         return null;
     }
 
-    @Nullable
     public static Object invokeConstructor(@NotNull Constructor<?> constructor, Object... obj) {
         try {
             return constructor.newInstance(obj);
@@ -77,7 +72,6 @@ public class Reflex {
         return result;
     }
 
-    @Nullable
     public static Field getField(@NotNull Class<?> clazz, @NotNull String fieldName) {
         try {
             return clazz.getDeclaredField(fieldName);
@@ -88,7 +82,6 @@ public class Reflex {
         }
     }
 
-    @Nullable
     public static Object getFieldValue(@NotNull Object from, @NotNull String fieldName) {
         try {
             Class<?> clazz = from instanceof Class<?> ? (Class<?>) from : from.getClass();
@@ -122,7 +115,6 @@ public class Reflex {
         return false;
     }
 
-    @Nullable
     public static Method getMethod(@NotNull Class<?> clazz, @NotNull String fieldName, @NotNull Class<?>... o) {
         try {
             return clazz.getDeclaredMethod(fieldName, o);
@@ -133,7 +125,6 @@ public class Reflex {
         }
     }
 
-    @Nullable
     public static Object invokeMethod(@NotNull Method method, @Nullable Object by, @Nullable Object... param) {
         method.setAccessible(true);
         try {

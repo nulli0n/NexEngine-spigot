@@ -410,23 +410,22 @@ public class JYML extends YamlConfiguration {
 
     @Nullable
     public ItemStack getItemEncoded(@NotNull String path) {
-        String code = this.getString(path);
-        if (code == null) return null;
+        String compressed = this.getString(path);
+        if (compressed == null) return null;
 
-        return ItemUtil.fromBase64(code);
+        return ItemUtil.decompress(compressed);
     }
 
     public void setItemEncoded(@NotNull String path, @Nullable ItemStack item) {
-        this.set(path, item == null ? null : ItemUtil.toBase64(item));
+        this.set(path, item == null ? null : ItemUtil.compress(item));
     }
 
     @NotNull
     public ItemStack[] getItemsEncoded(@NotNull String path) {
-        return ItemUtil.fromBase64(this.getStringList(path));
+        return ItemUtil.decompress(this.getStringList(path));
     }
 
     public void setItemsEncoded(@NotNull String path, @NotNull List<ItemStack> item) {
-        List<String> code = new ArrayList<>(ItemUtil.toBase64(item));
-        this.set(path, code);
+        this.set(path, ItemUtil.compress(item));
     }
 }
