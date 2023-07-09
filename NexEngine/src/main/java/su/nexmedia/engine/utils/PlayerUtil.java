@@ -50,7 +50,7 @@ public class PlayerUtil {
 
     public static void sendRichMessage(@NotNull CommandSender sender, @NotNull String message) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage(NexParser.toPlainText(message));
+            sender.sendMessage(Colorizer.apply(NexParser.toPlainText(message)));
             return;
         }
         NexParser.toMessage(message).send(sender);

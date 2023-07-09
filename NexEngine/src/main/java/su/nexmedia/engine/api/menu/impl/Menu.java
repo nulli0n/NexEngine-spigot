@@ -61,6 +61,11 @@ public abstract class Menu<P extends NexPlugin<P>> {
         return PLAYER_MENUS.get(player.getUniqueId());
     }
 
+    @NotNull
+    public P plugin() {
+        return this.plugin;
+    }
+
     public void update() {
         this.getViewers().forEach(viewer -> this.open(viewer.getPlayer(), viewer.getPage()));
     }
@@ -102,9 +107,6 @@ public abstract class Menu<P extends NexPlugin<P>> {
         }
 
         this.getItems(viewer).forEach(menuItem -> {
-            if (menuItem.getType() == MenuItemType.PAGE_NEXT && viewer.getPage() >= viewer.getPages()) return;
-            if (menuItem.getType() == MenuItemType.PAGE_PREVIOUS && viewer.getPage() == 1) return;
-
             ItemStack item = menuItem.getItem();
             menuItem.getOptions().modifyDisplay(viewer, item);
 
@@ -198,7 +200,11 @@ public abstract class Menu<P extends NexPlugin<P>> {
     @NotNull
     public List<MenuItem> getItems(@NotNull MenuViewer viewer) {
         return this.getItems().stream()
-            .filter(menuItem -> menuItem.getOptions().canSee(viewer))
+            .filter(menuItem -> {
+                if (menuItem.getType() == MenuItemType.PAGE_NEXT && viewer.getPage() >= viewer.getPages()) return false;
+                if (menuItem.getType() == MenuItemType.PAGE_PREVIOUS && viewer.getPage() == 1) return false;
+                return menuItem.getOptions().canSee(viewer);
+            })
             .sorted(Comparator.comparingInt(MenuItem::getPriority)).toList();
     }
 
@@ -211,9 +217,9 @@ public abstract class Menu<P extends NexPlugin<P>> {
 
     @Nullable
     public MenuItem getItem(@NotNull MenuViewer viewer, int slot) {
-        return this.getItems().stream()
-            .filter(menuItem -> ArrayUtils.contains(menuItem.getSlots(), slot) && menuItem.getOptions().canSee(viewer))
-            .max(Comparator.comparingInt(MenuItem::getPriority)).orElse(this.getItem(slot));
+        return this.getItems(viewer).stream()
+            .filter(menuItem -> ArrayUtils.contains(menuItem.getSlots(), slot))
+            .max(Comparator.comparingInt(MenuItem::getPriority)).orElse(null);
     }
 
     @NotNull

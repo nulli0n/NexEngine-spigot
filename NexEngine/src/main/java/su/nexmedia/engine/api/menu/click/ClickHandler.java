@@ -17,12 +17,25 @@ public class ClickHandler<E extends Enum<E>> {
 
     @NotNull
     public static ItemClick forNextPage(@NotNull Menu<?> menu) {
-        return ((viewer, event) -> menu.open(viewer.getPlayer(), viewer.getPage() + 1));
+        return ((viewer, event) -> {
+            if (viewer.getPage() < viewer.getPages()) {
+                menu.open(viewer.getPlayer(), viewer.getPage() + 1);
+            }
+        });
     }
 
     @NotNull
     public static ItemClick forPreviousPage(@NotNull Menu<?> menu) {
-        return ((viewer, event) -> menu.open(viewer.getPlayer(), viewer.getPage() - 1));
+        return ((viewer, event) -> {
+            if (viewer.getPage() > 1) {
+                menu.open(viewer.getPlayer(), viewer.getPage() - 1);
+            }
+        });
+    }
+
+    @NotNull
+    public static ItemClick forClose(@NotNull Menu<?> menu) {
+        return ((viewer, event) -> menu.plugin().runTask(task -> viewer.getPlayer().closeInventory()));
     }
 
     @NotNull
