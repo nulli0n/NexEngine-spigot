@@ -15,6 +15,7 @@ import su.nexmedia.engine.api.lang.LangKey;
 import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.api.manager.AbstractManager;
 import su.nexmedia.engine.utils.Colorizer;
+import su.nexmedia.engine.utils.EngineUtils;
 import su.nexmedia.engine.utils.Reflex;
 import su.nexmedia.engine.utils.StringUtil;
 
@@ -62,7 +63,7 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
             this.getConfig().saveChanges();
         }
         else {
-            NexEngine.get().getLangManager().getMessages().forEach((key, message) -> {
+            EngineUtils.ENGINE.getLangManager().getMessages().forEach((key, message) -> {
                 this.getMessages().put(key, new LangMessage(this.plugin, message.getRaw()));
             });
         }
@@ -222,24 +223,24 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         String path = e.getDeclaringClass().getSimpleName() + "." + e.name();
         String locEnum = this.getMessage(path).orElse(null);
         if (locEnum == null && !this.plugin.isEngine()) {
-            return NexPlugin.getEngine().getLangManager().getEnum(e);
+            return EngineUtils.ENGINE.getLangManager().getEnum(e);
         }
         return locEnum == null ? "null" : locEnum;
     }
 
     @NotNull
     public static String getPotionType(@NotNull PotionEffectType type) {
-        return NexEngine.get().getLangManager().getMessage("PotionEffectType." + type.getName()).orElse(type.getName());
+        return EngineUtils.ENGINE.getLangManager().getMessage("PotionEffectType." + type.getName()).orElse(type.getName());
     }
 
     @NotNull
     public static String getEntityType(@NotNull EntityType type) {
-        return NexEngine.get().getLangManager().getEnum(type);
+        return EngineUtils.ENGINE.getLangManager().getEnum(type);
     }
 
     @NotNull
     public static String getMaterial(@NotNull Material type) {
-        return NexEngine.get().getLangManager().getEnum(type);
+        return EngineUtils.ENGINE.getLangManager().getEnum(type);
     }
 
     @NotNull
@@ -254,7 +255,7 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     @NotNull
     private static String getByObject(@NotNull String nameRaw, @NotNull String path) {
-        LangManager<NexEngine> manager = NexEngine.get().getLangManager();
+        LangManager<NexEngine> manager = EngineUtils.ENGINE.getLangManager();
 
         manager.getConfig().addMissing(path + "." + nameRaw, StringUtil.capitalizeUnderscored(nameRaw));
         manager.getConfig().saveChanges();
@@ -264,11 +265,11 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     @NotNull
     public static String getBoolean(boolean b) {
-        return NexEngine.get().getLangManager().getMessage(b ? EngineLang.OTHER_YES : EngineLang.OTHER_NO).getLocalized();
+        return EngineUtils.ENGINE.getLangManager().getMessage(b ? EngineLang.OTHER_YES : EngineLang.OTHER_NO).getLocalized();
     }
 
     @NotNull
     public static String getPlain(@NotNull LangKey key) {
-        return NexEngine.get().getLangManager().getMessage(key).getLocalized();
+        return EngineUtils.ENGINE.getLangManager().getMessage(key).getLocalized();
     }
 }

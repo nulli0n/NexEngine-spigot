@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.api.manager.AbstractListener;
+import su.nexmedia.engine.utils.EngineUtils;
 
 import java.util.Collections;
 import java.util.Set;
@@ -36,7 +37,7 @@ public final class VaultHook extends AbstractListener<NexEngine> {
 
     public static void setup() {
         if (instance == null) {
-            instance = new VaultHook(NexEngine.get());
+            instance = new VaultHook(EngineUtils.ENGINE);
         }
     }
 

@@ -7,7 +7,6 @@ import org.bukkit.World;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.NexEngine;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,7 +35,7 @@ public class LocationUtil {
 
         World world = Bukkit.getWorld(split[5]);
         if (world == null) {
-            NexEngine.get().error("Invalid/Unloaded world for: '" + raw + "' location!");
+            EngineUtils.ENGINE.error("Invalid/Unloaded world for: '" + raw + "' location!");
             return null;
         }
 

@@ -16,7 +16,6 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.Version;
 import su.nexmedia.engine.utils.*;
@@ -117,7 +116,7 @@ public class JYML extends YamlConfiguration {
             this.save(this.file);
         }
         catch (IOException e) {
-            NexEngine.get().error("Could not save config: " + file.getName());
+            EngineUtils.ENGINE.error("Could not save config: " + file.getName());
             e.printStackTrace();
         }
     }

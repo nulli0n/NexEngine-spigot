@@ -1,7 +1,6 @@
 package su.nexmedia.engine.utils;
 
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.lang.EngineLang;
 
 import java.time.Instant;
@@ -11,8 +10,6 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 public class TimeUtil {
-
-    private static final NexEngine ENGINE = NexEngine.get();
 
     @NotNull
     public static String formatTime(long time) {
@@ -26,25 +23,25 @@ public class TimeUtil {
             if (str.length() > 0) {
                 str.append(" ");
             }
-            str.append(ENGINE.getMessage(EngineLang.TIME_DAY).replace("%s%", days).getLocalized());
+            str.append(EngineUtils.ENGINE.getMessage(EngineLang.TIME_DAY).replace("%s%", days).getLocalized());
         }
         if (hours > 0) {
             if (str.length() > 0) {
                 str.append(" ");
             }
-            str.append(ENGINE.getMessage(EngineLang.TIME_HOUR).replace("%s%", hours).getLocalized());
+            str.append(EngineUtils.ENGINE.getMessage(EngineLang.TIME_HOUR).replace("%s%", hours).getLocalized());
         }
         if (minutes > 0) {
             if (str.length() > 0) {
                 str.append(" ");
             }
-            str.append(ENGINE.getMessage(EngineLang.TIME_MIN).replace("%s%", minutes).getLocalized());
+            str.append(EngineUtils.ENGINE.getMessage(EngineLang.TIME_MIN).replace("%s%", minutes).getLocalized());
         }
         if (str.length() == 0 || seconds > 0) {
             if (str.length() > 0) {
                 str.append(" ");
             }
-            str.append(ENGINE.getMessage(EngineLang.TIME_SEC).replace("%s%", seconds).getLocalized());
+            str.append(EngineUtils.ENGINE.getMessage(EngineLang.TIME_SEC).replace("%s%", seconds).getLocalized());
         }
 
         return StringUtil.oneSpace(str.toString());

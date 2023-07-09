@@ -19,6 +19,7 @@ import su.nexmedia.engine.command.PluginMainCommand;
 import su.nexmedia.engine.config.ConfigManager;
 import su.nexmedia.engine.lang.LangManager;
 import su.nexmedia.engine.utils.CollectionsUtil;
+import su.nexmedia.engine.utils.EngineUtils;
 import su.nexmedia.engine.utils.Reflex;
 
 import java.io.File;
@@ -38,10 +39,10 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
     private Logger  logger;
     private boolean isEngine;
 
-    @NotNull
+    /*@NotNull
     public static NexEngine getEngine() {
         return NexEngine.get();
-    }
+    }*/
 
     public final boolean isEngine() {
         return this.isEngine;
@@ -62,7 +63,6 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
         this.logger = this.getLogger();
         this.isEngine = this instanceof NexEngine;
 
-        NexEngine engine = getEngine();
         if (this.isEngine()) {
             if (!this.getServer().getVersion().contains("Spigot")) {
                 isPaper = true;
@@ -70,8 +70,7 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
             }
         }
         else {
-            engine.addChildren(this);
-            this.info("Powered by: " + engine.getName());
+            EngineUtils.ENGINE.addChildren(this);
         }
 
         if (Version.getCurrent().isDeprecated()) {

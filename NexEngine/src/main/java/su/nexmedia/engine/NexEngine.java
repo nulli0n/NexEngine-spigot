@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class NexEngine extends NexPlugin<NexEngine> {
 
-    private static NexEngine instance;
+    //private static NexEngine instance;
 
     private final Set<NexPlugin<?>> childrens = new HashSet<>();
 
@@ -22,13 +22,13 @@ public class NexEngine extends NexPlugin<NexEngine> {
     private MenuListener menuListener;
 
     public NexEngine() {
-        instance = this;
+        //instance = this;
     }
 
-    @NotNull
+    /*@NotNull
     public static NexEngine get() {
         return instance;
-    }
+    }*/
 
     @Override
     @NotNull
@@ -90,6 +90,7 @@ public class NexEngine extends NexPlugin<NexEngine> {
 
     void addChildren(@NotNull NexPlugin<?> child) {
         this.childrens.add(child);
+        child.info("Powered by: " + this.getName());
     }
 
     @NotNull

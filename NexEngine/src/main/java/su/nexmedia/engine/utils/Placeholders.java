@@ -26,24 +26,6 @@ public class Placeholders {
     public static final String LOCATION_Z     = "%location_z%";
     public static final String LOCATION_WORLD = "%location_world%";
 
-    /*public interface Placeholder<U> {
-        UnaryOperator<String> replacer(@NotNull U src);
-    }
-
-    public static final Placeholder<org.bukkit.Location> LOCATION = location -> str -> str
-        .replace(LOCATION_X, NumberUtil.format(location.getX()))
-        .replace(LOCATION_Y, NumberUtil.format(location.getY()))
-        .replace(LOCATION_Z, NumberUtil.format(location.getZ()))
-        .replace(LOCATION_WORLD, LocationUtil.getWorldName(location));
-
-    public static final Placeholder<NexPlugin<?>> PLUGIN = plugin -> str -> str
-        .replace(PLUGIN_NAME, plugin.getName())
-        .replace(PLUGIN_NAME_LOCALIZED, plugin.getConfigManager().pluginName);
-
-    public static final Placeholder<Player> PLAYER = player -> str -> str
-        .replace(PLAYER_NAME, player.getName())
-        .replace(PLAYER_DISPLAY_NAME, player.getDisplayName());*/
-
     @NotNull
     public static UnaryOperator<String> forLocation(@NotNull Location location) {
         return new PlaceholderMap()
@@ -79,12 +61,4 @@ public class Placeholders {
             .add(PLAYER_DISPLAY_NAME, sender::getName)
             .replacer();
     }
-
-    /*public static final Placeholder<CommandSender> SENDER = sender -> {
-        if (sender instanceof Player player) return PLAYER.replacer(player);
-
-        return str -> str
-            .replace(PLAYER_NAME, sender.getName())
-            .replace(PLAYER_DISPLAY_NAME, sender.getName());
-    };*/
 }

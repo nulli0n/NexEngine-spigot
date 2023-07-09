@@ -12,6 +12,7 @@ import su.nexmedia.engine.api.menu.impl.Menu;
 import su.nexmedia.engine.api.menu.impl.MenuViewer;
 import su.nexmedia.engine.lang.EngineLang;
 import su.nexmedia.engine.utils.Colorizer;
+import su.nexmedia.engine.utils.EngineUtils;
 import su.nexmedia.engine.utils.Pair;
 import su.nexmedia.engine.utils.message.NexComponent;
 import su.nexmedia.engine.utils.message.NexMessage;
@@ -20,8 +21,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class EditorManager extends AbstractManager<NexEngine> {
-
-    private static final NexEngine ENGINE = NexEngine.get();
 
     private static final Map<Player, Pair<Menu<?>, Integer>> CACHE_MENU   = new WeakHashMap<>();
     private static final Map<Player, InputHandler>           CACHE_INPUT  = new WeakHashMap<>();
@@ -65,7 +64,7 @@ public class EditorManager extends AbstractManager<NexEngine> {
             int page = viewer == null ? 1 : viewer.getPage();
             CACHE_MENU.put(player, Pair.of(menu, page));
         }
-        ENGINE.getMessage(EngineLang.EDITOR_TIP_EXIT).send(player);
+        EngineUtils.ENGINE.getMessage(EngineLang.EDITOR_TIP_EXIT).send(player);
     }
 
     public static void endEdit(@NotNull Player player) {
@@ -81,7 +80,7 @@ public class EditorManager extends AbstractManager<NexEngine> {
         }
         CACHE_VALUES.remove(player);
 
-        player.sendTitle(ENGINE.getMessage(EngineLang.EDITOR_TITLE_DONE).getLocalized(), "", 10, 40, 10);
+        player.sendTitle(EngineUtils.ENGINE.getMessage(EngineLang.EDITOR_TITLE_DONE).getLocalized(), "", 10, 40, 10);
     }
 
     public static void suggestValues(@NotNull Player player, @NotNull Collection<String> values, boolean autoRun) {
@@ -129,11 +128,11 @@ public class EditorManager extends AbstractManager<NexEngine> {
     }
 
     public static void prompt(@NotNull Player player, @NotNull String text) {
-        tip(player, ENGINE.getMessage(EngineLang.EDITOR_TITLE_EDIT).getLocalized(), text);
+        tip(player, EngineUtils.ENGINE.getMessage(EngineLang.EDITOR_TITLE_EDIT).getLocalized(), text);
     }
 
     public static void error(@NotNull Player player, @NotNull String text) {
-        error(player, ENGINE.getMessage(EngineLang.EDITOR_TITLE_ERROR).getLocalized(), text);
+        error(player, EngineUtils.ENGINE.getMessage(EngineLang.EDITOR_TITLE_ERROR).getLocalized(), text);
     }
 
     public static void tip(@NotNull Player player, @NotNull String title, @NotNull String text) {

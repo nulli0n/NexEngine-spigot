@@ -23,7 +23,12 @@ public class PlayerRankMap<T extends Number> {
     public static <T extends Number> PlayerRankMap<T> read(@NotNull JYML cfg, @NotNull String path, @NotNull Class<T> clazz) {
         Map<String, T> values = new HashMap<>();
         for (String rank : cfg.getSection(path)) {
-            T number = clazz.cast(cfg.getDouble(path + "." + rank));
+            T number;
+            if (clazz == Double.class) {
+                number = clazz.cast(cfg.getDouble(path + "." + rank));
+            }
+            else number = clazz.cast(cfg.getInt(path + "." + rank));
+
             values.put(rank.toLowerCase(), number);
         }
         return new PlayerRankMap<>(values);

@@ -1460,47 +1460,6 @@ Material:
   BAMBOO_BLOCK: 竹块
   STRIPPED_BAMBOO_BLOCK: 剥皮竹块
   BAMBOO_SLAB: 竹板
-  BAMBOO_MOSAIC_SLAB: Bamboo Mosaic Slab
-  CHISELED_BOOKSHELF: Chiseled Bookshelf
-  BAMBOO_FENCE: Bamboo Fence
-  BAMBOO_STAIRS: Bamboo Stairs
-  BAMBOO_MOSAIC_STAIRS: Bamboo Mosaic Stairs
-  BAMBOO_BUTTON: Bamboo Button
-  BAMBOO_PRESSURE_PLATE: Bamboo Pressure Plate
-  BAMBOO_DOOR: Bamboo Door
-  BAMBOO_TRAPDOOR: Bamboo Trapdoor
-  BAMBOO_FENCE_GATE: Bamboo Fence Gate
-  BAMBOO_RAFT: Bamboo Raft
-  BAMBOO_CHEST_RAFT: Bamboo Chest Raft
-  BAMBOO_SIGN: Bamboo Sign
-  OAK_HANGING_SIGN: Oak Hanging Sign
-  SPRUCE_HANGING_SIGN: Spruce Hanging Sign
-  BIRCH_HANGING_SIGN: Birch Hanging Sign
-  JUNGLE_HANGING_SIGN: Jungle Hanging Sign
-  ACACIA_HANGING_SIGN: Acacia Hanging Sign
-  DARK_OAK_HANGING_SIGN: Dark Oak Hanging Sign
-  MANGROVE_HANGING_SIGN: Mangrove Hanging Sign
-  BAMBOO_HANGING_SIGN: Bamboo Hanging Sign
-  CRIMSON_HANGING_SIGN: Crimson Hanging Sign
-  WARPED_HANGING_SIGN: Warped Hanging Sign
-  CAMEL_SPAWN_EGG: Camel Spawn Egg
-  ENDER_DRAGON_SPAWN_EGG: Ender Dragon Spawn Egg
-  IRON_GOLEM_SPAWN_EGG: Iron Golem Spawn Egg
-  SNOW_GOLEM_SPAWN_EGG: Snow Golem Spawn Egg
-  WITHER_SPAWN_EGG: Wither Spawn Egg
-  PIGLIN_HEAD: Piglin Head
-  BAMBOO_WALL_SIGN: Bamboo Wall Sign
-  OAK_WALL_HANGING_SIGN: Oak Wall Hanging Sign
-  SPRUCE_WALL_HANGING_SIGN: Spruce Wall Hanging Sign
-  BIRCH_WALL_HANGING_SIGN: Birch Wall Hanging Sign
-  ACACIA_WALL_HANGING_SIGN: Acacia Wall Hanging Sign
-  JUNGLE_WALL_HANGING_SIGN: Jungle Wall Hanging Sign
-  DARK_OAK_WALL_HANGING_SIGN: Dark Oak Wall Hanging Sign
-  MANGROVE_WALL_HANGING_SIGN: Mangrove Wall Hanging Sign
-  CRIMSON_WALL_HANGING_SIGN: Crimson Wall Hanging Sign
-  WARPED_WALL_HANGING_SIGN: Warped Wall Hanging Sign
-  BAMBOO_WALL_HANGING_SIGN: Bamboo Wall Hanging Sign
-  PIGLIN_WALL_HEAD: Piglin Wall Head
 GameMode:
   CREATIVE: 创造
   SURVIVAL: 生存
@@ -1612,62 +1571,10 @@ Enchantment:
   jumpshot: 跳投
   metabolism: 新陈代谢
   ascend: 提升
-  telekinesis: Telekinesis
-  permanence_curse: Permanence Curse
-  rebounding: Rebounding
-  wisdom: Wisdom
-  boss_hunter: Boss Hunter
-  lumberjack: Lumberjack
-  block_breather: Block Breather
-  thor: Thor
-  slipstream: Slipstream
-  cubism: Cubism
-  transmission: Transmission
-  getaway: Getaway
-  introversion: Introversion
-  snipe: Snipe
-  shulker_harvest: Shulker Harvest
-  vitality: Vitality
-  first_strike: First Strike
-  shura: Shura
-  aura: Aura
-  rapid: Rapid
-  rocket_saver: Rocket Saver
-  contagion: Contagion
-  tripleshot: Tripleshot
-  wyvern: Wyvern
-  skull_puncture: Skull Puncture
-  foraging: Foraging
   breaklessness_curse: 不破诅咒
   one_for_all: 一体
   warp_drive: 传送器
   xray: 透视
-  soul_storm: Soul Storm
-  stun: Stun
-  frost: Frost
-  carve: Carve
-  repairing: Repairing
-  flashbang: Flashbang
-  dynamite: Dynamite
-  criticals: Criticals
-  infernal_touch: Infernal Touch
-  slaughter: Slaughter
-  blackout: Blackout
-  nether_affinity: Nether Affinity
-  streamlining: Streamlining
-  fortitude: Fortitude
-  brightness: Brightness
-  soulbound: Soulbound
-  charge: Charge
-  bleed: Bleed
-  excavation: Excavation
-  harmlessness_curse: Harmlessness Curse
-  dexterity: Dexterity
-  abrasion: Abrasion
-  adrenaline: Adrenaline
-  escape: Escape
-  thrive: Thrive
-  stamina: Stamina
 Editor:
   Tip:
     Exit: '{json: ~text: &b点击以退出 &d编辑模式; ~showText: &7点击或者输入 &f#exit; ~runCommand: /#exit;}'
@@ -1680,22 +1587,3 @@ Editor:
       Generic: '&7无效的数字!'
       NotInt: '&7数字必须是 &c整数&7!'
     Enum: '&7无效类型！在聊天中查看'
-  MenuItemType:
-    PAGE_NEXT:
-      Name: '&6&l下一页'
-      Lore: []
-    PAGE_PREVIOUS:
-      Name: '&6&l上一页'
-      Lore: []
-    CLOSE:
-      Name: '&c&l关闭'
-      Lore: []
-    RETURN:
-      Name: '&c&l返回'
-      Lore: []
-    CONFIRMATION_ACCEPT:
-      Name: '&a&l接受'
-      Lore: []
-    CONFIRMATION_DECLINE:
-      Name: '&c&l拒绝'
-      Lore: []
