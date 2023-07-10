@@ -3,6 +3,7 @@ package su.nexmedia.playerblocktracker;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Lightable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.event.EventHandler;
@@ -75,6 +76,7 @@ public class TrackListener<P extends NexPlugin<P>> extends AbstractListener<P> {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onFade(BlockFadeEvent event) {
+        if (event.getBlock().getBlockData() instanceof Lightable) return;
         PlayerBlockTracker.unTrack(event.getBlock());
     }
 
