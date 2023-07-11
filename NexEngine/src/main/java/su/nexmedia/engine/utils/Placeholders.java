@@ -26,6 +26,10 @@ public class Placeholders {
     public static final String LOCATION_Z     = "%location_z%";
     public static final String LOCATION_WORLD = "%location_world%";
 
+    public static final String COMMAND_USAGE       = "%command_usage%";
+    public static final String COMMAND_DESCRIPTION = "%command_description%";
+    public static final String COMMAND_LABEL       = "%command_label%";
+
     @NotNull
     public static UnaryOperator<String> forLocation(@NotNull Location location) {
         return new PlaceholderMap()

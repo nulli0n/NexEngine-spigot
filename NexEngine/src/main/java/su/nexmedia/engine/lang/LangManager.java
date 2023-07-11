@@ -1,6 +1,5 @@
 package su.nexmedia.engine.lang;
 
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
@@ -9,8 +8,10 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.NexPlugin;
+import su.nexmedia.engine.api.config.JOption;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.editor.EditorLocale;
+import su.nexmedia.engine.api.lang.LangColors;
 import su.nexmedia.engine.api.lang.LangKey;
 import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.api.manager.AbstractManager;
@@ -40,16 +41,35 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
     protected void onLoad() {
         this.plugin.getConfigManager().extractResources(DIR_LANG);
         this.config = JYML.loadOrExtract(plugin, DIR_LANG + "messages_" + plugin.getConfigManager().languageCode + ".yml");
-        this.plugin.info("Using '" + plugin.getConfigManager().languageCode + "' language.");
+        this.placeholders.putAll(JOption.forMap("Placeholders",
+            (cfg, path, key) -> cfg.getString(path + "." + key, key),
+            Map.of(
+                "%red%", LangColors.RED,
+                "%green%", LangColors.GREEN,
+                "%gray%", LangColors.GRAY
+            ),
+            "Here you can create your own custom placeholders to use it in language config.",
+            "Key = Placeholder, Value = Replacer."
+        ).setWriter((cfg, path, map) -> map.forEach((place, value) -> cfg.set(path + "." + place, value))).read(this.config));
 
-        this.getConfig().getSection("Placeholders").forEach(placeholder -> {
-            this.placeholders.put(placeholder, this.getConfig().getString("Placeholders." + placeholder, ""));
-        });
+        // Inherit Engine messages
+        if (!this.plugin.isEngine()) {
+            EngineUtils.ENGINE.getLangManager().getMessages().forEach((key, message) -> {
+                this.getMessages().put(key, new LangMessage(this.plugin, message.getRaw()));
+            });
+        }
+    }
 
+    @Override
+    protected void onShutdown() {
+        this.messages.clear();
+        this.placeholders.clear();
+    }
+
+    public void loadDefaults() {
         if (this.plugin.isEngine()) {
             this.loadEnum(EntityType.class);
             this.loadEnum(Material.class);
-            this.loadEnum(GameMode.class);
 
             for (PotionEffectType type : PotionEffectType.values()) {
                 this.getConfig().addMissing("PotionEffectType." + type.getName(), StringUtil.capitalizeUnderscored(type.getName()));
@@ -62,17 +82,6 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
             }
             this.getConfig().saveChanges();
         }
-        else {
-            EngineUtils.ENGINE.getLangManager().getMessages().forEach((key, message) -> {
-                this.getMessages().put(key, new LangMessage(this.plugin, message.getRaw()));
-            });
-        }
-    }
-
-    @Override
-    protected void onShutdown() {
-        this.messages.clear();
-        this.placeholders.clear();
     }
 
     @NotNull

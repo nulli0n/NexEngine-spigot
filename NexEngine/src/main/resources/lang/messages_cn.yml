@@ -1,22 +1,19 @@
-Core:
-  Command:
-    Usage: '&c用法: &e/%command_label% &6%command_usage%'
-    Help:
-      List:
-        - '&6&m              &6&l[ &e&l%plugin_name% &7- &e&l命令 &6&l]&6&m              &7'
-        - '&7'
-        - '&7          &4&l<> &7- 必需的, &2&l[] &7- 可选的'
-        - '&7'
-        - '&6▪ &e/%command_label% &6%command_usage% &7- %command_description%'
-        - '&7'
-      Desc: 显示帮助页面
-    Editor:
-      Desc: 打开GUI编辑器
-    About:
-      Desc: 显示插件信息
-    Reload:
-      Desc: 重载插件，&b汉化者：&c氿雾
-      Done: 已重载!
+Command:
+  Usage: '&c用法: &e/%command_label% &6%command_usage%'
+  Help:
+    List:
+      - '&6&m              &6&l[ &e&l%plugin_name% &7- &e&l命令 &6&l]&6&m              &7'
+      - '&7'
+      - '&7          &4&l<> &7- 必需的, &2&l[] &7- 可选的'
+      - '&7'
+      - '&6▪ &e/%command_label% &6%command_usage% &7- %command_description%'
+      - '&7'
+    Desc: 显示帮助页面
+  About:
+    Desc: 显示插件信息
+  Reload:
+    Desc: 重载插件，&b汉化者：&c氿雾
+    Done: 已重载!
 Time:
   Day: '%s%天'
   Hour: '%s%小时'

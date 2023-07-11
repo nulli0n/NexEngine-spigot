@@ -18,7 +18,7 @@ public class AboutSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> 
 
     public AboutSubCommand(@NotNull P plugin) {
         super(plugin, new String[]{"about"});
-        this.setDescription(plugin.getMessage(EngineLang.CORE_COMMAND_ABOUT_DESC));
+        this.setDescription(plugin.getMessage(EngineLang.COMMAND_ABOUT_DESC));
     }
 
     @Override
@@ -28,9 +28,9 @@ public class AboutSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> 
             LangColors.YELLOW + ChatColor.BOLD + plugin.getName() + LangColors.ORANGE + " v" + plugin.getDescription().getVersion(),
             LangColors.GRAY + plugin.getDescription().getDescription(),
             LangColors.GRAY,
-            LangColors.GREEN + "▪ " + LangColors.GRAY + "API Version: " + LangColors.GREEN + plugin.getDescription().getAPIVersion(),
-            LangColors.GREEN + "▪ " + LangColors.GRAY + "Made by " + LangColors.GREEN + plugin.getDescription().getAuthors().get(0),
-            LangColors.GREEN + "▪ " + LangColors.GRAY + "Powered by " + LangColors.GREEN + EngineUtils.ENGINE.getName(),
+            LangColors.YELLOW + "▪ " + LangColors.GRAY + "API Version: " + LangColors.YELLOW + plugin.getDescription().getAPIVersion(),
+            LangColors.YELLOW + "▪ " + LangColors.GRAY + "Made by " + LangColors.YELLOW + plugin.getDescription().getAuthors().get(0),
+            LangColors.YELLOW + "▪ " + LangColors.GRAY + "Powered by " + LangColors.YELLOW + EngineUtils.ENGINE.getName(),
             LangColors.GRAY,
             LangColors.CYAN + ChatColor.UNDERLINE + "Made in the Urals" + LangColors.CYAN + " © 2019-2023",
             LangColors.GRAY));

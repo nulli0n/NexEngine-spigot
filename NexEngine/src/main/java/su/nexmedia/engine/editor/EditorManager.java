@@ -26,7 +26,7 @@ public class EditorManager extends AbstractManager<NexEngine> {
     private static final Map<Player, InputHandler>           CACHE_INPUT  = new WeakHashMap<>();
     private static final Map<Player, List<String>>           CACHE_VALUES = new WeakHashMap<>();
 
-    static final String EXIT       = "#exit";
+    public static final String EXIT       = "#exit";
     static final String VALUES     = "#values";
     static final int    TITLE_STAY = Short.MAX_VALUE;
 

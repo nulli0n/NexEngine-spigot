@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
+import su.nexmedia.engine.api.placeholder.PlaceholderMap;
 import su.nexmedia.engine.utils.*;
 import su.nexmedia.engine.utils.message.NexParser;
 import su.nexmedia.engine.utils.regex.RegexUtil;
@@ -45,6 +46,7 @@ public class LangMessage {
     }
 
     private final NexPlugin<?> plugin;
+    private final PlaceholderMap placeholderMap;
 
     private String msgRaw;
     private String msgLocalized;
@@ -55,6 +57,11 @@ public class LangMessage {
 
     public LangMessage(@NotNull NexPlugin<?> plugin, @NotNull String raw) {
         this.plugin = plugin;
+        this.placeholderMap = new PlaceholderMap();
+        this.plugin.getLangManager().getPlaceholders().forEach((placeholder, value) -> {
+            this.placeholderMap.add(placeholder, () -> value);
+        });
+
         this.setRaw(raw);
     }
 
@@ -66,6 +73,7 @@ public class LangMessage {
         this.hasPrefix = from.hasPrefix;
         this.sound = from.sound;
         this.titleTimes = Arrays.copyOf(from.titleTimes, from.titleTimes.length);
+        this.placeholderMap = new PlaceholderMap(from.placeholderMap);
     }
 
     void setOptions(@NotNull String msg) {
@@ -208,11 +216,6 @@ public class LangMessage {
 
     @NotNull
     private UnaryOperator<String> replaceDefaults() {
-        return str -> {
-            for (Map.Entry<String, String> entry : this.plugin.getLangManager().getPlaceholders().entrySet()) {
-                str = str.replace(entry.getKey(), entry.getValue());
-            }
-            return Placeholders.forPlugin(plugin).apply(str);
-        };
+        return str -> Placeholders.forPlugin(this.plugin).apply(this.placeholderMap.replacer().apply(str));
     }
 }

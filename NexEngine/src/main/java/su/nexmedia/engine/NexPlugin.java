@@ -39,11 +39,6 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
     private Logger  logger;
     private boolean isEngine;
 
-    /*@NotNull
-    public static NexEngine getEngine() {
-        return NexEngine.get();
-    }*/
-
     public final boolean isEngine() {
         return this.isEngine;
     }
@@ -187,6 +182,7 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
         this.langManager = new LangManager<>(this.getSelf());
         this.langManager.setup();
         this.loadLang();
+        this.getLangManager().loadDefaults();
 
         this.registerPermissions();
 

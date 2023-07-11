@@ -14,21 +14,10 @@ import java.util.Set;
 
 public class NexEngine extends NexPlugin<NexEngine> {
 
-    //private static NexEngine instance;
-
     private final Set<NexPlugin<?>> childrens = new HashSet<>();
 
     private EditorManager editorManager;
     private MenuListener menuListener;
-
-    public NexEngine() {
-        //instance = this;
-    }
-
-    /*@NotNull
-    public static NexEngine get() {
-        return instance;
-    }*/
 
     @Override
     @NotNull

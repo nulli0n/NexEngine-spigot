@@ -1,9 +1,2 @@
 Plugin:
   Command_Aliases: 'nexengine'
-  Language: en
-
-Locale:
-  World_Names:
-    world: 'World'
-    world_nether: 'Nether'
-    world_the_end: 'The End'

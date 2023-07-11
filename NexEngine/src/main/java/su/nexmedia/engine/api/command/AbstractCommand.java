@@ -10,6 +10,7 @@ import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.api.placeholder.Placeholder;
 import su.nexmedia.engine.api.placeholder.PlaceholderMap;
 import su.nexmedia.engine.lang.EngineLang;
+import su.nexmedia.engine.utils.Placeholders;
 import su.nexmedia.engine.utils.regex.RegexUtil;
 
 import java.util.*;
@@ -18,10 +19,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public abstract class AbstractCommand<P extends NexPlugin<P>> implements Placeholder {
-
-    public static final String PLACEHOLDER_USAGE       = "%command_usage%";
-    public static final String PLACEHOLDER_DESCRIPTION = "%command_description%";
-    public static final String PLACEHOLDER_LABEL       = "%command_label%";
 
     protected final P                               plugin;
     protected final Map<String, AbstractCommand<P>> childrens;
@@ -62,9 +59,9 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements Placeho
         this.childrens = new TreeMap<>();
         this.commandFlags = new HashSet<>();
         this.placeholderMap = new PlaceholderMap()
-            .add(PLACEHOLDER_DESCRIPTION, this::getDescription)
-            .add(PLACEHOLDER_USAGE, this::getUsage)
-            .add(PLACEHOLDER_LABEL, this::getLabelFull);
+            .add(Placeholders.COMMAND_DESCRIPTION, this::getDescription)
+            .add(Placeholders.COMMAND_USAGE, this::getUsage)
+            .add(Placeholders.COMMAND_LABEL, this::getLabelFull);
 
     }
 
@@ -229,16 +226,11 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements Placeho
     }
 
     protected final void printUsage(@NotNull CommandSender sender) {
-        plugin.getMessage(EngineLang.CORE_COMMAND_USAGE).replace(this.replacePlaceholders()).send(sender);
+        plugin.getMessage(EngineLang.COMMAND_USAGE).replace(this.replacePlaceholders()).send(sender);
     }
 
     protected final void errorPermission(@NotNull CommandSender sender) {
         plugin.getMessage(EngineLang.ERROR_PERMISSION_DENY).send(sender);
-    }
-
-    @Deprecated
-    protected final void errorItem(@NotNull CommandSender sender) {
-        plugin.getMessage(EngineLang.ERROR_ITEM_INVALID).send(sender);
     }
 
     protected final void errorPlayer(@NotNull CommandSender sender) {

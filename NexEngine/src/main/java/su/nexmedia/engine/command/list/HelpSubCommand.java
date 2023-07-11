@@ -6,12 +6,13 @@ import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.api.command.CommandResult;
 import su.nexmedia.engine.lang.EngineLang;
+import su.nexmedia.engine.utils.Placeholders;
 
 public class HelpSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> {
 
     public HelpSubCommand(@NotNull P plugin) {
         super(plugin, new String[]{"help"});
-        this.setDescription(plugin.getMessage(EngineLang.CORE_COMMAND_HELP_DESC));
+        this.setDescription(plugin.getMessage(EngineLang.COMMAND_HELP_DESC));
     }
 
     @Override
@@ -21,8 +22,8 @@ public class HelpSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> {
             return;
         }
 
-        plugin.getMessage(EngineLang.CORE_COMMAND_HELP_LIST)
-            .replace(str -> str.contains(AbstractCommand.PLACEHOLDER_LABEL), (line, list) -> {
+        plugin.getMessage(EngineLang.COMMAND_HELP_LIST)
+            .replace(str -> str.contains(Placeholders.COMMAND_LABEL), (line, list) -> {
                 this.parent.getChildrens().forEach(children -> {
                     if (!children.hasPermission(sender)) return;
 
