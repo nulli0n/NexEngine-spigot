@@ -50,7 +50,7 @@ public class EngineLang implements LangColors {
 
     public static final LangKey EDITOR_TIP_EXIT             = LangKey.of("Editor.Tip.Exit",
         "<! prefix:\"false\" !>" +
-        "<? showText:\"" + GRAY + "Click me or type " + RED + EditorManager.EXIT + "\" run_command:\"/" + EditorManager.EXIT + "\" ?>" + GRAY + "Click here to " + RED + "[Exit Edit Mode]</>");
+        "<? show_text:\"" + GRAY + "Click me or type " + RED + EditorManager.EXIT + "\" run_command:\"/" + EditorManager.EXIT + "\" ?>" + GRAY + "Click here to " + RED + "[Exit Edit Mode]</>");
     public static final LangKey EDITOR_TITLE_DONE           = LangKey.of("Editor.Title.Done", "&a&lDone!");
     public static final LangKey EDITOR_TITLE_EDIT           = LangKey.of("Editor.Title.Edit", "&a&l< Edit Mode >");
     public static final LangKey EDITOR_TITLE_ERROR          = LangKey.of("Editor.Title.Error", "&c&lError!");

@@ -30,78 +30,78 @@ public class JOption<T> {
     protected Writer<T> writer;
     protected Reader<T> reader;
 
-    public JOption(@NotNull String path, @NotNull Reader<T> reader, @NotNull Supplier<T> defaultValue, @NotNull String... description) {
+    public JOption(@NotNull String path, @NotNull Reader<T> reader, @NotNull Supplier<T> defaultValue, @Nullable String... description) {
         this(path, reader, defaultValue.get(), description);
     }
 
-    public JOption(@NotNull String path, @NotNull Reader<T> reader, @NotNull T defaultValue, @NotNull String... description) {
+    public JOption(@NotNull String path, @NotNull Reader<T> reader, @NotNull T defaultValue, @Nullable String... description) {
         this.path = path;
-        this.description = description;
+        this.description = description == null ? new String[0] : description;
         this.reader = reader;
         this.defaultValue = defaultValue;
     }
 
     @NotNull
-    public static JOption<Boolean> create(@NotNull String path, boolean defaultValue, @NotNull String... description) {
+    public static JOption<Boolean> create(@NotNull String path, boolean defaultValue, @Nullable String... description) {
         return new JOption<>(path, READER_BOOLEAN, defaultValue, description);
     }
 
     @NotNull
-    public static JOption<Integer> create(@NotNull String path, int defaultValue, @NotNull String... description) {
+    public static JOption<Integer> create(@NotNull String path, int defaultValue, @Nullable String... description) {
         return new JOption<>(path, READER_INT, defaultValue, description);
     }
 
     @NotNull
-    public static JOption<Double> create(@NotNull String path, double defaultValue, @NotNull String... description) {
+    public static JOption<Double> create(@NotNull String path, double defaultValue, @Nullable String... description) {
         return new JOption<>(path, READER_DOUBLE, defaultValue, description);
     }
 
     @NotNull
-    public static JOption<Long> create(@NotNull String path, long defaultValue, @NotNull String... description) {
+    public static JOption<Long> create(@NotNull String path, long defaultValue, @Nullable String... description) {
         return new JOption<>(path, READER_LONG, defaultValue, description);
     }
 
     @NotNull
-    public static JOption<String> create(@NotNull String path, @NotNull String defaultValue, @NotNull String... description) {
+    public static JOption<String> create(@NotNull String path, @NotNull String defaultValue, @Nullable String... description) {
         return new JOption<>(path, READER_STRING, defaultValue, description);
     }
 
     @NotNull
-    public static JOption<List<String>> create(@NotNull String path, @NotNull List<String> defaultValue, @NotNull String... description) {
+    public static JOption<List<String>> create(@NotNull String path, @NotNull List<String> defaultValue, @Nullable String... description) {
         return new JOption<>(path, READER_LIST_STRING, defaultValue, description);
     }
 
     @NotNull
-    public static JOption<Set<String>> create(@NotNull String path, @NotNull Set<String> defaultValue, @NotNull String... description) {
+    public static JOption<Set<String>> create(@NotNull String path, @NotNull Set<String> defaultValue, @Nullable String... description) {
         return new JOption<>(path, READER_SET_STRING, defaultValue, description);
     }
 
     @NotNull
-    public static JOption<ItemStack> create(@NotNull String path, @NotNull ItemStack defaultValue, @NotNull String... description) {
-        return new JOption<>(path, READER_ITEM, defaultValue, description);
+    public static JOption<ItemStack> create(@NotNull String path, @NotNull ItemStack defaultValue, @Nullable String... description) {
+        return new JOption<>(path, READER_ITEM, defaultValue, description).setWriter(JYML::setItem);
     }
 
     @NotNull
-    public static <E extends Enum<E>> JOption<E> create(@NotNull String path, @NotNull Class<E> clazz, @NotNull E defaultValue, @NotNull String... description) {
+    public static <E extends Enum<E>> JOption<E> create(@NotNull String path, @NotNull Class<E> clazz, @NotNull E defaultValue, @Nullable String... description) {
         return new JOption<>(path, ((cfg, path1, def) -> cfg.getEnum(path1, clazz, defaultValue)), defaultValue, description)
             .setWriter((cfg, path1, type) -> cfg.set(path1, type.name()));
     }
 
     @NotNull
-    public static JOption<SimpleParticle> create(@NotNull String path, @NotNull SimpleParticle defaulValue, @NotNull String... description) {
+    public static JOption<SimpleParticle> create(@NotNull String path, @NotNull SimpleParticle defaulValue, @Nullable String... description) {
         return new JOption<>(path, (cfg, path1, def) -> SimpleParticle.read(cfg, path1), defaulValue, description)
             .setWriter((cfg, path1, particle) -> particle.write(cfg, path1));
     }
 
     @NotNull
     public static <V> JOption<Set<V>> forSet(@NotNull String path, @NotNull Function<String, V> valFun,
-                                             @NotNull Supplier<Set<V>> defaultValue, @NotNull String... description) {
+                                             @NotNull Supplier<Set<V>> defaultValue, @Nullable String... description) {
         return forSet(path, valFun, defaultValue.get(), description);
     }
 
     @NotNull
     public static <V> JOption<Set<V>> forSet(@NotNull String path, @NotNull Function<String, V> valFun,
-                                             @NotNull Set<V> defaultValue, @NotNull String... description) {
+                                             @NotNull Set<V> defaultValue, @Nullable String... description) {
         return new JOption<>(path,
             (cfg, path1, def) -> cfg.getStringSet(path1).stream().map(valFun).filter(Objects::nonNull).collect(Collectors.toCollection(HashSet::new)),
             defaultValue,
@@ -112,7 +112,7 @@ public class JOption<T> {
     public static <K, V> JOption<Map<K, V>> forMap(@NotNull String path,
                                                    @NotNull Function<String, K> keyFun,
                                                    @NotNull TriFunction<JYML, String, String, V> valFun,
-                                                   @NotNull Supplier<Map<K, V>> defaultValue, @NotNull String... description) {
+                                                   @NotNull Supplier<Map<K, V>> defaultValue, @Nullable String... description) {
         return forMap(path, keyFun, valFun, defaultValue.get(), description);
     }
 
@@ -120,7 +120,7 @@ public class JOption<T> {
     public static <K, V> JOption<Map<K, V>> forMap(@NotNull String path,
                                                    @NotNull Function<String, K> keyFun,
                                                    @NotNull TriFunction<JYML, String, String, V> valFun,
-                                                   @NotNull Map<K, V> defaultValue, @NotNull String... description) {
+                                                   @NotNull Map<K, V> defaultValue, @Nullable String... description) {
         return new JOption<>(path,
             (cfg, path1, def) -> {
                 Map<K, V> map = new HashMap<>();
@@ -139,13 +139,13 @@ public class JOption<T> {
 
     @NotNull
     public static <V> JOption<Map<String, V>> forMap(@NotNull String path, @NotNull TriFunction<JYML, String, String, V> function,
-                                                     @NotNull Supplier<Map<String, V>> defaultValue, @NotNull String... description) {
+                                                     @NotNull Supplier<Map<String, V>> defaultValue, @Nullable String... description) {
         return forMap(path, String::toLowerCase, function, defaultValue.get(), description);
     }
 
     @NotNull
     public static <V> JOption<Map<String, V>> forMap(@NotNull String path, @NotNull TriFunction<JYML, String, String, V> function,
-                                                     @NotNull Map<String, V> defaultValue, @NotNull String... description) {
+                                                     @NotNull Map<String, V> defaultValue, @Nullable String... description) {
         return forMap(path, String::toLowerCase, function, defaultValue, description);
     }
 
@@ -154,7 +154,9 @@ public class JOption<T> {
         if (!cfg.contains(this.getPath())) {
             this.write(cfg);
         }
-        cfg.setComments(this.getPath(), this.getDescription());
+        if (this.getDescription().length > 0 && !this.getDescription()[0].isEmpty()) {
+            cfg.setComments(this.getPath(), this.getDescription());
+        }
         return (this.value = this.reader.read(cfg, this.getPath(), this.getDefaultValue()));
     }
 

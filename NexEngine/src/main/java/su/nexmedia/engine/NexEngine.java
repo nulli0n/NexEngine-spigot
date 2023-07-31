@@ -4,10 +4,12 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.GeneralCommand;
 import su.nexmedia.engine.api.editor.EditorLocales;
 import su.nexmedia.engine.api.menu.impl.MenuListener;
+import su.nexmedia.engine.command.list.ReloadSubCommand;
 import su.nexmedia.engine.editor.EditorManager;
 import su.nexmedia.engine.integration.VaultHook;
 import su.nexmedia.engine.lang.EngineLang;
 import su.nexmedia.engine.utils.EngineUtils;
+import su.nexmedia.engine.utils.Placeholders;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -57,7 +59,7 @@ public class NexEngine extends NexPlugin<NexEngine> {
 
     @Override
     public void registerCommands(@NotNull GeneralCommand<NexEngine> mainCommand) {
-
+        mainCommand.addChildren(new ReloadSubCommand<>(this, Placeholders.WILDCARD));
     }
 
     @Override

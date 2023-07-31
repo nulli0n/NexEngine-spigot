@@ -90,8 +90,8 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
 
     public final void reload() {
         if (this.isEngine()) {
-            this.loadConfig();
-            this.loadLang();
+            this.setupConfigManager();
+            this.setupLangManager();
             return;
         }
         this.unloadManagers();
@@ -169,20 +169,30 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
         HandlerList.unregisterAll(this);
     }
 
-    protected void loadManagers() {
-        // Setup plugin Hooks.
-        this.registerHooks();
-
+    private void setupConfigManager() {
         // Setup ConfigManager before any other managers.
         this.configManager = new ConfigManager<>(this.getSelf());
         this.configManager.setup();
         this.loadConfig();
+    }
 
+    private void setupLangManager() {
         // Setup language manager after the main config.
         this.langManager = new LangManager<>(this.getSelf());
         this.langManager.setup();
         this.loadLang();
         this.getLangManager().loadDefaults();
+    }
+
+    protected void loadManagers() {
+        // Setup plugin Hooks.
+        this.registerHooks();
+
+        // Setup ConfigManager before any other managers.
+        this.setupConfigManager();
+
+        // Setup language manager after the main config.
+        this.setupLangManager();
 
         this.registerPermissions();
 

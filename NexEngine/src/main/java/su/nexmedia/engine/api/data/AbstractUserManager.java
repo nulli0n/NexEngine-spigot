@@ -58,6 +58,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         U user = this.getUserLoaded(player.getUniqueId());
         if (user == null) {
             user = this.getUserData(player.getUniqueId());
+            new Throwable().printStackTrace();
             this.plugin.warn("Sync data load for '" + player.getUniqueId() + "'! (Lost user data?)");
         }
         if (user == null) {

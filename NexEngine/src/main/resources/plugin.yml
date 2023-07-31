@@ -1,6 +1,6 @@
 name: NexEngine
 main: su.nexmedia.engine.NexEngine
-version: '${project.version} build-${buildNumber}'
+version: '${project.version}'
 description: Plugin Engine
 author: NightExpress
 softdepend: [ Vault]

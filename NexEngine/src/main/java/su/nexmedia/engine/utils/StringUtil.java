@@ -147,6 +147,8 @@ public class StringUtil {
     public static double getDouble(@NotNull String input, double def, boolean allowNegative) {
         try {
             double amount = Double.parseDouble(input);
+            if (Double.isNaN(amount) || Double.isInfinite(amount)) return def;
+
             return (amount < 0D && !allowNegative ? def : amount);
         }
         catch (NumberFormatException ex) {

@@ -1,6 +1,10 @@
 package su.nexmedia.engine.api.lang;
 
+import net.md_5.bungee.api.ChatColor;
+
 public interface LangColors {
+
+    String BOLD = ChatColor.BOLD.toString();
 
     String GRAY      = "#d4d9d8";
     String DARK_GRAY = "#6c6c62";

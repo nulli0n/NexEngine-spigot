@@ -7,7 +7,9 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.regex.RegexUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,6 +68,17 @@ public class NexParser {
     public static String[] getPlainParts(@NotNull String message) {
         //message = StringUtil.color(message.replace("\n", " "));
         return PATTERN_OPTIONS.split(message);
+    }
+
+    public static String[] getComponentParts(@NotNull String message) {
+        List<String> components = new ArrayList<>();
+
+        Matcher matcher = RegexUtil.getMatcher(PATTERN_OPTIONS, message);
+        while (RegexUtil.matcherFind(matcher)) {
+            components.add(matcher.group(0));
+        }
+
+        return components.toArray(new String[0]);
     }
 
     @NotNull

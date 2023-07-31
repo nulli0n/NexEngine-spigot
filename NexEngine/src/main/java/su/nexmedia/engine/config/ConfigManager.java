@@ -37,7 +37,8 @@ public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
             "Localized plugin name. It's used in messages and with internal placeholders.")
             .read(config);
 
-        this.pluginPrefix = JOption.create("Plugin.Prefix", LangColors.YELLOW + Placeholders.PLUGIN_NAME + LangColors.GRAY + " »",
+        this.pluginPrefix = JOption.create("Plugin.Prefix",
+            LangColors.YELLOW + Placeholders.PLUGIN_NAME + LangColors.GRAY + " » ",
             "Plugin prefix. Used in messages.",
             "You can use " + Placeholders.PLUGIN_NAME_LOCALIZED + " placeholder for a plugin name.")
             .read(config).replace(Placeholders.PLUGIN_NAME, this.pluginName);
