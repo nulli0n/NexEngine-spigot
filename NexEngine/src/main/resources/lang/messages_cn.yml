@@ -1,3 +1,9 @@
+# Here you can create your own custom placeholders to use it in language config.
+# Key = Placeholder, Value = Replacer.
+Placeholders:
+  '%red%': '#fd5e5e'
+  '%gray%': '#d4d9d8'
+  '%green%': '#aefd5e'
 Command:
   Usage: '&c用法: &e/%command_label% &6%command_usage%'
   Help:
@@ -12,8 +18,8 @@ Command:
   About:
     Desc: 显示插件信息
   Reload:
-    Desc: 重载插件，&b汉化者：&c氿雾
-    Done: 已重载!
+    Desc: 重载插件
+    Done: 已重载完成! &b汉化者：&c氿雾 &8& &r&cDreamMiu
 Time:
   Day: '%s%天'
   Hour: '%s%小时'
@@ -45,6 +51,31 @@ Error:
     Self: 不能用在自己身上
     Sender: 此命令仅供玩家使用
   Internal: '&c内部错误!'
+Editor:
+  Tip:
+    Exit: '<! prefix:"false" !><? show_text:"#d4d9d8点击或者输入 #fd5e5e#exit" run_command:"/#exit" ?>#fd5e5e[点击退出编辑模式]</>'
+  Title:
+    Done: '&a&l完成!'
+    Edit: '&a&l编辑'
+    Error: '&c&l错误!'
+  Error:
+    Number:
+      Generic: '&7无效的数字!'
+      NotInt: '&7数字必须是 &c整数&7!'
+    Enum: '&7无效类型！在聊天中查看'
+  Generic:
+    Close:
+      Name: '#FF5733(✕) &l退出'
+      Lore: [ ]
+    Return:
+      Name: '#ffee9a(↓) &f返回'
+      Lore: [ ]
+    NextPage:
+      Name: '#e3fbf9(→) &l下一页'
+      Lore: [ ]
+    PreviousPage:
+      Name: '#e3fbf9(←) &l上一页'
+      Lore: [ ]
 EntityType:
   DROPPED_ITEM: 掉落的物品
   EXPERIENCE_ORB: 经验球
@@ -165,8 +196,13 @@ EntityType:
   LIGHTNING: 闪电束
   PLAYER: 玩家
   UNKNOWN: 未知的实体
-  ZOMBIFIED_PIGLIN: Zombified Piglin
-  CAMEL: Camel
+  ZOMBIFIED_PIGLIN: 僵尸化猪灵
+  CAMEL: 骆驼
+  BLOCK_DISPLAY: 方块显示
+  INTERACTION: 交互
+  ITEM_DISPLAY: 物品显示
+  SNIFFER: 嗅探兽
+  TEXT_DISPLAY: 文本显示
 Material:
   ACACIA_BOAT: 金合欢木船
   ACACIA_BUTTON: 金合欢木按钮
@@ -1453,10 +1489,98 @@ Material:
   POTTED_AZALEA_BUSH: 盆栽杜鹃花丛
   POTTED_FLOWERING_AZALEA_BUSH: 盆栽开花杜鹃花灌木
   BAMBOO_PLANKS: 竹板
-  BAMBOO_MOSAIC: Bamboo Mosaic
+  BAMBOO_MOSAIC: 竹马赛克
   BAMBOO_BLOCK: 竹块
   STRIPPED_BAMBOO_BLOCK: 剥皮竹块
   BAMBOO_SLAB: 竹板
+  CHERRY_PLANKS: 樱花木板
+  CHERRY_SAPLING: 樱花树苗
+  SUSPICIOUS_SAND: 可疑的沙子
+  CHERRY_LOG: 樱花原木
+  STRIPPED_CHERRY_LOG: 剥皮的樱花原木
+  STRIPPED_CHERRY_WOOD: 剥皮的樱花木
+  CHERRY_WOOD: 樱花木
+  CHERRY_LEAVES: 樱花树叶
+  TORCHFLOWER: 火把花
+  PINK_PETALS: 粉色花瓣
+  CHERRY_SLAB: 樱花木台阶
+  BAMBOO_MOSAIC_SLAB: 竹石台阶
+  CHISELED_BOOKSHELF: 雕刻书架
+  DECORATED_POT: 装饰盆
+  CHERRY_FENCE: 樱花木栅栏
+  BAMBOO_FENCE: 竹栅栏
+  CHERRY_STAIRS: 樱花木楼梯
+  BAMBOO_STAIRS: 竹楼梯
+  BAMBOO_MOSAIC_STAIRS: 竹石楼梯
+  CHERRY_BUTTON: 樱花木按钮
+  BAMBOO_BUTTON: 竹按钮
+  CHERRY_PRESSURE_PLATE: 樱花木压力板
+  BAMBOO_PRESSURE_PLATE: 竹压力板
+  CHERRY_DOOR: 樱花木门
+  BAMBOO_DOOR: 竹门
+  CHERRY_TRAPDOOR: 樱花木活板门
+  BAMBOO_TRAPDOOR: 竹活板门
+  CHERRY_FENCE_GATE: 樱花木栅栏门
+  BAMBOO_FENCE_GATE: 竹栅栏门
+  CHERRY_BOAT: 樱花木船
+  CHERRY_CHEST_BOAT: 樱花木箱船
+  BAMBOO_RAFT: 竹筏
+  BAMBOO_CHEST_RAFT: 竹箱筏
+  CHERRY_SIGN: 樱花木告示牌
+  BAMBOO_SIGN: 竹告示牌
+  OAK_HANGING_SIGN: 橡木悬挂告示牌
+  SPRUCE_HANGING_SIGN: 云杉悬挂告示牌
+  BIRCH_HANGING_SIGN: 桦木悬挂告示牌
+  JUNGLE_HANGING_SIGN: 丛林悬挂告示牌
+  ACACIA_HANGING_SIGN: 金合欢悬挂告示牌
+  CHERRY_HANGING_SIGN: 樱花木悬挂告示牌
+  DARK_OAK_HANGING_SIGN: 黑橡木悬挂告示牌
+  MANGROVE_HANGING_SIGN: 红树悬挂告示牌
+  BAMBOO_HANGING_SIGN: 竹悬挂告示牌
+  CRIMSON_HANGING_SIGN: 猩红悬挂告示牌
+  WARPED_HANGING_SIGN: 扭曲悬挂告示牌
+  CAMEL_SPAWN_EGG: 骆驼生成蛋
+  ENDER_DRAGON_SPAWN_EGG: 末影龙生成蛋
+  IRON_GOLEM_SPAWN_EGG: 铁傀儡生成蛋
+  SNIFFER_SPAWN_EGG: 嗅探兽生成蛋
+  SNOW_GOLEM_SPAWN_EGG: 雪傀儡生成蛋
+  WITHER_SPAWN_EGG: 凋灵生成蛋
+  PIGLIN_HEAD: 猪灵头颅
+  TORCHFLOWER_SEEDS: 火把花种子
+  BRUSH: 画笔
+  NETHERITE_UPGRADE_SMITHING_TEMPLATE: 下界合金升级锻造模板
+  SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE: 哨兵盔甲镶边锻造模板
+  DUNE_ARMOR_TRIM_SMITHING_TEMPLATE: 沙丘盔甲镶边锻造模板
+  COAST_ARMOR_TRIM_SMITHING_TEMPLATE: 海岸盔甲镶边锻造模板
+  WILD_ARMOR_TRIM_SMITHING_TEMPLATE: 荒野盔甲镶边锻造模板
+  WARD_ARMOR_TRIM_SMITHING_TEMPLATE: 守望者盔甲镶边锻造模板
+  EYE_ARMOR_TRIM_SMITHING_TEMPLATE: 眼灵盔甲镶边锻造模板
+  VEX_ARMOR_TRIM_SMITHING_TEMPLATE: 恼鬼盔甲镶边锻造模板
+  TIDE_ARMOR_TRIM_SMITHING_TEMPLATE: 潮汐盔甲镶边锻造模板
+  SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE: 探头盔甲镶边锻造模板
+  RIB_ARMOR_TRIM_SMITHING_TEMPLATE: 肋骨盔甲镶边锻造模板
+  SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE: 尖塔盔甲镶边锻造模板
+  POTTERY_SHARD_ARCHER: 陶瓷碎片：射手
+  POTTERY_SHARD_PRIZE: 陶瓷碎片：奖品
+  POTTERY_SHARD_ARMS_UP: 陶瓷碎片：举手
+  POTTERY_SHARD_SKULL: 陶瓷碎片：头骨
+  CHERRY_WALL_SIGN: 樱花木墙上告示牌
+  BAMBOO_WALL_SIGN: 竹墙上告示牌
+  OAK_WALL_HANGING_SIGN: 橡木墙上悬挂告示牌
+  SPRUCE_WALL_HANGING_SIGN: 云杉墙上悬挂告示牌
+  BIRCH_WALL_HANGING_SIGN: 桦木墙上悬挂告示牌
+  ACACIA_WALL_HANGING_SIGN: 金合欢墙上悬挂告示牌
+  CHERRY_WALL_HANGING_SIGN: 樱花木墙上悬挂告示牌
+  JUNGLE_WALL_HANGING_SIGN: 丛林墙上悬挂告示牌
+  DARK_OAK_WALL_HANGING_SIGN: 黑橡木墙上悬挂告示牌
+  MANGROVE_WALL_HANGING_SIGN: 红树墙上悬挂告示牌
+  CRIMSON_WALL_HANGING_SIGN: 猩红墙上悬挂告示牌
+  WARPED_WALL_HANGING_SIGN: 扭曲墙上悬挂告示牌
+  BAMBOO_WALL_HANGING_SIGN: 竹墙上悬挂告示牌
+  POTTED_TORCHFLOWER: 盆栽火把花
+  POTTED_CHERRY_SAPLING: 盆栽樱花树苗
+  PIGLIN_WALL_HEAD: 猪灵墙头颅
+  TORCHFLOWER_CROP: 火把花作物
 GameMode:
   CREATIVE: 创造
   SURVIVAL: 生存
@@ -1572,15 +1696,54 @@ Enchantment:
   one_for_all: 一体
   warp_drive: 传送器
   xray: 透视
-Editor:
-  Tip:
-    Exit: '{json: ~text: &b点击以退出 &d编辑模式; ~showText: &7点击或者输入 &f#exit; ~runCommand: /#exit;}'
-  Title:
-    Done: '&a&l完成!'
-    Edit: '&a&l编辑'
-    Error: '&c&l错误!'
-  Error:
-    Number:
-      Generic: '&7无效的数字!'
-      NotInt: '&7数字必须是 &c整数&7!'
-    Enum: '&7无效类型！在聊天中查看'
+  permanence_curse: 永恒诅咒
+  rebounding: 反弹
+  wisdom: 智慧
+  boss_hunter: Boss 猎手
+  lumberjack: 伐木工
+  block_breather: 方块呼吸
+  thor: 雷神
+  slipstream: 滑行
+  blastmine: 爆破挖掘
+  cubism: 立方体
+  transmission: 传输
+  getaway: 逃脱
+  introversion: 内向
+  snipe: 瞄准
+  shulker_harvest: 潜影贝收获
+  vitality: 活力
+  first_strike: 先发制人
+  shura: 修罗
+  aura: 光环
+  rocket_saver: 火箭节省者
+  contagion: 传染
+  tripleshot: 三重射击
+  wyvern: 翼龙
+  skull_puncture: 颅穿
+  foraging: 采集
+  soul_storm: 灵魂风暴
+  stun: 晕眩
+  frost: 冰霜
+  carve: 雕刻
+  repairing: 修复
+  flashbang: 闪光弹
+  dynamite: 炸药
+  criticals: 暴击
+  infernal_touch: 炼狱之触
+  slaughter: 屠杀
+  blackout: 失明
+  nether_affinity: 地狱亲和
+  streamlining: 流线
+  fortitude: 坚韧
+  brightness: 亮度
+  soulbound: 灵魂绑定
+  charge: 充能
+  bleed: 流血
+  excavation: 挖掘
+  harmlessness_curse: 无害诅咒
+  dexterity: 敏捷
+  abrasion: 磨损
+  adrenaline: 肾上腺素
+  escape: 逃离
+  thrive: 兴旺
+  stamina: 耐力
