@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import su.nexmedia.engine.config.EngineConfig;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -15,12 +16,21 @@ public class CollectionsUtil {
 
     @NotNull
     public static List<String> playerNames() {
-        return Bukkit.getServer().getOnlinePlayers().stream().map(Player::getName).toList();
+        return playerNames(null);
     }
 
     @NotNull
-    public static List<String> playerNames(@NotNull Player viewer) {
-        return Bukkit.getServer().getOnlinePlayers().stream().filter(viewer::canSee).map(Player::getName).toList();
+    public static List<String> playerNames(@Nullable Player viewer) {
+        List<String> names = new ArrayList<>();
+        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+            if (viewer != null && !viewer.canSee(player)) continue;
+
+            names.add(player.getName());
+            if (EngineConfig.RESPECT_PLAYER_DISPLAYNAME.get()) {
+                names.add(Colorizer.strip(player.getDisplayName()));
+            }
+        }
+        return names;
     }
 
     @NotNull

@@ -85,7 +85,7 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
     }*/
 
     @Override
-    public final boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         AbstractCommand<P> command = this.findChildren(args);
         if (command instanceof GeneralCommand<P> generalCommand) {
             if (generalCommand.defaultCommand != null) {
@@ -97,7 +97,7 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
     }
 
     @Override
-    public final List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd,
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd,
                                             @NotNull String label, String[] args) {
 
         if (!(sender instanceof Player player) || args.length == 0) return Collections.emptyList();

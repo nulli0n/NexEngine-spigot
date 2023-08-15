@@ -13,16 +13,60 @@ import org.bukkit.inventory.ItemStack;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import su.nexmedia.engine.config.EngineConfig;
 import su.nexmedia.engine.integration.VaultHook;
 import su.nexmedia.engine.utils.message.NexParser;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class PlayerUtil {
+
+    @NotNull
+    public static Optional<Player> find(@NotNull String nameOrNick) {
+        return Optional.ofNullable(getPlayer(nameOrNick));
+    }
+
+    @Nullable
+    public static Player getPlayer(@NotNull String nameOrNick) {
+        if (!EngineConfig.RESPECT_PLAYER_DISPLAYNAME.get()) {
+            return Bukkit.getServer().getPlayer(nameOrNick);
+        }
+
+        Player found = Bukkit.getServer().getPlayerExact(nameOrNick);
+        if (found != null) {
+            return found;
+        }
+
+        String lowerName = nameOrNick.toLowerCase();
+        int lowerLength = lowerName.length();
+        int delta = Integer.MAX_VALUE;
+
+        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+            String nameReal = player.getName().toLowerCase(Locale.ENGLISH);
+            String nameCustom = player.getDisplayName().toLowerCase();
+
+            int length;
+            if (nameReal.startsWith(lowerName)) {
+                length = player.getName().length();
+            }
+            else if (nameCustom.startsWith(lowerName)) {
+                length = player.getDisplayName().length();
+            }
+            else continue;
+
+            int curDelta = Math.abs(length - lowerLength);
+            if (curDelta < delta) {
+                found = player;
+                delta = curDelta;
+            }
+
+            if (curDelta == 0) break;
+        }
+
+        return found;
+    }
 
     public static boolean isBedrockPlayer(@NotNull Player player) {
         return EngineUtils.hasFloodgate() && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId());

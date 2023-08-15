@@ -121,9 +121,34 @@ public class JOption<T> {
                                                    @NotNull Function<String, K> keyFun,
                                                    @NotNull TriFunction<JYML, String, String, V> valFun,
                                                    @NotNull Map<K, V> defaultValue, @Nullable String... description) {
+        return forMap(path, keyFun, valFun, HashMap::new, defaultValue, description);
+    }
+
+    @NotNull
+    public static <K, V> JOption<TreeMap<K, V>> forTreeMap(@NotNull String path,
+                                                   @NotNull Function<String, K> keyFun,
+                                                   @NotNull TriFunction<JYML, String, String, V> valFun,
+                                                   @NotNull Supplier<TreeMap<K, V>> defaultValue, @Nullable String... description) {
+        return forTreeMap(path, keyFun, valFun, defaultValue.get(), description);
+    }
+
+    @NotNull
+    public static <K, V> JOption<TreeMap<K, V>> forTreeMap(@NotNull String path,
+                                                   @NotNull Function<String, K> keyFun,
+                                                   @NotNull TriFunction<JYML, String, String, V> valFun,
+                                                   @NotNull TreeMap<K, V> defaultValue, @Nullable String... description) {
+        return forMap(path, keyFun, valFun, TreeMap::new, defaultValue, description);
+    }
+
+    @NotNull
+    public static <K, V, M extends Map<K, V>> JOption<M> forMap(@NotNull String path,
+                                                    @NotNull Function<String, K> keyFun,
+                                                    @NotNull TriFunction<JYML, String, String, V> valFun,
+                                                    @NotNull Supplier<M> mapSupplier,
+                                                    @NotNull M defaultValue, @Nullable String... description) {
         return new JOption<>(path,
             (cfg, path1, def) -> {
-                Map<K, V> map = new HashMap<>();
+                M map = mapSupplier.get();
                 for (String id : cfg.getSection(path1)) {
                     K key = keyFun.apply(id);
                     V val = valFun.apply(cfg, path1, id);
