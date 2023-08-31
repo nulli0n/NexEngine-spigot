@@ -1,8 +1,8 @@
-# Here you can create your own custom placeholders to use it in language config.
+# Здесь вы можете создать свои собственные заполнители, чтобы использовать их в конфигурации языка.
 # Key = Placeholder, Value = Replacer.
 Placeholders:
-  '%red%': '#fd5e5e'
   '%gray%': '#d4d9d8'
+  '%red%': '#fd5e5e'
   '%green%': '#aefd5e'
 Command:
   Usage:
@@ -19,7 +19,7 @@ Command:
       - '#d4d9d8'
       - '#fd5e5e&l<> #d4d9d8- Обязательно, #aefd5e&l[] #d4d9d8- Опционально.'
       - '#d4d9d8'
-      - '#ffeea2? #fdf35e/%command_label% #ffeea2%command_usage% #d4d9d8- %command_description%'
+      - '#ffeea2 #fdf35e/%command_label% #ffeea2%command_usage% #d4d9d8- %command_description%'
       - '#d4d9d8'
     Desc: Отобразить страницу помощи.
   About:
@@ -1642,45 +1642,122 @@ PotionEffectType:
   HERO_OF_THE_VILLAGE: Герой деревни
   DARKNESS: Тьма
 Enchantment:
-  fire_protection: Огнеупорность
-  sharpness: Острота
-  flame: Воспламенение
+  vanish: Vanish
   soul_speed: Скорость души
-  aqua_affinity: Подводник
+  veinminer: Veinminer
+  ninja: Ninja
   punch: Откидывание
+  haunting: Haunting
+  goliath: Goliath
   loyalty: Верность
-  depth_strider: Подводная ходьба
-  vanishing_curse: Проклятье утраты
-  unbreaking: Прочность
-  knockback: Отдача
-  luck_of_the_sea: Везучий рыбак
-  binding_curse: Проклятье несъемности
-  fortune: Удача
-  protection: Защита
+  feather_step: Feather Step
+  caffeinated: Caffeinated
+  end_affinity: End Affinity
+  finishing: Finishing
   efficiency: Эффективность
-  mending: Починка
+  wound: Wound
+  sparks: Sparks
   frost_walker: Ледоход
-  lure: Приманка
-  looting: Добыча
-  piercing: Пронзающая стрела
-  blast_protection: Взрывоустойчивость
-  smite: Небесная кара
-  multishot: Тройной выстрел
   swift_sneak: Проворство
-  fire_aspect: Заговор огня
+  poison_ivy: Poison Ivy
   channeling: Громовержец
-  sweeping: Разящий клинок
+  arcane_defence: Arcane Defence
   thorns: Шипы
+  rumble: Rumble
   bane_of_arthropods: Бич членистоногих
-  respiration: Подводное дыхание
-  riptide: Тягун
+  ender_slayer: Ender Slayer
   silk_touch: Шелковое касание
-  quick_charge: Быстра перезарядка
+  confusion: Тошнота
+  replenish: Replenish
   projectile_protection: Защита от снарядов
   impaling: Пронзание
-  feather_falling: Невесомость
   power: Сила
+  lifesteal: Lifesteal
+  flame: Воспламенение
+  hunger_curse: Hunger Curse
+  aqua_affinity: Подводник
+  depth_strider: Подводная ходьба
+  misfortune_curse: Misfortune Curse
+  nether_prospector: Nether Prospector
+  jumpshot: Jumpshot
+  metabolism: Metabolism
+  ascend: Ascend
+  permanence_curse: Permanence Curse
+  rebounding: Rebounding
+  lure: Приманка
+  wisdom: Wisdom
+  boss_hunter: Boss Hunter
+  piercing: Пронзающая стрела
+  blast_protection: Взрывоустойчивость
+  lumberjack: Lumberjack
+  sweeping: Разящий клинок
+  block_breather: Block Breather
+  respiration: Подводное дыхание
+  thor: Thor
+  slipstream: Slipstream
+  cubism: Cubism
+  transmission: Transmission
+  getaway: Getaway
+  introversion: Introversion
+  snipe: Snipe
+  shulker_harvest: Shulker Harvest
+  vitality: Vitality
+  glow: Свечение
+  first_strike: First Strike
+  feather_falling: Невесомость
+  shura: Shura
+  aura: Аура
+  fire_protection: Огнеупорность
+  rocket_saver: Rocket Saver
+  sharpness: Острота
+  contagion: Contagion
+  tripleshot: Tripleshot
+  wyvern: Wyvern
+  skull_puncture: Skull Puncture
+  unbreaking: Прочность
+  luck_of_the_sea: Везучий рыбак
+  foraging: Foraging
+  breaklessness_curse: Breaklessness Curse
+  one_for_all: One For All
+  binding_curse: Проклятье несъемности
+  fortune: Удача
+  warp_drive: Warp Drive
+  xray: Xray
+  soul_storm: Soul Storm
+  stun: Stun
+  frost: Frost
+  smite: Небесная кара
+  multishot: Тройной выстрел
+  fire_aspect: Заговор огня
+  carve: Carve
+  repairing: Repairing
+  flashbang: Flashbang
+  quick_charge: Быстра перезарядка
+  dynamite: Dynamite
   infinity: Бесконечность
-World:
-  world: Верхний мир
-  world_nether: World Nether
+  criticals: Criticals
+  infernal_touch: Infernal Touch
+  slaughter: Slaughter
+  blackout: Blackout
+  nether_affinity: Nether Affinity
+  vanishing_curse: Проклятье утраты
+  streamlining: Streamlining
+  knockback: Отдача
+  fortitude: Fortitude
+  protection: Защита
+  mending: Починка
+  brightness: Brightness
+  soulbound: Soulbound
+  charge: Charge
+  bleed: Bleed
+  excavation: Excavation
+  looting: Добыча
+  harmlessness_curse: Harmlessness Curse
+  dexterity: Dexterity
+  abrasion: Abrasion
+  adrenaline: Adrenaline
+  escape: Escape
+  thrive: Thrive
+  riptide: Тягун
+  stamina: Stamina
+  blast_mining: Blast Mining
