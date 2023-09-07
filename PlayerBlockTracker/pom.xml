@@ -9,6 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>su.nexmedia.playerblocktracker</groupId>
     <artifactId>PlayerBlockTracker</artifactId>
     <version>1.0.1</version>
 
