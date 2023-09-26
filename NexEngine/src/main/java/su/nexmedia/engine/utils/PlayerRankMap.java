@@ -20,6 +20,21 @@ public class PlayerRankMap<T extends Number> {
     }
 
     @NotNull
+    public static PlayerRankMap<Integer> readInt(@NotNull JYML cfg, @NotNull String path) {
+        return read(cfg, path, Integer.class);
+    }
+
+    @NotNull
+    public static PlayerRankMap<Double> readDouble(@NotNull JYML cfg, @NotNull String path) {
+        return read(cfg, path, Double.class);
+    }
+
+    @NotNull
+    public static PlayerRankMap<Long> readLong(@NotNull JYML cfg, @NotNull String path) {
+        return read(cfg, path, Long.class);
+    }
+
+    @NotNull
     public static <T extends Number> PlayerRankMap<T> read(@NotNull JYML cfg, @NotNull String path, @NotNull Class<T> clazz) {
         Map<String, T> values = new HashMap<>();
         for (String rank : cfg.getSection(path)) {

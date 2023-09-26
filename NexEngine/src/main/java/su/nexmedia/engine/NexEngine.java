@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.command.GeneralCommand;
 import su.nexmedia.engine.api.editor.EditorLocales;
 import su.nexmedia.engine.api.menu.impl.MenuListener;
+import su.nexmedia.engine.api.menu.impl.MenuRefreshTask;
 import su.nexmedia.engine.command.list.ReloadSubCommand;
 import su.nexmedia.engine.config.EngineConfig;
 import su.nexmedia.engine.editor.EditorManager;
@@ -21,6 +22,7 @@ public class NexEngine extends NexPlugin<NexEngine> {
 
     private EditorManager editorManager;
     private MenuListener menuListener;
+    private MenuRefreshTask menuRefreshTask;
 
     @Override
     @NotNull
@@ -33,20 +35,18 @@ public class NexEngine extends NexPlugin<NexEngine> {
         this.menuListener = new MenuListener(this);
         this.menuListener.registerListeners();
 
+        this.menuRefreshTask = new MenuRefreshTask(this);
+        this.menuRefreshTask.start();
+
         this.editorManager = new EditorManager(this);
         this.editorManager.setup();
     }
 
     @Override
     public void disable() {
-        if (this.editorManager != null) {
-            this.editorManager.shutdown();
-            this.editorManager = null;
-        }
-        if (this.menuListener != null) {
-            this.menuListener.unregisterListeners();
-            this.menuListener = null;
-        }
+        if (this.editorManager != null) this.editorManager.shutdown();
+        if (this.menuListener != null) this.menuListener.unregisterListeners();
+        if (this.menuRefreshTask != null) this.menuRefreshTask.stop();
 
         if (EngineUtils.hasVault()) VaultHook.shutdown();
     }

@@ -66,6 +66,8 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         this.placeholders.clear();
     }
 
+
+
     public void loadDefaults() {
         if (this.plugin.isEngine()) {
             this.loadEnum(EntityType.class);

@@ -21,16 +21,31 @@ public class CollectionsUtil {
 
     @NotNull
     public static List<String> playerNames(@Nullable Player viewer) {
-        List<String> names = new ArrayList<>();
+        return playerNames(viewer, true);
+    }
+
+    @NotNull
+    public static List<String> realPlayerNames() {
+        return realPlayerNames(null);
+    }
+
+    @NotNull
+    public static List<String> realPlayerNames(@Nullable Player viewer) {
+        return playerNames(viewer, false);
+    }
+
+    @NotNull
+    public static List<String> playerNames(@Nullable Player viewer, boolean includeCustom) {
+        Set<String> names = new HashSet<>();
         for (Player player : Bukkit.getServer().getOnlinePlayers()) {
             if (viewer != null && !viewer.canSee(player)) continue;
 
             names.add(player.getName());
-            if (EngineConfig.RESPECT_PLAYER_DISPLAYNAME.get()) {
+            if (includeCustom && EngineConfig.RESPECT_PLAYER_DISPLAYNAME.get()) {
                 names.add(Colorizer.strip(player.getDisplayName()));
             }
         }
-        return names;
+        return names.stream().sorted(String::compareTo).toList();
     }
 
     @NotNull

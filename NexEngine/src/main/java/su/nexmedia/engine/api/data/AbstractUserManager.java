@@ -11,6 +11,7 @@ import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.manager.AbstractListener;
 import su.nexmedia.engine.api.manager.AbstractManager;
 import su.nexmedia.engine.utils.EntityUtil;
+import su.nexmedia.engine.utils.PlayerUtil;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -59,7 +60,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         if (user == null) {
             user = this.getUserData(player.getUniqueId());
             new Throwable().printStackTrace();
-            this.plugin.warn("Sync data load for '" + player.getUniqueId() + "'! (Lost user data?)");
+            this.plugin.warn("Main thread user data load for '" + player.getUniqueId() + "' aka '" + player.getName() + "'.");
         }
         if (user == null) {
             throw new IllegalStateException("User data for '" + player.getName() + "' is not loaded or created!");
@@ -68,17 +69,17 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     }
 
     /**
-     * Attempts to load user data from online player with that Name (if there is any).
-     * In case if no such player is online, attempts to load data from the database.
+     * Attempts to load user data from online or cached player with that name.
+     * If no such player data found, attempts to load it from the database.
      * @param name A user name to load data for.
      * @return User data for the specified user name.
      */
     @Nullable
     public final U getUserData(@NotNull String name) {
-        Player player = this.plugin.getServer().getPlayer(name);
+        Player player = PlayerUtil.getPlayer(name);
         if (player != null) return this.getUserData(player);
 
-        U user = this.getUsersLoaded().stream().filter(userOff -> userOff.getName().equalsIgnoreCase(name))
+        U user = this.getUsersLoaded().stream().filter(userMemory -> userMemory.getName().equalsIgnoreCase(name))
             .findFirst().orElse(null);
         if (user != null) return user;
 
@@ -133,6 +134,18 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     public void unloadUser(@NotNull U user) {
         user.onUnload();
         user.saveData(this.dataHolder);
+    }
+
+    @NotNull
+    public Set<U> getAllUsers() {
+        Map<UUID, U> users = new HashMap<>();
+        this.getUsersLoaded().forEach(user -> users.put(user.getId(), user));
+        this.dataHolder.getData().getUsers().forEach(user -> {
+            if (!users.containsKey(user.getId())) {
+                users.put(user.getId(), user);
+            }
+        });
+        return new HashSet<>(users.values());
     }
 
     @NotNull

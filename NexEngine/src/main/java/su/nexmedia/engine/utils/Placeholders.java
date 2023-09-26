@@ -11,7 +11,8 @@ import java.util.function.UnaryOperator;
 
 public class Placeholders {
 
-    public static final String WIKI_MAIN_URL     = "https://github.com/nulli0n/NexEngine-spigot/wiki/";
+    public static final String GITHUB_URL     = "https://github.com/nulli0n/NexEngine-spigot/";
+    public static final String WIKI_MAIN_URL     = GITHUB_URL + "wiki/";
     public static final String WIKI_ITEMS_URL    = WIKI_MAIN_URL + "Configuration-Tips#item-sections";
     public static final String WIKI_PARTICLE_URL = WIKI_MAIN_URL + "Configuration-Tips#particle-sections";
     public static final String WIKI_MENU_URL     = WIKI_MAIN_URL + "Menu-Config";

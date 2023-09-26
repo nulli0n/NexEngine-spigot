@@ -6,6 +6,7 @@ public class LangKey {
 
     private final String path;
     private final String defaultText;
+    // TODO int version ?
 
     public LangKey(@NotNull String path, @NotNull String defaultText) {
         this.path = path;

@@ -26,6 +26,24 @@ public class PlaceholderMap {
     }
 
     @NotNull
+    public static PlaceholderMap fusion(@NotNull PlaceholderMap... others) {
+        PlaceholderMap map = new PlaceholderMap();
+        for (PlaceholderMap other : others) {
+            map.add(other);
+        }
+        return map;
+    }
+
+    @NotNull
+    public static PlaceholderMap fusion(@NotNull Placeholder... others) {
+        PlaceholderMap map = new PlaceholderMap();
+        for (Placeholder other : others) {
+            map.add(other.getPlaceholders());
+        }
+        return map;
+    }
+
+    @NotNull
     public List<Pair<String, Supplier<String>>> getKeys() {
         return keys;
     }

@@ -11,15 +11,21 @@ public class MenuOptions {
     private String title;
     private int size;
     private InventoryType type;
+    private int autoRefresh;
 
     public MenuOptions(@NotNull String title, int size, @NotNull InventoryType type) {
+        this(title, size, type, 0);
+    }
+
+    public MenuOptions(@NotNull String title, int size, @NotNull InventoryType type, int autoRefresh) {
         this.setTitle(title);
         this.setSize(size);
         this.setType(type);
+        this.setAutoRefresh(autoRefresh);
     }
 
     public MenuOptions(@NotNull MenuOptions options) {
-        this(options.getTitle(), options.getSize(), options.getType());
+        this(options.getTitle(), options.getSize(), options.getType(), options.getAutoRefresh());
     }
 
     @NotNull
@@ -69,5 +75,13 @@ public class MenuOptions {
 
     public void setType(@NotNull InventoryType type) {
         this.type = type;
+    }
+
+    public int getAutoRefresh() {
+        return autoRefresh;
+    }
+
+    public void setAutoRefresh(int autoRefresh) {
+        this.autoRefresh = Math.max(0, autoRefresh);
     }
 }

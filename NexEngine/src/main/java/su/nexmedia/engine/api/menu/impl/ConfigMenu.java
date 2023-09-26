@@ -42,14 +42,20 @@ public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
             "Sets the GUI type.",
             "https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/inventory/InventoryType.html").read(cfg);
 
+        int autoRefresh = JOption.create("Settings.Auto_Refresh", 0,
+            "Sets the GUI auto-refresh interval (in seconds). Set this to 0 to disable.").read(cfg);
+
         this.getOptions().setTitle(title);
         this.getOptions().setSize(size);
         this.getOptions().setType(type);
+        this.getOptions().setAutoRefresh(autoRefresh);
 
         this.cfg.getSection(this.itemSection).forEach(sId -> {
             MenuItem menuItem = this.readItem(this.itemSection + "." + sId);
             this.addItem(menuItem);
         });
+
+        // TODO All under 'Settings' + comment list with registered handler types
 
         /*this.useMiniMessage = JOption.create("Use_Mini_Message", false,
             "Sets whether to use Paper's MiniMessage API for the GUI Title.").read(cfg);*/
