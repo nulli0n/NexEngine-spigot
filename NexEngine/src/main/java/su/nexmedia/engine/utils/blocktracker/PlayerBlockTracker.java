@@ -1,4 +1,4 @@
-package su.nexmedia.playerblocktracker;
+package su.nexmedia.engine.utils.blocktracker;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.bukkit.Bukkit;
@@ -9,7 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.NexPlugin;
+import su.nexmedia.engine.utils.EngineUtils;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -22,10 +22,10 @@ public final class PlayerBlockTracker {
 
     private static TrackListener<?> listener;
 
-    public static <P extends NexPlugin<P>> void initialize(@NotNull P plugin) {
+    public static void initialize() {
         if (listener == null) {
             initCurrentlyLoadedWorlds();
-            (listener = new TrackListener<>(plugin)).registerListeners();
+            (listener = new TrackListener<>(EngineUtils.ENGINE)).registerListeners();
         }
     }
 

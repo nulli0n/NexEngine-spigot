@@ -3,8 +3,9 @@ package su.nexmedia.engine.api.config;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import su.nexmedia.engine.api.particle.SimpleParticle;
 import su.nexmedia.engine.utils.TriFunction;
+import su.nexmedia.engine.utils.values.UniParticle;
+import su.nexmedia.engine.utils.values.UniSound;
 
 import java.util.*;
 import java.util.function.Function;
@@ -82,15 +83,19 @@ public class JOption<T> {
     }
 
     @NotNull
-    public static <E extends Enum<E>> JOption<E> create(@NotNull String path, @NotNull Class<E> clazz, @NotNull E defaultValue, @Nullable String... description) {
-        return new JOption<>(path, ((cfg, path1, def) -> cfg.getEnum(path1, clazz, defaultValue)), defaultValue, description)
-            .setWriter((cfg, path1, type) -> cfg.set(path1, type.name()));
+    public static JOption<UniSound> create(@NotNull String path, @NotNull UniSound defaultValue, @Nullable String... description) {
+        return new JOption<>(path, (cfg, path1, def) -> UniSound.read(cfg, path1), defaultValue, description).setWriter((cfg, path2, us) -> us.write(cfg, path2));
     }
 
     @NotNull
-    public static JOption<SimpleParticle> create(@NotNull String path, @NotNull SimpleParticle defaulValue, @Nullable String... description) {
-        return new JOption<>(path, (cfg, path1, def) -> SimpleParticle.read(cfg, path1), defaulValue, description)
-            .setWriter((cfg, path1, particle) -> particle.write(cfg, path1));
+    public static JOption<UniParticle> create(@NotNull String path, @NotNull UniParticle defaultValue, @Nullable String... description) {
+        return new JOption<>(path, (cfg, path1, def) -> UniParticle.read(cfg, path1), defaultValue, description).setWriter((cfg, path2, us) -> us.write(cfg, path2));
+    }
+
+    @NotNull
+    public static <E extends Enum<E>> JOption<E> create(@NotNull String path, @NotNull Class<E> clazz, @NotNull E defaultValue, @Nullable String... description) {
+        return new JOption<>(path, ((cfg, path1, def) -> cfg.getEnum(path1, clazz, defaultValue)), defaultValue, description)
+            .setWriter((cfg, path1, type) -> cfg.set(path1, type.name()));
     }
 
     @NotNull

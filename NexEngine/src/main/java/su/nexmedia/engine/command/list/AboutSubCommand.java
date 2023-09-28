@@ -6,9 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.command.AbstractCommand;
 import su.nexmedia.engine.api.command.CommandResult;
-import su.nexmedia.engine.api.lang.LangColors;
 import su.nexmedia.engine.lang.EngineLang;
 import su.nexmedia.engine.utils.Colorizer;
+import su.nexmedia.engine.utils.Colors;
 import su.nexmedia.engine.utils.EngineUtils;
 
 import java.util.Arrays;
@@ -24,16 +24,16 @@ public class AboutSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> 
     @Override
     protected void onExecute(@NotNull CommandSender sender, @NotNull CommandResult result) {
         List<String> info = Colorizer.apply(Arrays.asList(
-            LangColors.GRAY,
-            LangColors.YELLOW + ChatColor.BOLD + plugin.getName() + LangColors.ORANGE + " v" + plugin.getDescription().getVersion(),
-            LangColors.GRAY + plugin.getDescription().getDescription(),
-            LangColors.GRAY,
-            LangColors.YELLOW + "▪ " + LangColors.GRAY + "API Version: " + LangColors.YELLOW + plugin.getDescription().getAPIVersion(),
-            LangColors.YELLOW + "▪ " + LangColors.GRAY + "Made by " + LangColors.YELLOW + plugin.getDescription().getAuthors().get(0),
-            LangColors.YELLOW + "▪ " + LangColors.GRAY + "Powered by " + LangColors.YELLOW + EngineUtils.ENGINE.getName(),
-            LangColors.GRAY,
-            LangColors.CYAN + ChatColor.UNDERLINE + "Made in the Urals" + LangColors.CYAN + " © 2019-2023",
-            LangColors.GRAY));
+            Colors.GRAY,
+            Colors.YELLOW + ChatColor.BOLD + plugin.getName() + Colors.ORANGE + " v" + plugin.getDescription().getVersion(),
+            Colors.GRAY + plugin.getDescription().getDescription(),
+            Colors.GRAY,
+            Colors.YELLOW + "▪ " + Colors.GRAY + "API Version: " + Colors.YELLOW + plugin.getDescription().getAPIVersion(),
+            Colors.YELLOW + "▪ " + Colors.GRAY + "Made by " + Colors.YELLOW + plugin.getDescription().getAuthors().get(0),
+            Colors.YELLOW + "▪ " + Colors.GRAY + "Powered by " + Colors.YELLOW + EngineUtils.ENGINE.getName(),
+            Colors.GRAY,
+            Colors.CYAN + ChatColor.UNDERLINE + "Made in the Urals" + Colors.CYAN + " © 2019-2023",
+            Colors.GRAY));
 
         info.forEach(sender::sendMessage);
     }

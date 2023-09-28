@@ -82,7 +82,7 @@ public class EditorMenu<P extends NexPlugin<P>, T> extends Menu<P> {
             meta.addItemFlags(ItemFlag.values());
         });
 
-        MenuItem menuItem = new MenuItem(item, 100, slots);
+        MenuItem menuItem = new MenuItem(item).setPriority(100).setSlots(slots);
         this.addItem(menuItem);
         return menuItem;
     }

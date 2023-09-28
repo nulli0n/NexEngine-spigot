@@ -3,10 +3,11 @@ package su.nexmedia.engine.api.manager;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.config.JYML;
+import su.nexmedia.engine.utils.StringUtil;
 
 import java.io.File;
 
-public abstract class AbstractConfigHolder<P extends NexPlugin<P>> implements ConfigHolder {
+public abstract class AbstractConfigHolder<P extends NexPlugin<P>> {
 
     protected final P      plugin;
     protected final JYML   cfg;
@@ -17,7 +18,7 @@ public abstract class AbstractConfigHolder<P extends NexPlugin<P>> implements Co
     }
 
     public AbstractConfigHolder(@NotNull P plugin, @NotNull JYML cfg) {
-        this(plugin, cfg, cfg.getFile().getName().replace(".yml", "").toLowerCase());
+        this(plugin, cfg, cfg.getFile().getName().replace(".yml", ""));
     }
 
     public AbstractConfigHolder(@NotNull P plugin, @NotNull String filePath, @NotNull String id) {
@@ -27,13 +28,25 @@ public abstract class AbstractConfigHolder<P extends NexPlugin<P>> implements Co
     public AbstractConfigHolder(@NotNull P plugin, @NotNull JYML cfg, @NotNull String id) {
         this.plugin = plugin;
         this.cfg = cfg;
-        this.id = id.toLowerCase().replace(" ", "_");
+        this.id = StringUtil.lowerCaseUnderscore(id);
     }
 
     public abstract boolean load();
 
+    protected abstract void onSave();
+
     public boolean reload() {
         return this.getConfig().reload() && this.load();
+    }
+
+    public void save() {
+        this.onSave();
+        this.getConfig().save();
+    }
+
+    @NotNull
+    public File getFile() {
+        return this.getConfig().getFile();
     }
 
     @NotNull

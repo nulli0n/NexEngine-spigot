@@ -23,8 +23,8 @@ public class EditorListener extends AbstractListener<NexEngine> {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onQuit(PlayerQuitEvent e) {
-        EditorManager.endEdit(e.getPlayer());
+    public void onQuit(PlayerQuitEvent event) {
+        EditorManager.endEdit(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -47,15 +47,15 @@ public class EditorListener extends AbstractListener<NexEngine> {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onChatCommand(PlayerCommandPreprocessEvent e) {
-        Player player = e.getPlayer();
+    public void onChatCommand(PlayerCommandPreprocessEvent event) {
+        Player player = event.getPlayer();
 
         InputHandler handler = EditorManager.getInputHandler(player);
         if (handler == null) return;
 
-        e.setCancelled(true);
+        event.setCancelled(true);
 
-        String raw = e.getMessage();
+        String raw = event.getMessage();
         String text = Colorizer.apply(raw.substring(1));
         if (text.startsWith(EditorManager.VALUES)) {
             String[] split = text.split(" ");
@@ -65,8 +65,8 @@ public class EditorListener extends AbstractListener<NexEngine> {
             return;
         }
 
-        AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(true, player, text, new HashSet<>());
-        InputWrapper wrapper = new InputWrapper(event);
+        AsyncPlayerChatEvent chatEvent = new AsyncPlayerChatEvent(true, player, text, new HashSet<>());
+        InputWrapper wrapper = new InputWrapper(chatEvent);
 
         this.plugin.runTask(task -> {
             if (wrapper.getTextRaw().equalsIgnoreCase(EditorManager.EXIT) || handler.handle(wrapper)) {

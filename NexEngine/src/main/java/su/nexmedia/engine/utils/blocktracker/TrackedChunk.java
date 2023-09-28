@@ -1,4 +1,4 @@
-package su.nexmedia.playerblocktracker;
+package su.nexmedia.engine.utils.blocktracker;
 
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;

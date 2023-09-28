@@ -4,9 +4,9 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.config.JOption;
 import su.nexmedia.engine.api.config.JYML;
-import su.nexmedia.engine.api.lang.LangColors;
 import su.nexmedia.engine.api.manager.AbstractManager;
 import su.nexmedia.engine.lang.LangManager;
+import su.nexmedia.engine.utils.Colors;
 import su.nexmedia.engine.utils.Placeholders;
 import su.nexmedia.engine.utils.ResourceExtractor;
 
@@ -38,7 +38,7 @@ public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
             .read(config);
 
         this.pluginPrefix = JOption.create("Plugin.Prefix",
-            LangColors.YELLOW + Placeholders.PLUGIN_NAME + LangColors.GRAY + " » ",
+            Colors.YELLOW + Placeholders.PLUGIN_NAME + Colors.GRAY + " » ",
             "Plugin prefix. Used in messages.",
             "You can use " + Placeholders.PLUGIN_NAME_LOCALIZED + " placeholder for a plugin name.")
             .read(config).replace(Placeholders.PLUGIN_NAME, this.pluginName);

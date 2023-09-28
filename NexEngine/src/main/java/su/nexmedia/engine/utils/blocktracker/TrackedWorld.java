@@ -1,4 +1,4 @@
-package su.nexmedia.playerblocktracker;
+package su.nexmedia.engine.utils.blocktracker;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;

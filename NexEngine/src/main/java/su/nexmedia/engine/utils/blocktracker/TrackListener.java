@@ -1,4 +1,4 @@
-package su.nexmedia.playerblocktracker;
+package su.nexmedia.engine.utils.blocktracker;
 
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
@@ -130,8 +130,8 @@ public class TrackListener<P extends NexPlugin<P>> extends AbstractListener<P> {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onEntityFallingSpawn(EntitySpawnEvent e) {
-        Entity entity = e.getEntity();
+    public void onEntityFallingSpawn(EntitySpawnEvent event) {
+        Entity entity = event.getEntity();
         if (!(entity instanceof FallingBlock)) return;
 
         Block block = entity.getLocation().getBlock();
@@ -142,10 +142,10 @@ public class TrackListener<P extends NexPlugin<P>> extends AbstractListener<P> {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onEntityFallingLand(EntityChangeBlockEvent e) {
-        Entity entity = e.getEntity();
+    public void onEntityFallingLand(EntityChangeBlockEvent event) {
+        Entity entity = event.getEntity();
         if (!entity.hasMetadata(META_TRACK_FALLING_BLOCK)) return;
 
-        PlayerBlockTracker.trackForce(e.getBlock());
+        PlayerBlockTracker.trackForce(event.getBlock());
     }
 }

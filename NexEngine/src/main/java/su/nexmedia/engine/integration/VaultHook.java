@@ -76,8 +76,8 @@ public final class VaultHook extends AbstractListener<NexEngine> {
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onServiceRegisterEvent(ServiceRegisterEvent e) {
-        Object provider = e.getProvider().getProvider();
+    public void onServiceRegisterEvent(ServiceRegisterEvent event) {
+        Object provider = event.getProvider().getProvider();
 
         if (provider instanceof Economy) {
             this.setEconomy();

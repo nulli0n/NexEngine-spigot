@@ -4,23 +4,23 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.utils.random.Rnd;
 
-public final class UniformInt {
+public final class UniInt {
 
     private final int minInclusive;
     private final int maxInclusive;
 
-    private UniformInt(int var0, int var1) {
+    private UniInt(int var0, int var1) {
         this.minInclusive = var0;
         this.maxInclusive = var1;
     }
 
     @NotNull
-    public static UniformInt of(int var0, int var1) {
-        return new UniformInt(var0, var1);
+    public static UniInt of(int var0, int var1) {
+        return new UniInt(var0, var1);
     }
 
     @NotNull
-    public static UniformInt read(@NotNull JYML cfg, @NotNull String path) {
+    public static UniInt read(@NotNull JYML cfg, @NotNull String path) {
         int min = cfg.getInt(path + ".Min");
         int max = cfg.getInt(path + ".Max");
         return of(min, max);

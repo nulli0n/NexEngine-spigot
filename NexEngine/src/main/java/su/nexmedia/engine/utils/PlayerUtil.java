@@ -4,7 +4,6 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -74,7 +73,7 @@ public class PlayerUtil {
 
     @NotNull
     public static String getPermissionGroup(@NotNull Player player) {
-        return EngineUtils.hasVault() ? VaultHook.getPermissionGroup(player).toLowerCase() : "";
+        return EngineUtils.hasVault() ? VaultHook.getPermissionGroup(player).toLowerCase() : Placeholders.DEFAULT;
     }
 
     @NotNull
@@ -102,11 +101,6 @@ public class PlayerUtil {
 
     public static void sendActionBar(@NotNull Player player, @NotNull String msg) {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, NexParser.toMessage(msg).build());
-    }
-
-    public static void sound(@NotNull Player player, @Nullable Sound sound) {
-        if (sound == null) return;
-        player.playSound(player.getLocation(), sound, 0.9f, 0.9f);
     }
 
     public static void dispatchCommands(@NotNull Player player, @NotNull String... commands) {

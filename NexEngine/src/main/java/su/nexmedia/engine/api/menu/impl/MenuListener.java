@@ -3,7 +3,6 @@ package su.nexmedia.engine.api.menu.impl;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -27,14 +26,14 @@ public class MenuListener extends AbstractListener<NexEngine> {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onQuit(PlayerQuitEvent e) {
-        Menu.PLAYER_MENUS.remove(e.getPlayer().getUniqueId());
-        FAST_CLICK.remove(e.getPlayer().getUniqueId());
+    public void onQuit(PlayerQuitEvent event) {
+        Menu.PLAYER_MENUS.remove(event.getPlayer().getUniqueId());
+        FAST_CLICK.remove(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onMenuItemClick(InventoryClickEvent e) {
-        Player player = (Player) e.getWhoClicked();
+    public void onMenuItemClick(InventoryClickEvent event) {
+        Player player = (Player) event.getWhoClicked();
 
         Menu<?> menu = Menu.getMenu(player);
         if (menu == null) return;
@@ -43,21 +42,21 @@ public class MenuListener extends AbstractListener<NexEngine> {
         if (viewer == null) return;
 
         // Fix visual glitch when item goes in player's offhand.
-        if (e.getClick() == ClickType.SWAP_OFFHAND || e.isShiftClick()) {
+        /*if (event.getClick() == ClickType.SWAP_OFFHAND || event.isShiftClick()) {
             this.plugin.runTask(task -> player.updateInventory());
-        }
+        }*/
 
         // Prevent clicks spam in our GUIs.
         long lastClick = FAST_CLICK.getOrDefault(player.getUniqueId(), 0L);
         if (System.currentTimeMillis() - lastClick < 150) {
-            e.setCancelled(true);
+            event.setCancelled(true);
             return;
         }
 
-        Inventory inventory = e.getInventory();
-        ItemStack item = e.getCurrentItem();
+        Inventory inventory = event.getInventory();
+        ItemStack item = event.getCurrentItem();
 
-        int slot = e.getRawSlot();
+        int slot = event.getRawSlot();
         boolean isPlayerSlot = slot >= inventory.getSize();
         boolean isEmptyItem = item == null || item.getType().isAir();
 
@@ -67,13 +66,13 @@ public class MenuListener extends AbstractListener<NexEngine> {
         }
         else slotType = isEmptyItem ? Menu.SlotType.MENU_EMPTY : Menu.SlotType.MENU;
 
-        menu.onClick(viewer, item, slotType, slot, e);
+        menu.onClick(viewer, item, slotType, slot, event);
         FAST_CLICK.put(player.getUniqueId(), System.currentTimeMillis());
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onMenuItemDrag(InventoryDragEvent e) {
-        Player player = (Player) e.getWhoClicked();
+    public void onMenuItemDrag(InventoryDragEvent event) {
+        Player player = (Player) event.getWhoClicked();
 
         Menu<?> menu = Menu.getMenu(player);
         if (menu == null) return;
@@ -81,12 +80,12 @@ public class MenuListener extends AbstractListener<NexEngine> {
         MenuViewer viewer = menu.getViewer(player);
         if (viewer == null) return;
 
-        menu.onDrag(viewer, e);
+        menu.onDrag(viewer, event);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onMenuClose(InventoryCloseEvent e) {
-        Player player = (Player) e.getPlayer();
+    public void onMenuClose(InventoryCloseEvent event) {
+        Player player = (Player) event.getPlayer();
 
         Menu<?> menu = Menu.getMenu(player);
         if (menu == null) return;
@@ -94,7 +93,7 @@ public class MenuListener extends AbstractListener<NexEngine> {
         MenuViewer viewer = menu.getViewer(player);
         if (viewer == null) return;
 
-        menu.onClose(viewer, e);
+        menu.onClose(viewer, event);
         FAST_CLICK.remove(player.getUniqueId());
     }
 }

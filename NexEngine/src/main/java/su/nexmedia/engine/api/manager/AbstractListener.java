@@ -3,7 +3,7 @@ package su.nexmedia.engine.api.manager;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
 
-public class AbstractListener<P extends NexPlugin<P>> implements EventListener {
+public abstract class AbstractListener<P extends NexPlugin<P>> implements EventListener {
 
     @NotNull
     public final P plugin;

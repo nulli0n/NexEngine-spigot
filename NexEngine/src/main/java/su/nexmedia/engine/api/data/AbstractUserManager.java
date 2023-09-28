@@ -133,7 +133,11 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
 
     public void unloadUser(@NotNull U user) {
         user.onUnload();
-        user.saveData(this.dataHolder);
+        this.saveUser(user);
+    }
+
+    public void saveUser(@NotNull U user) {
+        this.plugin.runTaskAsync(task -> this.dataHolder.getData().saveUser(user));
     }
 
     @NotNull
@@ -178,13 +182,13 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         }
 
         @EventHandler(priority = EventPriority.MONITOR)
-        public void onUserLogin(AsyncPlayerPreLoginEvent e) {
-            if (e.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) return;
+        public void onUserLogin(AsyncPlayerPreLoginEvent event) {
+            if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) return;
 
-            UUID uuid = e.getUniqueId();
+            UUID uuid = event.getUniqueId();
             U user;
             if (!dataHolder.getData().isUserExists(uuid)) {
-                user = createData(uuid, e.getName());
+                user = createData(uuid, event.getName());
                 user.setRecentlyCreated(true);
                 cache(user);
                 dataHolder.getData().addUser(user);
@@ -196,13 +200,13 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
             }
 
             if (user == null) {
-                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Unable to load your user data.");
+                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Unable to load your user data.");
             }
         }
 
         @EventHandler(priority = EventPriority.MONITOR)
-        public void onUserQuit(PlayerQuitEvent e) {
-            unloadUser(e.getPlayer());
+        public void onUserQuit(PlayerQuitEvent event) {
+            unloadUser(event.getPlayer());
         }
     }
 }

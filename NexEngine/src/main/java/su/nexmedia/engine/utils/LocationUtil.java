@@ -2,7 +2,6 @@ package su.nexmedia.engine.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -57,13 +56,6 @@ public class LocationUtil {
     public static String getWorldName(@NotNull Location location) {
         World world = location.getWorld();
         return world == null ? "null" : world.getName();
-    }
-
-    public static void sound(@NotNull Location location, @Nullable Sound sound) {
-        World world = location.getWorld();
-        if (world == null || sound == null) return;
-
-        world.playSound(location, sound, 0.9f, 0.9f);
     }
 
     @NotNull

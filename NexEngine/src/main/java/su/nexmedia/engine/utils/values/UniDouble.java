@@ -4,23 +4,23 @@ import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.utils.random.Rnd;
 
-public final class UniformDouble {
+public final class UniDouble {
 
     private final double minInclusive;
     private final double maxInclusive;
 
-    private UniformDouble(double min, double max) {
+    private UniDouble(double min, double max) {
         this.minInclusive = min;
         this.maxInclusive = max;
     }
 
     @NotNull
-    public static UniformDouble of(double min, double max) {
-        return new UniformDouble(min, max);
+    public static UniDouble of(double min, double max) {
+        return new UniDouble(min, max);
     }
 
     @NotNull
-    public static UniformDouble read(@NotNull JYML cfg, @NotNull String path) {
+    public static UniDouble read(@NotNull JYML cfg, @NotNull String path) {
         double min = cfg.getDouble(path + ".Min");
         double max = cfg.getDouble(path + ".Max");
         return of(min, max);

@@ -14,8 +14,8 @@ import java.util.*;
 public class CommandRegister extends Command implements PluginIdentifiableCommand {
 
     protected final CommandExecutor executor;
-    protected       Plugin          plugin;
-    protected       TabCompleter    tab;
+    protected final Plugin          plugin;
+    protected final TabCompleter    tab;
 
     public CommandRegister(@NotNull Plugin plugin, @NotNull CommandExecutor executor, @NotNull TabCompleter tab,
                            @NotNull String[] aliases, @NotNull String description, @NotNull String usage) {

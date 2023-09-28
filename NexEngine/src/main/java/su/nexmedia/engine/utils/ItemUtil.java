@@ -76,7 +76,7 @@ public class ItemUtil {
         if (!(item.getItemMeta() instanceof SkullMeta meta)) return;
 
         UUID uuid = UUID.nameUUIDFromBytes(value.getBytes());
-        GameProfile profile = new GameProfile(uuid, null);
+        GameProfile profile = new GameProfile(uuid, "null");
         profile.getProperties().put("textures", new Property("textures", value));
 
         Method method = Reflex.getMethod(meta.getClass(), "setProfile", GameProfile.class);

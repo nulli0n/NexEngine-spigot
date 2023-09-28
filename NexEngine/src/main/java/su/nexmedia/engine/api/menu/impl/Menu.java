@@ -71,7 +71,7 @@ public abstract class Menu<P extends NexPlugin<P>> {
     }
 
     public void openNextTick(@NotNull MenuViewer viewer, int page) {
-        this.plugin.runTask(task -> this.open(viewer, page));
+        this.openNextTick(viewer.getPlayer(), page);
     }
 
     public void openNextTick(@NotNull Player player, int page) {

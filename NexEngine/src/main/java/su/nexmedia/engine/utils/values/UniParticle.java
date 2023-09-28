@@ -1,4 +1,4 @@
-package su.nexmedia.engine.api.particle;
+package su.nexmedia.engine.utils.values;
 
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
@@ -9,58 +9,63 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.utils.StringUtil;
 
-public class SimpleParticle {
+public class UniParticle {
 
     private final Particle particle;
-    private final Object data;
+    private final Object   data;
 
-    public SimpleParticle(@NotNull Particle particle, @Nullable Object data) {
+    public UniParticle(@NotNull Particle particle, @Nullable Object data) {
         this.particle = particle;
         this.data = data;
     }
 
     @NotNull
-    public static SimpleParticle of(@NotNull Particle particle) {
-        return SimpleParticle.of(particle, null);
+    public static UniParticle of(@NotNull Particle particle) {
+        return UniParticle.of(particle, null);
     }
 
     @NotNull
-    public static SimpleParticle of(@NotNull Particle particle, @Nullable Object data) {
-        return new SimpleParticle(particle, data);
+    public static UniParticle of(@NotNull Particle particle, @Nullable Object data) {
+        return new UniParticle(particle, data);
     }
 
     @NotNull
-    public static SimpleParticle itemCrack(@NotNull Material material) {
-        return new SimpleParticle(Particle.ITEM_CRACK, new ItemStack(material));
+    public static UniParticle itemCrack(@NotNull ItemStack item) {
+        return new UniParticle(Particle.ITEM_CRACK, new ItemStack(item));
     }
 
     @NotNull
-    public static SimpleParticle blockCrack(@NotNull Material material) {
-        return new SimpleParticle(Particle.BLOCK_CRACK, material.createBlockData());
+    public static UniParticle itemCrack(@NotNull Material material) {
+        return new UniParticle(Particle.ITEM_CRACK, new ItemStack(material));
     }
 
     @NotNull
-    public static SimpleParticle blockDust(@NotNull Material material) {
-        return new SimpleParticle(Particle.BLOCK_DUST, material.createBlockData());
+    public static UniParticle blockCrack(@NotNull Material material) {
+        return new UniParticle(Particle.BLOCK_CRACK, material.createBlockData());
     }
 
     @NotNull
-    public static SimpleParticle blockMarker(@NotNull Material material) {
-        return new SimpleParticle(Particle.BLOCK_MARKER, material.createBlockData());
+    public static UniParticle blockDust(@NotNull Material material) {
+        return new UniParticle(Particle.BLOCK_DUST, material.createBlockData());
     }
 
     @NotNull
-    public static SimpleParticle fallingDust(@NotNull Material material) {
-        return new SimpleParticle(Particle.FALLING_DUST, material.createBlockData());
+    public static UniParticle blockMarker(@NotNull Material material) {
+        return new UniParticle(Particle.BLOCK_MARKER, material.createBlockData());
     }
 
     @NotNull
-    public static SimpleParticle redstone(@NotNull Color color, float size) {
-        return new SimpleParticle(Particle.REDSTONE, new Particle.DustOptions(color, size));
+    public static UniParticle fallingDust(@NotNull Material material) {
+        return new UniParticle(Particle.FALLING_DUST, material.createBlockData());
     }
 
     @NotNull
-    public static SimpleParticle read(@NotNull JYML cfg, @NotNull String path) {
+    public static UniParticle redstone(@NotNull Color color, float size) {
+        return new UniParticle(Particle.REDSTONE, new Particle.DustOptions(color, size));
+    }
+
+    @NotNull
+    public static UniParticle read(@NotNull JYML cfg, @NotNull String path) {
         String name = cfg.getString(path + ".Name", "");
         Particle particle = StringUtil.getEnum(name, Particle.class).orElse(Particle.REDSTONE);
 
@@ -85,13 +90,13 @@ public class SimpleParticle {
             ItemStack item = cfg.getItem(path + ".Item");
             data = item.getType().isAir() ? new ItemStack(Material.STONE) : item;
         }
-        else if (dataType != Void.class) return SimpleParticle.of(Particle.REDSTONE);
+        else if (dataType != Void.class) return UniParticle.of(Particle.REDSTONE);
 
-        return SimpleParticle.of(particle, data);
+        return UniParticle.of(particle, data);
     }
 
     @Deprecated
-    public static void write(@NotNull SimpleParticle particle, @NotNull JYML cfg, @NotNull String path) {
+    public static void write(@NotNull UniParticle particle, @NotNull JYML cfg, @NotNull String path) {
         particle.write(cfg, path);
     }
 
@@ -130,7 +135,7 @@ public class SimpleParticle {
     }
 
     @NotNull
-    public SimpleParticle parseData(@NotNull String from) {
+    public UniParticle parseData(@NotNull String from) {
         String[] split = from.split(" ");
         Class<?> dataType = this.getParticle().getDataType();
         Object data = null;
@@ -154,9 +159,9 @@ public class SimpleParticle {
             if (material != null && !material.isAir()) data = new ItemStack(material);
             else data = new ItemStack(Material.STONE);
         }
-        else if (dataType != Void.class) return SimpleParticle.of(Particle.REDSTONE);
+        else if (dataType != Void.class) return UniParticle.of(Particle.REDSTONE);
 
-        return SimpleParticle.of(this.getParticle(), data);
+        return UniParticle.of(this.getParticle(), data);
     }
 
     public void play(@NotNull Location location, double speed, int amount) {

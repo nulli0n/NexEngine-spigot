@@ -39,6 +39,7 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
     }
 
     @SuppressWarnings("unchecked")
+    @Deprecated
     public <U extends AbstractUser<P>> void saveData(@NotNull UserDataHolder<P, U> dataHolder) {
         this.plugin.runTaskAsync(task -> dataHolder.getData().saveUser((U) this));
     }

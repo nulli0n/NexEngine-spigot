@@ -6,31 +6,33 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
-import su.nexmedia.engine.NexEngine;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.config.JOption;
 import su.nexmedia.engine.api.config.JYML;
 import su.nexmedia.engine.api.editor.EditorLocale;
-import su.nexmedia.engine.api.lang.LangColors;
 import su.nexmedia.engine.api.lang.LangKey;
 import su.nexmedia.engine.api.lang.LangMessage;
 import su.nexmedia.engine.api.manager.AbstractManager;
-import su.nexmedia.engine.utils.Colorizer;
-import su.nexmedia.engine.utils.EngineUtils;
-import su.nexmedia.engine.utils.Reflex;
-import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.*;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.*;
 
 public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
-    protected JYML config;
+    public static final String DIR_LANG = "/lang/";
+
+    protected static JYML assetsConfig;
+
     protected final Map<String, LangMessage> messages;
     protected final Map<String, String> placeholders;
+    protected JYML config;
 
-    public static final String DIR_LANG = "/lang/";
-    
     public LangManager(@NotNull P plugin) {
         super(plugin);
         this.messages = new HashMap<>();
@@ -39,14 +41,20 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     @Override
     protected void onLoad() {
+        String langCode = plugin.getConfigManager().languageCode;
+
+        if (this.plugin.isEngine()) {
+            this.downloadAssets(langCode);
+            assetsConfig = JYML.loadOrExtract(plugin, DIR_LANG, "assets_" + langCode + ".yml");
+        }
         this.plugin.getConfigManager().extractResources(DIR_LANG);
-        this.config = JYML.loadOrExtract(plugin, DIR_LANG + "messages_" + plugin.getConfigManager().languageCode + ".yml");
+        this.config = JYML.loadOrExtract(plugin, DIR_LANG, "messages_" + langCode + ".yml");
         this.placeholders.putAll(JOption.forMap("Placeholders",
             (cfg, path, key) -> cfg.getString(path + "." + key, key),
             Map.of(
-                "%red%", LangColors.RED,
-                "%green%", LangColors.GREEN,
-                "%gray%", LangColors.GRAY
+                "%red%", Colors.RED,
+                "%green%", Colors.GREEN,
+                "%gray%", Colors.GRAY
             ),
             "Here you can create your own custom placeholders to use it in language config.",
             "Key = Placeholder, Value = Replacer."
@@ -66,15 +74,36 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         this.placeholders.clear();
     }
 
+    private void downloadAssets(@NotNull String langCode) {
+        File file = new File(plugin.getDataFolder().getAbsolutePath() + DIR_LANG, "assets_" + langCode + ".yml");
+        if (file.exists()) return;
 
+        FileUtil.create(file);
+
+        this.plugin.info("Downloading assets for your language from github...");
+        String url = "https://github.com/nulli0n/NexEngine-spigot/raw/master/assets/" + langCode + ".yml";
+
+        try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
+             FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            byte[] dataBuffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
+                fileOutputStream.write(dataBuffer, 0, bytesRead);
+            }
+        }
+        catch (IOException exception) {
+            //exception.printStackTrace();
+            this.plugin.error("Could not download language assets for '" + langCode + "' (no such asset?).");
+        }
+    }
 
     public void loadDefaults() {
-        if (this.plugin.isEngine()) {
+        /*if (this.plugin.isEngine()) {
             this.loadEnum(EntityType.class);
             this.loadEnum(Material.class);
 
             for (PotionEffectType type : PotionEffectType.values()) {
-                this.getConfig().addMissing("PotionEffectType." + type.getName(), StringUtil.capitalizeUnderscored(type.getName()));
+                this.getMessagesConfig().addMissing("PotionEffectType." + type.getName(), StringUtil.capitalizeUnderscored(type.getName()));
             }
             for (Enchantment enchantment : Enchantment.values()) {
                 getEnchantment(enchantment);
@@ -82,13 +111,18 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
             for (World world : this.plugin.getServer().getWorlds()) {
                 getWorld(world);
             }
-            this.getConfig().saveChanges();
-        }
+            this.getMessagesConfig().saveChanges();
+        }*/
     }
 
     @NotNull
     public JYML getConfig() {
         return config;
+    }
+
+    @NotNull
+    public static JYML getAssetsConfig() {
+        return assetsConfig;
     }
 
     @NotNull
@@ -197,8 +231,6 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         if (!clazz.isEnum()) return;
         for (Object eName : clazz.getEnumConstants()) {
             String name = eName.toString();
-            if (clazz == Material.class && name.startsWith("LEGACY")) continue;
-
             String path = clazz.getSimpleName() + "." + name;
             String val = StringUtil.capitalizeUnderscored(name);
             this.getConfig().addMissing(path, val);
@@ -224,11 +256,6 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         locale.setLocalizedLore(this.getConfig().getStringList(locale.getKey() + ".Lore"));
     }
 
-    @Deprecated
-    public void setupEnum(@NotNull Class<? extends Enum<?>> clazz) {
-        this.loadEnum(clazz);
-    }
-
     @NotNull
     public String getEnum(@NotNull Enum<?> e) {
         String path = e.getDeclaringClass().getSimpleName() + "." + e.name();
@@ -241,37 +268,40 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     @NotNull
     public static String getPotionType(@NotNull PotionEffectType type) {
-        return EngineUtils.ENGINE.getLangManager().getMessage("PotionEffectType." + type.getName()).orElse(type.getName());
+        return getAsset("PotionEffectType", type.getKey().getKey());//EngineUtils.ENGINE.getLangManager().getMessage("PotionEffectType." + type.getName()).orElse(type.getName());
     }
 
     @NotNull
     public static String getEntityType(@NotNull EntityType type) {
-        return EngineUtils.ENGINE.getLangManager().getEnum(type);
+        return getAsset("EntityType", type.getKey().getKey());//EngineUtils.ENGINE.getLangManager().getEnum(type);
     }
 
     @NotNull
     public static String getMaterial(@NotNull Material type) {
-        return EngineUtils.ENGINE.getLangManager().getEnum(type);
+        return getAsset("Material", type.getKey().getKey());//EngineUtils.ENGINE.getLangManager().getEnum(type);
     }
 
     @NotNull
     public static String getWorld(@NotNull World world) {
-        return getByObject(world.getName(), "World");
+        return getAsset("World", world.getName());
     }
 
     @NotNull
     public static String getEnchantment(@NotNull Enchantment enchantment) {
-        return getByObject(enchantment.getKey().getKey(), "Enchantment");
+        return getAsset("Enchantment", enchantment.getKey().getKey());
     }
 
     @NotNull
-    private static String getByObject(@NotNull String nameRaw, @NotNull String path) {
-        LangManager<NexEngine> manager = EngineUtils.ENGINE.getLangManager();
+    public static Optional<String> getAsset(@NotNull String path) {
+        return Optional.ofNullable(getAssetsConfig().getString(path)).map(Colorizer::apply);
+    }
 
-        manager.getConfig().addMissing(path + "." + nameRaw, StringUtil.capitalizeUnderscored(nameRaw));
-        manager.getConfig().saveChanges();
+    @NotNull
+    public static String getAsset(@NotNull String path, @NotNull String nameRaw) {
+        getAssetsConfig().addMissing(path + "." + nameRaw, StringUtil.capitalizeUnderscored(nameRaw));
+        getAssetsConfig().saveChanges();
 
-        return manager.getMessage(path + "." + nameRaw).orElse(nameRaw);
+        return getAsset(path + "." + nameRaw).orElse(nameRaw);
     }
 
     @NotNull

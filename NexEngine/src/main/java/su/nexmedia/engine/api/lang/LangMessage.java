@@ -7,11 +7,18 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.placeholder.PlaceholderMap;
-import su.nexmedia.engine.utils.*;
+import su.nexmedia.engine.utils.Colorizer;
+import su.nexmedia.engine.utils.Placeholders;
+import su.nexmedia.engine.utils.PlayerUtil;
+import su.nexmedia.engine.utils.StringUtil;
 import su.nexmedia.engine.utils.message.NexParser;
 import su.nexmedia.engine.utils.regex.RegexUtil;
+import su.nexmedia.engine.utils.values.UniSound;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -175,7 +182,7 @@ public class LangMessage {
         if (this.isEmpty()) return;
 
         if (this.sound != null && sender instanceof Player player) {
-            PlayerUtil.sound(player, this.sound);
+            UniSound.of(this.sound).play(player);
         }
 
         if (this.type == LangMessage.OutputType.CHAT) {

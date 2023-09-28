@@ -12,6 +12,7 @@ import su.nexmedia.engine.integration.VaultHook;
 import su.nexmedia.engine.lang.EngineLang;
 import su.nexmedia.engine.utils.EngineUtils;
 import su.nexmedia.engine.utils.Placeholders;
+import su.nexmedia.engine.utils.blocktracker.PlayerBlockTracker;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -49,6 +50,7 @@ public class NexEngine extends NexPlugin<NexEngine> {
         if (this.menuRefreshTask != null) this.menuRefreshTask.stop();
 
         if (EngineUtils.hasVault()) VaultHook.shutdown();
+        PlayerBlockTracker.shutdown();
     }
 
     @Override

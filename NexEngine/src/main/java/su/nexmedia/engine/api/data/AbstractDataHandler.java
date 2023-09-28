@@ -69,9 +69,6 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
                     this.synchronizationTask.start();
                     this.plugin.info("Enabled data synchronization with " + config.syncInterval + " seconds interval.");
                 }
-                else {
-                    this.plugin.warn("Data synchronization is useless for local databases (SQLite). It will be disabled.");
-                }
             }
 
             if (this.getConfig().purgeEnabled && this.getConfig().purgePeriod > 0) {

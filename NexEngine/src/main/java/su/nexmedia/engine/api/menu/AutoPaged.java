@@ -9,7 +9,6 @@ import su.nexmedia.engine.api.menu.item.ItemOptions;
 import su.nexmedia.engine.api.menu.item.MenuItem;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public interface AutoPaged<I> {
@@ -21,11 +20,6 @@ public interface AutoPaged<I> {
     @NotNull ItemStack getObjectStack(@NotNull Player player, @NotNull I object);
 
     @NotNull ItemClick getObjectClick(@NotNull I object);
-
-    @Deprecated
-    @NotNull default Comparator<I> getObjectSorter() {
-        return (o1, o2) -> 0;
-    }
 
     @NotNull
     default List<MenuItem> getItemsForPage(@NotNull MenuViewer viewer) {

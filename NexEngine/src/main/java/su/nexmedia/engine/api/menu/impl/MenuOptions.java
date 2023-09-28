@@ -13,6 +13,8 @@ public class MenuOptions {
     private InventoryType type;
     private int autoRefresh;
 
+    private long lastAutoRefresh;
+
     public MenuOptions(@NotNull String title, int size, @NotNull InventoryType type) {
         this(title, size, type, 0);
     }
@@ -26,28 +28,18 @@ public class MenuOptions {
 
     public MenuOptions(@NotNull MenuOptions options) {
         this(options.getTitle(), options.getSize(), options.getType(), options.getAutoRefresh());
+        this.lastAutoRefresh = 0L;
     }
 
     @NotNull
     public Inventory createInventory() {
         String title = this.getTitle();
-        // TODO
-        /*if (NexPlugin.isPaper && this.useMiniMessage) {
-            if (this.getInventoryType() == InventoryType.CHEST) {
-                return this.plugin.getServer().createInventory(null, this.getSize(), MiniMessage.miniMessage().deserialize(title));
-            }
-            else {
-                return this.plugin.getServer().createInventory(null, this.getInventoryType(), MiniMessage.miniMessage().deserialize(title));
-            }
-        }
-        else {*/
         if (this.getType() == InventoryType.CHEST) {
             return Bukkit.getServer().createInventory(null, this.getSize(), title);
         }
         else {
             return Bukkit.getServer().createInventory(null, this.getType(), title);
         }
-        //}
     }
 
     @NotNull
@@ -64,7 +56,7 @@ public class MenuOptions {
     }
 
     public void setSize(int size) {
-        if (size <= 0 || size % 9 != 0) size = 27;
+        if (size <= 0 || size % 9 != 0 || size > 54) size = 27;
         this.size = size;
     }
 
@@ -83,5 +75,17 @@ public class MenuOptions {
 
     public void setAutoRefresh(int autoRefresh) {
         this.autoRefresh = Math.max(0, autoRefresh);
+    }
+
+    public long getLastAutoRefresh() {
+        return lastAutoRefresh;
+    }
+
+    public void setLastAutoRefresh(long lastAutoRefresh) {
+        this.lastAutoRefresh = lastAutoRefresh;
+    }
+
+    public boolean isReadyToRefresh() {
+        return this.getAutoRefresh() > 0 && System.currentTimeMillis() - this.getLastAutoRefresh() >= this.getAutoRefresh();
     }
 }

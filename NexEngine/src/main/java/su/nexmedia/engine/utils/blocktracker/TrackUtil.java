@@ -1,4 +1,4 @@
-package su.nexmedia.playerblocktracker;
+package su.nexmedia.engine.utils.blocktracker;
 
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;

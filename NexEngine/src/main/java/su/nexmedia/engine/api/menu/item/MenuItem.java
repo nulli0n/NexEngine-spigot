@@ -8,7 +8,6 @@ import su.nexmedia.engine.api.menu.click.ItemClick;
 
 public class MenuItem {
 
-    //private String id;
     protected Enum<?> type;
     protected ItemStack item;
     protected int priority;
@@ -23,10 +22,6 @@ public class MenuItem {
 
     public MenuItem(@NotNull ItemStack item, int... slots) {
         this(MenuItemType.NONE, item, 0, slots);
-    }
-
-    public MenuItem(@NotNull ItemStack item, int priority, int... slots) {
-        this(MenuItemType.NONE, item, priority, slots);
     }
 
     public MenuItem( @NotNull ItemStack item, int priority, @NotNull ItemOptions options, int... slots) {
@@ -59,8 +54,10 @@ public class MenuItem {
         return new MenuItem(this.getType(), this.getItem(), this.getPriority(), this.getOptions(), this.getSlots());
     }
 
-    public void resetOptions() {
+    @NotNull
+    public MenuItem resetOptions() {
         this.setOptions(new ItemOptions());
+        return this;
     }
 
     @NotNull
@@ -68,8 +65,10 @@ public class MenuItem {
         return type;
     }
 
-    public void setType(@Nullable Enum<?> type) {
+    @NotNull
+    public MenuItem setType(@Nullable Enum<?> type) {
         this.type = type == null ? MenuItemType.NONE : type;
+        return this;
     }
 
     @NotNull
@@ -77,24 +76,30 @@ public class MenuItem {
         return new ItemStack(this.item);
     }
 
-    public void setItem(@NotNull ItemStack item) {
+    @NotNull
+    public MenuItem setItem(@NotNull ItemStack item) {
         this.item = new ItemStack(item);
+        return this;
     }
 
     public int getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
+    @NotNull
+    public MenuItem setPriority(int priority) {
         this.priority = priority;
+        return this;
     }
 
     public int[] getSlots() {
         return slots;
     }
 
-    public void setSlots(int... slots) {
+    @NotNull
+    public MenuItem setSlots(int... slots) {
         this.slots = slots;
+        return this;
     }
 
     @NotNull
@@ -102,8 +107,10 @@ public class MenuItem {
         return options;
     }
 
-    public void setOptions(@NotNull ItemOptions options) {
+    @NotNull
+    public MenuItem setOptions(@NotNull ItemOptions options) {
         this.options = options;
+        return this;
     }
 
     @Nullable

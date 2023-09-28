@@ -6,7 +6,7 @@ import su.nexmedia.engine.NexPlugin;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class AbstractManager<P extends NexPlugin<P>> implements Loadable {
+public abstract class AbstractManager<P extends NexPlugin<P>> {
 
     protected final P                  plugin;
     protected final Set<EventListener> listeners;
@@ -16,16 +16,19 @@ public abstract class AbstractManager<P extends NexPlugin<P>> implements Loadabl
         this.listeners = new HashSet<>();
     }
 
-    @Override
     public void setup() {
         this.onLoad();
     }
 
-    @Override
     public void shutdown() {
         this.listeners.forEach(EventListener::unregisterListeners);
         this.listeners.clear();
         this.onShutdown();
+    }
+
+    public void reload() {
+        this.shutdown();
+        this.setup();
     }
 
     protected abstract void onLoad();
