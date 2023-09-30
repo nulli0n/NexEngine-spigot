@@ -31,6 +31,11 @@ public final class UniDouble {
         cfg.set(path + ".Max", this.getMaxValue());
     }
 
+    @NotNull
+    public UniInt asInt() {
+        return UniInt.of((int) this.getMinValue(), (int) this.getMaxValue());
+    }
+
     public double roll() {
         return Rnd.getDouble(this.minInclusive, this.maxInclusive);
     }

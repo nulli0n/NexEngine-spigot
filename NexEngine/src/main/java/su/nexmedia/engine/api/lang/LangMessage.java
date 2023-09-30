@@ -1,5 +1,6 @@
 package su.nexmedia.engine.api.lang;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
@@ -7,10 +8,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.placeholder.PlaceholderMap;
-import su.nexmedia.engine.utils.Colorizer;
-import su.nexmedia.engine.utils.Placeholders;
-import su.nexmedia.engine.utils.PlayerUtil;
-import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.*;
 import su.nexmedia.engine.utils.message.NexParser;
 import su.nexmedia.engine.utils.regex.RegexUtil;
 import su.nexmedia.engine.utils.values.UniSound;
@@ -38,6 +36,7 @@ public class LangMessage {
         PREFIX("prefix"),
         SOUND("sound"),
         TYPE("type"),
+        PAPI("papi"),
         ;
 
         private final Pattern pattern;
@@ -59,6 +58,7 @@ public class LangMessage {
     private String msgLocalized;
     private OutputType type = OutputType.CHAT;
     private boolean hasPrefix = true;
+    private boolean papi = false;
     private Sound sound;
     private int[] titleTimes = new int[3];
 
@@ -78,6 +78,7 @@ public class LangMessage {
         this.msgLocalized = from.getLocalized();
         this.type = from.type;
         this.hasPrefix = from.hasPrefix;
+        this.papi = from.papi;
         this.sound = from.sound;
         this.titleTimes = Arrays.copyOf(from.titleTimes, from.titleTimes.length);
         this.placeholderMap = new PlaceholderMap(from.placeholderMap);
@@ -110,6 +111,7 @@ public class LangMessage {
                     }
                 }
                 case PREFIX -> this.hasPrefix = Boolean.parseBoolean(optionValue);
+                case PAPI -> this.papi = Boolean.parseBoolean(optionValue) && EngineUtils.hasPlaceholderAPI();
                 case SOUND -> this.sound = StringUtil.getEnum(optionValue, Sound.class).orElse(null);
             }
         }
@@ -129,6 +131,15 @@ public class LangMessage {
     @NotNull
     public String getLocalized() {
         return this.msgLocalized;
+    }
+
+    @NotNull
+    public String getLocalized(@NotNull CommandSender sender) {
+        String localized = this.getLocalized();
+        if (this.papi && sender instanceof Player player) {
+            localized = PlaceholderAPI.setPlaceholders(player, localized);
+        }
+        return localized;
     }
 
     private void setLocalized(@NotNull String msgLocalized) {
@@ -187,7 +198,7 @@ public class LangMessage {
 
         if (this.type == LangMessage.OutputType.CHAT) {
             String prefix = hasPrefix ? plugin.getConfigManager().pluginPrefix : "";
-            this.asList().forEach(line -> {
+            this.asList(sender).forEach(line -> {
                 PlayerUtil.sendRichMessage(sender, prefix + line);
             });
             return;
@@ -195,10 +206,10 @@ public class LangMessage {
 
         if (sender instanceof Player player) {
             if (this.type == LangMessage.OutputType.ACTION_BAR) {
-                PlayerUtil.sendActionBar(player, this.getLocalized());
+                PlayerUtil.sendActionBar(player, this.getLocalized(player));
             }
             else if (this.type == LangMessage.OutputType.TITLES) {
-                List<String> list = this.asList();
+                List<String> list = this.asList(player);
                 String title = list.size() > 0 ? NexParser.toPlainText(list.get(0)) : "";
                 String subtitle = list.size() > 1 ? NexParser.toPlainText(list.get(1)) : "";
                 player.sendTitle(title, subtitle, this.titleTimes[0], this.titleTimes[1], this.titleTimes[2]);
@@ -208,7 +219,17 @@ public class LangMessage {
 
     @NotNull
     public List<String> asList() {
-        return this.isEmpty() ? Collections.emptyList() : Stream.of(this.getLocalized().split("\\\\n"))
+        return this.asList(this.getLocalized());
+    }
+
+    @NotNull
+    public List<String> asList(@NotNull CommandSender sender) {
+        return this.asList(this.getLocalized(sender));
+    }
+
+    @NotNull
+    private List<String> asList(@NotNull String localized) {
+        return this.isEmpty() ? Collections.emptyList() : Stream.of(localized.split("\\\\n"))
             .filter(Predicate.not(String::isEmpty)).toList();
     }
 

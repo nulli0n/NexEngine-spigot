@@ -1,78 +1,78 @@
-# Here you can create your own custom placeholders to use it in language config.
-# Key = Placeholder, Value = Replacer.
 Placeholders:
-  '%red%': '#fd5e5e'
-  '%gray%': '#d4d9d8'
-  '%green%': '#aefd5e'
+  '%green%': '#74ea31'
+  '%gray%': '#aaa8a8'
+  '%red%': '#ea3131'
 Command:
-  Usage: '&c用法: &e/%command_label% &6%command_usage%'
+  Usage:
+    - <! prefix:"false" !>
+    - '#aaa8a8'
+    - '#ea3131错误：#aaa8a8参数错误！'
+    - '#ea3131用法：#ead931/%command_label% #ea9631%command_usage%'
+    - '#aaa8a8'
   Help:
     List:
-      - '&6&m              &6&l[ &e&l%plugin_name% &7- &e&l命令 &6&l]&6&m              &7'
-      - '&7'
-      - '&7          &4&l<> &7- 必需的, &2&l[] &7- 可选的'
-      - '&7'
-      - '&6▪ &e/%command_label% &6%command_usage% &7- %command_description%'
-      - '&7'
+      - <! prefix:"false" !>
+      - '#aaa8a8'
+      - '  #ead931%plugin_name_localized%#aaa8a8 - #ead931命令:'
+      - '#aaa8a8'
+      - '  #ea3131<> #aaa8a8- 必需的，#74ea31[] #aaa8a8- 可选的。'
+      - '#aaa8a8'
+      - '  #ead931/%command_label% #ea9631%command_usage% #aaa8a8- %command_description%'
+      - '#aaa8a8'
     Desc: 显示帮助页面
   About:
-    Desc: 显示插件信息
+    Desc: 一些关于插件的信息
   Reload:
-    Desc: 重载插件
-    Done: 已重载完成! &b汉化者：&c氿雾 &8& &r&cDreamMiu
+    Desc: 重新加载整个插件
+    Done: 所有数据和配置已重新加载!
 Time:
   Day: '%s%天'
   Hour: '%s%小时'
   Min: '%s%分钟'
   Sec: '%s%秒'
 Other:
-  'Yes': '&a是'
-  'No': '&c否'
-  Any: 任意
+  'Yes': '#74ea31是'
+  'No': '#ea3131否'
+  Any: 任何
   None: 无
   Never: 从不
   OneTimed: 一次性的
-  Unlimited: 无限
+  Unlimited: 无限的
   Infinity: ∞
 Error:
   Player:
-    Invalid: '&c找不到玩家'
+    Invalid: '#ea3131没有找到玩家'
   World:
-    Invalid: '&c未找到世界'
+    Invalid: '#ea3131没有找到世界'
   Number:
-    Invalid: '&7%num% &c不是有效数字'
+    Invalid: '#ea3131%num% 这不是一个有效的数字'
   Permission:
-    Deny: '&c您无权执行此操作!'
-  Item:
-    Invalid: '&c您必须持有物品!'
-  Type:
-    Invalid: '无效类型。有效类型: %types%'
+    Deny: '#ea3131你没有权限这么做!'
   Command:
-    Self: 不能用在自己身上
-    Sender: 此命令仅供玩家使用
-  Internal: '&c内部错误!'
+    Self: '#ea3131此命令不能在自己身上使用'
+    Sender: '#ea3131此命令仅供玩家使用'
 Editor:
   Tip:
-    Exit: '<! prefix:"false" !><? show_text:"#d4d9d8点击或者输入 #fd5e5e#exit" run_command:"/#exit" ?>#fd5e5e[点击退出编辑模式]</>'
+    Exit: '<! prefix:"false" !><? show_text:"#aaa8a8点击我或输入 #ea3131#exit" run_command:"/#exit" ?>#aaa8a8点击这里 #ea3131[退出编辑模式]</>'
   Title:
-    Done: '&a&l完成!'
-    Edit: '&a&l编辑'
-    Error: '&c&l错误!'
+    Done: '#74ea31完成!'
+    Edit: '#74ea31< 编辑模式 >'
+    Error: '#ea3131错误!'
   Error:
     Number:
-      Generic: '&7无效的数字!'
-      NotInt: '&7数字必须是 &c整数&7!'
-    Enum: '&7无效类型！在聊天中查看'
+      Generic: '#aaa8a8无效的数字!'
+      NotInt: '#aaa8a8期待 #ea3131整数!'
+    Enum: '#aaa8a8无效的输入!'
   Generic:
     Close:
-      Name: '#FF5733(✕) &l退出'
-      Lore: [ ]
+      Name: '#FF5733(✕) 退出'
+      Lore: []
     Return:
       Name: '#ffee9a(↓) &f返回'
-      Lore: [ ]
+      Lore: []
     NextPage:
-      Name: '#e3fbf9(→) &l下一页'
-      Lore: [ ]
+      Name: '#e3fbf9(→) 下一页'
+      Lore: []
     PreviousPage:
-      Name: '#e3fbf9(←) &l上一页'
-      Lore: [ ]
+      Name: '#e3fbf9(←) 上一页'
+      Lore: []
