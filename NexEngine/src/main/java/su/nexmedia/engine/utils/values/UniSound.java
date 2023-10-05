@@ -24,8 +24,19 @@ public class UniSound {
         this.pitch = pitch;
     }
 
+    @NotNull
     public static UniSound of(@NotNull Sound sound) {
-        return new UniSound(sound.name(), sound, 0.8F, 1F);
+        return of(sound, 0.8F);
+    }
+
+    @NotNull
+    public static UniSound of(@NotNull Sound sound, float volume) {
+        return of(sound, volume, 1F);
+    }
+
+    @NotNull
+    public static UniSound of(@NotNull Sound sound, float volume, float pitch) {
+        return new UniSound(sound.name(), sound, volume, pitch);
     }
 
     @NotNull
