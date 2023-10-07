@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.NexPlugin;
 import su.nexmedia.engine.api.command.GeneralCommand;
 import su.nexmedia.engine.api.manager.AbstractManager;
-import su.nexmedia.engine.command.list.AboutSubCommand;
 import su.nexmedia.engine.command.list.HelpSubCommand;
 import su.nexmedia.engine.utils.ArrayUtil;
 
@@ -35,10 +34,6 @@ public class CommandManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
         // Register child plugin sub-commands to the main plugin command.
         this.plugin.registerCommands(this.mainCommand);
-
-        if (!this.plugin.isEngine()) {
-            this.mainCommand.addChildren(new AboutSubCommand<>(this.plugin));
-        }
 
         // Register main command as a bukkit command.
         this.registerCommand(this.mainCommand);

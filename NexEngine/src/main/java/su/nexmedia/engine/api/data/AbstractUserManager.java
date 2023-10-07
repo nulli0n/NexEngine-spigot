@@ -34,6 +34,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
 
     @Override
     protected void onShutdown() {
+        this.getUsersLoaded().forEach(user -> this.dataHolder.getData().saveUser(user));
         this.getUsersLoadedMap().clear();
     }
 

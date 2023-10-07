@@ -27,7 +27,6 @@ public class EngineLang {
             "\n" + GRAY);
 
     public static final LangKey COMMAND_HELP_DESC   = LangKey.of("Command.Help.Desc", "Show help page.");
-    public static final LangKey COMMAND_ABOUT_DESC  = LangKey.of("Command.About.Desc", "Some info about the plugin.");
     public static final LangKey COMMAND_RELOAD_DESC = LangKey.of("Command.Reload.Desc", "Reload the whole plugin.");
     public static final LangKey COMMAND_RELOAD_DONE = LangKey.of("Command.Reload.Done", "All data & configuration has been reloaded!");
 
