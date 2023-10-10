@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static su.nexmedia.engine.utils.Colors.*;
+import static su.nexmedia.engine.utils.Colors2.*;
 
 public class EditorLocales {
 
@@ -13,6 +13,11 @@ public class EditorLocales {
     public static final EditorLocale RETURN = EditorLocale.of("Editor.Generic.Return", "#ffee9a(↓) &fReturn");
     public static final EditorLocale NEXT_PAGE = EditorLocale.of("Editor.Generic.NextPage", "#e3fbf9(→) &lNext Page");
     public static final EditorLocale PREVIOUS_PAGE = EditorLocale.of("Editor.Generic.PreviousPage", "#e3fbf9(←) &lPrevious Page");
+
+    protected static final String LMB = "Left-Click";
+    protected static final String RMB = "Right-Click";
+    protected static final String DROP_KEY = "[Q] Drop Key";
+    protected static final String SWAP_KEY = "[F] Swap Key";
 
     @NotNull
     protected static Builder builder(@NotNull String key) {
