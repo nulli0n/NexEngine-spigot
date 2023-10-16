@@ -7,14 +7,16 @@ EntityType:
   bat: Chauve-souris
   bee: Abeille
   blaze: Blaze
+  block_display: Bloc holographique
   boat: Bateau
+  camel: Dromadaire
   cat: Chat
   cave_spider: Araignée venimeuse
   chest_boat: Bateau de stockage
   chest_minecart: Wagonnet de stockage
   chicken: Poule
   cod: Morue
-  command_block_minecart: Wagonnet avec bloc de commande
+  command_block_minecart: Wagonnet à bloc de commande
   cow: Vache
   creeper: Creeper
   dolphin: Dauphin
@@ -32,8 +34,9 @@ EntityType:
   evoker_fangs: Mâchoires d'évocateur
   experience_bottle: Fiole d'expérience lancée
   experience_orb: Orbe d'expérience
-  eye_of_ender: Oeil de l'Ender
+  eye_of_ender: Œil de l'Ender
   falling_block: Bloc soumis à la gravité
+  falling_block_type: '%s qui tombe'
   fireball: Boule de feu
   firework_rocket: Fusée de feu d'artifice
   fishing_bobber: Flotteur
@@ -51,8 +54,10 @@ EntityType:
   horse: Cheval
   husk: Zombie momifié
   illusioner: Illusionniste
+  interaction: Interaction
   iron_golem: Golem de fer
   item: Objet
+  item_display: Objet holographique
   item_frame: Cadre
   killer_bunny: Lapin tueur
   leash_knot: Nœud de laisse
@@ -88,15 +93,17 @@ EntityType:
   skeleton_horse: Cheval-squelette
   slime: Slime
   small_fireball: Petite boule de feu
+  sniffer: Renifleur
   snow_golem: Golem de neige
   snowball: Boule de neige
-  spawner_minecart: Wagonnet générateur
+  spawner_minecart: Wagonnet générateur de créatures
   spectral_arrow: Flèche spectrale
   spider: Araignée
   squid: Poulpe
   stray: Vagabond
   strider: Arpenteur
   tadpole: Têtard
+  text_display: Texte holographique
   tnt: TNT amorcé
   tnt_minecart: Wagonnet à TNT
   trader_llama: Lama de marchand
@@ -151,12 +158,13 @@ PotionEffectType:
   unluck: Malchance
   water_breathing: Apnée
   weakness: Faiblesse
-  wither: Wither
+  wither: Décomposition
 Material:
   acacia_button: Bouton en acacia
   acacia_door: Porte en acacia
   acacia_fence: Barrière en acacia
   acacia_fence_gate: Portillon en acacia
+  acacia_hanging_sign: Pancarte suspendue en acacia
   acacia_leaves: Feuilles d'acacia
   acacia_log: Bûche d'acacia
   acacia_planks: Planches d'acacia
@@ -166,6 +174,7 @@ Material:
   acacia_slab: Dalle en acacia
   acacia_stairs: Escalier en acacia
   acacia_trapdoor: Trappe en acacia
+  acacia_wall_hanging_sign: Pancarte suspendue en acacia murale
   acacia_wall_sign: Pancarte en acacia murale
   acacia_wood: Bois d'acacia
   activator_rail: Rails déclencheurs
@@ -185,7 +194,24 @@ Material:
   azalea_leaves: Feuilles d'azalée
   azure_bluet: Houstonie bleue
   bamboo: Bambou
+  bamboo_block: Bloc de bambou
+  bamboo_button: Bouton en bambou
+  bamboo_door: Porte en bambou
+  bamboo_fence: Barrière en bambou
+  bamboo_fence_gate: Portillon en bambou
+  bamboo_hanging_sign: Pancarte suspendue en bambou
+  bamboo_mosaic: Mosaïque de bambou
+  bamboo_mosaic_slab: Dalle en mosaïque de bambou
+  bamboo_mosaic_stairs: Escalier en mosaïque de bambou
+  bamboo_planks: Planches de bambou
+  bamboo_pressure_plate: Plaque de pression en bambou
   bamboo_sapling: Pousse de bambou
+  bamboo_sign: Pancarte en bambou
+  bamboo_slab: Dalle en bambou
+  bamboo_stairs: Escalier en bambou
+  bamboo_trapdoor: Trappe en bambou
+  bamboo_wall_hanging_sign: Pancarte suspendue en bambou murale
+  bamboo_wall_sign: Pancarte en bambou murale
   barrel: Tonneau
   barrier: Barrière invisible
   basalt: Basalte
@@ -201,6 +227,7 @@ Material:
   birch_door: Porte en bouleau
   birch_fence: Barrière en bouleau
   birch_fence_gate: Portillon en bouleau
+  birch_hanging_sign: Pancarte suspendue en bouleau
   birch_leaves: Feuilles de bouleau
   birch_log: Bûche de bouleau
   birch_planks: Planches de bouleau
@@ -210,6 +237,7 @@ Material:
   birch_slab: Dalle en bouleau
   birch_stairs: Escalier en bouleau
   birch_trapdoor: Trappe en bouleau
+  birch_wall_hanging_sign: Pancarte suspendue en bouleau murale
   birch_wall_sign: Pancarte en bouleau murale
   birch_wood: Bois de bouleau
   black_banner: Bannière noire
@@ -280,6 +308,7 @@ Material:
   cactus: Cactus
   cake: Gâteau
   calcite: Calcite
+  calibrated_sculk_sensor: Capteur sculk calibré
   campfire: Feu de camp
   candle: Bougie
   candle_cake: Gâteau à bougie
@@ -292,8 +321,26 @@ Material:
   cave_vines_plant: Plante de lianes des cavernes
   chain: Chaîne
   chain_command_block: Bloc de commande en chaîne
+  cherry_button: Bouton en cerisier
+  cherry_door: Porte en cerisier
+  cherry_fence: Barrière en cerisier
+  cherry_fence_gate: Portillon en cerisier
+  cherry_hanging_sign: Pancarte suspendue en cerisier
+  cherry_leaves: Feuilles de cerisier
+  cherry_log: Bûche de cerisier
+  cherry_planks: Planches de cerisier
+  cherry_pressure_plate: Plaque de pression en cerisier
+  cherry_sapling: Pousse de cerisier
+  cherry_sign: Pancarte en cerisier
+  cherry_slab: Dalle en cerisier
+  cherry_stairs: Escalier en cerisier
+  cherry_trapdoor: Trappe en cerisier
+  cherry_wall_hanging_sign: Pancarte suspendue en cerisier murale
+  cherry_wall_sign: Pancarte en cerisier murale
+  cherry_wood: Bois de cerisier
   chest: Coffre
   chipped_anvil: Enclume ébréchée
+  chiseled_bookshelf: Bibliothèque sculptée
   chiseled_deepslate: Ardoise des abîmes sculptée
   chiseled_nether_bricks: Briques du Nether sculptées
   chiseled_polished_blackstone: Pierre noire sculptée
@@ -337,6 +384,7 @@ Material:
   crimson_fence: Barrière carmin
   crimson_fence_gate: Portillon carmin
   crimson_fungus: Champignon carmin
+  crimson_hanging_sign: Pancarte suspendue carmin
   crimson_hyphae: Hyphes carmin
   crimson_nylium: Nylium carmin
   crimson_planks: Planches carmin
@@ -347,6 +395,7 @@ Material:
   crimson_stairs: Escalier carmin
   crimson_stem: Tige carmin
   crimson_trapdoor: Trappe carmin
+  crimson_wall_hanging_sign: Pancarte suspendue carmin murale
   crimson_wall_sign: Pancarte carmin murale
   crying_obsidian: Obsidienne pleureuse
   cut_copper: Cuivre taillé
@@ -375,6 +424,7 @@ Material:
   dark_oak_door: Porte en chêne noir
   dark_oak_fence: Barrière en chêne noir
   dark_oak_fence_gate: Portillon en chêne noir
+  dark_oak_hanging_sign: Pancarte suspendue en chêne noir
   dark_oak_leaves: Feuilles de chêne noir
   dark_oak_log: Bûche de chêne noir
   dark_oak_planks: Planches de chêne noir
@@ -384,6 +434,7 @@ Material:
   dark_oak_slab: Dalle en chêne noir
   dark_oak_stairs: Escalier en chêne noir
   dark_oak_trapdoor: Trappe en chêne noir
+  dark_oak_wall_hanging_sign: Pancarte suspendue en chêne noir murale
   dark_oak_wall_sign: Pancarte en chêne noir murale
   dark_oak_wood: Bois de chêne noir
   dark_prismarine: Prismarine sombre
@@ -411,6 +462,7 @@ Material:
   dead_tube_coral_block: Bloc de corail tubulaire mort
   dead_tube_coral_fan: Gorgone de corail tubulaire morte
   dead_tube_coral_wall_fan: Gorgone de corail tubulaire morte murale
+  decorated_pot: Vase décoré
   deepslate: Ardoise des abîmes
   deepslate_brick_slab: Dalle en ardoise des abîmes taillée
   deepslate_brick_stairs: Escalier en ardoise des abîmes taillée
@@ -546,6 +598,7 @@ Material:
   jungle_door: Porte en acajou
   jungle_fence: Barrière en acajou
   jungle_fence_gate: Portillon en acajou
+  jungle_hanging_sign: Pancarte suspendue en acajou
   jungle_leaves: Feuilles d'acajou
   jungle_log: Bûche d'acajou
   jungle_planks: Planches d'acajou
@@ -555,6 +608,7 @@ Material:
   jungle_slab: Dalle en acajou
   jungle_stairs: Escalier en acajou
   jungle_trapdoor: Trappe en acajou
+  jungle_wall_hanging_sign: Pancarte suspendue en acajou murale
   jungle_wall_sign: Pancarte en acajou murale
   jungle_wood: Bois d'acajou
   kelp: Algue
@@ -634,6 +688,7 @@ Material:
   mangrove_door: Porte en palétuvier
   mangrove_fence: Barrière en palétuvier
   mangrove_fence_gate: Portillon en palétuvier
+  mangrove_hanging_sign: Pancarte suspendue en palétuvier
   mangrove_leaves: Feuilles de palétuvier
   mangrove_log: Bûche de palétuvier
   mangrove_planks: Planches de palétuvier
@@ -644,6 +699,7 @@ Material:
   mangrove_slab: Dalle en palétuvier
   mangrove_stairs: Escalier en palétuvier
   mangrove_trapdoor: Trappe en palétuvier
+  mangrove_wall_hanging_sign: Pancarte suspendue en palétuvier murale
   mangrove_wall_sign: Pancarte en palétuvier murale
   mangrove_wood: Bois de palétuvier
   medium_amethyst_bud: Cristal moyen d'améthyste
@@ -686,6 +742,7 @@ Material:
   oak_door: Porte en chêne
   oak_fence: Barrière en chêne
   oak_fence_gate: Portillon en chêne
+  oak_hanging_sign: Pancarte suspendue en chêne
   oak_leaves: Feuilles de chêne
   oak_log: Bûche de chêne
   oak_planks: Planches de chêne
@@ -695,6 +752,7 @@ Material:
   oak_slab: Dalle en chêne
   oak_stairs: Escalier en chêne
   oak_trapdoor: Trappe en chêne
+  oak_wall_hanging_sign: Pancarte suspendue en chêne murale
   oak_wall_sign: Pancarte en chêne murale
   oak_wood: Bois de chêne
   observer: Observateur
@@ -725,6 +783,8 @@ Material:
   pearlescent_froglight: Grelampe nacrée
   peony: Pivoine
   petrified_oak_slab: Dalle en chêne pétrifiée
+  piglin_head: Tête de Piglin
+  piglin_wall_head: Tête de Piglin murale
   pink_banner: Bannière rose
   pink_bed: Lit rose
   pink_candle: Bougie rose
@@ -733,6 +793,7 @@ Material:
   pink_concrete: Béton rose
   pink_concrete_powder: Béton rose en poudre
   pink_glazed_terracotta: Terre cuite émaillée rose
+  pink_petals: Pétales roses
   pink_shulker_box: Boîte de Shulker rose
   pink_stained_glass: Verre rose
   pink_stained_glass_pane: Vitre rose
@@ -741,6 +802,8 @@ Material:
   pink_wool: Laine rose
   piston: Piston
   piston_head: Tête de piston
+  pitcher_crop: Plant de planturne
+  pitcher_plant: Planturne
   player_head: Tête de joueur
   player_wall_head: Tête de joueur murale
   podzol: Podzol
@@ -780,6 +843,7 @@ Material:
   potted_blue_orchid: Orchidée bleue en pot
   potted_brown_mushroom: Champignon brun en pot
   potted_cactus: Cactus en pot
+  potted_cherry_sapling: Pousse de cerisier en pot
   potted_cornflower: Bleuet en pot
   potted_crimson_fungus: Champignon carmin en pot
   potted_crimson_roots: Racines carmin en pot
@@ -799,6 +863,7 @@ Material:
   potted_red_mushroom: Champignon rouge en pot
   potted_red_tulip: Tulipe rouge en pot
   potted_spruce_sapling: Pousse de sapin en pot
+  potted_torchflower: Torche-fleur en pot
   potted_warped_fungus: Champignon biscornu en pot
   potted_warped_roots: Racines biscornues en pot
   potted_white_tulip: Tulipe blanche en pot
@@ -900,7 +965,7 @@ Material:
   slime_block: Bloc de Slime
   small_amethyst_bud: Petit cristal d'améthyste
   small_dripleaf: Petite foliogoutte
-  smithing_table: Table de forgeron
+  smithing_table: Table de forge
   smoker: Fumoir
   smooth_basalt: Basalte lisse
   smooth_quartz: Bloc de quartz lisse
@@ -914,6 +979,7 @@ Material:
   smooth_sandstone_stairs: Escalier en grès lisse
   smooth_stone: Roche lisse
   smooth_stone_slab: Dalle de roche lisse
+  sniffer_egg: Oeuf de renifleur
   snow: Neige
   snow_block: Bloc de neige
   soul_campfire: Feu de camp des âmes
@@ -923,13 +989,14 @@ Material:
   soul_soil: Terre des âmes
   soul_torch: Torche des âmes
   soul_wall_torch: Torche des âmes murale
-  spawner: Générateur
+  spawner: Générateur de créatures
   sponge: Éponge
   spore_blossom: Fleur sporifère
   spruce_button: Bouton en sapin
   spruce_door: Porte en sapin
   spruce_fence: Barrière en sapin
   spruce_fence_gate: Portillon en sapin
+  spruce_hanging_sign: Pancarte suspendue en sapin
   spruce_leaves: Feuilles de sapin
   spruce_log: Bûche de sapin
   spruce_planks: Planches de sapin
@@ -939,6 +1006,7 @@ Material:
   spruce_slab: Dalle en sapin
   spruce_stairs: Escalier en sapin
   spruce_trapdoor: Trappe en sapin
+  spruce_wall_hanging_sign: Pancarte suspendue en sapin murale
   spruce_wall_sign: Pancarte en sapin murale
   spruce_wood: Bois de sapin
   sticky_piston: Piston collant
@@ -954,8 +1022,11 @@ Material:
   stonecutter: Tailleur de pierre
   stripped_acacia_log: Bûche d'acacia écorcée
   stripped_acacia_wood: Bois d'acacia écorcé
+  stripped_bamboo_block: Bloc de bambou écorcé
   stripped_birch_log: Bûche de bouleau écorcée
   stripped_birch_wood: Bois de bouleau écorcé
+  stripped_cherry_log: Bûche de cerisier écorcée
+  stripped_cherry_wood: Bois de cerisier écorcé
   stripped_crimson_hyphae: Hyphes carmin dénudées
   stripped_crimson_stem: Tige carmin dénudée
   stripped_dark_oak_log: Bûche de chêne noir écorcée
@@ -974,6 +1045,8 @@ Material:
   structure_void: Vide de structure
   sugar_cane: Canne à sucre
   sunflower: Tournesol
+  suspicious_gravel: Gravier suspect
+  suspicious_sand: Sable suspect
   sweet_berry_bush: Buisson à baies sucrées
   tall_grass: Hautes herbes
   tall_seagrass: Hautes herbes aquatiques
@@ -982,6 +1055,8 @@ Material:
   tinted_glass: Verre teinté
   tnt: TNT
   torch: Torche
+  torchflower: Torche-fleur
+  torchflower_crop: Plant de torche-fleur
   trapped_chest: Coffre piégé
   tripwire: Fil de déclenchement
   tripwire_hook: Crochet
@@ -1002,6 +1077,7 @@ Material:
   warped_fence: Barrière biscornue
   warped_fence_gate: Portillon biscornu
   warped_fungus: Champignon biscornu
+  warped_hanging_sign: Pancarte suspendue biscornue
   warped_hyphae: Hyphes biscornues
   warped_nylium: Nylium biscornu
   warped_planks: Planches biscornues
@@ -1012,6 +1088,7 @@ Material:
   warped_stairs: Escalier biscornu
   warped_stem: Tige biscornue
   warped_trapdoor: Trappe biscornue
+  warped_wall_hanging_sign: Pancarte suspendue biscornue murale
   warped_wall_sign: Pancarte biscornue murale
   warped_wart_block: Bloc de verrues biscornues
   water: Eau
@@ -1076,12 +1153,20 @@ Material:
   acacia_chest_boat: Bateau de stockage en acacia
   allay_spawn_egg: Oeuf d'apparition d'Allay
   amethyst_shard: Éclat d'améthyste
+  angler_pottery_shard: Tesson de poterie de pêcheur
+  angler_pottery_sherd: Tesson de poterie de pêcheur
   apple: Pomme
+  archer_pottery_shard: Tesson de poterie d'archer
+  archer_pottery_sherd: Tesson de poterie d'archer
   armor_stand: Porte-armure
+  arms_up_pottery_shard: Tesson de poterie de figure
+  arms_up_pottery_sherd: Tesson de poterie de figure
   arrow: Flèche
   axolotl_bucket: Axolotl dans un seau
   axolotl_spawn_egg: Oeuf d'apparition d'axolotl
   baked_potato: Pomme de terre cuite
+  bamboo_chest_raft: Radeau de stockage en bambou
+  bamboo_raft: Radeau en bambou
   bat_spawn_egg: Oeuf d'apparition de chauve-souris
   bee_spawn_egg: Oeuf d'apparition d'abeille
   beef: Boeuf cru
@@ -1091,6 +1176,8 @@ Material:
   birch_boat: Bateau en bouleau
   birch_chest_boat: Bateau de stockage en bouleau
   black_dye: Teinture noire
+  blade_pottery_shard: Tesson de poterie de lame
+  blade_pottery_sherd: Tesson de poterie de lame
   blaze_powder: Poudre de Blaze
   blaze_rod: Bâton de Blaze
   blaze_spawn_egg: Oeuf d'apparition de Blaze
@@ -1101,10 +1188,16 @@ Material:
   bow: Arc
   bowl: Bol
   bread: Pain
+  brewer_pottery_shard: Tesson de poterie d'alchimiste
+  brewer_pottery_sherd: Tesson de poterie d'alchimiste
   brick: Brique
   brown_dye: Teinture marron
+  brush: Pinceau
   bucket: Seau
   bundle: Sac
+  burn_pottery_shard: Tesson de poterie de feu
+  burn_pottery_sherd: Tesson de poterie de feu
+  camel_spawn_egg: Oeuf d'apparition de dromadaire
   carrot: Carotte
   carrot_on_a_stick: Carotte sur un bâton
   cat_spawn_egg: Oeuf d'apparition de chat
@@ -1114,6 +1207,8 @@ Material:
   chainmail_helmet: Casque de mailles
   chainmail_leggings: Jambières de mailles
   charcoal: Charbon de bois
+  cherry_boat: Bateau en cerisier
+  cherry_chest_boat: Bateau de stockage en cerisier
   chest_minecart: Wagonnet de stockage
   chicken: Poulet cru
   chicken_spawn_egg: Oeuf d'apparition de poule
@@ -1121,11 +1216,12 @@ Material:
   clay_ball: Motte d'argile
   clock: Montre
   coal: Charbon
+  coast_armor_trim_smithing_template: Modèle de forge
   cocoa_beans: Fèves de cacao
   cod: Morue crue
   cod_bucket: Morue dans un seau
   cod_spawn_egg: Oeuf d'apparition de morue
-  command_block_minecart: Wagonnet avec bloc de commande
+  command_block_minecart: Wagonnet à bloc de commande
   compass: Boussole
   cooked_beef: Steak
   cooked_chicken: Poulet rôti
@@ -1141,6 +1237,8 @@ Material:
   creeper_spawn_egg: Oeuf d'apparition de Creeper
   crossbow: Arbalète
   cyan_dye: Teinture cyan
+  danger_pottery_shard: Tesson de poterie de danger
+  danger_pottery_sherd: Tesson de poterie de danger
   dark_oak_boat: Bateau en chêne noir
   dark_oak_chest_boat: Bateau de stockage en chêne noir
   debug_stick: Bâton de débogage
@@ -1161,6 +1259,7 @@ Material:
   dragon_breath: Souffle de dragon
   dried_kelp: Algue séchée
   drowned_spawn_egg: Oeuf d'apparition de noyé
+  dune_armor_trim_smithing_template: Modèle de forge
   echo_shard: Éclat d'écho
   egg: Oeuf
   elder_guardian_spawn_egg: Oeuf d'apparition de grand gardien
@@ -1169,12 +1268,16 @@ Material:
   enchanted_book: Livre enchanté
   enchanted_golden_apple: Pomme dorée enchantée
   end_crystal: Cristal de l'End
+  ender_dragon_spawn_egg: Oeuf d'apparition d'Ender Dragon
   ender_eye: Oeil de l'Ender
   ender_pearl: Perle de l'Ender
   enderman_spawn_egg: Oeuf d'apparition d'Enderman
   endermite_spawn_egg: Oeuf d'apparition d'Endermite
   evoker_spawn_egg: Oeuf d'apparition d'évocateur
   experience_bottle: Fiole d'expérience
+  explorer_pottery_shard: Tesson de poterie d'explorateur
+  explorer_pottery_sherd: Tesson de poterie d'explorateur
+  eye_armor_trim_smithing_template: Modèle de forge
   feather: Plume
   fermented_spider_eye: Oeil d'araignée fermenté
   filled_map: Carte
@@ -1186,6 +1289,8 @@ Material:
   flint_and_steel: Briquet
   flower_banner_pattern: Motif de bannière
   fox_spawn_egg: Oeuf d'apparition de renard
+  friend_pottery_shard: Tesson de poterie d'ami
+  friend_pottery_sherd: Tesson de poterie d'ami
   frog_spawn_egg: Oeuf d'apparition de grenouille
   furnace_minecart: Wagonnet motorisé
   ghast_spawn_egg: Oeuf d'apparition de Ghast
@@ -1219,16 +1324,24 @@ Material:
   guardian_spawn_egg: Oeuf d'apparition de gardien
   gunpowder: Poudre à canon
   heart_of_the_sea: Coeur de la mer
+  heart_pottery_shard: Tesson de poterie de coeur
+  heart_pottery_sherd: Tesson de poterie de coeur
+  heartbreak_pottery_shard: Tesson de poterie de coeur brisé
+  heartbreak_pottery_sherd: Tesson de poterie de coeur brisé
   hoglin_spawn_egg: Oeuf d'apparition de Hoglin
   honey_bottle: Fiole de miel
   honeycomb: Rayon de miel
   hopper_minecart: Wagonnet à entonnoir
   horse_spawn_egg: Oeuf d'apparition de cheval
+  host_armor_trim_smithing_template: Modèle de forge
+  howl_pottery_shard: Tesson de poterie de loup
+  howl_pottery_sherd: Tesson de poterie de loup
   husk_spawn_egg: Oeuf d'apparition de zombie momifié
   ink_sac: Poche d'encre
   iron_axe: Hache en fer
   iron_boots: Bottes en fer
   iron_chestplate: Plastron en fer
+  iron_golem_spawn_egg: Oeuf d'apparition de golem de fer
   iron_helmet: Casque en fer
   iron_hoe: Houe en fer
   iron_horse_armor: Armure en fer pour cheval
@@ -1267,13 +1380,17 @@ Material:
   melon_slice: Tranche de pastèque
   milk_bucket: Seau de lait
   minecart: Wagonnet
+  miner_pottery_shard: Tesson de poterie de mineur
+  miner_pottery_sherd: Tesson de poterie de mineur
   mojang_banner_pattern: Motif de bannière
   mooshroom_spawn_egg: Oeuf d'apparition de Mooshroom
+  mourner_pottery_shard: Tesson de poterie de pleureur
+  mourner_pottery_sherd: Tesson de poterie de pleureur
   mule_spawn_egg: Oeuf d'apparition de mule
   mushroom_stew: Soupe de champignons
   music_disc_11: Disque
   music_disc_13: Disque
-  music_disc_5: Disque de musique
+  music_disc_5: Disque
   music_disc_blocks: Disque
   music_disc_cat: Disque
   music_disc_chirp: Disque
@@ -1282,6 +1399,7 @@ Material:
   music_disc_mellohi: Disque
   music_disc_otherside: Disque
   music_disc_pigstep: Disque
+  music_disc_relic: Disque
   music_disc_stal: Disque
   music_disc_strad: Disque
   music_disc_wait: Disque
@@ -1302,6 +1420,7 @@ Material:
   netherite_scrap: Fragments de Netherite
   netherite_shovel: Pelle en Netherite
   netherite_sword: Épée en Netherite
+  netherite_upgrade_smithing_template: Modèle de forge
   oak_boat: Bateau en chêne
   oak_chest_boat: Bateau de stockage en chêne
   ocelot_spawn_egg: Oeuf d'apparition d'ocelot
@@ -1318,15 +1437,24 @@ Material:
   piglin_spawn_egg: Oeuf d'apparition de Piglin
   pillager_spawn_egg: Oeuf d'apparition de pillard
   pink_dye: Teinture rose
+  pitcher_pod: Gousse de planturne
+  plenty_pottery_shard: Tesson de poterie de richesse
+  plenty_pottery_sherd: Tesson de poterie de richesse
   poisonous_potato: Pomme de terre empoisonnée
   polar_bear_spawn_egg: Oeuf d'apparition d'ours blanc
   popped_chorus_fruit: Chorus éclaté
   porkchop: Côtelette de porc crue
   potato: Pomme de terre
   potion: Potion
+  pottery_shard_archer: Tesson de poterie d'archer
+  pottery_shard_arms_up: Tesson de poterie de figure
+  pottery_shard_prize: Tesson de poterie de joyau
+  pottery_shard_skull: Tesson de poterie de crâne
   powder_snow_bucket: Seau de neige poudreuse
   prismarine_crystals: Cristaux de prismarine
   prismarine_shard: Éclat de prismarine
+  prize_pottery_shard: Tesson de poterie de joyau
+  prize_pottery_sherd: Tesson de poterie de joyau
   pufferfish: Poisson-globe
   pufferfish_bucket: Poisson-globe dans un seau
   pufferfish_spawn_egg: Oeuf d'apparition de poisson-globe
@@ -1339,6 +1467,7 @@ Material:
   rabbit_hide: Peau de lapin
   rabbit_spawn_egg: Oeuf d'apparition de lapin
   rabbit_stew: Ragoût de lapin
+  raiser_armor_trim_smithing_template: Modèle de forge
   ravager_spawn_egg: Oeuf d'apparition de ravageur
   raw_copper: Cuivre brut
   raw_gold: Or brut
@@ -1346,28 +1475,45 @@ Material:
   recovery_compass: Boussole de récupération
   red_dye: Teinture rouge
   redstone: Poudre de redstone
+  rib_armor_trim_smithing_template: Modèle de forge
   rotten_flesh: Chair putréfiée
   saddle: Selle
   salmon: Saumon cru
   salmon_bucket: Saumon dans un seau
   salmon_spawn_egg: Oeuf d'apparition de saumon
   scute: Écaille de tortue
+  sentry_armor_trim_smithing_template: Modèle de forge
+  shaper_armor_trim_smithing_template: Modèle de forge
+  sheaf_pottery_shard: Tesson de poterie d'épis
+  sheaf_pottery_sherd: Tesson de poterie d'épis
   shears: Cisailles
   sheep_spawn_egg: Oeuf d'apparition de mouton
+  shelter_pottery_shard: Tesson de poterie d'abri
+  shelter_pottery_sherd: Tesson de poterie d'abri
   shield: Bouclier
   shulker_shell: Carapace de Shulker
   shulker_spawn_egg: Oeuf d'apparition de Shulker
   sign: Pancarte
+  silence_armor_trim_smithing_template: Modèle de forge
   silverfish_spawn_egg: Oeuf d'apparition de poisson d'argent
   skeleton_horse_spawn_egg: Oeuf d'apparition de cheval-squelette
   skeleton_spawn_egg: Oeuf d'apparition de squelette
   skull_banner_pattern: Motif de bannière
+  skull_pottery_shard: Tesson de poterie de crâne
+  skull_pottery_sherd: Tesson de poterie de crâne
   slime_ball: Boule de Slime
   slime_spawn_egg: Oeuf d'apparition de Slime
+  smithing_template: Modèle de forge
+  sniffer_spawn_egg: Oeuf d'apparition de renifleur
+  snort_pottery_shard: Tesson de poterie de renifleur
+  snort_pottery_sherd: Tesson de poterie de renifleur
+  snout_armor_trim_smithing_template: Modèle de forge
+  snow_golem_spawn_egg: Oeuf d'apparition de golem de neige
   snowball: Boule de neige
   spectral_arrow: Flèche spectrale
   spider_eye: Oeil d'araignée
   spider_spawn_egg: Oeuf d'apparition d'araignée
+  spire_armor_trim_smithing_template: Modèle de forge
   splash_potion: Potion jetable
   spruce_boat: Bateau en sapin
   spruce_chest_boat: Bateau de stockage en sapin
@@ -1387,8 +1533,10 @@ Material:
   sweet_berries: Baies sucrées
   tadpole_bucket: Têtard dans un seau
   tadpole_spawn_egg: Oeuf d'apparition de têtard
+  tide_armor_trim_smithing_template: Modèle de forge
   tipped_arrow: Flèche à effet
   tnt_minecart: Wagonnet à TNT
+  torchflower_seeds: Graines de torche-fleur
   totem_of_undying: Totem d'immortalité
   trader_llama_spawn_egg: Oeuf d'apparition de lama de marchand
   trident: Trident
@@ -1397,17 +1545,22 @@ Material:
   tropical_fish_spawn_egg: Oeuf d'apparition de poisson tropical
   turtle_helmet: Carapace de tortue
   turtle_spawn_egg: Oeuf d'apparition de tortue
+  vex_armor_trim_smithing_template: Modèle de forge
   vex_spawn_egg: Oeuf d'apparition de Vex
   villager_spawn_egg: Oeuf d'apparition de villageois
   vindicator_spawn_egg: Oeuf d'apparition de vindicateur
   wandering_trader_spawn_egg: Oeuf d'apparition de marchand ambulant
+  ward_armor_trim_smithing_template: Modèle de forge
   warden_spawn_egg: Oeuf d'apparition de Warden
   warped_fungus_on_a_stick: Champignon biscornu sur un bâton
   water_bucket: Seau d'eau
+  wayfinder_armor_trim_smithing_template: Modèle de forge
   wheat_seeds: Graines de blé
   white_dye: Teinture blanche
+  wild_armor_trim_smithing_template: Modèle de forge
   witch_spawn_egg: Oeuf d'apparition de sorcière
   wither_skeleton_spawn_egg: Oeuf d'apparition de Wither squelette
+  wither_spawn_egg: Oeuf d'apparition de Wither
   wolf_spawn_egg: Oeuf d'apparition de loup
   wooden_axe: Hache en bois
   wooden_hoe: Houe en bois

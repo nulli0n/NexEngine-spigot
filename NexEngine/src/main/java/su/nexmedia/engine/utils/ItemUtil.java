@@ -102,11 +102,24 @@ public class ItemUtil {
 
         Collection<Property> properties = profile.getProperties().get("textures");
         Optional<Property> opt = properties.stream().filter(prop -> {
-            String name = (String) Reflex.getFieldValue(profile, "name");
+            String name;
+            if (Version.isAtLeast(Version.V1_20_R2)) {
+                name = prop.name();
+            }
+            else {
+                name = (String) Reflex.getFieldValue(profile, "name");
+            }
             return name != null && name.equalsIgnoreCase("textures");
         }).findFirst();
 
-        return opt.map(Property::value).orElse(null);
+        if (opt.isEmpty()) return null;
+
+        if (Version.isAtLeast(Version.V1_20_R2)) {
+            return opt.get().value();
+        }
+        else {
+            return (String) Reflex.getFieldValue(opt.get(), "value");
+        }
     }
 
     public static void setPlaceholderAPI(@NotNull Player player, @NotNull ItemStack item) {

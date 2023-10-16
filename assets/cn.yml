@@ -7,7 +7,9 @@ EntityType:
   bat: 蝙蝠
   bee: 蜜蜂
   blaze: 烈焰人
+  block_display: 方块展示实体
   boat: 船
+  camel: 骆驼
   cat: 猫
   cave_spider: 洞穴蜘蛛
   chest_boat: 运输船
@@ -34,6 +36,7 @@ EntityType:
   experience_orb: 经验球
   eye_of_ender: 末影之眼
   falling_block: 下落的方块
+  falling_block_type: 下落的%s
   fireball: 火球
   firework_rocket: 烟花火箭
   fishing_bobber: 浮漂
@@ -51,8 +54,10 @@ EntityType:
   horse: 马
   husk: 尸壳
   illusioner: 幻术师
+  interaction: 交互实体
   iron_golem: 铁傀儡
   item: 物品
+  item_display: 物品展示实体
   item_frame: 物品展示框
   killer_bunny: 杀手兔
   leash_knot: 拴绳结
@@ -88,6 +93,7 @@ EntityType:
   skeleton_horse: 骷髅马
   slime: 史莱姆
   small_fireball: 小火球
+  sniffer: 嗅探兽
   snow_golem: 雪傀儡
   snowball: 雪球
   spawner_minecart: 刷怪笼矿车
@@ -97,6 +103,7 @@ EntityType:
   stray: 流浪者
   strider: 炽足兽
   tadpole: 蝌蚪
+  text_display: 文本展示实体
   tnt: 被激活的TNT
   tnt_minecart: TNT矿车
   trader_llama: 行商羊驼
@@ -125,7 +132,7 @@ PotionEffectType:
   conduit_power: 潮涌能量
   darkness: 黑暗
   dolphins_grace: 海豚的恩惠
-  fire_resistance: 防火
+  fire_resistance: 抗火
   glowing: 发光
   haste: 急迫
   health_boost: 生命提升
@@ -146,7 +153,7 @@ PotionEffectType:
   saturation: 饱和
   slow_falling: 缓降
   slowness: 缓慢
-  speed: 速度
+  speed: 迅捷
   strength: 力量
   unluck: 霉运
   water_breathing: 水下呼吸
@@ -157,6 +164,7 @@ Material:
   acacia_door: 金合欢木门
   acacia_fence: 金合欢木栅栏
   acacia_fence_gate: 金合欢木栅栏门
+  acacia_hanging_sign: 悬挂式金合欢木告示牌
   acacia_leaves: 金合欢树叶
   acacia_log: 金合欢原木
   acacia_planks: 金合欢木板
@@ -166,6 +174,7 @@ Material:
   acacia_slab: 金合欢木台阶
   acacia_stairs: 金合欢木楼梯
   acacia_trapdoor: 金合欢木活板门
+  acacia_wall_hanging_sign: 墙上的悬挂式金合欢木告示牌
   acacia_wall_sign: 墙上的金合欢木告示牌
   acacia_wood: 金合欢木
   activator_rail: 激活铁轨
@@ -185,7 +194,24 @@ Material:
   azalea_leaves: 杜鹃树叶
   azure_bluet: 蓝花美耳草
   bamboo: 竹子
+  bamboo_block: 竹块
+  bamboo_button: 竹按钮
+  bamboo_door: 竹门
+  bamboo_fence: 竹栅栏
+  bamboo_fence_gate: 竹栅栏门
+  bamboo_hanging_sign: 悬挂式竹告示牌
+  bamboo_mosaic: 竹马赛克
+  bamboo_mosaic_slab: 竹马赛克台阶
+  bamboo_mosaic_stairs: 竹马赛克楼梯
+  bamboo_planks: 竹板
+  bamboo_pressure_plate: 竹压力板
   bamboo_sapling: 竹笋
+  bamboo_sign: 竹告示牌
+  bamboo_slab: 竹台阶
+  bamboo_stairs: 竹楼梯
+  bamboo_trapdoor: 竹活板门
+  bamboo_wall_hanging_sign: 墙上的悬挂式竹告示牌
+  bamboo_wall_sign: 墙上的竹告示牌
   barrel: 木桶
   barrier: 屏障
   basalt: 玄武岩
@@ -201,6 +227,7 @@ Material:
   birch_door: 白桦木门
   birch_fence: 白桦木栅栏
   birch_fence_gate: 白桦木栅栏门
+  birch_hanging_sign: 悬挂式白桦木告示牌
   birch_leaves: 白桦树叶
   birch_log: 白桦原木
   birch_planks: 白桦木板
@@ -210,6 +237,7 @@ Material:
   birch_slab: 白桦木台阶
   birch_stairs: 白桦木楼梯
   birch_trapdoor: 白桦木活板门
+  birch_wall_hanging_sign: 墙上的悬挂式白桦木告示牌
   birch_wall_sign: 墙上的白桦木告示牌
   birch_wood: 白桦木
   black_banner: 黑色旗帜
@@ -280,27 +308,46 @@ Material:
   cactus: 仙人掌
   cake: 蛋糕
   calcite: 方解石
+  calibrated_sculk_sensor: 校频幽匿感测体
   campfire: 营火
   candle: 蜡烛
   candle_cake: 插上蜡烛的蛋糕
   carrots: 胡萝卜
   cartography_table: 制图台
-  carved_pumpkin: 雕刻过的南瓜
+  carved_pumpkin: 雕刻南瓜
   cauldron: 炼药锅
   cave_air: 洞穴空气
   cave_vines: 洞穴藤蔓
   cave_vines_plant: 洞穴藤蔓植株
   chain: 锁链
   chain_command_block: 连锁型命令方块
+  cherry_button: 樱花木按钮
+  cherry_door: 樱花木门
+  cherry_fence: 樱花木栅栏
+  cherry_fence_gate: 樱花木栅栏门
+  cherry_hanging_sign: 悬挂式樱花木告示牌
+  cherry_leaves: 樱花树叶
+  cherry_log: 樱花原木
+  cherry_planks: 樱花木板
+  cherry_pressure_plate: 樱花木压力板
+  cherry_sapling: 樱花树苗
+  cherry_sign: 樱花木告示牌
+  cherry_slab: 樱花木台阶
+  cherry_stairs: 樱花木楼梯
+  cherry_trapdoor: 樱花木活板门
+  cherry_wall_hanging_sign: 墙上的悬挂式樱花木告示牌
+  cherry_wall_sign: 墙上的樱花木告示牌
+  cherry_wood: 樱花木
   chest: 箱子
   chipped_anvil: 开裂的铁砧
-  chiseled_deepslate: 錾制深板岩
-  chiseled_nether_bricks: 錾制下界砖块
-  chiseled_polished_blackstone: 錾制磨制黑石
-  chiseled_quartz_block: 錾制石英块
-  chiseled_red_sandstone: 錾制红砂岩
-  chiseled_sandstone: 錾制砂岩
-  chiseled_stone_bricks: 錾制石砖
+  chiseled_bookshelf: 雕纹书架
+  chiseled_deepslate: 雕纹深板岩
+  chiseled_nether_bricks: 雕纹下界砖块
+  chiseled_polished_blackstone: 雕纹磨制黑石
+  chiseled_quartz_block: 雕纹石英块
+  chiseled_red_sandstone: 雕纹红砂岩
+  chiseled_sandstone: 雕纹砂岩
+  chiseled_stone_bricks: 雕纹石砖
   chorus_flower: 紫颂花
   chorus_plant: 紫颂植株
   clay: 黏土块
@@ -337,6 +384,7 @@ Material:
   crimson_fence: 绯红木栅栏
   crimson_fence_gate: 绯红木栅栏门
   crimson_fungus: 绯红菌
+  crimson_hanging_sign: 悬挂式绯红木告示牌
   crimson_hyphae: 绯红菌核
   crimson_nylium: 绯红菌岩
   crimson_planks: 绯红木板
@@ -347,6 +395,7 @@ Material:
   crimson_stairs: 绯红木楼梯
   crimson_stem: 绯红菌柄
   crimson_trapdoor: 绯红木活板门
+  crimson_wall_hanging_sign: 墙上的悬挂式绯红木告示牌
   crimson_wall_sign: 墙上的绯红木告示牌
   crying_obsidian: 哭泣的黑曜石
   cut_copper: 切制铜块
@@ -375,6 +424,7 @@ Material:
   dark_oak_door: 深色橡木门
   dark_oak_fence: 深色橡木栅栏
   dark_oak_fence_gate: 深色橡木栅栏门
+  dark_oak_hanging_sign: 悬挂式深色橡木告示牌
   dark_oak_leaves: 深色橡树树叶
   dark_oak_log: 深色橡木原木
   dark_oak_planks: 深色橡木木板
@@ -384,6 +434,7 @@ Material:
   dark_oak_slab: 深色橡木台阶
   dark_oak_stairs: 深色橡木楼梯
   dark_oak_trapdoor: 深色橡木活板门
+  dark_oak_wall_hanging_sign: 墙上的悬挂式深色橡木告示牌
   dark_oak_wall_sign: 墙上的深色橡木告示牌
   dark_oak_wood: 深色橡木
   dark_prismarine: 暗海晶石
@@ -411,6 +462,7 @@ Material:
   dead_tube_coral_block: 失活的管珊瑚块
   dead_tube_coral_fan: 失活的管珊瑚扇
   dead_tube_coral_wall_fan: 墙上的失活管珊瑚扇
+  decorated_pot: 饰纹陶罐
   deepslate: 深板岩
   deepslate_brick_slab: 深板岩砖台阶
   deepslate_brick_stairs: 深板岩砖楼梯
@@ -517,7 +569,7 @@ Material:
   green_wool: 绿色羊毛
   grindstone: 砂轮
   hanging_roots: 垂根
-  hay_block: 干草块
+  hay_block: 干草捆
   heavy_weighted_pressure_plate: 重质测重压力板
   honey_block: 蜂蜜块
   honeycomb_block: 蜜脾块
@@ -527,13 +579,13 @@ Material:
   horn_coral_fan: 鹿角珊瑚扇
   horn_coral_wall_fan: 墙上的鹿角珊瑚扇
   ice: 冰
-  infested_chiseled_stone_bricks: 被虫蚀的錾制石砖
-  infested_cobblestone: 被虫蚀的圆石
-  infested_cracked_stone_bricks: 被虫蚀的裂纹石砖
-  infested_deepslate: 被虫蚀的深板岩
-  infested_mossy_stone_bricks: 被虫蚀的苔石砖
-  infested_stone: 被虫蚀的石头
-  infested_stone_bricks: 被虫蚀的石砖
+  infested_chiseled_stone_bricks: 虫蚀雕纹石砖
+  infested_cobblestone: 虫蚀圆石
+  infested_cracked_stone_bricks: 虫蚀裂纹石砖
+  infested_deepslate: 虫蚀深板岩
+  infested_mossy_stone_bricks: 虫蚀苔石砖
+  infested_stone: 虫蚀石头
+  infested_stone_bricks: 虫蚀石砖
   iron_bars: 铁栏杆
   iron_block: 铁块
   iron_door: 铁门
@@ -546,6 +598,7 @@ Material:
   jungle_door: 丛林木门
   jungle_fence: 丛林木栅栏
   jungle_fence_gate: 丛林木栅栏门
+  jungle_hanging_sign: 悬挂式丛林木告示牌
   jungle_leaves: 丛林树叶
   jungle_log: 丛林原木
   jungle_planks: 丛林木板
@@ -555,6 +608,7 @@ Material:
   jungle_slab: 丛林木台阶
   jungle_stairs: 丛林木楼梯
   jungle_trapdoor: 丛林木活板门
+  jungle_wall_hanging_sign: 墙上的悬挂式丛林木告示牌
   jungle_wall_sign: 墙上的丛林木告示牌
   jungle_wood: 丛林木
   kelp: 海带
@@ -634,6 +688,7 @@ Material:
   mangrove_door: 红树木门
   mangrove_fence: 红树木栅栏
   mangrove_fence_gate: 红树木栅栏门
+  mangrove_hanging_sign: 悬挂式红树木告示牌
   mangrove_leaves: 红树树叶
   mangrove_log: 红树原木
   mangrove_planks: 红树木板
@@ -644,13 +699,14 @@ Material:
   mangrove_slab: 红树木台阶
   mangrove_stairs: 红树木楼梯
   mangrove_trapdoor: 红树木活板门
+  mangrove_wall_hanging_sign: 墙上的悬挂式红树木告示牌
   mangrove_wall_sign: 墙上的红树木告示牌
   mangrove_wood: 红树木
   medium_amethyst_bud: 中型紫晶芽
   melon: 西瓜
   melon_stem: 西瓜茎
   moss_block: 苔藓块
-  moss_carpet: 苔藓地毯
+  moss_carpet: 覆地苔藓
   mossy_cobblestone: 苔石
   mossy_cobblestone_slab: 苔石台阶
   mossy_cobblestone_stairs: 苔石楼梯
@@ -667,7 +723,7 @@ Material:
   mud_bricks: 泥砖
   muddy_mangrove_roots: 沾泥的红树根
   mushroom_stem: 蘑菇柄
-  mycelium: 菌丝
+  mycelium: 菌丝体
   nether_brick_fence: 下界砖栅栏
   nether_brick_slab: 下界砖台阶
   nether_brick_stairs: 下界砖楼梯
@@ -686,6 +742,7 @@ Material:
   oak_door: 橡木门
   oak_fence: 橡木栅栏
   oak_fence_gate: 橡木栅栏门
+  oak_hanging_sign: 悬挂式橡木告示牌
   oak_leaves: 橡树树叶
   oak_log: 橡木原木
   oak_planks: 橡木木板
@@ -695,6 +752,7 @@ Material:
   oak_slab: 橡木台阶
   oak_stairs: 橡木楼梯
   oak_trapdoor: 橡木活板门
+  oak_wall_hanging_sign: 墙上的悬挂式橡木告示牌
   oak_wall_sign: 墙上的橡木告示牌
   oak_wood: 橡木
   observer: 侦测器
@@ -725,6 +783,8 @@ Material:
   pearlescent_froglight: 珠光蛙明灯
   peony: 牡丹
   petrified_oak_slab: 石化橡木台阶
+  piglin_head: 猪灵的头
+  piglin_wall_head: 墙上的猪灵的头
   pink_banner: 粉红色旗帜
   pink_bed: 粉红色床
   pink_candle: 粉红色蜡烛
@@ -733,6 +793,7 @@ Material:
   pink_concrete: 粉红色混凝土
   pink_concrete_powder: 粉红色混凝土粉末
   pink_glazed_terracotta: 粉红色带釉陶瓦
+  pink_petals: 粉红色花簇
   pink_shulker_box: 粉红色潜影盒
   pink_stained_glass: 粉红色染色玻璃
   pink_stained_glass_pane: 粉红色染色玻璃板
@@ -741,6 +802,8 @@ Material:
   pink_wool: 粉红色羊毛
   piston: 活塞
   piston_head: 活塞头
+  pitcher_crop: 瓶子草植株
+  pitcher_plant: 瓶子草
   player_head: 玩家的头
   player_wall_head: 墙上的玩家的头
   podzol: 灰化土
@@ -780,6 +843,7 @@ Material:
   potted_blue_orchid: 兰花盆栽
   potted_brown_mushroom: 棕色蘑菇盆栽
   potted_cactus: 仙人掌盆栽
+  potted_cherry_sapling: 樱花树苗盆栽
   potted_cornflower: 矢车菊盆栽
   potted_crimson_fungus: 绯红菌盆栽
   potted_crimson_roots: 绯红菌索盆栽
@@ -799,10 +863,11 @@ Material:
   potted_red_mushroom: 红色蘑菇盆栽
   potted_red_tulip: 红色郁金香盆栽
   potted_spruce_sapling: 云杉树苗盆栽
+  potted_torchflower: 火把花盆栽
   potted_warped_fungus: 诡异菌盆栽
   potted_warped_roots: 诡异菌索盆栽
   potted_white_tulip: 白色郁金香盆栽
-  potted_wither_rose: 凋零玫瑰盆栽
+  potted_wither_rose: 凋灵玫瑰盆栽
   powder_snow: 细雪
   powder_snow_cauldron: 装有细雪的炼药锅
   powered_rail: 动力铁轨
@@ -914,6 +979,7 @@ Material:
   smooth_sandstone_stairs: 平滑砂岩楼梯
   smooth_stone: 平滑石头
   smooth_stone_slab: 平滑石头台阶
+  sniffer_egg: 嗅探兽蛋
   snow: 雪
   snow_block: 雪块
   soul_campfire: 灵魂营火
@@ -930,6 +996,7 @@ Material:
   spruce_door: 云杉木门
   spruce_fence: 云杉木栅栏
   spruce_fence_gate: 云杉木栅栏门
+  spruce_hanging_sign: 悬挂式云杉木告示牌
   spruce_leaves: 云杉树叶
   spruce_log: 云杉原木
   spruce_planks: 云杉木板
@@ -939,6 +1006,7 @@ Material:
   spruce_slab: 云杉木台阶
   spruce_stairs: 云杉木楼梯
   spruce_trapdoor: 云杉木活板门
+  spruce_wall_hanging_sign: 墙上的悬挂式云杉木告示牌
   spruce_wall_sign: 墙上的云杉木告示牌
   spruce_wood: 云杉木
   sticky_piston: 黏性活塞
@@ -954,8 +1022,11 @@ Material:
   stonecutter: 切石机
   stripped_acacia_log: 去皮金合欢原木
   stripped_acacia_wood: 去皮金合欢木
+  stripped_bamboo_block: 去皮竹块
   stripped_birch_log: 去皮白桦原木
   stripped_birch_wood: 去皮白桦木
+  stripped_cherry_log: 去皮樱花原木
+  stripped_cherry_wood: 去皮樱花木
   stripped_crimson_hyphae: 去皮绯红菌核
   stripped_crimson_stem: 去皮绯红菌柄
   stripped_dark_oak_log: 去皮深色橡木原木
@@ -974,6 +1045,8 @@ Material:
   structure_void: 结构空位
   sugar_cane: 甘蔗
   sunflower: 向日葵
+  suspicious_gravel: 可疑的沙砾
+  suspicious_sand: 可疑的沙子
   sweet_berry_bush: 甜浆果丛
   tall_grass: 高草丛
   tall_seagrass: 高海草
@@ -982,6 +1055,8 @@ Material:
   tinted_glass: 遮光玻璃
   tnt: TNT
   torch: 火把
+  torchflower: 火把花
+  torchflower_crop: 火把花植株
   trapped_chest: 陷阱箱
   tripwire: 绊线
   tripwire_hook: 绊线钩
@@ -1002,6 +1077,7 @@ Material:
   warped_fence: 诡异木栅栏
   warped_fence_gate: 诡异木栅栏门
   warped_fungus: 诡异菌
+  warped_hanging_sign: 悬挂式诡异木告示牌
   warped_hyphae: 诡异菌核
   warped_nylium: 诡异菌岩
   warped_planks: 诡异木板
@@ -1012,26 +1088,27 @@ Material:
   warped_stairs: 诡异木楼梯
   warped_stem: 诡异菌柄
   warped_trapdoor: 诡异木活板门
+  warped_wall_hanging_sign: 墙上的悬挂式诡异木告示牌
   warped_wall_sign: 墙上的诡异木告示牌
   warped_wart_block: 诡异疣块
   water: 水
   water_cauldron: 装有水的炼药锅
-  waxed_copper_block: 涂蜡铜块
-  waxed_cut_copper: 涂蜡切制铜块
-  waxed_cut_copper_slab: 涂蜡切制铜台阶
-  waxed_cut_copper_stairs: 涂蜡切制铜楼梯
-  waxed_exposed_copper: 斑驳的涂蜡铜块
-  waxed_exposed_cut_copper: 斑驳的涂蜡切制铜块
-  waxed_exposed_cut_copper_slab: 斑驳的涂蜡切制铜台阶
-  waxed_exposed_cut_copper_stairs: 斑驳的涂蜡切制铜楼梯
-  waxed_oxidized_copper: 氧化的涂蜡铜块
-  waxed_oxidized_cut_copper: 氧化的涂蜡切制铜块
-  waxed_oxidized_cut_copper_slab: 氧化的涂蜡切制铜台阶
-  waxed_oxidized_cut_copper_stairs: 氧化的涂蜡切制铜楼梯
-  waxed_weathered_copper: 锈蚀的涂蜡铜块
-  waxed_weathered_cut_copper: 锈蚀的涂蜡切制铜块
-  waxed_weathered_cut_copper_slab: 锈蚀的涂蜡切制铜台阶
-  waxed_weathered_cut_copper_stairs: 锈蚀的涂蜡切制铜楼梯
+  waxed_copper_block: 涂蜡的铜块
+  waxed_cut_copper: 涂蜡的切制铜块
+  waxed_cut_copper_slab: 涂蜡的切制铜台阶
+  waxed_cut_copper_stairs: 涂蜡的切制铜楼梯
+  waxed_exposed_copper: 涂蜡的斑驳铜块
+  waxed_exposed_cut_copper: 涂蜡的斑驳切制铜块
+  waxed_exposed_cut_copper_slab: 涂蜡的斑驳切制铜台阶
+  waxed_exposed_cut_copper_stairs: 涂蜡的斑驳切制铜楼梯
+  waxed_oxidized_copper: 涂蜡的氧化铜块
+  waxed_oxidized_cut_copper: 涂蜡的氧化切制铜块
+  waxed_oxidized_cut_copper_slab: 涂蜡的氧化切制铜台阶
+  waxed_oxidized_cut_copper_stairs: 涂蜡的氧化切制铜楼梯
+  waxed_weathered_copper: 涂蜡的锈蚀铜块
+  waxed_weathered_cut_copper: 涂蜡的锈蚀切制铜块
+  waxed_weathered_cut_copper_slab: 涂蜡的锈蚀切制铜台阶
+  waxed_weathered_cut_copper_stairs: 涂蜡的锈蚀切制铜楼梯
   weathered_copper: 锈蚀的铜块
   weathered_cut_copper: 锈蚀的切制铜块
   weathered_cut_copper_slab: 锈蚀的切制铜台阶
@@ -1054,7 +1131,7 @@ Material:
   white_terracotta: 白色陶瓦
   white_tulip: 白色郁金香
   white_wool: 白色羊毛
-  wither_rose: 凋零玫瑰
+  wither_rose: 凋灵玫瑰
   wither_skeleton_skull: 凋灵骷髅头颅
   wither_skeleton_wall_skull: 墙上的凋灵骷髅头颅
   yellow_banner: 黄色旗帜
@@ -1076,12 +1153,20 @@ Material:
   acacia_chest_boat: 金合欢木运输船
   allay_spawn_egg: 悦灵刷怪蛋
   amethyst_shard: 紫水晶碎片
+  angler_pottery_shard: 垂钓纹样陶片
+  angler_pottery_sherd: 垂钓纹样陶片
   apple: 苹果
+  archer_pottery_shard: 弓箭纹样陶片
+  archer_pottery_sherd: 弓箭纹样陶片
   armor_stand: 盔甲架
+  arms_up_pottery_shard: 举臂纹样陶片
+  arms_up_pottery_sherd: 举臂纹样陶片
   arrow: 箭
   axolotl_bucket: 美西螈桶
   axolotl_spawn_egg: 美西螈刷怪蛋
   baked_potato: 烤马铃薯
+  bamboo_chest_raft: 运输竹筏
+  bamboo_raft: 竹筏
   bat_spawn_egg: 蝙蝠刷怪蛋
   bee_spawn_egg: 蜜蜂刷怪蛋
   beef: 生牛肉
@@ -1091,6 +1176,8 @@ Material:
   birch_boat: 白桦木船
   birch_chest_boat: 白桦木运输船
   black_dye: 黑色染料
+  blade_pottery_shard: 利刃纹样陶片
+  blade_pottery_sherd: 利刃纹样陶片
   blaze_powder: 烈焰粉
   blaze_rod: 烈焰棒
   blaze_spawn_egg: 烈焰人刷怪蛋
@@ -1101,10 +1188,16 @@ Material:
   bow: 弓
   bowl: 碗
   bread: 面包
+  brewer_pottery_shard: 佳酿纹样陶片
+  brewer_pottery_sherd: 佳酿纹样陶片
   brick: 红砖
   brown_dye: 棕色染料
-  bucket: 桶
+  brush: 刷子
+  bucket: 铁桶
   bundle: 收纳袋
+  burn_pottery_shard: 烈焰纹样陶片
+  burn_pottery_sherd: 烈焰纹样陶片
+  camel_spawn_egg: 骆驼刷怪蛋
   carrot: 胡萝卜
   carrot_on_a_stick: 胡萝卜钓竿
   cat_spawn_egg: 猫刷怪蛋
@@ -1114,6 +1207,8 @@ Material:
   chainmail_helmet: 锁链头盔
   chainmail_leggings: 锁链护腿
   charcoal: 木炭
+  cherry_boat: 樱花木船
+  cherry_chest_boat: 樱花木运输船
   chest_minecart: 运输矿车
   chicken: 生鸡肉
   chicken_spawn_egg: 鸡刷怪蛋
@@ -1121,6 +1216,7 @@ Material:
   clay_ball: 黏土球
   clock: 时钟
   coal: 煤炭
+  coast_armor_trim_smithing_template: 锻造模板
   cocoa_beans: 可可豆
   cod: 生鳕鱼
   cod_bucket: 鳕鱼桶
@@ -1141,6 +1237,8 @@ Material:
   creeper_spawn_egg: 苦力怕刷怪蛋
   crossbow: 弩
   cyan_dye: 青色染料
+  danger_pottery_shard: 危机纹样陶片
+  danger_pottery_sherd: 危机纹样陶片
   dark_oak_boat: 深色橡木船
   dark_oak_chest_boat: 深色橡木运输船
   debug_stick: 调试棒
@@ -1161,6 +1259,7 @@ Material:
   dragon_breath: 龙息
   dried_kelp: 干海带
   drowned_spawn_egg: 溺尸刷怪蛋
+  dune_armor_trim_smithing_template: 锻造模板
   echo_shard: 回响碎片
   egg: 鸡蛋
   elder_guardian_spawn_egg: 远古守卫者刷怪蛋
@@ -1169,12 +1268,16 @@ Material:
   enchanted_book: 附魔书
   enchanted_golden_apple: 附魔金苹果
   end_crystal: 末地水晶
+  ender_dragon_spawn_egg: 末影龙刷怪蛋
   ender_eye: 末影之眼
   ender_pearl: 末影珍珠
   enderman_spawn_egg: 末影人刷怪蛋
   endermite_spawn_egg: 末影螨刷怪蛋
   evoker_spawn_egg: 唤魔者刷怪蛋
   experience_bottle: 附魔之瓶
+  explorer_pottery_shard: 探险纹样陶片
+  explorer_pottery_sherd: 探险纹样陶片
+  eye_armor_trim_smithing_template: 锻造模板
   feather: 羽毛
   fermented_spider_eye: 发酵蛛眼
   filled_map: 地图
@@ -1186,6 +1289,8 @@ Material:
   flint_and_steel: 打火石
   flower_banner_pattern: 旗帜图案
   fox_spawn_egg: 狐狸刷怪蛋
+  friend_pottery_shard: 挚友纹样陶片
+  friend_pottery_sherd: 挚友纹样陶片
   frog_spawn_egg: 青蛙刷怪蛋
   furnace_minecart: 动力矿车
   ghast_spawn_egg: 恶魂刷怪蛋
@@ -1219,16 +1324,24 @@ Material:
   guardian_spawn_egg: 守卫者刷怪蛋
   gunpowder: 火药
   heart_of_the_sea: 海洋之心
+  heart_pottery_shard: 爱心纹样陶片
+  heart_pottery_sherd: 爱心纹样陶片
+  heartbreak_pottery_shard: 心碎纹样陶片
+  heartbreak_pottery_sherd: 心碎纹样陶片
   hoglin_spawn_egg: 疣猪兽刷怪蛋
   honey_bottle: 蜂蜜瓶
   honeycomb: 蜜脾
   hopper_minecart: 漏斗矿车
   horse_spawn_egg: 马刷怪蛋
+  host_armor_trim_smithing_template: 锻造模板
+  howl_pottery_shard: 狼嚎纹样陶片
+  howl_pottery_sherd: 狼嚎纹样陶片
   husk_spawn_egg: 尸壳刷怪蛋
   ink_sac: 墨囊
   iron_axe: 铁斧
   iron_boots: 铁靴子
   iron_chestplate: 铁胸甲
+  iron_golem_spawn_egg: 铁傀儡刷怪蛋
   iron_helmet: 铁头盔
   iron_hoe: 铁锄
   iron_horse_armor: 铁马铠
@@ -1267,8 +1380,12 @@ Material:
   melon_slice: 西瓜片
   milk_bucket: 奶桶
   minecart: 矿车
+  miner_pottery_shard: 采矿纹样陶片
+  miner_pottery_sherd: 采矿纹样陶片
   mojang_banner_pattern: 旗帜图案
   mooshroom_spawn_egg: 哞菇刷怪蛋
+  mourner_pottery_shard: 悲恸纹样陶片
+  mourner_pottery_sherd: 悲恸纹样陶片
   mule_spawn_egg: 骡刷怪蛋
   mushroom_stew: 蘑菇煲
   music_disc_11: 音乐唱片
@@ -1282,6 +1399,7 @@ Material:
   music_disc_mellohi: 音乐唱片
   music_disc_otherside: 音乐唱片
   music_disc_pigstep: 音乐唱片
+  music_disc_relic: 音乐唱片
   music_disc_stal: 音乐唱片
   music_disc_strad: 音乐唱片
   music_disc_wait: 音乐唱片
@@ -1302,6 +1420,7 @@ Material:
   netherite_scrap: 下界合金碎片
   netherite_shovel: 下界合金锹
   netherite_sword: 下界合金剑
+  netherite_upgrade_smithing_template: 锻造模板
   oak_boat: 橡木船
   oak_chest_boat: 橡木运输船
   ocelot_spawn_egg: 豹猫刷怪蛋
@@ -1318,15 +1437,24 @@ Material:
   piglin_spawn_egg: 猪灵刷怪蛋
   pillager_spawn_egg: 掠夺者刷怪蛋
   pink_dye: 粉红色染料
+  pitcher_pod: 瓶子草荚果
+  plenty_pottery_shard: 富饶纹样陶片
+  plenty_pottery_sherd: 富饶纹样陶片
   poisonous_potato: 毒马铃薯
   polar_bear_spawn_egg: 北极熊刷怪蛋
   popped_chorus_fruit: 爆裂紫颂果
   porkchop: 生猪排
   potato: 马铃薯
   potion: 药水
+  pottery_shard_archer: 弓箭纹样陶片
+  pottery_shard_arms_up: 举臂纹样陶片
+  pottery_shard_prize: 珍宝纹样陶片
+  pottery_shard_skull: 头颅纹样陶片
   powder_snow_bucket: 细雪桶
   prismarine_crystals: 海晶砂粒
   prismarine_shard: 海晶碎片
+  prize_pottery_shard: 珍宝纹样陶片
+  prize_pottery_sherd: 珍宝纹样陶片
   pufferfish: 河豚
   pufferfish_bucket: 河豚桶
   pufferfish_spawn_egg: 河豚刷怪蛋
@@ -1339,6 +1467,7 @@ Material:
   rabbit_hide: 兔子皮
   rabbit_spawn_egg: 兔子刷怪蛋
   rabbit_stew: 兔肉煲
+  raiser_armor_trim_smithing_template: 锻造模板
   ravager_spawn_egg: 劫掠兽刷怪蛋
   raw_copper: 粗铜
   raw_gold: 粗金
@@ -1346,28 +1475,45 @@ Material:
   recovery_compass: 追溯指针
   red_dye: 红色染料
   redstone: 红石粉
+  rib_armor_trim_smithing_template: 锻造模板
   rotten_flesh: 腐肉
   saddle: 鞍
   salmon: 生鲑鱼
   salmon_bucket: 鲑鱼桶
   salmon_spawn_egg: 鲑鱼刷怪蛋
   scute: 鳞甲
+  sentry_armor_trim_smithing_template: 锻造模板
+  shaper_armor_trim_smithing_template: 锻造模板
+  sheaf_pottery_shard: 麦捆纹样陶片
+  sheaf_pottery_sherd: 麦捆纹样陶片
   shears: 剪刀
   sheep_spawn_egg: 绵羊刷怪蛋
+  shelter_pottery_shard: 树荫纹样陶片
+  shelter_pottery_sherd: 树荫纹样陶片
   shield: 盾牌
   shulker_shell: 潜影壳
   shulker_spawn_egg: 潜影贝刷怪蛋
   sign: 告示牌
+  silence_armor_trim_smithing_template: 锻造模板
   silverfish_spawn_egg: 蠹虫刷怪蛋
   skeleton_horse_spawn_egg: 骷髅马刷怪蛋
   skeleton_spawn_egg: 骷髅刷怪蛋
   skull_banner_pattern: 旗帜图案
+  skull_pottery_shard: 头颅纹样陶片
+  skull_pottery_sherd: 头颅纹样陶片
   slime_ball: 黏液球
   slime_spawn_egg: 史莱姆刷怪蛋
+  smithing_template: 锻造模板
+  sniffer_spawn_egg: 嗅探兽刷怪蛋
+  snort_pottery_shard: 嗅探纹样陶片
+  snort_pottery_sherd: 嗅探纹样陶片
+  snout_armor_trim_smithing_template: 锻造模板
+  snow_golem_spawn_egg: 雪傀儡刷怪蛋
   snowball: 雪球
   spectral_arrow: 光灵箭
   spider_eye: 蜘蛛眼
   spider_spawn_egg: 蜘蛛刷怪蛋
+  spire_armor_trim_smithing_template: 锻造模板
   splash_potion: 喷溅药水
   spruce_boat: 云杉木船
   spruce_chest_boat: 云杉木运输船
@@ -1383,12 +1529,14 @@ Material:
   strider_spawn_egg: 炽足兽刷怪蛋
   string: 线
   sugar: 糖
-  suspicious_stew: 迷之炖菜
+  suspicious_stew: 谜之炖菜
   sweet_berries: 甜浆果
   tadpole_bucket: 蝌蚪桶
   tadpole_spawn_egg: 蝌蚪刷怪蛋
+  tide_armor_trim_smithing_template: 锻造模板
   tipped_arrow: 药箭
   tnt_minecart: TNT矿车
+  torchflower_seeds: 火把花种子
   totem_of_undying: 不死图腾
   trader_llama_spawn_egg: 行商羊驼刷怪蛋
   trident: 三叉戟
@@ -1397,17 +1545,22 @@ Material:
   tropical_fish_spawn_egg: 热带鱼刷怪蛋
   turtle_helmet: 海龟壳
   turtle_spawn_egg: 海龟刷怪蛋
+  vex_armor_trim_smithing_template: 锻造模板
   vex_spawn_egg: 恼鬼刷怪蛋
   villager_spawn_egg: 村民刷怪蛋
   vindicator_spawn_egg: 卫道士刷怪蛋
   wandering_trader_spawn_egg: 流浪商人刷怪蛋
+  ward_armor_trim_smithing_template: 锻造模板
   warden_spawn_egg: 监守者刷怪蛋
   warped_fungus_on_a_stick: 诡异菌钓竿
   water_bucket: 水桶
+  wayfinder_armor_trim_smithing_template: 锻造模板
   wheat_seeds: 小麦种子
   white_dye: 白色染料
+  wild_armor_trim_smithing_template: 锻造模板
   witch_spawn_egg: 女巫刷怪蛋
   wither_skeleton_spawn_egg: 凋灵骷髅刷怪蛋
+  wither_spawn_egg: 凋灵刷怪蛋
   wolf_spawn_egg: 狼刷怪蛋
   wooden_axe: 木斧
   wooden_hoe: 木锄
@@ -1430,7 +1583,7 @@ Enchantment:
   channeling: 引雷
   depth_strider: 深海探索者
   efficiency: 效率
-  feather_falling: 摔落保护
+  feather_falling: 摔落缓冲
   fire_aspect: 火焰附加
   fire_protection: 火焰保护
   flame: 火矢

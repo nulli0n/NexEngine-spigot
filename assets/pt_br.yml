@@ -7,7 +7,9 @@ EntityType:
   bat: Morcego
   bee: Abelha
   blaze: Blaze
+  block_display: Entidade-bloco
   boat: Bote
+  camel: Camelo
   cat: Gato
   cave_spider: Aranha das cavernas
   chest_boat: Bote com baú
@@ -34,6 +36,7 @@ EntityType:
   experience_orb: Esfera de experiência
   eye_of_ender: Olho de ender
   falling_block: Bloco em queda
+  falling_block_type: '%s em queda'
   fireball: Bola de fogo
   firework_rocket: Fogo de artifício
   fishing_bobber: Boia de pesca
@@ -51,8 +54,10 @@ EntityType:
   horse: Cavalo
   husk: Zumbi-múmia
   illusioner: Ilusionista
+  interaction: Entidade-interação
   iron_golem: Golem de ferro
   item: Item
+  item_display: Entidade-item
   item_frame: Moldura
   killer_bunny: Coelho assassino
   leash_knot: Nó de laço
@@ -88,15 +93,17 @@ EntityType:
   skeleton_horse: Cavalo-esqueleto
   slime: Slime
   small_fireball: Bola de fogo pequena
+  sniffer: Farejador
   snow_golem: Golem de neve
   snowball: Bola de neve
-  spawner_minecart: Carrinho de mina com gerador
+  spawner_minecart: Carrinho de mina com gerador de criaturas
   spectral_arrow: Flecha espectral
   spider: Aranha
   squid: Lula
   stray: Esqueleto-errante
   strider: Lavagante
   tadpole: Girino
+  text_display: Entidade-texto
   tnt: Dinamite acionada
   tnt_minecart: Carrinho de mina com dinamite
   trader_llama: Lhama do vendedor
@@ -157,6 +164,7 @@ Material:
   acacia_door: Porta de acácia
   acacia_fence: Cerca de acácia
   acacia_fence_gate: Portão de acácia
+  acacia_hanging_sign: Placa suspensa de acácia
   acacia_leaves: Folhas de acácia
   acacia_log: Tronco de acácia
   acacia_planks: Tábuas de acácia
@@ -166,6 +174,7 @@ Material:
   acacia_slab: Laje de acácia
   acacia_stairs: Escadas de acácia
   acacia_trapdoor: Alçapão de acácia
+  acacia_wall_hanging_sign: Placa suspensa de acácia de parede
   acacia_wall_sign: Placa de acácia de parede
   acacia_wood: Madeira de acácia
   activator_rail: Trilho ativador
@@ -185,7 +194,24 @@ Material:
   azalea_leaves: Folhas de azaleia
   azure_bluet: Flor-silvestre-azul
   bamboo: Bambu
+  bamboo_block: Bloco de bambu
+  bamboo_button: Botão de bambu
+  bamboo_door: Porta de bambu
+  bamboo_fence: Cerca de bambu
+  bamboo_fence_gate: Portão de bambu
+  bamboo_hanging_sign: Placa suspensa de bambu
+  bamboo_mosaic: Mosaico de bambu
+  bamboo_mosaic_slab: Laje de mosaico de bambu
+  bamboo_mosaic_stairs: Escadas de mosaico de bambu
+  bamboo_planks: Tábuas de bambu
+  bamboo_pressure_plate: Placa de pressão de bambu
   bamboo_sapling: Muda de bambu
+  bamboo_sign: Placa de bambu
+  bamboo_slab: Laje de bambu
+  bamboo_stairs: Escadas de bambu
+  bamboo_trapdoor: Alçapão de bambu
+  bamboo_wall_hanging_sign: Placa suspensa de bambu de parede
+  bamboo_wall_sign: Placa de bambu de parede
   barrel: Barril
   barrier: Barreira
   basalt: Basalto
@@ -201,6 +227,7 @@ Material:
   birch_door: Porta de bétula
   birch_fence: Cerca de bétula
   birch_fence_gate: Portão de bétula
+  birch_hanging_sign: Placa suspensa de bétula
   birch_leaves: Folhas de bétula
   birch_log: Tronco de bétula
   birch_planks: Tábuas de bétula
@@ -210,6 +237,7 @@ Material:
   birch_slab: Laje de bétula
   birch_stairs: Escadas de bétula
   birch_trapdoor: Alçapão de bétula
+  birch_wall_hanging_sign: Placa suspensa de bétula de parede
   birch_wall_sign: Placa de bétula de parede
   birch_wood: Madeira de bétula
   black_banner: Estandarte preto
@@ -280,6 +308,7 @@ Material:
   cactus: Cacto
   cake: Bolo
   calcite: Calcita
+  calibrated_sculk_sensor: Sensor de sculk calibrado
   campfire: Fogueira
   candle: Vela
   candle_cake: Bolo com vela
@@ -292,8 +321,26 @@ Material:
   cave_vines_plant: Planta de trepadeiras das cavernas
   chain: Corrente
   chain_command_block: Bloco de comando em cadeia
+  cherry_button: Botão de cerejeira
+  cherry_door: Porta de cerejeira
+  cherry_fence: Cerca de cerejeira
+  cherry_fence_gate: Portão de cerejeira
+  cherry_hanging_sign: Placa suspensa de cerejeira
+  cherry_leaves: Folhas de cerejeira
+  cherry_log: Tronco de cerejeira
+  cherry_planks: Tábuas de cerejeira
+  cherry_pressure_plate: Placa de pressão de cerejeira
+  cherry_sapling: Muda de cerejeira
+  cherry_sign: Placa de cerejeira
+  cherry_slab: Laje de cerejeira
+  cherry_stairs: Escadas de cerejeira
+  cherry_trapdoor: Alçapão de cerejeira
+  cherry_wall_hanging_sign: Placa suspensa de cerejeira de parede
+  cherry_wall_sign: Placa de cerejeira de parede
+  cherry_wood: Madeira de cerejeira
   chest: Baú
   chipped_anvil: Bigorna rachada
+  chiseled_bookshelf: Porta-livros
   chiseled_deepslate: Ardósia talhada
   chiseled_nether_bricks: Tijolos do Nether talhados
   chiseled_polished_blackstone: Pedra-negra polida talhada
@@ -337,6 +384,7 @@ Material:
   crimson_fence: Cerca carmesim
   crimson_fence_gate: Portão carmesim
   crimson_fungus: Fungo carmesim
+  crimson_hanging_sign: Placa suspensa carmesim
   crimson_hyphae: Hifas carmesins
   crimson_nylium: Nicélio carmesim
   crimson_planks: Tábuas carmesins
@@ -347,6 +395,7 @@ Material:
   crimson_stairs: Escadas carmesins
   crimson_stem: Caule carmesim
   crimson_trapdoor: Alçapão carmesim
+  crimson_wall_hanging_sign: Placa suspensa carmesim de parede
   crimson_wall_sign: Placa carmesim de parede
   crying_obsidian: Obsidiana chorona
   cut_copper: Cobre lapidado
@@ -375,6 +424,7 @@ Material:
   dark_oak_door: Porta de carvalho escuro
   dark_oak_fence: Cerca de carvalho escuro
   dark_oak_fence_gate: Portão de carvalho escuro
+  dark_oak_hanging_sign: Placa suspensa de carvalho escuro
   dark_oak_leaves: Folhas de carvalho escuro
   dark_oak_log: Tronco de carvalho escuro
   dark_oak_planks: Tábuas de carvalho escuro
@@ -384,6 +434,7 @@ Material:
   dark_oak_slab: Laje de carvalho escuro
   dark_oak_stairs: Escadas de carvalho escuro
   dark_oak_trapdoor: Alçapão de carvalho escuro
+  dark_oak_wall_hanging_sign: Placa suspensa de carvalho escuro de parede
   dark_oak_wall_sign: Placa de carvalho escuro de parede
   dark_oak_wood: Madeira de carvalho escuro
   dark_prismarine: Prismarinho escuro
@@ -411,6 +462,7 @@ Material:
   dead_tube_coral_block: Bloco de coral-de-tubo morto
   dead_tube_coral_fan: Gorgônia-de-tubo morta
   dead_tube_coral_wall_fan: Gorgônia-de-tubo morta de parede
+  decorated_pot: Vaso decorado
   deepslate: Ardósia
   deepslate_brick_slab: Laje de tijolos de ardósia
   deepslate_brick_stairs: Escadas de tijolos de ardósia
@@ -546,6 +598,7 @@ Material:
   jungle_door: Porta de madeira da selva
   jungle_fence: Cerca de madeira da selva
   jungle_fence_gate: Portão de madeira da selva
+  jungle_hanging_sign: Placa suspensa de madeira da selva
   jungle_leaves: Folhas da selva
   jungle_log: Tronco de árvore da selva
   jungle_planks: Tábuas de madeira da selva
@@ -555,6 +608,7 @@ Material:
   jungle_slab: Laje de madeira da selva
   jungle_stairs: Escadas de madeira da selva
   jungle_trapdoor: Alçapão de madeira da selva
+  jungle_wall_hanging_sign: Placa suspensa de madeira da selva de parede
   jungle_wall_sign: Placa de madeira da selva de parede
   jungle_wood: Madeira da selva
   kelp: Alga
@@ -634,6 +688,7 @@ Material:
   mangrove_door: Porta de mangue
   mangrove_fence: Cerca de mangue
   mangrove_fence_gate: Portão de mangue
+  mangrove_hanging_sign: Placa suspensa de mangue
   mangrove_leaves: Folhas de mangue
   mangrove_log: Tronco de mangue
   mangrove_planks: Tábuas de mangue
@@ -644,6 +699,7 @@ Material:
   mangrove_slab: Laje de mangue
   mangrove_stairs: Escadas de mangue
   mangrove_trapdoor: Alçapão de mangue
+  mangrove_wall_hanging_sign: Placa suspensa de mangue de parede
   mangrove_wall_sign: Placa de mangue de parede
   mangrove_wood: Madeira de mangue
   medium_amethyst_bud: Cristal de ametista médio
@@ -686,6 +742,7 @@ Material:
   oak_door: Porta de carvalho
   oak_fence: Cerca de carvalho
   oak_fence_gate: Portão de carvalho
+  oak_hanging_sign: Placa suspensa de carvalho
   oak_leaves: Folhas de carvalho
   oak_log: Tronco de carvalho
   oak_planks: Tábuas de carvalho
@@ -695,6 +752,7 @@ Material:
   oak_slab: Laje de carvalho
   oak_stairs: Escadas de carvalho
   oak_trapdoor: Alçapão de carvalho
+  oak_wall_hanging_sign: Placa suspensa de carvalho de parede
   oak_wall_sign: Placa de carvalho de parede
   oak_wood: Madeira de carvalho
   observer: Observador
@@ -725,6 +783,8 @@ Material:
   pearlescent_froglight: Anfibrilho perolado
   peony: Peônia
   petrified_oak_slab: Laje de carvalho petrificado
+  piglin_head: Cabeça de piglin
+  piglin_wall_head: Cabeça de piglin de parede
   pink_banner: Estandarte rosa
   pink_bed: Cama rosa
   pink_candle: Vela rosa
@@ -733,6 +793,7 @@ Material:
   pink_concrete: Concreto rosa
   pink_concrete_powder: Cimento rosa
   pink_glazed_terracotta: Azulejo rosa
+  pink_petals: Pétalas rosas
   pink_shulker_box: Caixa de shulker rosa
   pink_stained_glass: Vidro rosa
   pink_stained_glass_pane: Vidraça rosa
@@ -741,6 +802,8 @@ Material:
   pink_wool: Lã rosa
   piston: Pistão
   piston_head: Cabeça de pistão
+  pitcher_crop: Plantio de planta ancestral
+  pitcher_plant: Planta ancestral
   player_head: Cabeça de jogador
   player_wall_head: Cabeça de jogador de parede
   podzol: Podzol
@@ -780,6 +843,7 @@ Material:
   potted_blue_orchid: Orquídea-azul envasada
   potted_brown_mushroom: Cogumelo marrom envasado
   potted_cactus: Cacto envasado
+  potted_cherry_sapling: Muda de cerejeira envasada
   potted_cornflower: Centáurea envasada
   potted_crimson_fungus: Fungo carmesim envasado
   potted_crimson_roots: Raízes carmesins envasadas
@@ -799,6 +863,7 @@ Material:
   potted_red_mushroom: Cogumelo vermelho envasado
   potted_red_tulip: Tulipa vermelha envasada
   potted_spruce_sapling: Muda de pinheiro envasada
+  potted_torchflower: Plantocha envasada
   potted_warped_fungus: Fungo distorcido envasado
   potted_warped_roots: Raízes distorcidas envasadas
   potted_white_tulip: Tulipa branca envasada
@@ -914,6 +979,7 @@ Material:
   smooth_sandstone_stairs: Escadas de arenito liso
   smooth_stone: Pedra lisa
   smooth_stone_slab: Laje de pedra lisa
+  sniffer_egg: Ovo de farejador
   snow: Neve
   snow_block: Bloco de neve
   soul_campfire: Fogueira das almas
@@ -923,13 +989,14 @@ Material:
   soul_soil: Terra das almas
   soul_torch: Tocha das almas
   soul_wall_torch: Tocha das almas de parede
-  spawner: Gerador
+  spawner: Gerador de criaturas
   sponge: Esponja
   spore_blossom: Flor de esporos
   spruce_button: Botão de pinheiro
   spruce_door: Porta de pinheiro
   spruce_fence: Cerca de pinheiro
   spruce_fence_gate: Portão de pinheiro
+  spruce_hanging_sign: Placa suspensa de pinheiro
   spruce_leaves: Folhas de pinheiro
   spruce_log: Tronco de pinheiro
   spruce_planks: Tábuas de pinheiro
@@ -939,6 +1006,7 @@ Material:
   spruce_slab: Laje de pinheiro
   spruce_stairs: Escadas de pinheiro
   spruce_trapdoor: Alçapão de pinheiro
+  spruce_wall_hanging_sign: Placa suspensa de pinheiro de parede
   spruce_wall_sign: Placa de pinheiro de parede
   spruce_wood: Madeira de pinheiro
   sticky_piston: Pistão grudento
@@ -954,8 +1022,11 @@ Material:
   stonecutter: Cortador de pedras
   stripped_acacia_log: Tronco de acácia descascado
   stripped_acacia_wood: Madeira de acácia descascada
+  stripped_bamboo_block: Bloco de bambu descascado
   stripped_birch_log: Tronco de bétula descascado
   stripped_birch_wood: Madeira de bétula descascada
+  stripped_cherry_log: Tronco de cerejeira descascado
+  stripped_cherry_wood: Madeira de cerejeira descascada
   stripped_crimson_hyphae: Hifas carmesins descascadas
   stripped_crimson_stem: Caule carmesim descascado
   stripped_dark_oak_log: Tronco de carvalho escuro descascado
@@ -974,6 +1045,8 @@ Material:
   structure_void: Vazio estrutural
   sugar_cane: Cana-de-açúcar
   sunflower: Girassol
+  suspicious_gravel: Cascalho suspeito
+  suspicious_sand: Areia suspeita
   sweet_berry_bush: Arbusto de bagas doces
   tall_grass: Grama alta
   tall_seagrass: Erva marinha alta
@@ -982,6 +1055,8 @@ Material:
   tinted_glass: Vidro fosco
   tnt: Dinamite
   torch: Tocha
+  torchflower: Plantocha
+  torchflower_crop: Plantio de plantocha
   trapped_chest: Baú com armadilha
   tripwire: Fio de armadilha
   tripwire_hook: Gancho de armadilha
@@ -1002,6 +1077,7 @@ Material:
   warped_fence: Cerca distorcida
   warped_fence_gate: Portão distorcido
   warped_fungus: Fungo distorcido
+  warped_hanging_sign: Placa suspensa distorcida
   warped_hyphae: Hifas distorcidas
   warped_nylium: Nicélio distorcido
   warped_planks: Tábuas distorcidas
@@ -1012,6 +1088,7 @@ Material:
   warped_stairs: Escadas distorcidas
   warped_stem: Caule distorcido
   warped_trapdoor: Alçapão distorcido
+  warped_wall_hanging_sign: Placa suspensa distorcida de parede
   warped_wall_sign: Placa distorcida de parede
   warped_wart_block: Bloco de fungos distorcidos
   water: Água
@@ -1076,12 +1153,20 @@ Material:
   acacia_chest_boat: Bote de acácia com baú
   allay_spawn_egg: Ovo gerador de allay
   amethyst_shard: Fragmento de ametista
+  angler_pottery_shard: Óstraco de pesca
+  angler_pottery_sherd: Óstraco de pesca
   apple: Maçã
+  archer_pottery_shard: Óstraco de arco
+  archer_pottery_sherd: Óstraco de arco
   armor_stand: Suporte de armaduras
+  arms_up_pottery_shard: Óstraco de figura
+  arms_up_pottery_sherd: Óstraco de figura
   arrow: Flecha
   axolotl_bucket: Balde com axolote
   axolotl_spawn_egg: Ovo gerador de axolote
   baked_potato: Batata assada
+  bamboo_chest_raft: Jangada de bambu com baú
+  bamboo_raft: Jangada de bambu
   bat_spawn_egg: Ovo gerador de morcego
   bee_spawn_egg: Ovo gerador de abelha
   beef: Bife cru
@@ -1091,6 +1176,8 @@ Material:
   birch_boat: Bote de bétula
   birch_chest_boat: Bote de bétula com baú
   black_dye: Corante preto
+  blade_pottery_shard: Óstraco de espada
+  blade_pottery_sherd: Óstraco de espada
   blaze_powder: Pó de blaze
   blaze_rod: Vara de blaze
   blaze_spawn_egg: Ovo gerador de blaze
@@ -1101,10 +1188,16 @@ Material:
   bow: Arco
   bowl: Tigela
   bread: Pão
+  brewer_pottery_shard: Óstraco de poção
+  brewer_pottery_sherd: Óstraco de poção
   brick: Tijolo
   brown_dye: Corante marrom
+  brush: Pincel
   bucket: Balde
   bundle: Trouxa
+  burn_pottery_shard: Óstraco de fogo
+  burn_pottery_sherd: Óstraco de fogo
+  camel_spawn_egg: Ovo gerador de camelo
   carrot: Cenoura
   carrot_on_a_stick: Vara com cenoura
   cat_spawn_egg: Ovo gerador de gato
@@ -1114,6 +1207,8 @@ Material:
   chainmail_helmet: Capacete de malha
   chainmail_leggings: Calças de malha
   charcoal: Carvão vegetal
+  cherry_boat: Bote de cerejeira
+  cherry_chest_boat: Bote de cerejeira com baú
   chest_minecart: Carrinho de mina com baú
   chicken: Frango cru
   chicken_spawn_egg: Ovo gerador de galinha
@@ -1121,6 +1216,7 @@ Material:
   clay_ball: Bola de argila
   clock: Relógio
   coal: Carvão
+  coast_armor_trim_smithing_template: Molde de ferraria
   cocoa_beans: Sementes de cacau
   cod: Bacalhau cru
   cod_bucket: Balde com bacalhau
@@ -1141,6 +1237,8 @@ Material:
   creeper_spawn_egg: Ovo gerador de creeper
   crossbow: Besta
   cyan_dye: Corante ciano
+  danger_pottery_shard: Óstraco de creeper
+  danger_pottery_sherd: Óstraco de creeper
   dark_oak_boat: Bote de carvalho escuro
   dark_oak_chest_boat: Bote de carvalho escuro com baú
   debug_stick: Graveto de depuração
@@ -1161,6 +1259,7 @@ Material:
   dragon_breath: Bafo do dragão
   dried_kelp: Algas secas
   drowned_spawn_egg: Ovo gerador de afogado
+  dune_armor_trim_smithing_template: Molde de ferraria
   echo_shard: Fragmento de eco
   egg: Ovo
   elder_guardian_spawn_egg: Ovo gerador de guardião-mestre
@@ -1169,12 +1268,16 @@ Material:
   enchanted_book: Livro encantado
   enchanted_golden_apple: Maçã dourada encantada
   end_crystal: Cristal do End
+  ender_dragon_spawn_egg: Ovo gerador de Dragão Ender
   ender_eye: Olho de ender
   ender_pearl: Pérola de ender
   enderman_spawn_egg: Ovo gerador de enderman
   endermite_spawn_egg: Ovo gerador de endermite
   evoker_spawn_egg: Ovo gerador de invocador
   experience_bottle: Frasco de experiência
+  explorer_pottery_shard: Óstraco de mapa
+  explorer_pottery_sherd: Óstraco de mapa
+  eye_armor_trim_smithing_template: Molde de ferraria
   feather: Pena
   fermented_spider_eye: Olho de aranha fermentado
   filled_map: Mapa
@@ -1186,6 +1289,8 @@ Material:
   flint_and_steel: Pederneira
   flower_banner_pattern: Desenho para estandarte
   fox_spawn_egg: Ovo gerador de raposa
+  friend_pottery_shard: Óstraco de amigo
+  friend_pottery_sherd: Óstraco de amigo
   frog_spawn_egg: Ovo gerador de sapo
   furnace_minecart: Carrinho de mina com fornalha
   ghast_spawn_egg: Ovo gerador de ghast
@@ -1219,16 +1324,24 @@ Material:
   guardian_spawn_egg: Ovo gerador de guardião
   gunpowder: Pólvora
   heart_of_the_sea: Coração do mar
+  heart_pottery_shard: Óstraco de coração
+  heart_pottery_sherd: Óstraco de coração
+  heartbreak_pottery_shard: Óstraco de coração partido
+  heartbreak_pottery_sherd: Óstraco de coração partido
   hoglin_spawn_egg: Ovo gerador de hoglin
   honey_bottle: Frasco de mel
   honeycomb: Favo de mel
   hopper_minecart: Carrinho de mina com funil
   horse_spawn_egg: Ovo gerador de cavalo
+  host_armor_trim_smithing_template: Molde de ferraria
+  howl_pottery_shard: Óstraco de lobo
+  howl_pottery_sherd: Óstraco de lobo
   husk_spawn_egg: Ovo gerador de zumbi-múmia
   ink_sac: Bolsa de tinta
   iron_axe: Machado de ferro
   iron_boots: Botas de ferro
   iron_chestplate: Peitoral de ferro
+  iron_golem_spawn_egg: Ovo gerador de golem de ferro
   iron_helmet: Capacete de ferro
   iron_hoe: Enxada de ferro
   iron_horse_armor: Armadura de ferro para cavalo
@@ -1267,8 +1380,12 @@ Material:
   melon_slice: Fatia de melancia
   milk_bucket: Balde de leite
   minecart: Carrinho de mina
+  miner_pottery_shard: Óstraco de picareta
+  miner_pottery_sherd: Óstraco de picareta
   mojang_banner_pattern: Desenho para estandarte
   mooshroom_spawn_egg: Ovo gerador de mooshroom
+  mourner_pottery_shard: Óstraco de defensor
+  mourner_pottery_sherd: Óstraco de defensor
   mule_spawn_egg: Ovo gerador de mula
   mushroom_stew: Ensopado de cogumelos
   music_disc_11: Disco musical
@@ -1282,6 +1399,7 @@ Material:
   music_disc_mellohi: Disco musical
   music_disc_otherside: Disco musical
   music_disc_pigstep: Disco musical
+  music_disc_relic: Disco musical
   music_disc_stal: Disco musical
   music_disc_strad: Disco musical
   music_disc_wait: Disco musical
@@ -1302,6 +1420,7 @@ Material:
   netherite_scrap: Fragmentos de netherita
   netherite_shovel: Pá de netherita
   netherite_sword: Espada de netherita
+  netherite_upgrade_smithing_template: Molde de ferraria
   oak_boat: Bote de carvalho
   oak_chest_boat: Bote de carvalho com baú
   ocelot_spawn_egg: Ovo gerador de jaguatirica
@@ -1318,15 +1437,24 @@ Material:
   piglin_spawn_egg: Ovo gerador de piglin
   pillager_spawn_egg: Ovo gerador de saqueador
   pink_dye: Corante rosa
+  pitcher_pod: Vagem de planta ancestral
+  plenty_pottery_shard: Óstraco de baú
+  plenty_pottery_sherd: Óstraco de baú
   poisonous_potato: Batata venenosa
   polar_bear_spawn_egg: Ovo gerador de urso polar
   popped_chorus_fruit: Fruta do coro cozida
   porkchop: Costeleta de porco crua
   potato: Batata
   potion: Poção
+  pottery_shard_archer: Óstraco de arco
+  pottery_shard_arms_up: Óstraco de figura
+  pottery_shard_prize: Óstraco de joia
+  pottery_shard_skull: Óstraco de caveira
   powder_snow_bucket: Balde de neve fofa
   prismarine_crystals: Cristais de prismarinho
   prismarine_shard: Pedaço de prismarinho
+  prize_pottery_shard: Óstraco de joia
+  prize_pottery_sherd: Óstraco de joia
   pufferfish: Baiacu
   pufferfish_bucket: Balde com baiacu
   pufferfish_spawn_egg: Ovo gerador de baiacu
@@ -1339,6 +1467,7 @@ Material:
   rabbit_hide: Pele de coelho
   rabbit_spawn_egg: Ovo gerador de coelho
   rabbit_stew: Ensopado de coelho
+  raiser_armor_trim_smithing_template: Molde de ferraria
   ravager_spawn_egg: Ovo gerador de devastador
   raw_copper: Cobre bruto
   raw_gold: Ouro bruto
@@ -1346,28 +1475,45 @@ Material:
   recovery_compass: Bússola de retomada
   red_dye: Corante vermelho
   redstone: Pó de redstone
+  rib_armor_trim_smithing_template: Molde de ferraria
   rotten_flesh: Carne podre
   saddle: Sela
   salmon: Salmão cru
   salmon_bucket: Balde com salmão
   salmon_spawn_egg: Ovo gerador de salmão
   scute: Escama de tartaruga
+  sentry_armor_trim_smithing_template: Molde de ferraria
+  shaper_armor_trim_smithing_template: Molde de ferraria
+  sheaf_pottery_shard: Óstraco de trigo
+  sheaf_pottery_sherd: Óstraco de trigo
   shears: Tesoura
   sheep_spawn_egg: Ovo gerador de ovelha
+  shelter_pottery_shard: Óstraco de árvore
+  shelter_pottery_sherd: Óstraco de árvore
   shield: Escudo
   shulker_shell: Casco de shulker
   shulker_spawn_egg: Ovo gerador de shulker
   sign: Placa
+  silence_armor_trim_smithing_template: Molde de ferraria
   silverfish_spawn_egg: Ovo gerador de traça
   skeleton_horse_spawn_egg: Ovo gerador de cavalo-esqueleto
   skeleton_spawn_egg: Ovo gerador de esqueleto
   skull_banner_pattern: Desenho para estandarte
+  skull_pottery_shard: Óstraco de caveira
+  skull_pottery_sherd: Óstraco de caveira
   slime_ball: Bola de slime
   slime_spawn_egg: Ovo gerador de slime
+  smithing_template: Molde de ferraria
+  sniffer_spawn_egg: Ovo gerador de farejador
+  snort_pottery_shard: Óstraco de farejador
+  snort_pottery_sherd: Óstraco de farejador
+  snout_armor_trim_smithing_template: Molde de ferraria
+  snow_golem_spawn_egg: Ovo gerador de golem de neve
   snowball: Bola de neve
   spectral_arrow: Flecha espectral
   spider_eye: Olho de aranha
   spider_spawn_egg: Ovo gerador de aranha
+  spire_armor_trim_smithing_template: Molde de ferraria
   splash_potion: Poção arremessável
   spruce_boat: Bote de pinheiro
   spruce_chest_boat: Bote de pinheiro com baú
@@ -1387,8 +1533,10 @@ Material:
   sweet_berries: Bagas doces
   tadpole_bucket: Balde com girino
   tadpole_spawn_egg: Ovo gerador de girino
+  tide_armor_trim_smithing_template: Molde de ferraria
   tipped_arrow: Flecha com efeito
   tnt_minecart: Carrinho de mina com dinamite
+  torchflower_seeds: Sementes de plantocha
   totem_of_undying: Totem da imortalidade
   trader_llama_spawn_egg: Ovo gerador de lhama do vendedor
   trident: Tridente
@@ -1397,17 +1545,22 @@ Material:
   tropical_fish_spawn_egg: Ovo gerador de peixe tropical
   turtle_helmet: Casco de tartaruga
   turtle_spawn_egg: Ovo gerador de tartaruga
+  vex_armor_trim_smithing_template: Molde de ferraria
   vex_spawn_egg: Ovo gerador de vex
   villager_spawn_egg: Ovo gerador de aldeão
   vindicator_spawn_egg: Ovo gerador de vingador
   wandering_trader_spawn_egg: Ovo gerador de vendedor ambulante
+  ward_armor_trim_smithing_template: Molde de ferraria
   warden_spawn_egg: Ovo gerador de defensor
   warped_fungus_on_a_stick: Vara com fungo distorcido
   water_bucket: Balde de água
+  wayfinder_armor_trim_smithing_template: Molde de ferraria
   wheat_seeds: Sementes de trigo
   white_dye: Corante branco
+  wild_armor_trim_smithing_template: Molde de ferraria
   witch_spawn_egg: Ovo gerador de bruxa
   wither_skeleton_spawn_egg: Ovo gerador de esqueleto wither
+  wither_spawn_egg: Ovo gerador de Wither
   wolf_spawn_egg: Ovo gerador de lobo
   wooden_axe: Machado de madeira
   wooden_hoe: Enxada de madeira

@@ -16,6 +16,7 @@ import su.nexmedia.engine.api.menu.MenuItemType;
 import su.nexmedia.engine.api.menu.click.ItemClick;
 import su.nexmedia.engine.api.menu.item.ItemOptions;
 import su.nexmedia.engine.api.menu.item.MenuItem;
+import su.nexmedia.engine.api.menu.link.Linked;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -170,6 +171,10 @@ public abstract class Menu<P extends NexPlugin<P>> {
         this.getViewersMap().remove(player.getUniqueId());
         this.getItems().removeIf(menuItem -> menuItem.getOptions().canBeDestroyed(viewer));
         PLAYER_MENUS.remove(player.getUniqueId());
+
+        if (this instanceof Linked<?> linked) {
+            linked.getLink().clear(viewer);
+        }
 
         if (this.getViewers().isEmpty() && !this.isPersistent()) {
             this.clear();

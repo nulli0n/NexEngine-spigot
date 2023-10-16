@@ -7,7 +7,9 @@ EntityType:
   bat: Летучая мышь
   bee: Пчела
   blaze: Всполох
+  block_display: Визуализатор блока
   boat: Лодка
+  camel: Верблюд
   cat: Кошка
   cave_spider: Пещерный паук
   chest_boat: Грузовая лодка
@@ -34,6 +36,7 @@ EntityType:
   experience_orb: Сфера опыта
   eye_of_ender: Око Эндера
   falling_block: Падающий блок
+  falling_block_type: '%s в падении'
   fireball: Файербол
   firework_rocket: Фейерверк
   fishing_bobber: Поплавок
@@ -51,8 +54,10 @@ EntityType:
   horse: Лошадь
   husk: Кадавр
   illusioner: Иллюзор
+  interaction: Взаимодействие
   iron_golem: Железный голем
   item: Предмет
+  item_display: Визуализатор предмета
   item_frame: Рамка
   killer_bunny: Кролик-убийца
   leash_knot: Узел поводка
@@ -88,15 +93,17 @@ EntityType:
   skeleton_horse: Лошадь-скелет
   slime: Слизень
   small_fireball: Малый файербол
-  snow_golem: Снеговик
+  sniffer: Нюхач
+  snow_golem: Снежный голем
   snowball: Снежок
-  spawner_minecart: Вагонетка с рассадником
+  spawner_minecart: Вагонетка с рассадником монстров
   spectral_arrow: Спектральная стрела
   spider: Паук
   squid: Спрут
   stray: Зимогор
   strider: Лавомерка
   tadpole: Головастик
+  text_display: Визуализатор текста
   tnt: Активированный динамит
   tnt_minecart: Вагонетка с динамитом
   trader_llama: Лама торговца
@@ -157,6 +164,7 @@ Material:
   acacia_door: Акациевая дверь
   acacia_fence: Акациевый забор
   acacia_fence_gate: Акациевая калитка
+  acacia_hanging_sign: Акациевая подвесная табличка
   acacia_leaves: Листья акации
   acacia_log: Акациевое бревно
   acacia_planks: Акациевые доски
@@ -166,6 +174,7 @@ Material:
   acacia_slab: Акациевая плита
   acacia_stairs: Акациевые ступеньки
   acacia_trapdoor: Акациевый люк
+  acacia_wall_hanging_sign: Акациевая настенная подвесная табличка
   acacia_wall_sign: Акациевая настенная табличка
   acacia_wood: Акация
   activator_rail: Активирующие рельсы
@@ -185,7 +194,24 @@ Material:
   azalea_leaves: Листья азалии
   azure_bluet: Хаустония серая
   bamboo: Бамбук
+  bamboo_block: Блок бамбука
+  bamboo_button: Бамбуковая кнопка
+  bamboo_door: Бамбуковая дверь
+  bamboo_fence: Бамбуковый забор
+  bamboo_fence_gate: Бамбуковая калитка
+  bamboo_hanging_sign: Бамбуковая подвесная табличка
+  bamboo_mosaic: Бамбуковая мозаика
+  bamboo_mosaic_slab: Плита из бамбуковой мозаики
+  bamboo_mosaic_stairs: Ступеньки из бамбуковой мозаики
+  bamboo_planks: Бамбуковые доски
+  bamboo_pressure_plate: Бамбуковая нажимная плита
   bamboo_sapling: Побег бамбука
+  bamboo_sign: Бамбуковая табличка
+  bamboo_slab: Бамбуковая плита
+  bamboo_stairs: Бамбуковые ступеньки
+  bamboo_trapdoor: Бамбуковый люк
+  bamboo_wall_hanging_sign: Бамбуковая настенная подвесная табличка
+  bamboo_wall_sign: Бамбуковая настенная табличка
   barrel: Бочка
   barrier: Барьер
   basalt: Базальт
@@ -201,6 +227,7 @@ Material:
   birch_door: Берёзовая дверь
   birch_fence: Берёзовый забор
   birch_fence_gate: Берёзовая калитка
+  birch_hanging_sign: Берёзовая подвесная табличка
   birch_leaves: Берёзовые листья
   birch_log: Берёзовое бревно
   birch_planks: Берёзовые доски
@@ -210,6 +237,7 @@ Material:
   birch_slab: Берёзовая плита
   birch_stairs: Берёзовые ступеньки
   birch_trapdoor: Берёзовый люк
+  birch_wall_hanging_sign: Берёзовая настенная подвесная табличка
   birch_wall_sign: Берёзовая настенная табличка
   birch_wood: Берёза
   black_banner: Чёрный флаг
@@ -280,6 +308,7 @@ Material:
   cactus: Кактус
   cake: Торт
   calcite: Кальцит
+  calibrated_sculk_sensor: Откалиброванный скалк-сенсор
   campfire: Костёр
   candle: Свеча
   candle_cake: Торт со свечой
@@ -292,8 +321,26 @@ Material:
   cave_vines_plant: Стебель пещерной лозы
   chain: Цепь
   chain_command_block: Последовательный командный блок
+  cherry_button: Вишнёвая кнопка
+  cherry_door: Вишнёвая дверь
+  cherry_fence: Вишнёвый забор
+  cherry_fence_gate: Вишнёвая калитка
+  cherry_hanging_sign: Вишнёвая подвесная табличка
+  cherry_leaves: Вишнёвые листья
+  cherry_log: Вишнёвое бревно
+  cherry_planks: Вишнёвые доски
+  cherry_pressure_plate: Вишнёвая нажимная плита
+  cherry_sapling: Саженец вишни
+  cherry_sign: Вишнёвая табличка
+  cherry_slab: Вишнёвая плита
+  cherry_stairs: Вишнёвые ступеньки
+  cherry_trapdoor: Вишнёвый люк
+  cherry_wall_hanging_sign: Вишнёвая настенная подвесная табличка
+  cherry_wall_sign: Вишнёвая настенная табличка
+  cherry_wood: Вишня
   chest: Сундук
   chipped_anvil: Повреждённая наковальня
+  chiseled_bookshelf: Резная книжная полка
   chiseled_deepslate: Резной глубинный сланец
   chiseled_nether_bricks: Резные незерские кирпичи
   chiseled_polished_blackstone: Резной полированный чернит
@@ -337,6 +384,7 @@ Material:
   crimson_fence: Багровый забор
   crimson_fence_gate: Багровая калитка
   crimson_fungus: Багровый гриб
+  crimson_hanging_sign: Багровая подвесная табличка
   crimson_hyphae: Багровые гифы
   crimson_nylium: Багровый нилий
   crimson_planks: Багровые доски
@@ -347,6 +395,7 @@ Material:
   crimson_stairs: Багровые ступеньки
   crimson_stem: Багровый стебель
   crimson_trapdoor: Багровый люк
+  crimson_wall_hanging_sign: Багровая настенная подвесная табличка
   crimson_wall_sign: Багровая настенная табличка
   crying_obsidian: Плачущий обсидиан
   cut_copper: Резной медный блок
@@ -375,6 +424,7 @@ Material:
   dark_oak_door: Дверь из тёмного дуба
   dark_oak_fence: Забор из тёмного дуба
   dark_oak_fence_gate: Калитка из тёмного дуба
+  dark_oak_hanging_sign: Подвесная табличка из тёмного дуба
   dark_oak_leaves: Листья тёмного дуба
   dark_oak_log: Бревно тёмного дуба
   dark_oak_planks: Доски из тёмного дуба
@@ -384,6 +434,7 @@ Material:
   dark_oak_slab: Плита из тёмного дуба
   dark_oak_stairs: Ступеньки из тёмного дуба
   dark_oak_trapdoor: Люк из тёмного дуба
+  dark_oak_wall_hanging_sign: Настенная подвесная табличка из тёмного дуба
   dark_oak_wall_sign: Настенная табличка из тёмного дуба
   dark_oak_wood: Тёмный дуб
   dark_prismarine: Тёмный призмарин
@@ -411,6 +462,7 @@ Material:
   dead_tube_coral_block: Блок мёртвого трубчатого коралла
   dead_tube_coral_fan: Мёртвый веерный трубчатый коралл
   dead_tube_coral_wall_fan: Мёртвый горизонтальный веерный трубчатый коралл
+  decorated_pot: Узорчатая ваза
   deepslate: Глубинный сланец
   deepslate_brick_slab: Плита из глубинносланцевого кирпича
   deepslate_brick_stairs: Ступеньки из глубинносланцевого кирпича
@@ -546,6 +598,7 @@ Material:
   jungle_door: Дверь из тропического дерева
   jungle_fence: Забор из тропического дерева
   jungle_fence_gate: Калитка из тропического дерева
+  jungle_hanging_sign: Подвесная табличка из тропического дерева
   jungle_leaves: Листья тропического дерева
   jungle_log: Бревно тропического дерева
   jungle_planks: Доски из тропического дерева
@@ -555,6 +608,7 @@ Material:
   jungle_slab: Плита из тропического дерева
   jungle_stairs: Ступеньки из тропического дерева
   jungle_trapdoor: Люк из тропического дерева
+  jungle_wall_hanging_sign: Настенная подвесная табличка из тропического дерева
   jungle_wall_sign: Настенная табличка из тропического дерева
   jungle_wood: Тропическое дерево
   kelp: Ламинария
@@ -634,6 +688,7 @@ Material:
   mangrove_door: Мангровая дверь
   mangrove_fence: Мангровый забор
   mangrove_fence_gate: Мангровая калитка
+  mangrove_hanging_sign: Мангровая подвесная табличка
   mangrove_leaves: Мангровые листья
   mangrove_log: Мангровое бревно
   mangrove_planks: Мангровые доски
@@ -644,6 +699,7 @@ Material:
   mangrove_slab: Мангровая плита
   mangrove_stairs: Мангровые ступеньки
   mangrove_trapdoor: Мангровый люк
+  mangrove_wall_hanging_sign: Мангровая настенная подвесная табличка
   mangrove_wall_sign: Мангровая настенная табличка
   mangrove_wood: Мангровое дерево
   medium_amethyst_bud: Средний аметистовый бутон
@@ -668,9 +724,9 @@ Material:
   muddy_mangrove_roots: Грязные мангровые корни
   mushroom_stem: Ножка гриба
   mycelium: Мицелий
-  nether_brick_fence: Незерский забор
-  nether_brick_slab: Незерская плита
-  nether_brick_stairs: Незерские ступеньки
+  nether_brick_fence: Забор из незерского кирпича
+  nether_brick_slab: Плита из незерского кирпича
+  nether_brick_stairs: Ступеньки из незерского кирпича
   nether_brick_wall: Ограда из незерского кирпича
   nether_bricks: Незерские кирпичи
   nether_gold_ore: Незерская золотая руда
@@ -686,6 +742,7 @@ Material:
   oak_door: Дубовая дверь
   oak_fence: Дубовый забор
   oak_fence_gate: Дубовая калитка
+  oak_hanging_sign: Дубовая подвесная табличка
   oak_leaves: Дубовые листья
   oak_log: Дубовое бревно
   oak_planks: Дубовые доски
@@ -695,6 +752,7 @@ Material:
   oak_slab: Дубовая плита
   oak_stairs: Дубовые ступеньки
   oak_trapdoor: Дубовый люк
+  oak_wall_hanging_sign: Дубовая настенная подвесная табличка
   oak_wall_sign: Дубовая настенная табличка
   oak_wood: Дуб
   observer: Наблюдатель
@@ -725,6 +783,8 @@ Material:
   pearlescent_froglight: Перламутровая квампа
   peony: Пион
   petrified_oak_slab: Окаменевшая дубовая плита
+  piglin_head: Голова пиглина
+  piglin_wall_head: Настенная голова пиглина
   pink_banner: Розовый флаг
   pink_bed: Розовая кровать
   pink_candle: Розовая свеча
@@ -733,6 +793,7 @@ Material:
   pink_concrete: Розовый бетон
   pink_concrete_powder: Розовый сухой бетон
   pink_glazed_terracotta: Розовая глазурованная керамика
+  pink_petals: Розовые лепестки
   pink_shulker_box: Розовый шалкеровый ящик
   pink_stained_glass: Розовое стекло
   pink_stained_glass_pane: Розовая стеклянная панель
@@ -741,6 +802,8 @@ Material:
   pink_wool: Розовая шерсть
   piston: Поршень
   piston_head: Головка поршня
+  pitcher_crop: Росток кувшинницы
+  pitcher_plant: Кувшинница
   player_head: Голова игрока
   player_wall_head: Настенная голова игрока
   podzol: Подзол
@@ -780,6 +843,7 @@ Material:
   potted_blue_orchid: Синяя орхидея в горшке
   potted_brown_mushroom: Коричневый гриб в горшке
   potted_cactus: Кактус в горшке
+  potted_cherry_sapling: Саженец вишни в горшке
   potted_cornflower: Синий василёк в горшке
   potted_crimson_fungus: Багровый гриб в горшке
   potted_crimson_roots: Багровые корни в горшке
@@ -799,6 +863,7 @@ Material:
   potted_red_mushroom: Красный гриб в горшке
   potted_red_tulip: Красный тюльпан в горшке
   potted_spruce_sapling: Саженец ели в горшке
+  potted_torchflower: Факельник в горшке
   potted_warped_fungus: Искажённый гриб в горшке
   potted_warped_roots: Искажённые корни в горшке
   potted_white_tulip: Белый тюльпан в горшке
@@ -914,6 +979,7 @@ Material:
   smooth_sandstone_stairs: Ступеньки из гладкого песчаника
   smooth_stone: Гладкий камень
   smooth_stone_slab: Плита из гладкого камня
+  sniffer_egg: Яйцо нюхача
   snow: Снег
   snow_block: Блок снега
   soul_campfire: Костёр душ
@@ -923,13 +989,14 @@ Material:
   soul_soil: Почва душ
   soul_torch: Факел душ
   soul_wall_torch: Настенный факел душ
-  spawner: Рассадник
+  spawner: Рассадник монстров
   sponge: Губка
   spore_blossom: Спороцвет
   spruce_button: Еловая кнопка
   spruce_door: Еловая дверь
   spruce_fence: Еловый забор
   spruce_fence_gate: Еловая калитка
+  spruce_hanging_sign: Еловая подвесная табличка
   spruce_leaves: Хвоя
   spruce_log: Еловое бревно
   spruce_planks: Еловые доски
@@ -939,6 +1006,7 @@ Material:
   spruce_slab: Еловая плита
   spruce_stairs: Еловые ступеньки
   spruce_trapdoor: Еловый люк
+  spruce_wall_hanging_sign: Еловая настенная подвесная табличка
   spruce_wall_sign: Еловая настенная табличка
   spruce_wood: Ель
   sticky_piston: Липкий поршень
@@ -954,8 +1022,11 @@ Material:
   stonecutter: Камнерез
   stripped_acacia_log: Обтёсанное акациевое бревно
   stripped_acacia_wood: Обтёсанная акациевая древесина
+  stripped_bamboo_block: Блок обтёсанного бамбука
   stripped_birch_log: Обтёсанное берёзовое бревно
   stripped_birch_wood: Обтёсанная берёзовая древесина
+  stripped_cherry_log: Обтёсанное вишнёвое бревно
+  stripped_cherry_wood: Обтёсанная вишнёвая древесина
   stripped_crimson_hyphae: Очищенные багровые гифы
   stripped_crimson_stem: Очищенный багровый стебель
   stripped_dark_oak_log: Обтёсанное бревно тёмного дуба
@@ -974,6 +1045,8 @@ Material:
   structure_void: Пустой блок
   sugar_cane: Сахарный тростник
   sunflower: Подсолнух
+  suspicious_gravel: Подозрительный гравий
+  suspicious_sand: Подозрительный песок
   sweet_berry_bush: Куст сладких ягод
   tall_grass: Высокая трава
   tall_seagrass: Высокая морская трава
@@ -982,6 +1055,8 @@ Material:
   tinted_glass: Тонированное стекло
   tnt: Динамит
   torch: Факел
+  torchflower: Факельник
+  torchflower_crop: Росток факельника
   trapped_chest: Сундук-ловушка
   tripwire: Растяжка
   tripwire_hook: Крюк
@@ -1002,6 +1077,7 @@ Material:
   warped_fence: Искажённый забор
   warped_fence_gate: Искажённая калитка
   warped_fungus: Искажённый гриб
+  warped_hanging_sign: Искажённая подвесная табличка
   warped_hyphae: Искажённые гифы
   warped_nylium: Искажённый нилий
   warped_planks: Искажённые доски
@@ -1012,6 +1088,7 @@ Material:
   warped_stairs: Искажённые ступеньки
   warped_stem: Искажённый стебель
   warped_trapdoor: Искажённый люк
+  warped_wall_hanging_sign: Искажённая настенная подвесная табличка
   warped_wall_sign: Искажённая настенная табличка
   warped_wart_block: Блок искажённого нароста
   water: Вода
@@ -1076,12 +1153,20 @@ Material:
   acacia_chest_boat: Акациевая грузовая лодка
   allay_spawn_egg: Яйцо призыва тихони
   amethyst_shard: Осколок аметиста
+  angler_pottery_shard: Глиняный черепок «Рыбак»
+  angler_pottery_sherd: Глиняный черепок «Рыбак»
   apple: Яблоко
+  archer_pottery_shard: Глиняный черепок «Лучник»
+  archer_pottery_sherd: Глиняный черепок «Лучник»
   armor_stand: Стойка для брони
+  arms_up_pottery_shard: Глиняный черепок «Руки вверх»
+  arms_up_pottery_sherd: Глиняный черепок «Руки вверх»
   arrow: Стрела
   axolotl_bucket: Аксолотль в ведре
   axolotl_spawn_egg: Яйцо призыва аксолотля
   baked_potato: Печёный картофель
+  bamboo_chest_raft: Грузовой бамбуковый плот
+  bamboo_raft: Бамбуковый плот
   bat_spawn_egg: Яйцо призыва летучей мыши
   bee_spawn_egg: Яйцо призыва пчелы
   beef: Сырая говядина
@@ -1091,6 +1176,8 @@ Material:
   birch_boat: Берёзовая лодка
   birch_chest_boat: Берёзовая грузовая лодка
   black_dye: Чёрный краситель
+  blade_pottery_shard: Глиняный черепок «Клинок»
+  blade_pottery_sherd: Глиняный черепок «Клинок»
   blaze_powder: Огненный порошок
   blaze_rod: Огненный стержень
   blaze_spawn_egg: Яйцо призыва всполоха
@@ -1101,10 +1188,16 @@ Material:
   bow: Лук
   bowl: Миска
   bread: Хлеб
+  brewer_pottery_shard: Глиняный черепок «Зельевар»
+  brewer_pottery_sherd: Глиняный черепок «Зельевар»
   brick: Кирпич
   brown_dye: Коричневый краситель
+  brush: Кисть
   bucket: Ведро
   bundle: Мешок
+  burn_pottery_shard: Глиняный черепок «Пламя»
+  burn_pottery_sherd: Глиняный черепок «Пламя»
+  camel_spawn_egg: Яйцо призыва верблюда
   carrot: Морковь
   carrot_on_a_stick: Удочка с морковкой
   cat_spawn_egg: Яйцо призыва кошки
@@ -1114,6 +1207,8 @@ Material:
   chainmail_helmet: Койф
   chainmail_leggings: Кольчужные поножи
   charcoal: Древесный уголь
+  cherry_boat: Вишнёвая лодка
+  cherry_chest_boat: Вишнёвая грузовая лодка
   chest_minecart: Грузовая вагонетка
   chicken: Курятина
   chicken_spawn_egg: Яйцо призыва курицы
@@ -1121,6 +1216,7 @@ Material:
   clay_ball: Комок глины
   clock: Часы
   coal: Уголь
+  coast_armor_trim_smithing_template: Кузнечный шаблон
   cocoa_beans: Какао-бобы
   cod: Сырая треска
   cod_bucket: Треска в ведре
@@ -1141,6 +1237,8 @@ Material:
   creeper_spawn_egg: Яйцо призыва крипера
   crossbow: Арбалет
   cyan_dye: Бирюзовый краситель
+  danger_pottery_shard: Глиняный черепок «Угроза»
+  danger_pottery_sherd: Глиняный черепок «Опасность»
   dark_oak_boat: Лодка из тёмного дуба
   dark_oak_chest_boat: Грузовая лодка из тёмного дуба
   debug_stick: Палочка отладки
@@ -1161,6 +1259,7 @@ Material:
   dragon_breath: Драконье дыхание
   dried_kelp: Сушёная ламинария
   drowned_spawn_egg: Яйцо призыва утопленника
+  dune_armor_trim_smithing_template: Кузнечный шаблон
   echo_shard: Осколок эха
   egg: Яйцо
   elder_guardian_spawn_egg: Яйцо призыва древнего стража
@@ -1169,12 +1268,16 @@ Material:
   enchanted_book: Чародейская книга
   enchanted_golden_apple: Зачарованное золотое яблоко
   end_crystal: Кристалл Энда
+  ender_dragon_spawn_egg: Яйцо призыва Эндер-дракона
   ender_eye: Око Эндера
   ender_pearl: Эндер-жемчуг
   enderman_spawn_egg: Яйцо призыва эндермена
   endermite_spawn_egg: Яйцо призыва эндермита
   evoker_spawn_egg: Яйцо призыва заклинателя
   experience_bottle: Пузырёк опыта
+  explorer_pottery_shard: Глиняный черепок «Исследователь»
+  explorer_pottery_sherd: Глиняный черепок «Исследователь»
+  eye_armor_trim_smithing_template: Кузнечный шаблон
   feather: Перо
   fermented_spider_eye: Маринованный паучий глаз
   filled_map: Карта
@@ -1186,6 +1289,8 @@ Material:
   flint_and_steel: Огниво
   flower_banner_pattern: Узор флага
   fox_spawn_egg: Яйцо призыва лисицы
+  friend_pottery_shard: Глиняный черепок «Друг»
+  friend_pottery_sherd: Глиняный черепок «Друг»
   frog_spawn_egg: Яйцо призыва лягушки
   furnace_minecart: Самоходная вагонетка
   ghast_spawn_egg: Яйцо призыва гаста
@@ -1219,16 +1324,24 @@ Material:
   guardian_spawn_egg: Яйцо призыва стража
   gunpowder: Порох
   heart_of_the_sea: Сердце моря
+  heart_pottery_shard: Глиняный черепок «Сердце»
+  heart_pottery_sherd: Глиняный черепок «Сердце»
+  heartbreak_pottery_shard: Глиняный черепок «Разбитое сердце»
+  heartbreak_pottery_sherd: Глиняный черепок «Разбитое сердце»
   hoglin_spawn_egg: Яйцо призыва хоглина
   honey_bottle: Бутылочка мёда
   honeycomb: Пчелиные соты
   hopper_minecart: Загрузочная вагонетка
   horse_spawn_egg: Яйцо призыва лошади
+  host_armor_trim_smithing_template: Кузнечный шаблон
+  howl_pottery_shard: Глиняный черепок «Вой»
+  howl_pottery_sherd: Глиняный черепок «Вой»
   husk_spawn_egg: Яйцо призыва кадавра
   ink_sac: Чернильный мешок
   iron_axe: Железный топор
   iron_boots: Железные ботинки
   iron_chestplate: Железный нагрудник
+  iron_golem_spawn_egg: Яйцо призыва железного голема
   iron_helmet: Железный шлем
   iron_hoe: Железная мотыга
   iron_horse_armor: Железная конская броня
@@ -1267,8 +1380,12 @@ Material:
   melon_slice: Ломтик арбуза
   milk_bucket: Ведро молока
   minecart: Вагонетка
+  miner_pottery_shard: Глиняный черепок «Шахтёр»
+  miner_pottery_sherd: Глиняный черепок «Шахтёр»
   mojang_banner_pattern: Узор флага
   mooshroom_spawn_egg: Яйцо призыва муухомора
+  mourner_pottery_shard: Глиняный черепок «Скорбь»
+  mourner_pottery_sherd: Глиняный черепок «Скорбь»
   mule_spawn_egg: Яйцо призыва мула
   mushroom_stew: Тушёные грибы
   music_disc_11: Пластинка
@@ -1282,6 +1399,7 @@ Material:
   music_disc_mellohi: Пластинка
   music_disc_otherside: Пластинка
   music_disc_pigstep: Пластинка
+  music_disc_relic: Пластинка
   music_disc_stal: Пластинка
   music_disc_strad: Пластинка
   music_disc_wait: Пластинка
@@ -1302,6 +1420,7 @@ Material:
   netherite_scrap: Незеритовый лом
   netherite_shovel: Незеритовая лопата
   netherite_sword: Незеритовый меч
+  netherite_upgrade_smithing_template: Кузнечный шаблон
   oak_boat: Дубовая лодка
   oak_chest_boat: Дубовая грузовая лодка
   ocelot_spawn_egg: Яйцо призыва оцелота
@@ -1318,15 +1437,24 @@ Material:
   piglin_spawn_egg: Яйцо призыва пиглина
   pillager_spawn_egg: Яйцо призыва разбойника
   pink_dye: Розовый краситель
+  pitcher_pod: Стручок кувшинницы
+  plenty_pottery_shard: Глиняный черепок «Изобилие»
+  plenty_pottery_sherd: Глиняный черепок «Изобилие»
   poisonous_potato: Ядовитый картофель
   polar_bear_spawn_egg: Яйцо призыва белого медведя
   popped_chorus_fruit: Прожаренный плод хоруса
   porkchop: Сырая свинина
   potato: Картофель
   potion: Зелье
+  pottery_shard_archer: Глиняный черепок «Лучник»
+  pottery_shard_arms_up: Глиняный черепок «Руки вверх»
+  pottery_shard_prize: Глиняный черепок «Награда»
+  pottery_shard_skull: Глиняный черепок «Череп»
   powder_snow_bucket: Ведро с рыхлым снегом
   prismarine_crystals: Кристалл призмарина
   prismarine_shard: Осколок призмарина
+  prize_pottery_shard: Глиняный черепок «Награда»
+  prize_pottery_sherd: Глиняный черепок «Награда»
   pufferfish: Иглобрюх
   pufferfish_bucket: Иглобрюх в ведре
   pufferfish_spawn_egg: Яйцо призыва иглобрюха
@@ -1339,6 +1467,7 @@ Material:
   rabbit_hide: Кроличья шкурка
   rabbit_spawn_egg: Яйцо призыва кролика
   rabbit_stew: Тушёный кролик
+  raiser_armor_trim_smithing_template: Кузнечный шаблон
   ravager_spawn_egg: Яйцо призыва разорителя
   raw_copper: Рудная медь
   raw_gold: Рудное золото
@@ -1346,28 +1475,45 @@ Material:
   recovery_compass: Возвратный компас
   red_dye: Красный краситель
   redstone: Редстоуновая пыль
+  rib_armor_trim_smithing_template: Кузнечный шаблон
   rotten_flesh: Гнилая плоть
   saddle: Седло
   salmon: Сырой лосось
   salmon_bucket: Лосось в ведре
   salmon_spawn_egg: Яйцо призыва лосося
   scute: Щиток
+  sentry_armor_trim_smithing_template: Кузнечный шаблон
+  shaper_armor_trim_smithing_template: Кузнечный шаблон
+  sheaf_pottery_shard: Глиняный черепок «Пучок»
+  sheaf_pottery_sherd: Глиняный черепок «Пучок»
   shears: Ножницы
   sheep_spawn_egg: Яйцо призыва овцы
+  shelter_pottery_shard: Глиняный черепок «Дом»
+  shelter_pottery_sherd: Глиняный черепок «Убежище»
   shield: Щит
   shulker_shell: Панцирь шалкера
   shulker_spawn_egg: Яйцо призыва шалкера
   sign: Табличка
+  silence_armor_trim_smithing_template: Кузнечный шаблон
   silverfish_spawn_egg: Яйцо призыва чешуйницы
   skeleton_horse_spawn_egg: Яйцо призыва лошади-скелета
   skeleton_spawn_egg: Яйцо призыва скелета
   skull_banner_pattern: Узор флага
+  skull_pottery_shard: Глиняный черепок «Череп»
+  skull_pottery_sherd: Глиняный черепок «Череп»
   slime_ball: Сгусток слизи
   slime_spawn_egg: Яйцо призыва слизня
+  smithing_template: Кузнечный шаблон
+  sniffer_spawn_egg: Яйцо призыва нюхача
+  snort_pottery_shard: Глиняный черепок «Шмыг»
+  snort_pottery_sherd: Глиняный черепок «Нюхач»
+  snout_armor_trim_smithing_template: Кузнечный шаблон
+  snow_golem_spawn_egg: Яйцо призыва снежного голема
   snowball: Снежок
   spectral_arrow: Спектральная стрела
   spider_eye: Паучий глаз
   spider_spawn_egg: Яйцо призыва паука
+  spire_armor_trim_smithing_template: Кузнечный орнамент
   splash_potion: Взрывное зелье
   spruce_boat: Еловая лодка
   spruce_chest_boat: Еловая грузовая лодка
@@ -1387,8 +1533,10 @@ Material:
   sweet_berries: Сладкие ягоды
   tadpole_bucket: Головастик в ведре
   tadpole_spawn_egg: Яйцо призыва головастика
+  tide_armor_trim_smithing_template: Кузнечный шаблон
   tipped_arrow: Обработанная стрела
   tnt_minecart: Вагонетка с динамитом
+  torchflower_seeds: Семена факельника
   totem_of_undying: Тотем бессмертия
   trader_llama_spawn_egg: Яйцо призыва ламы торговца
   trident: Трезубец
@@ -1397,17 +1545,22 @@ Material:
   tropical_fish_spawn_egg: Яйцо призыва тропической рыбы
   turtle_helmet: Черепаший панцирь
   turtle_spawn_egg: Яйцо призыва черепахи
+  vex_armor_trim_smithing_template: Шаблон Рыло
   vex_spawn_egg: Яйцо призыва вредины
   villager_spawn_egg: Яйцо призыва крестьянина
   vindicator_spawn_egg: Яйцо призыва поборника
   wandering_trader_spawn_egg: Яйцо призыва странствующего торговца
+  ward_armor_trim_smithing_template: Кузнечный шаблон
   warden_spawn_egg: Яйцо призыва хранителя
   warped_fungus_on_a_stick: Удочка с искажённым грибом
   water_bucket: Ведро воды
+  wayfinder_armor_trim_smithing_template: Кузнечный шаблон
   wheat_seeds: Семена пшеницы
   white_dye: Белый краситель
+  wild_armor_trim_smithing_template: Кузнечный шаблон
   witch_spawn_egg: Яйцо призыва ведьмы
   wither_skeleton_spawn_egg: Яйцо призыва визер-скелета
+  wither_spawn_egg: Яйцо призыва визера
   wolf_spawn_egg: Яйцо призыва волка
   wooden_axe: Деревянный топор
   wooden_hoe: Деревянная мотыга
