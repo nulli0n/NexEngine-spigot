@@ -11,14 +11,9 @@ import su.nexmedia.engine.api.menu.click.ClickHandler;
 import su.nexmedia.engine.api.menu.click.ClickType;
 import su.nexmedia.engine.api.menu.click.ItemClick;
 import su.nexmedia.engine.api.menu.item.MenuItem;
-import su.nexmedia.engine.utils.Colorizer;
-import su.nexmedia.engine.utils.PlayerUtil;
-import su.nexmedia.engine.utils.StringUtil;
+import su.nexmedia.engine.utils.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
@@ -34,15 +29,25 @@ public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
     }
 
     public void load() {
-        if (!this.isCodeCreation() || this.cfg.getBoolean("set_up")) {
+        if (!this.isCodeCreation() || this.cfg.contains(this.itemSection)) {
             this.loadConfig();
         }
         else {
             this.loadDefaults();
-            this.cfg.set("set_up", true);
-            this.cfg.remove(this.itemSection);
             this.write();
         }
+
+        List<String> comments = new ArrayList<>();
+        comments.add("=".repeat(20) + " GUI CONTENT " + "=".repeat(20));
+        comments.add("You can freely edit items in this section as you wish (add, remove, modify items).");
+        comments.add("Get some tips in documentation: " + Placeholders.WIKI_MENU_URL);
+        comments.add("The following values are available for button types:");
+        this.handlers.forEach((clazz, handler) -> {
+            comments.addAll(handler.getClicks().keySet().stream().map(e -> "- " + e.name()).toList());
+        });
+        comments.add("=".repeat(50));
+        this.cfg.setComments(this.itemSection, comments);
+        this.cfg.saveChanges();
     }
 
     public boolean isCodeCreation() {
@@ -54,42 +59,54 @@ public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
     }
 
     public void loadConfig() {
-        String title = JOption.create("Title", "", "Sets the GUI title.")
-            .mapReader(Colorizer::apply).read(cfg);
+        String oldTitle = cfg.getString("Title");
+        int oldSize = cfg.getInt("Size", 0);
+        InventoryType oldType = cfg.getEnum("Inventory_Type", InventoryType.class);
 
-        int size = JOption.create("Size", 27, "Sets the GUI size. Must be multiply of 9.").read(cfg);
+        String title = JOption.create("Settings.Title", oldTitle != null ? oldTitle : "",
+            "Sets the GUI title."
+        ).mapReader(Colorizer::apply).read(cfg);
 
-        InventoryType type = JOption.create("Inventory_Type", InventoryType.class, InventoryType.CHEST,
+        int size = JOption.create("Settings.Size", oldSize != 0 ? oldSize : 27,
+            "Sets the GUI size. Must be multiply of 9."
+        ).read(cfg);
+
+        InventoryType type = JOption.create("Settings.Inventory_Type", InventoryType.class, oldType != null ? oldType : InventoryType.CHEST,
             "Sets the GUI type.",
-            "https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/inventory/InventoryType.html").read(cfg);
+            "https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/inventory/InventoryType.html"
+        ).read(cfg);
 
         int autoRefresh = JOption.create("Settings.Auto_Refresh", 0,
-            "Sets the GUI auto-refresh interval (in seconds). Set this to 0 to disable.").read(cfg);
+            "Sets the GUI auto-refresh interval (in seconds). Set this to 0 to disable."
+        ).read(cfg);
 
         this.getOptions().setTitle(title);
         this.getOptions().setSize(size);
         this.getOptions().setType(type);
         this.getOptions().setAutoRefresh(autoRefresh);
 
+        this.cfg.remove("Title");
+        this.cfg.remove("Size");
+        this.cfg.remove("Inventory_Type");
+
         this.cfg.getSection(this.itemSection).forEach(sId -> {
             MenuItem menuItem = this.readItem(this.itemSection + "." + sId);
             this.addItem(menuItem);
         });
-
-        // TODO All under 'Settings' + comment list with registered handler types
     }
 
     protected void write() {
-        this.cfg.set("Title", this.getOptions().getTitle());
-        this.cfg.set("Size", this.getOptions().getSize());
-        this.cfg.set("Type", this.getOptions().getType().name());
+        this.cfg.set("Settings.Title", this.getOptions().getTitle());
+        this.cfg.set("Settings.Size", this.getOptions().getSize());
+        this.cfg.set("Settings.Type", this.getOptions().getType().name());
         this.cfg.set("Settings.Auto_Refresh", this.getOptions().getAutoRefresh());
 
         AtomicInteger count = new AtomicInteger();
         this.getItems().forEach(menuItem -> {
-            this.writeItem(menuItem, this.itemSection + "." + menuItem.getType().name() + "_" + count.incrementAndGet());
+            String name = StringUtil.lowerCaseUnderscore(ItemUtil.getItemName(menuItem.getItem()));
+
+            this.writeItem(menuItem, this.itemSection + "." + name + "_" + count.incrementAndGet());
         });
-        this.cfg.save();
     }
 
     @Override

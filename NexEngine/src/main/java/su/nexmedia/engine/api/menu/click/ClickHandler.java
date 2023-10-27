@@ -39,6 +39,11 @@ public class ClickHandler<E extends Enum<E>> {
     }
 
     @NotNull
+    public Map<Enum<E>, ItemClick> getClicks() {
+        return clicks;
+    }
+
+    @NotNull
     public ClickHandler<E> addClick(@NotNull E type, @NotNull ItemClick click) {
         this.clicks.put(type, click);
         return this;

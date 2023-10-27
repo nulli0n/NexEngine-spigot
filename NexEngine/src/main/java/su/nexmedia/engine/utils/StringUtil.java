@@ -3,12 +3,16 @@ package su.nexmedia.engine.utils;
 import org.bukkit.Color;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.utils.random.Rnd;
+import su.nexmedia.engine.utils.regex.RegexUtil;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StringUtil {
+
+    private static final Pattern ID_PATTERN = Pattern.compile("[^a-zA-Zа-яА-Я_0-9]");
 
     @NotNull
     public static String oneSpace(@NotNull String str) {
@@ -205,7 +209,9 @@ public class StringUtil {
 
     @NotNull
     public static String lowerCaseUnderscore(@NotNull String str) {
-        return Colorizer.restrip(str).toLowerCase().replace(" ", "_");
+        Matcher matcher = RegexUtil.getMatcher(ID_PATTERN, Colorizer.restrip(str).toLowerCase().replace(" ", "_"));
+        return matcher.replaceAll("");
+        //return Colorizer.restrip(str).toLowerCase().replace(" ", "_").replaceAll(ID_PATTERN, "");
     }
 
     @NotNull

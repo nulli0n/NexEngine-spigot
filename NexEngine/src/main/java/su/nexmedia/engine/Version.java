@@ -12,7 +12,7 @@ public enum Version {
     @Deprecated V1_19_R1("1.19.2", true),
     @Deprecated V1_19_R2("1.19.3", true),
     V1_19_R3("1.19.4"),
-    V1_20_R1("1.20.1"),
+    V1_20_R1("1.20.1", true),
     V1_20_R2("1.20.2"),
     UNKNOWN("Unknown", true),
     // API-Version in plugin.yml won't allow to load this on lower version, so

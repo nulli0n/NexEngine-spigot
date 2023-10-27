@@ -115,9 +115,8 @@ public class JYML extends YamlConfiguration {
         try {
             this.save(this.file);
         }
-        catch (IOException e) {
-            EngineUtils.ENGINE.error("Could not save config: " + file.getName());
-            e.printStackTrace();
+        catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 
@@ -136,8 +135,8 @@ public class JYML extends YamlConfiguration {
             this.isChanged = false;
             return true;
         }
-        catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+        catch (IOException | InvalidConfigurationException exception) {
+            exception.printStackTrace();
         }
         return false;
     }
