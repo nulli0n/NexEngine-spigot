@@ -52,7 +52,7 @@ public class LangMessage {
     }
 
     private final NexPlugin<?> plugin;
-    private final PlaceholderMap placeholderMap;
+    @Deprecated private final PlaceholderMap placeholderMap;
 
     private String msgRaw;
     private String msgLocalized;

@@ -20,8 +20,8 @@ import java.util.UUID;
 
 public class PDCUtil {
 
-    public static final PersistentDataType<byte[], double[]> DOUBLE_ARRAY = new DoubleArray();
-    public static final PersistentDataType<byte[], String[]> STRING_ARRAY = new StringArray(StandardCharsets.UTF_8);
+    @Deprecated public static final PersistentDataType<byte[], double[]> DOUBLE_ARRAY = new DoubleArray();
+    @Deprecated public static final PersistentDataType<byte[], String[]> STRING_ARRAY = new StringArray(StandardCharsets.UTF_8);
     public static final PersistentDataType<byte[], UUID>     UUID         = new UUIDDataType();
 
     @NotNull
@@ -81,18 +81,22 @@ public class PDCUtil {
         set(holder, PersistentDataType.STRING, key, value);
     }
 
+    @Deprecated
     public static void set(@NotNull ItemStack holder, @NotNull NamespacedKey key, String[] value) {
         set(holder, STRING_ARRAY, key, value);
     }
 
+    @Deprecated
     public static void set(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key, String[] value) {
         set(holder, STRING_ARRAY, key, value);
     }
 
+    @Deprecated
     public static void set(@NotNull ItemStack holder, @NotNull NamespacedKey key, double[] value) {
         set(holder, DOUBLE_ARRAY, key, value);
     }
 
+    @Deprecated
     public static void set(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key, double[] value) {
         set(holder, DOUBLE_ARRAY, key, value);
     }
@@ -160,21 +164,25 @@ public class PDCUtil {
     }
 
     @NotNull
+    @Deprecated
     public static Optional<String[]> getStringArray(@NotNull ItemStack holder, @NotNull NamespacedKey key) {
         return get(holder, STRING_ARRAY, key);
     }
 
     @NotNull
+    @Deprecated
     public static Optional<String[]> getStringArray(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key) {
         return get(holder, STRING_ARRAY, key);
     }
 
     @NotNull
+    @Deprecated
     public static Optional<double[]> getDoubleArray(@NotNull ItemStack holder, @NotNull NamespacedKey key) {
         return get(holder, DOUBLE_ARRAY, key);
     }
 
     @NotNull
+    @Deprecated
     public static Optional<double[]> getDoubleArray(@NotNull PersistentDataHolder holder, @NotNull NamespacedKey key) {
         return get(holder, DOUBLE_ARRAY, key);
     }
@@ -229,6 +237,7 @@ public class PDCUtil {
         return get(holder, UUID, key);
     }
 
+    @Deprecated
     public static class DoubleArray implements PersistentDataType<byte[], double[]> {
 
         @Override
@@ -263,6 +272,7 @@ public class PDCUtil {
         }
     }
 
+    @Deprecated
     public static class StringArray implements PersistentDataType<byte[], String[]> {
 
         private final Charset charset;

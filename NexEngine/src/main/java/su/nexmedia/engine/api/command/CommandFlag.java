@@ -17,8 +17,7 @@ public class CommandFlag<T> {
 
     public CommandFlag(@NotNull String name, @NotNull Function<String, T> parser) {
         this.name = name;
-        //this.pattern = Pattern.compile("-" + name + "(\\s|$)((?=-)|\\S*)"); valid
-        this.pattern = Pattern.compile("-" + name + "(\\s|$)([^-]*)"); // experimantal
+        this.pattern = Pattern.compile("-" + name + "(\\s|$)([^-]*)");
         this.parser = parser;
     }
 

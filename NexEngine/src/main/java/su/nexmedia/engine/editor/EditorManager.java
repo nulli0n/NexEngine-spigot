@@ -1,6 +1,5 @@
 package su.nexmedia.engine.editor;
 
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +18,8 @@ import su.nexmedia.engine.utils.message.NexMessage;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static su.nexmedia.engine.utils.Colors2.*;
 
 public class EditorManager extends AbstractManager<NexEngine> {
 
@@ -103,27 +104,27 @@ public class EditorManager extends AbstractManager<NexEngine> {
         boolean isLastPage = page == pages;
         boolean isFirstPage = page == 1;
         boolean fixCommand = Version.isAbove(Version.V1_18_R2);
-        String prefix = ChatColor.DARK_GRAY + "> ";
-        String header = ChatColor.GOLD + "=".repeat(8) + "[ " + ChatColor.YELLOW + "Value Helper" + ChatColor.GOLD + " ]" + "=".repeat(8);
-        String footer = ChatColor.GOLD + "=".repeat(9) + ChatColor.GRAY + " [<] " + ChatColor.YELLOW + page + ChatColor.GOLD + "/" + ChatColor.YELLOW + pages + ChatColor.GRAY + " [>] " + ChatColor.GOLD + "=".repeat(9);
+        String prefix = DARK_GRAY + "> ";
+        String header = ORANGE + "=".repeat(8) + "[ " + YELLOW + "Value Helper" + ORANGE + " ]" + "=".repeat(8);
+        String footer = ORANGE + "=".repeat(9) + GRAY + " [<] " + YELLOW + page + ORANGE + "/" + YELLOW + pages + GRAY + " [>] " + ORANGE + "=".repeat(9);
 
         List<String> items = new ArrayList<>(values.stream().skip(skip).limit(perPage).toList());
         List<String> prefixed = items.stream().map(str -> prefix + str).toList();
 
         NexMessage message = new NexMessage(String.join("\n", prefixed) + "\n" + footer);
         items.forEach(item -> {
-            NexComponent component = message.addComponent(Colorizer.strip(item), ChatColor.GREEN + item);
-            component.showText(ChatColor.GRAY + "Click me to select " + ChatColor.AQUA + item);
+            NexComponent component = message.addComponent(Colorizer.strip(item), GREEN + item);
+            component.showText(GRAY + "Click me to select " + CYAN + item);
 
             if (autoRun && fixCommand && !item.startsWith("/")) item = "/" + item;
 
             if (autoRun) component.runCommand(Colorizer.strip(item));
             else component.suggestCommand(Colorizer.strip(item));
         });
-        if (!isFirstPage) message.addComponent("[<]", ChatColor.RED + "[<]").showText(ChatColor.GRAY + "Previous Page").runCommand("/" + VALUES + " " + (page - 1) + " " + autoRun);
-        if (!isLastPage) message.addComponent("[>]", ChatColor.RED + "[>]").showText(ChatColor.GRAY + "Next Page").runCommand("/" + VALUES + " " + (page + 1) + " " + autoRun);
+        if (!isFirstPage) message.addComponent("[<]", LIGHT_RED + "[<]").showText(GRAY + "Previous Page").runCommand("/" + VALUES + " " + (page - 1) + " " + autoRun);
+        if (!isLastPage) message.addComponent("[>]", LIGHT_RED + "[>]").showText(GRAY + "Next Page").runCommand("/" + VALUES + " " + (page + 1) + " " + autoRun);
 
-        player.sendMessage(header);
+        player.sendMessage(Colorizer.hex(header));
         message.send(player);
     }
 

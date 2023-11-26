@@ -141,6 +141,8 @@ public class CollectionsUtil {
     @NotNull
     public static <T> T shifted(@NotNull List<T> values, int currentIndex, int shift) {
         int index = currentIndex + shift;
-        return values.get(index >= values.size() || index < 0 ? 0 : index);
+        if (index < 0) return values.get(values.size() - 1);
+
+        return values.get(index >= values.size() ? 0 : index);
     }
 }

@@ -122,15 +122,18 @@ public class ItemUtil {
         }
     }
 
+    @Deprecated
     public static void setPlaceholderAPI(@NotNull Player player, @NotNull ItemStack item) {
         if (!EngineUtils.hasPlaceholderAPI()) return;
         replace(item, str -> Colorizer.apply(PlaceholderAPI.setPlaceholders(player, str)));
     }
 
+    @Deprecated
     public static void replace(@NotNull ItemStack item, @NotNull UnaryOperator<String> replacer) {
         mapMeta(item, meta -> replace(meta, replacer));
     }
 
+    @Deprecated
     public static void replace(@NotNull ItemMeta meta, @NotNull UnaryOperator<String> replacer) {
         if (meta.hasDisplayName()) {
             meta.setDisplayName(replacer.apply(meta.getDisplayName()));
@@ -149,6 +152,7 @@ public class ItemUtil {
         }
     }
 
+    @Deprecated
     public static void replaceLore(@NotNull ItemStack item, @NotNull String placeholder, @NotNull List<String> replacer) {
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;

@@ -11,6 +11,7 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+@Deprecated
 public final class ResourceExtractor {
 
     private final NexPlugin<?> plugin;

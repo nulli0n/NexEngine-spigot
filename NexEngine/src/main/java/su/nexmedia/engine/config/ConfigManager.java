@@ -37,11 +37,13 @@ public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
             "Localized plugin name. It's used in messages and with internal placeholders.")
             .read(config);
 
+        // TODO plugin.loadConfig(ConfigDefaults)
+
         this.pluginPrefix = JOption.create("Plugin.Prefix",
             Colors.YELLOW + Placeholders.PLUGIN_NAME + Colors.GRAY + " » ",
             "Plugin prefix. Used in messages.",
-            "You can use " + Placeholders.PLUGIN_NAME_LOCALIZED + " placeholder for a plugin name.")
-            .read(config).replace(Placeholders.PLUGIN_NAME, this.pluginName);
+            "You can use " + Placeholders.PLUGIN_NAME_LOCALIZED + " placeholder for a plugin name."
+        ).read(config).replace(Placeholders.PLUGIN_NAME, this.pluginName);
 
         this.commandAliases = JOption.create("Plugin.Command_Aliases", plugin.getName().toLowerCase(),
             "Command names that will be registered as main plugin commands.",
@@ -67,14 +69,17 @@ public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         return this.config;
     }
 
+    @Deprecated
     public void extractResources(@NotNull String folder) {
         this.extractResources(folder,plugin.getDataFolder() + folder, false);
     }
 
+    @Deprecated
     public void extractResources(@NotNull String jarPath, @NotNull String toPath) {
         this.extractResources(jarPath, toPath, false);
     }
 
+    @Deprecated
     public void extractResources(@NotNull String jarPath, @NotNull String toPath, boolean override) {
         File destination = new File(toPath);
         if (destination.exists() && !override) return;

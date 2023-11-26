@@ -14,6 +14,7 @@ import su.nexmedia.engine.utils.regex.RegexUtil;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -109,7 +110,7 @@ public class NexMessage {
     // Фикс форматирования компонентов на основе https://github.com/SpigotMC/BungeeCord/pull/3344/
     // Так как этот фикс не встроен в API спигота, и все равно работает не так, как нужно, будем использовать свой.
 
-    private static final Set<BaseComponent> TO_RETAIN = new HashSet<>();
+    private static final Set<BaseComponent> TO_RETAIN = ConcurrentHashMap.newKeySet();
     private static final Method             GET_DUMMY = Reflex.getMethod(ComponentBuilder.class, "getDummy");
 
     @NotNull

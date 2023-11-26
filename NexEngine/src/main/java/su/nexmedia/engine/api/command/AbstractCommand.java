@@ -11,10 +11,9 @@ import su.nexmedia.engine.api.placeholder.Placeholder;
 import su.nexmedia.engine.api.placeholder.PlaceholderMap;
 import su.nexmedia.engine.lang.EngineLang;
 import su.nexmedia.engine.utils.Placeholders;
-import su.nexmedia.engine.utils.regex.RegexUtil;
+import su.nexmedia.engine.utils.regex.TimedMatcher;
 
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -94,10 +93,11 @@ public abstract class AbstractCommand<P extends NexPlugin<P>> implements Placeho
             String name = flag.getName();
             Pattern pattern = flag.getPattern();
 
-            Matcher matcher = RegexUtil.getMatcher(pattern, argLine);
-            if (RegexUtil.matcherFind(matcher)) {
-                result.getFlags().put(flag, matcher.group(2).trim());
-                argLine = argLine.replace(matcher.group(0), "");
+            TimedMatcher matcher = TimedMatcher.create(pattern, argLine, 100);
+            matcher.setDebug(true);
+            if (matcher.find()) {
+                result.getFlags().put(flag, matcher.getMatcher().group(2).trim());
+                argLine = argLine.replace(matcher.getMatcher().group(0), "");
             }
         }
         result.setArgs(argLine.isEmpty() ? new String[0] : argLine.trim().split(" "));

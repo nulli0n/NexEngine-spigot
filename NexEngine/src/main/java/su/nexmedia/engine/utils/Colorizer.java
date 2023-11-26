@@ -12,8 +12,9 @@ import java.util.stream.Collectors;
 
 public class Colorizer {
 
-    public static final Pattern PATTERN_HEX      = Pattern.compile("#([A-Fa-f0-9]{6})");
-    public static final Pattern PATTERN_GRADIENT = Pattern.compile("<gradient:" + PATTERN_HEX.pattern() + ">(.*?)</gradient:" + PATTERN_HEX.pattern() + ">");
+    public static final Pattern PATTERN_HEX          = Pattern.compile("#([A-Fa-f0-9]{6})");
+    public static final Pattern PATTERN_HEX_BRACKETS = Pattern.compile("<#([A-Fa-f0-9]{6})>");
+    public static final Pattern PATTERN_GRADIENT     = Pattern.compile("<gradient:" + PATTERN_HEX.pattern() + ">(.*?)</gradient:" + PATTERN_HEX.pattern() + ">");
 
     @NotNull
     public static String apply(@NotNull String str) {

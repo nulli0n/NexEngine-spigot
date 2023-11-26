@@ -29,33 +29,26 @@ public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
     }
 
     public void load() {
-        if (!this.isCodeCreation() || this.cfg.contains(this.itemSection)) {
-            this.loadConfig();
-        }
-        else {
-            this.loadDefaults();
-            this.write();
-        }
-
-        List<String> comments = new ArrayList<>();
-        comments.add("=".repeat(20) + " GUI CONTENT " + "=".repeat(20));
-        comments.add("You can freely edit items in this section as you wish (add, remove, modify items).");
-        comments.add("Get some tips in documentation: " + Placeholders.WIKI_MENU_URL);
-        comments.add("The following values are available for button types:");
-        this.handlers.forEach((clazz, handler) -> {
-            comments.addAll(handler.getClicks().keySet().stream().map(e -> "- " + e.name()).toList());
-        });
-        comments.add("=".repeat(50));
-        this.cfg.setComments(this.itemSection, comments);
-        this.cfg.saveChanges();
+        this.loadConfig();
     }
 
     public boolean isCodeCreation() {
         return false;
     }
 
+    @Deprecated
     public void loadDefaults() {
 
+    }
+
+    @NotNull
+    protected MenuOptions createDefaultOptions() {
+        return new MenuOptions("", 27, InventoryType.CHEST);
+    }
+
+    @NotNull
+    protected List<MenuItem> createDefaultItems() {
+        return new ArrayList<>();
     }
 
     public void loadConfig() {
@@ -63,20 +56,31 @@ public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
         int oldSize = cfg.getInt("Size", 0);
         InventoryType oldType = cfg.getEnum("Inventory_Type", InventoryType.class);
 
-        String title = JOption.create("Settings.Title", oldTitle != null ? oldTitle : "",
+        boolean isCodeCreation = this.isCodeCreation() && !this.cfg.contains(this.itemSection);
+        MenuOptions options;
+
+        if (isCodeCreation) {
+            options = this.createDefaultOptions();
+        }
+        else {
+            options = new MenuOptions(oldTitle != null ? oldTitle : "", oldSize != 0 ? oldSize : 27, oldType != null ? oldType : InventoryType.CHEST);
+        }
+
+        String title = JOption.create("Settings.Title", options.getTitle(),
             "Sets the GUI title."
         ).mapReader(Colorizer::apply).read(cfg);
 
-        int size = JOption.create("Settings.Size", oldSize != 0 ? oldSize : 27,
-            "Sets the GUI size. Must be multiply of 9."
+        int size = JOption.create("Settings.Size", options.getSize(),
+            "Sets the GUI size. Must be multiply of 9.",
+            "Useful for '" + InventoryType.CHEST.name() + "' Inventory Type only."
         ).read(cfg);
 
-        InventoryType type = JOption.create("Settings.Inventory_Type", InventoryType.class, oldType != null ? oldType : InventoryType.CHEST,
+        InventoryType type = JOption.create("Settings.Inventory_Type", InventoryType.class, options.getType(),
             "Sets the GUI type.",
             "https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/inventory/InventoryType.html"
         ).read(cfg);
 
-        int autoRefresh = JOption.create("Settings.Auto_Refresh", 0,
+        int autoRefresh = JOption.create("Settings.Auto_Refresh", options.getAutoRefresh(),
             "Sets the GUI auto-refresh interval (in seconds). Set this to 0 to disable."
         ).read(cfg);
 
@@ -85,16 +89,44 @@ public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
         this.getOptions().setType(type);
         this.getOptions().setAutoRefresh(autoRefresh);
 
+        this.loadAdditional();
+
         this.cfg.remove("Title");
         this.cfg.remove("Size");
         this.cfg.remove("Inventory_Type");
+
+        if (isCodeCreation) {
+            AtomicInteger count = new AtomicInteger();
+            this.createDefaultItems().forEach(menuItem -> {
+                String name = StringUtil.lowerCaseUnderscore(ItemUtil.getItemName(menuItem.getItem()));
+
+                this.writeItem(menuItem, this.itemSection + "." + name + "_" + count.incrementAndGet());
+            });
+        }
 
         this.cfg.getSection(this.itemSection).forEach(sId -> {
             MenuItem menuItem = this.readItem(this.itemSection + "." + sId);
             this.addItem(menuItem);
         });
+
+        List<String> comments = new ArrayList<>();
+        comments.add("=".repeat(20) + " GUI CONTENT " + "=".repeat(20));
+        comments.add("You can freely edit items in this section as you wish (add, remove, modify items).");
+        comments.add("Get some tips in documentation: " + Placeholders.WIKI_MENU_URL);
+        comments.add("The following values are available for button types:");
+        this.handlers.forEach((clazz, handler) -> {
+            comments.addAll(handler.getClicks().keySet().stream().map(e -> "- " + e.name()).sorted(String::compareTo).toList());
+        });
+        comments.add("=".repeat(50));
+        this.cfg.setComments(this.itemSection, comments);
+        this.cfg.saveChanges();
     }
 
+    protected void loadAdditional() {
+
+    }
+
+    /*@Deprecated
     protected void write() {
         this.cfg.set("Settings.Title", this.getOptions().getTitle());
         this.cfg.set("Settings.Size", this.getOptions().getSize());
@@ -107,7 +139,7 @@ public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
 
             this.writeItem(menuItem, this.itemSection + "." + name + "_" + count.incrementAndGet());
         });
-    }
+    }*/
 
     @Override
     public void clear() {

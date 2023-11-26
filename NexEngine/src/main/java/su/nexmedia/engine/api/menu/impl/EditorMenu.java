@@ -87,15 +87,15 @@ public class EditorMenu<P extends NexPlugin<P>, T> extends Menu<P> {
         return menuItem;
     }
 
-    protected void handleInput(@NotNull MenuViewer viewer, @NotNull LangKey prompt, @NotNull InputHandler handler) {
+    public void handleInput(@NotNull MenuViewer viewer, @NotNull LangKey prompt, @NotNull InputHandler handler) {
         this.handleInput(viewer.getPlayer(), prompt, handler);
     }
 
-    protected void handleInput(@NotNull Player player, @NotNull LangKey prompt, @NotNull InputHandler handler) {
+    public void handleInput(@NotNull Player player, @NotNull LangKey prompt, @NotNull InputHandler handler) {
         this.handleInput(player, this.plugin.getMessage(prompt), handler);
     }
 
-    protected void handleInput(@NotNull Player player, @NotNull LangMessage prompt, @NotNull InputHandler handler) {
+    public void handleInput(@NotNull Player player, @NotNull LangMessage prompt, @NotNull InputHandler handler) {
         EditorManager.prompt(player, prompt.getLocalized());
         EditorManager.startEdit(player, handler);
         this.plugin.runTask(task -> player.closeInventory());

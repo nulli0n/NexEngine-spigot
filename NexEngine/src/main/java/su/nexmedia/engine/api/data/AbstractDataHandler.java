@@ -87,7 +87,7 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
             this.saveTask.stop();
             this.saveTask = null;
         }
-        this.onSynchronize();
+        //this.onSynchronize();
         this.onSave();
         this.getConnector().close();
     }

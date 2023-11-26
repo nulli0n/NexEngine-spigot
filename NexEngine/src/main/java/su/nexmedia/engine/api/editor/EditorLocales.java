@@ -108,7 +108,7 @@ public class EditorLocales {
 
         @NotNull
         public Builder click(@NotNull String click, @NotNull String action) {
-            return this.addLore(GRAY + "(" + WHITE + click + GRAY + " to " + action + GRAY + ")");
+            return this.addLore("", GRAY + "(" + WHITE + click + GRAY + " to " + action + GRAY + ")");
         }
 
         @NotNull

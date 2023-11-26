@@ -36,10 +36,19 @@ public class JOption<T> {
     }
 
     public JOption(@NotNull String path, @NotNull Reader<T> reader, @NotNull T defaultValue, @Nullable String... description) {
+        this(path, null, reader, defaultValue, description);
+    }
+
+    public JOption(@NotNull String path, @Nullable Writer<T> writer, @NotNull Reader<T> reader, @NotNull T defaultValue, @Nullable String... description) {
         this.path = path;
         this.description = description == null ? new String[0] : description;
         this.reader = reader;
         this.defaultValue = defaultValue;
+    }
+
+    @NotNull
+    public static <T> JOption<T> create(@NotNull ConfigKey<T> key, @NotNull T defaultValue, @Nullable String... description) {
+        return new JOption<>(key.getPath(), key.getWriter(), key.getReader(), defaultValue, description);
     }
 
     @NotNull

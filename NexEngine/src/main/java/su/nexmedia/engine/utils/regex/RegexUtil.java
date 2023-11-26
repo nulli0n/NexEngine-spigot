@@ -1,33 +1,13 @@
 package su.nexmedia.engine.utils.regex;
 
-import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.utils.EngineUtils;
 
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Deprecated
 public class RegexUtil {
-
-    @Deprecated public static final Pattern PATTERN_EN = Pattern.compile("[a-zA-Z0-9_]*");
-    @Deprecated public static final Pattern PATTERN_RU = Pattern.compile("[a-zA-Zа-яА-Я0-9_]*");
-    @Deprecated public static final Pattern PATTERN_IP = Pattern.compile(
-        "(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)");
-
-    @Deprecated
-    public static boolean matchesEn(@NotNull String msg) {
-        return matches(PATTERN_EN, msg);
-    }
-
-    @Deprecated
-    public static boolean matchesEnRu(@NotNull String msg) {
-        return matches(PATTERN_RU, msg);
-    }
-
-    @Deprecated
-    public static boolean isIpAddress(@NotNull String str) {
-        return matches(PATTERN_IP, str);
-    }
 
     public static boolean matches(@NotNull Pattern pattern, @NotNull String text) {
         Matcher matcher = getMatcher(pattern, text);
@@ -54,8 +34,8 @@ public class RegexUtil {
         try {
             return matcher.find();
         }
-        catch (MatcherTimeoutException e) {
-            Bukkit.getLogger().log(Level.SEVERE, "Matcher timeout error: '" + matcher.pattern().pattern() + "' (" + e.getTimeout() + "ms)");
+        catch (MatcherTimeoutException exception) {
+            EngineUtils.ENGINE.warn("Matcher " + exception.getTimeout() + "ms timeout error for: '" + matcher.pattern().pattern() + "'");
             return false;
         }
     }

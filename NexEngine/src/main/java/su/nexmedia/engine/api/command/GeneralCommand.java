@@ -105,14 +105,14 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
         AbstractCommand<P> command = this.findChildren(args);
         if (!command.hasPermission(sender)) return Collections.emptyList();
 
+        List<String> list = new ArrayList<>();
         if (!command.getChildrens().isEmpty()) {
-            List<String> list = new ArrayList<>();
             command.getChildrens().stream().filter(child -> child.hasPermission(sender))
                 .forEach(child -> list.addAll(Arrays.asList(child.getAliases())));
-            return StringUtil.getByPartialMatches(list, args[args.length - 1], 2);
         }
-
-        List<String> list = command.getTab(player, command.equals(this) ? (args.length) : (args.length - 1), args);
+        else {
+            list.addAll(command.getTab(player, command.equals(this) ? (args.length) : (args.length - 1), args));
+        }
         return StringUtil.getByPartialMatches(list, args[args.length - 1], 2);
     }
 }

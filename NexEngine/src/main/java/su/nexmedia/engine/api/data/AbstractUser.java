@@ -31,11 +31,7 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
     }
 
     public void onUnload() {
-        Player player = this.getPlayer();
-        if (player != null) {
-            this.name = player.getName();
-            this.setLastOnline(System.currentTimeMillis());
-        }
+
     }
 
     @SuppressWarnings("unchecked")
@@ -60,6 +56,10 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
     @NotNull
     public final String getName() {
         return this.name;
+    }
+
+    void setName(String name) {
+        this.name = name;
     }
 
     public final long getDateCreated() {

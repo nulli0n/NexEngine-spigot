@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+@Deprecated
 public class Scaler {
 
     private final int                      levelMin;

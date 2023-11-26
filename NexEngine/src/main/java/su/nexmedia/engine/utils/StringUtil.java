@@ -2,17 +2,18 @@ package su.nexmedia.engine.utils;
 
 import org.bukkit.Color;
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.config.EngineConfig;
 import su.nexmedia.engine.utils.random.Rnd;
-import su.nexmedia.engine.utils.regex.RegexUtil;
+import su.nexmedia.engine.utils.regex.TimedMatcher;
 
 import java.util.*;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StringUtil {
 
-    private static final Pattern ID_PATTERN = Pattern.compile("[^a-zA-Zа-яА-Я_0-9]");
+    private static final Pattern ID_PATTERN = Pattern.compile("[<>\\%\\$\\!\\@\\#\\^\\&\\*\\(\\)\\,\\.\\'\\:\\;\\\"\\}\\]\\{\\[\\=\\+\\`\\~\\\\]");//Pattern.compile("[^a-zA-Zа-яА-Я_0-9]");
+    private static final Pattern ID_STRICT_PATTERN = Pattern.compile("[^a-zA-Zа-яА-Я_0-9]");
 
     @NotNull
     public static String oneSpace(@NotNull String str) {
@@ -209,9 +210,34 @@ public class StringUtil {
 
     @NotNull
     public static String lowerCaseUnderscore(@NotNull String str) {
-        Matcher matcher = RegexUtil.getMatcher(ID_PATTERN, Colorizer.restrip(str).toLowerCase().replace(" ", "_"));
+        return lowerCaseUnderscore(str, -1);
+    }
+
+    @NotNull
+    public static String lowerCaseUnderscore(@NotNull String str, int length) {
+        return lowerCaseAndClean(str, ID_PATTERN, length);
+    }
+
+    @NotNull
+    public static String lowerCaseUnderscoreStrict(@NotNull String str) {
+        return lowerCaseUnderscoreStrict(str, -1);
+    }
+
+    @NotNull
+    public static String lowerCaseUnderscoreStrict(@NotNull String str, int length) {
+        return lowerCaseAndClean(str, ID_STRICT_PATTERN, length);
+    }
+
+    @NotNull
+    private static String lowerCaseAndClean(@NotNull String str, @NotNull Pattern pattern, int length) {
+        String clean = Colorizer.restrip(str).toLowerCase().replace(" ", "_");
+        if (length > 0 && clean.length() > length) {
+            clean = clean.substring(0, length);
+        }
+
+        TimedMatcher matcher = TimedMatcher.create(pattern, clean, 200);
+        //Matcher matcher = RegexUtil.getMatcher(ID_STRICT_PATTERN, clean);
         return matcher.replaceAll("");
-        //return Colorizer.restrip(str).toLowerCase().replace(" ", "_").replaceAll(ID_PATTERN, "");
     }
 
     @NotNull
@@ -221,37 +247,34 @@ public class StringUtil {
 
     @NotNull
     public static String capitalizeFully(@NotNull String str) {
-        if (str.length() != 0) {
-            str = str.toLowerCase();
-            return capitalize(str);
-        }
-        return str;
+        if (str.length() == 0) return str;
+
+        return capitalize(str.toLowerCase());
     }
 
     @NotNull
     public static String capitalize(@NotNull String str) {
-        if (str.length() != 0) {
-            int strLen = str.length();
-            StringBuilder buffer = new StringBuilder(strLen);
-            boolean capitalizeNext = true;
+        if (str.length() == 0) return str;
 
-            for (int i = 0; i < strLen; ++i) {
-                char ch = str.charAt(i);
-                if (Character.isWhitespace(ch)) {
-                    buffer.append(ch);
-                    capitalizeNext = true;
-                }
-                else if (capitalizeNext) {
-                    buffer.append(Character.toTitleCase(ch));
-                    capitalizeNext = false;
-                }
-                else {
-                    buffer.append(ch);
-                }
+        int length = str.length();
+        StringBuilder builder = new StringBuilder(length);
+        boolean capitalizeNext = true;
+
+        for (int index = 0; index < length; ++index) {
+            char letter = str.charAt(index);
+            if (Character.isWhitespace(letter)) {
+                builder.append(letter);
+                capitalizeNext = true;
             }
-            return buffer.toString();
+            else if (capitalizeNext) {
+                builder.append(Character.toTitleCase(letter));
+                capitalizeNext = false;
+            }
+            else {
+                builder.append(letter);
+            }
         }
-        return str;
+        return builder.toString();
     }
 
     @NotNull
@@ -287,15 +310,41 @@ public class StringUtil {
      */
     @NotNull
     public static List<String> getByPartialMatches(@NotNull List<String> results, @NotNull String input, int steps) {
+        if (input.length() > EngineConfig.TAB_COMPLETER_REGEX_MAX_LENGTH.get()) {
+            return copyPartialMatches(input, results);
+        }
+
         StringBuilder builder = new StringBuilder();
         for (char letter : input.toLowerCase().toCharArray()) {
             builder.append(Pattern.quote(String.valueOf(letter))).append("(?:.*)");
         }
 
         Pattern pattern = Pattern.compile(builder.toString());
-        List<String> list = new ArrayList<>(results.stream().filter(orig -> pattern.matcher(orig.toLowerCase()).find()).toList());
-        Collections.sort(list);
-        return list;
+        return new ArrayList<>(results.stream()
+            .filter(orig -> {
+                TimedMatcher matcher = TimedMatcher.create(pattern, orig.toLowerCase(), EngineConfig.TAB_COMPLETER_REGEX_TIMEOUT.get());
+                return matcher.find();
+                //pattern.matcher(orig.toLowerCase()).find()
+            })
+            .sorted(String::compareTo)
+            .toList());
+    }
+
+    @NotNull
+    private static List<String> copyPartialMatches(@NotNull String token, @NotNull Collection<String> originals) {
+        List<String> collection = new ArrayList<>();
+
+        for (String string : originals) {
+            if (startsWithIgnoreCase(string, token)) {
+                collection.add(string);
+            }
+        }
+
+        return collection;
+    }
+
+    private static boolean startsWithIgnoreCase(@NotNull String string, @NotNull String prefix) {
+        return string.length() >= prefix.length() && string.regionMatches(true, 0, prefix, 0, prefix.length());
     }
 
     @NotNull

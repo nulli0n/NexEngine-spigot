@@ -15,6 +15,7 @@ import su.nexmedia.engine.utils.PlayerUtil;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends AbstractUser<P>> extends AbstractManager<P> {
 
@@ -24,7 +25,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     public AbstractUserManager(@NotNull P plugin, @NotNull UserDataHolder<P, U> dataHolder) {
         super(plugin);
         this.dataHolder = dataHolder;
-        this.usersLoaded = new HashMap<>();
+        this.usersLoaded = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -126,15 +127,26 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     }
 
     public final void unloadUser(@NotNull UUID uuid) {
-        U user = this.getUsersLoadedMap().remove(uuid);
+        U user = this.getUsersLoadedMap().get(uuid);
         if (user == null) return;
 
         this.unloadUser(user);
     }
 
     public void unloadUser(@NotNull U user) {
-        user.onUnload();
+        Player player = user.getPlayer();
+        if (player != null) {
+            user.setName(player.getName());
+            user.setLastOnline(System.currentTimeMillis());
+        }
         this.saveUser(user);
+
+        this.plugin.runTaskLaterAsync(task -> {
+            if (!user.isOnline()) {
+                this.getUsersLoadedMap().remove(user.getId());
+                user.onUnload();
+            }
+        }, 40L);
     }
 
     public void saveUser(@NotNull U user) {

@@ -6,6 +6,8 @@ import org.bukkit.inventory.Inventory;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.utils.Colorizer;
 
+import java.util.function.UnaryOperator;
+
 public class MenuOptions {
 
     private String title;
@@ -49,6 +51,10 @@ public class MenuOptions {
 
     public void setTitle(@NotNull String title) {
         this.title = Colorizer.apply(title);
+    }
+
+    public void editTitle(@NotNull UnaryOperator<String> function) {
+        this.setTitle(function.apply(this.getTitle()));
     }
 
     public int getSize() {
