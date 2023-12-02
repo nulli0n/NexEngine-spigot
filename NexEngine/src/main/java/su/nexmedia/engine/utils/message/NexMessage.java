@@ -1,14 +1,19 @@
 package su.nexmedia.engine.utils.message;
 
 import com.google.common.base.Preconditions;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.utils.Colorizer;
+import su.nexmedia.engine.utils.EngineUtils;
 import su.nexmedia.engine.utils.Reflex;
 import su.nexmedia.engine.utils.regex.RegexUtil;
 
@@ -96,6 +101,18 @@ public class NexMessage {
             for (String line : this.message.split("\n")) {
                 player.spigot().sendMessage(this.build(line));
             }
+        }
+    }
+
+    public void sendByBungeeCord(String playerName) {
+        for (String line : this.message.split("\n")) {
+            ByteArrayDataOutput out = ByteStreams.newDataOutput();
+            out.writeUTF("MessageRaw");
+            out.writeUTF(playerName);
+            out.writeUTF(ComponentSerializer.toString(this.build(line)));
+
+            System.out.println(playerName + ": " + ComponentSerializer.toString(this.build(line)));
+            Bukkit.getServer().sendPluginMessage(EngineUtils.ENGINE, "BungeeCord" , out.toByteArray());
         }
     }
 

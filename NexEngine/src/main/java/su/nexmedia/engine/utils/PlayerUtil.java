@@ -99,6 +99,10 @@ public class PlayerUtil {
         NexParser.toMessage(message).send(sender);
     }
 
+    public static void sendBungeeCordMessage(@NotNull String playerName, @NotNull String message) {
+        NexParser.toMessage(message).sendByBungeeCord(playerName);
+    }
+
     public static void sendActionBar(@NotNull Player player, @NotNull String msg) {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, NexParser.toMessage(msg).build());
     }

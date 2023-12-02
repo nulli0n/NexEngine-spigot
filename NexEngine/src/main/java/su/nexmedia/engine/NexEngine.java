@@ -41,6 +41,8 @@ public class NexEngine extends NexPlugin<NexEngine> {
 
         this.editorManager = new EditorManager(this);
         this.editorManager.setup();
+
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
     }
 
     @Override
@@ -51,6 +53,8 @@ public class NexEngine extends NexPlugin<NexEngine> {
 
         if (EngineUtils.hasVault()) VaultHook.shutdown();
         PlayerBlockTracker.shutdown();
+
+        this.getServer().getMessenger().unregisterOutgoingPluginChannel(this);
     }
 
     @Override
