@@ -5,6 +5,7 @@ import su.nexmedia.engine.api.command.GeneralCommand;
 import su.nexmedia.engine.api.editor.EditorLocales;
 import su.nexmedia.engine.api.menu.impl.MenuListener;
 import su.nexmedia.engine.api.menu.impl.MenuRefreshTask;
+import su.nexmedia.engine.command.list.CheckPermCommand;
 import su.nexmedia.engine.command.list.ReloadSubCommand;
 import su.nexmedia.engine.config.EngineConfig;
 import su.nexmedia.engine.editor.EditorManager;
@@ -63,6 +64,7 @@ public class NexEngine extends NexPlugin<NexEngine> {
     @Override
     public void registerCommands(@NotNull GeneralCommand<NexEngine> mainCommand) {
         mainCommand.addChildren(new ReloadSubCommand<>(this, Placeholders.WILDCARD));
+        mainCommand.addChildren(new CheckPermCommand(this));
     }
 
     @Override

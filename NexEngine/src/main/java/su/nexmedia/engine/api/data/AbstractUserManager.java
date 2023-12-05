@@ -16,8 +16,12 @@ import su.nexmedia.engine.utils.PlayerUtil;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends AbstractUser<P>> extends AbstractManager<P> {
+
+    // TODO user option cachedUntil, isChacheExpired
+    // TODO engine config to precache user names & uuids to fast check user existance.
 
     private final UserDataHolder<P, U> dataHolder;
     private final Map<UUID, U> usersLoaded;
@@ -81,8 +85,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         Player player = PlayerUtil.getPlayer(name);
         if (player != null) return this.getUserData(player);
 
-        U user = this.getUsersLoaded().stream().filter(userMemory -> userMemory.getName().equalsIgnoreCase(name))
-            .findFirst().orElse(null);
+        U user = this.getUserLoaded(name);
         if (user != null) return user;
 
         user = this.dataHolder.getData().getUser(name);
@@ -120,6 +123,38 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
 
     public final CompletableFuture<U> getUserDataAsync(@NotNull UUID uuid) {
         return CompletableFuture.supplyAsync(() -> this.getUserData(uuid));
+    }
+
+    public void getUserDataAndPerform(@NotNull String name, Consumer<U> consumer) {
+        U user = this.getUserLoaded(name);
+        if (user != null) {
+            consumer.accept(user);
+        }
+        else this.getUserDataAsync(name).thenAccept(user2 -> this.plugin.runTask(task -> consumer.accept(user2)));
+    }
+
+    public void getUserDataAndPerform(@NotNull UUID uuid, Consumer<U> consumer) {
+        U user = this.getUserLoaded(uuid);
+        if (user != null) {
+            consumer.accept(user);
+        }
+        else this.getUserDataAsync(uuid).thenAccept(user2 -> this.plugin.runTask(task -> consumer.accept(user2)));
+    }
+
+    public void getUserDataAndPerformAsync(@NotNull String name, Consumer<U> consumer) {
+        U user = this.getUserLoaded(name);
+        if (user != null) {
+            consumer.accept(user);
+        }
+        else this.getUserDataAsync(name).thenAccept(consumer);
+    }
+
+    public void getUserDataAndPerformAsync(@NotNull UUID uuid, Consumer<U> consumer) {
+        U user = this.getUserLoaded(uuid);
+        if (user != null) {
+            consumer.accept(user);
+        }
+        else this.getUserDataAsync(uuid).thenAccept(consumer);
     }
 
     public final void unloadUser(@NotNull Player player) {
@@ -178,6 +213,12 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     @Nullable
     public U getUserLoaded(@NotNull UUID uuid) {
         return this.getUsersLoadedMap().get(uuid);
+    }
+
+    @Nullable
+    public U getUserLoaded(@NotNull String name) {
+        return this.getUsersLoaded().stream().filter(user -> user.getName().equalsIgnoreCase(name))
+            .findFirst().orElse(null);
     }
 
     public boolean isUserLoaded(@NotNull Player player) {

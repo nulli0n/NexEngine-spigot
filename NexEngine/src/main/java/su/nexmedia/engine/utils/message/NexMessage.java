@@ -10,12 +10,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import su.nexmedia.engine.utils.Colorizer;
 import su.nexmedia.engine.utils.Reflex;
-import su.nexmedia.engine.utils.regex.RegexUtil;
 
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -31,13 +29,13 @@ public class NexMessage {
         this.components = new HashMap<>();
 
         // Originally was in 'fromLegacyText' method of the TextComponent class.
-        Matcher matcher = RegexUtil.getMatcher(URL, Colorizer.strip(this.message));
+        /*Matcher matcher = RegexUtil.getMatcher(URL, Colorizer.strip(this.message));
         while (RegexUtil.matcherFind(matcher)) {
             String url = matcher.group(0);
             String link = url.startsWith("http") ? url : "http://" + url;
 
             this.addComponent(url, url).openURL(link);
-        }
+        }*/
     }
 
     @NotNull
