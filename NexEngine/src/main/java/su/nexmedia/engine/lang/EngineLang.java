@@ -60,4 +60,10 @@ public class EngineLang {
     public static final LangKey EDITOR_ERROR_NUMBER_GENERIC = LangKey.of("Editor.Error.Number.Generic", GRAY + "Invalid number!");
     public static final LangKey EDITOR_ERROR_NUMBER_NOT_INT = LangKey.of("Editor.Error.Number.NotInt", GRAY + "Expecting " + RED + "whole" + GRAY + " number!");
     public static final LangKey EDITOR_ERROR_ENUM           = LangKey.of("Editor.Error.Enum", GRAY + "Invalid Input!");
+
+    public static final LangKey NUMBER_SHORT_THOUSAND = LangKey.of("Number.Thousand", "k");
+    public static final LangKey NUMBER_SHORT_MILLION = LangKey.of("Number.Million", "m");
+    public static final LangKey NUMBER_SHORT_BILLION = LangKey.of("Number.Billion", "b");
+    public static final LangKey NUMBER_SHORT_TRILLION = LangKey.of("Number.Trillion", "t");
+    public static final LangKey NUMBER_SHORT_QUADRILLION = LangKey.of("Number.Quadrillion", "q");
 }
