@@ -16,15 +16,11 @@ import java.util.function.Supplier;
 public class NumberUtil {
 
     private static final DecimalFormat FORMAT_ROUND_HUMAN;
-    private static final NumberFormat FORMAT_COMPACT;
     private final static TreeMap<Integer, String> ROMAN_MAP = new TreeMap<>();
     private final static TreeMap<Integer, Supplier<String>> NUMERIC_MAP = new TreeMap<>();
 
     static {
         FORMAT_ROUND_HUMAN = new DecimalFormat("#,###.##", new DecimalFormatSymbols(Locale.ENGLISH));
-        FORMAT_COMPACT = NumberFormat.getNumberInstance(Locale.US);
-        FORMAT_COMPACT.setMinimumFractionDigits(1);
-        FORMAT_COMPACT.setMaximumFractionDigits(2);
 
         NUMERIC_MAP.put(0, () -> "");
         NUMERIC_MAP.put(1, () -> LangManager.getPlain(EngineLang.NUMBER_SHORT_THOUSAND));
@@ -65,7 +61,7 @@ public class NumberUtil {
             index++;
         }
 
-        return Pair.of(FORMAT_COMPACT.format(negative ? -value : value), NUMERIC_MAP.get(NUMERIC_MAP.floorKey(index)).get());
+        return Pair.of(FORMAT_ROUND_HUMAN.format(negative ? -value : value), NUMERIC_MAP.get(NUMERIC_MAP.floorKey(index)).get());
     }
 
     public static double round(double value) {
