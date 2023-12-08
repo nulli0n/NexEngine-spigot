@@ -4,6 +4,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import su.nexmedia.engine.utils.TriFunction;
+import su.nexmedia.engine.utils.values.UniFormatter;
 import su.nexmedia.engine.utils.values.UniParticle;
 import su.nexmedia.engine.utils.values.UniSound;
 
@@ -94,6 +95,11 @@ public class JOption<T> {
     @NotNull
     public static JOption<UniSound> create(@NotNull String path, @NotNull UniSound defaultValue, @Nullable String... description) {
         return new JOption<>(path, (cfg, path1, def) -> UniSound.read(cfg, path1), defaultValue, description).setWriter((cfg, path2, us) -> us.write(cfg, path2));
+    }
+
+    @NotNull
+    public static JOption<UniFormatter> create(@NotNull String path, @NotNull UniFormatter defaultValue, @Nullable String... description) {
+        return new JOption<>(path, (cfg, path1, def) -> UniFormatter.read(cfg, path1), defaultValue, description).setWriter((cfg, path2, us) -> us.write(cfg, path2));
     }
 
     @NotNull

@@ -1,27 +1,20 @@
 package su.nexmedia.engine.utils;
 
 import org.jetbrains.annotations.NotNull;
+import su.nexmedia.engine.config.EngineConfig;
 import su.nexmedia.engine.lang.EngineLang;
 import su.nexmedia.engine.lang.LangManager;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.Locale;
 import java.util.TreeMap;
 import java.util.function.Supplier;
 
 public class NumberUtil {
-
-    private static final DecimalFormat FORMAT_ROUND_HUMAN;
     private final static TreeMap<Integer, String> ROMAN_MAP = new TreeMap<>();
     private final static TreeMap<Integer, Supplier<String>> NUMERIC_MAP = new TreeMap<>();
 
     static {
-        FORMAT_ROUND_HUMAN = new DecimalFormat("#,###.##", new DecimalFormatSymbols(Locale.ENGLISH));
-
         NUMERIC_MAP.put(0, () -> "");
         NUMERIC_MAP.put(1, () -> Colorizer.apply(LangManager.getPlain(EngineLang.NUMBER_SHORT_THOUSAND)));
         NUMERIC_MAP.put(2, () -> Colorizer.apply(LangManager.getPlain(EngineLang.NUMBER_SHORT_MILLION)));
@@ -46,7 +39,7 @@ public class NumberUtil {
 
     @NotNull
     public static String format(double value) {
-        return FORMAT_ROUND_HUMAN.format(value);
+        return EngineConfig.NUMBER_FORMATTER.get().format(value);
     }
 
     public static Pair<String, String> formatCompact(double value) {
@@ -61,7 +54,7 @@ public class NumberUtil {
             index++;
         }
 
-        return Pair.of(FORMAT_ROUND_HUMAN.format(negative ? -value : value), NUMERIC_MAP.get(NUMERIC_MAP.floorKey(index)).get());
+        return Pair.of(EngineConfig.NUMBER_FORMATTER.get().format(negative ? -value : value), NUMERIC_MAP.get(NUMERIC_MAP.floorKey(index)).get());
     }
 
     public static double round(double value) {
