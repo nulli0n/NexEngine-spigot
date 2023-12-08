@@ -23,11 +23,11 @@ public class NumberUtil {
         FORMAT_ROUND_HUMAN = new DecimalFormat("#,###.##", new DecimalFormatSymbols(Locale.ENGLISH));
 
         NUMERIC_MAP.put(0, () -> "");
-        NUMERIC_MAP.put(1, () -> LangManager.getPlain(EngineLang.NUMBER_SHORT_THOUSAND));
-        NUMERIC_MAP.put(2, () -> LangManager.getPlain(EngineLang.NUMBER_SHORT_MILLION));
-        NUMERIC_MAP.put(3, () -> LangManager.getPlain(EngineLang.NUMBER_SHORT_BILLION));
-        NUMERIC_MAP.put(4, () -> LangManager.getPlain(EngineLang.NUMBER_SHORT_TRILLION));
-        NUMERIC_MAP.put(5, () -> LangManager.getPlain(EngineLang.NUMBER_SHORT_QUADRILLION));
+        NUMERIC_MAP.put(1, () -> Colorizer.apply(LangManager.getPlain(EngineLang.NUMBER_SHORT_THOUSAND)));
+        NUMERIC_MAP.put(2, () -> Colorizer.apply(LangManager.getPlain(EngineLang.NUMBER_SHORT_MILLION)));
+        NUMERIC_MAP.put(3, () -> Colorizer.apply(LangManager.getPlain(EngineLang.NUMBER_SHORT_BILLION)));
+        NUMERIC_MAP.put(4, () -> Colorizer.apply(LangManager.getPlain(EngineLang.NUMBER_SHORT_TRILLION)));
+        NUMERIC_MAP.put(5, () -> Colorizer.apply(LangManager.getPlain(EngineLang.NUMBER_SHORT_QUADRILLION)));
 
         ROMAN_MAP.put(1000, "M");
         ROMAN_MAP.put(900, "CM");
