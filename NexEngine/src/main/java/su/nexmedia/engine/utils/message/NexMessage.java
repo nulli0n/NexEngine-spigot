@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 
 public class NexMessage {
 
-    private static final Pattern URL = Pattern.compile("(?:(https?)://)?([-\\w_\\.]{2,}\\.[a-z]{2,4})(/\\S*)?$");
+    //private static final Pattern URL = Pattern.compile("(?:(https?)://)?([-\\w_\\.]{2,}\\.[a-z]{2,4})(/\\S*)?$");
 
     private String message;
     private final Map<String, NexComponent> components;

@@ -31,79 +31,103 @@ public class JOption<T> {
     protected Writer<T> writer;
     protected Reader<T> reader;
 
-    public JOption(@NotNull String path, @NotNull Reader<T> reader, @NotNull Supplier<T> defaultValue, @Nullable String... description) {
-        this(path, reader, defaultValue.get(), description);
-    }
-
     public JOption(@NotNull String path, @NotNull Reader<T> reader, @NotNull T defaultValue, @Nullable String... description) {
-        this(path, null, reader, defaultValue, description);
+        this(path, JYML::set, reader, defaultValue, description);
     }
 
-    public JOption(@NotNull String path, @Nullable Writer<T> writer, @NotNull Reader<T> reader, @NotNull T defaultValue, @Nullable String... description) {
+    public JOption(@NotNull String path, @NotNull Reader<T> reader, @NotNull Supplier<T> defaultValue, @Nullable String... description) {
+        this(path, JYML::set, reader, defaultValue.get(), description);
+    }
+
+    public JOption(@NotNull String path, @NotNull Writer<T> writer, @NotNull Reader<T> reader, @NotNull T defaultValue, @Nullable String... description) {
         this.path = path;
         this.description = description == null ? new String[0] : description;
+        this.writer = writer;
         this.reader = reader;
         this.defaultValue = defaultValue;
     }
 
     @NotNull
-    public static <T> JOption<T> create(@NotNull ConfigKey<T> key, @NotNull T defaultValue, @Nullable String... description) {
-        return new JOption<>(key.getPath(), key.getWriter(), key.getReader(), defaultValue, description);
+    public static <T> JOption<T> create(@NotNull String path,
+                                        @NotNull Writer<T> writer,
+                                        @NotNull Reader<T> reader,
+                                        @NotNull T defaultValue,
+                                        @Nullable String... description) {
+        return new JOption<>(path, writer, reader, defaultValue, description);
+    }
+
+    @NotNull
+    public static <T> JOption<T> create(@NotNull String path,
+                                        @NotNull Writer<T> writer,
+                                        @NotNull Reader<T> reader,
+                                        @NotNull Supplier<T> defaultValue,
+                                        @Nullable String... description) {
+        return create(path, writer, reader, defaultValue.get(), description);
+    }
+
+    @NotNull
+    public static <T> JOption<T> create(@NotNull String path, @NotNull Reader<T> reader, @NotNull T defaultValue, @Nullable String... description) {
+        return create(path, JYML::set, reader, defaultValue, description);
+    }
+
+    @NotNull
+    public static <T> JOption<T> create(@NotNull String path, @NotNull Reader<T> reader, @NotNull Supplier<T> defaultValue, @Nullable String... description) {
+        return create(path, JYML::set, reader, defaultValue, description);
     }
 
     @NotNull
     public static JOption<Boolean> create(@NotNull String path, boolean defaultValue, @Nullable String... description) {
-        return new JOption<>(path, READER_BOOLEAN, defaultValue, description);
+        return create(path, READER_BOOLEAN, defaultValue, description);
     }
 
     @NotNull
     public static JOption<Integer> create(@NotNull String path, int defaultValue, @Nullable String... description) {
-        return new JOption<>(path, READER_INT, defaultValue, description);
+        return create(path, READER_INT, defaultValue, description);
     }
 
     @NotNull
     public static JOption<Double> create(@NotNull String path, double defaultValue, @Nullable String... description) {
-        return new JOption<>(path, READER_DOUBLE, defaultValue, description);
+        return create(path, READER_DOUBLE, defaultValue, description);
     }
 
     @NotNull
     public static JOption<Long> create(@NotNull String path, long defaultValue, @Nullable String... description) {
-        return new JOption<>(path, READER_LONG, defaultValue, description);
+        return create(path, READER_LONG, defaultValue, description);
     }
 
     @NotNull
     public static JOption<String> create(@NotNull String path, @NotNull String defaultValue, @Nullable String... description) {
-        return new JOption<>(path, READER_STRING, defaultValue, description);
+        return create(path, READER_STRING, defaultValue, description);
     }
 
     @NotNull
     public static JOption<List<String>> create(@NotNull String path, @NotNull List<String> defaultValue, @Nullable String... description) {
-        return new JOption<>(path, READER_LIST_STRING, defaultValue, description);
+        return create(path, READER_LIST_STRING, defaultValue, description);
     }
 
     @NotNull
     public static JOption<Set<String>> create(@NotNull String path, @NotNull Set<String> defaultValue, @Nullable String... description) {
-        return new JOption<>(path, READER_SET_STRING, defaultValue, description);
+        return create(path, READER_SET_STRING, defaultValue, description);
     }
 
     @NotNull
     public static JOption<ItemStack> create(@NotNull String path, @NotNull ItemStack defaultValue, @Nullable String... description) {
-        return new JOption<>(path, READER_ITEM, defaultValue, description).setWriter(JYML::setItem);
+        return create(path, READER_ITEM, defaultValue, description).setWriter(JYML::setItem);
     }
 
     @NotNull
     public static JOption<UniSound> create(@NotNull String path, @NotNull UniSound defaultValue, @Nullable String... description) {
-        return new JOption<>(path, (cfg, path1, def) -> UniSound.read(cfg, path1), defaultValue, description).setWriter((cfg, path2, us) -> us.write(cfg, path2));
+        return create(path, (cfg, path1, def) -> UniSound.read(cfg, path1), defaultValue, description).setWriter((cfg, path2, us) -> us.write(cfg, path2));
     }
 
     @NotNull
     public static JOption<UniParticle> create(@NotNull String path, @NotNull UniParticle defaultValue, @Nullable String... description) {
-        return new JOption<>(path, (cfg, path1, def) -> UniParticle.read(cfg, path1), defaultValue, description).setWriter((cfg, path2, us) -> us.write(cfg, path2));
+        return create(path, (cfg, path1, def) -> UniParticle.read(cfg, path1), defaultValue, description).setWriter((cfg, path2, us) -> us.write(cfg, path2));
     }
 
     @NotNull
     public static <E extends Enum<E>> JOption<E> create(@NotNull String path, @NotNull Class<E> clazz, @NotNull E defaultValue, @Nullable String... description) {
-        return new JOption<>(path, ((cfg, path1, def) -> cfg.getEnum(path1, clazz, defaultValue)), defaultValue, description)
+        return create(path, ((cfg, path1, def) -> cfg.getEnum(path1, clazz, defaultValue)), defaultValue, description)
             .setWriter((cfg, path1, type) -> cfg.set(path1, type.name()));
     }
 
@@ -116,7 +140,7 @@ public class JOption<T> {
     @NotNull
     public static <V> JOption<Set<V>> forSet(@NotNull String path, @NotNull Function<String, V> valFun,
                                              @NotNull Set<V> defaultValue, @Nullable String... description) {
-        return new JOption<>(path,
+        return create(path,
             (cfg, path1, def) -> cfg.getStringSet(path1).stream().map(valFun).filter(Objects::nonNull).collect(Collectors.toCollection(HashSet::new)),
             defaultValue,
             description);
@@ -160,7 +184,7 @@ public class JOption<T> {
                                                     @NotNull TriFunction<JYML, String, String, V> valFun,
                                                     @NotNull Supplier<M> mapSupplier,
                                                     @NotNull M defaultValue, @Nullable String... description) {
-        return new JOption<>(path,
+        return create(path,
             (cfg, path1, def) -> {
                 M map = mapSupplier.get();
                 for (String id : cfg.getSection(path1)) {
@@ -228,6 +252,7 @@ public class JOption<T> {
     }
 
     @NotNull
+    @Deprecated
     public JOption<T> mapReader(@NotNull UnaryOperator<T> operator) {
         if (this.reader == null) return this;
 

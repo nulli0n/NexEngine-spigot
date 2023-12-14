@@ -71,6 +71,10 @@ public class PlayerUtil {
         return EngineUtils.hasFloodgate() && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId());
     }
 
+    public static boolean isReal(@NotNull Player player) {
+        return Bukkit.getServer().getPlayer(player.getUniqueId()) != null;
+    }
+
     @NotNull
     public static String getPermissionGroup(@NotNull Player player) {
         return EngineUtils.hasVault() ? VaultHook.getPermissionGroup(player).toLowerCase() : Placeholders.DEFAULT;
