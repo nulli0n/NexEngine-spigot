@@ -17,6 +17,7 @@ import java.util.Map;
 
 public class EntityUtil {
 
+    @Deprecated
     public static boolean isNPC(@NotNull Entity entity) {
         return entity.hasMetadata("NPC");
     }

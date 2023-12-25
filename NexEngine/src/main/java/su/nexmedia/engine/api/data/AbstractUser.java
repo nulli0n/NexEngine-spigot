@@ -10,13 +10,15 @@ import java.util.UUID;
 
 public abstract class AbstractUser<P extends NexPlugin<P>> {
 
-    protected transient final P plugin;
-    private transient boolean isRecent = false;
-
+    protected final P plugin;
     protected final UUID uuid;
+
     protected String name;
-    protected long dateCreated;
-    protected long lastOnline;
+    protected long   dateCreated;
+    protected long   lastOnline;
+    protected long   cachedUntil;
+
+    @Deprecated private boolean isRecent = false;
 
     public AbstractUser(@NotNull P plugin, @NotNull UUID uuid, @NotNull String name, long dateCreated, long lastOnline) {
         this.plugin = plugin;
@@ -24,6 +26,7 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
         this.name = name;
         this.setDateCreated(dateCreated);
         this.setLastOnline(lastOnline);
+        this.setCachedUntil(-1);
     }
 
     public void onLoad() {
@@ -40,12 +43,26 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
         this.plugin.runTaskAsync(task -> dataHolder.getData().saveUser((U) this));
     }
 
+    @Deprecated
     public boolean isRecentlyCreated() {
         return isRecent;
     }
 
+    @Deprecated
     public void setRecentlyCreated(boolean recent) {
         isRecent = recent;
+    }
+
+    public boolean isCacheExpired() {
+        return this.getCachedUntil() > 0 && System.currentTimeMillis() > this.getCachedUntil();
+    }
+
+    public long getCachedUntil() {
+        return cachedUntil;
+    }
+
+    public void setCachedUntil(long cachedUntil) {
+        this.cachedUntil = cachedUntil;
     }
 
     @NotNull

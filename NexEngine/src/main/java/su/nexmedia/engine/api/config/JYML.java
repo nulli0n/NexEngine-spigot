@@ -229,10 +229,12 @@ public class JYML extends YamlConfiguration {
     }
 
     public int[] getIntArray(@NotNull String path) {
-        int[] slots = new int[0];
+        return getIntArray(path, new int[0]);
+    }
 
+    public int @NotNull [] getIntArray(@NotNull String path, int[] def) {
         String str = this.getString(path);
-        return str == null ? slots : StringUtil.getIntArray(str);
+        return str == null ? def : StringUtil.getIntArray(str);
     }
 
     public void setIntArray(@NotNull String path, int[] arr) {

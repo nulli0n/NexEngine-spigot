@@ -27,6 +27,10 @@ public class EngineLang {
             "\n" + GRAY);
 
     public static final LangKey COMMAND_HELP_DESC   = LangKey.of("Command.Help.Desc", "Show help page.");
+
+    public static final LangKey COMMAND_CHECKPERM_DESC = LangKey.of("Command.CheckPerm.Desc", "Print player permission info.");
+    public static final LangKey COMMAND_CHECKPERM_USAGE = LangKey.of("Command.CheckPerm.Usage", "<player>");
+
     public static final LangKey COMMAND_RELOAD_DESC = LangKey.of("Command.Reload.Desc", "Reload the whole plugin.");
     public static final LangKey COMMAND_RELOAD_DONE = LangKey.of("Command.Reload.Done", "All data & configuration has been reloaded!");
 

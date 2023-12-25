@@ -50,7 +50,9 @@ public class NexEngine extends NexPlugin<NexEngine> {
         if (this.menuListener != null) this.menuListener.unregisterListeners();
         if (this.menuRefreshTask != null) this.menuRefreshTask.stop();
 
-        if (EngineUtils.hasVault()) VaultHook.shutdown();
+        if (EngineUtils.hasVault()) {
+            VaultHook.shutdown();
+        }
         PlayerBlockTracker.shutdown();
     }
 
@@ -64,7 +66,10 @@ public class NexEngine extends NexPlugin<NexEngine> {
     @Override
     public void registerCommands(@NotNull GeneralCommand<NexEngine> mainCommand) {
         mainCommand.addChildren(new ReloadSubCommand<>(this, Placeholders.WILDCARD));
-        mainCommand.addChildren(new CheckPermCommand(this));
+
+        if (EngineUtils.hasVault() && VaultHook.hasPermissions()) {
+            mainCommand.addChildren(new CheckPermCommand(this));
+        }
     }
 
     @Override

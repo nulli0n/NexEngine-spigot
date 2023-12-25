@@ -3,10 +3,7 @@ package su.nexmedia.engine.utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,6 +49,28 @@ public class Reflex {
             e.printStackTrace();
         }
         return obj;
+    }
+
+    @NotNull
+    public static <T> List<T> getFields(@NotNull Class<?> clazz, @NotNull Class<T> type) {
+        List<T> list = new ArrayList<>();
+
+        for (Field field : Reflex.getFields(clazz)) {
+            if (!field.getDeclaringClass().equals(clazz)) continue;
+            if (!Modifier.isStatic(field.getModifiers())) continue;
+            if (!Modifier.isFinal(field.getModifiers())) continue;
+            if (!type.isAssignableFrom(field.getType())) continue;
+
+            //T langText;
+            try {
+                list.add(type.cast(field.get(null)));
+            }
+            catch (IllegalArgumentException | IllegalAccessException exception) {
+                exception.printStackTrace();
+            }
+        }
+
+        return list;
     }
 
     @NotNull

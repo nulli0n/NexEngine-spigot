@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 
 public final class VaultHook extends AbstractListener<NexEngine> {
 
-    private static VaultHook instance;
+    private static VaultHook  instance;
     private static Economy    economy;
     private static Permission permission;
     private static Chat       chat;

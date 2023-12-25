@@ -159,6 +159,10 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
         this.logger.severe(msg);
     }
 
+    public final void debug(@NotNull String msg) {
+        this.info("[DEBUG] " + msg);
+    }
+
     private void unregisterListeners() {
         for (Player player : this.getServer().getOnlinePlayers()) {
             Menu<?> menu = Menu.getMenu(player);
