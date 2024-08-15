@@ -217,6 +217,23 @@ public class LangMessage {
         }
     }
 
+    public void send(@NotNull String playerName) {
+        Player pTarget = plugin.getServer().getPlayerExact(playerName);
+        if (pTarget != null) {
+            send(pTarget);
+        } else {
+            if (this.type == LangMessage.OutputType.CHAT) {
+                if (Bukkit.spigot().getConfig().getBoolean("settings.bungeecord", false)) {
+                    String prefix = hasPrefix ? plugin.getConfigManager().pluginPrefix : "";
+                    this.asList().forEach(line -> {
+                        PlayerUtil.sendBungeeCordMessage(playerName, prefix + line);
+                    });
+                }
+            }
+        }
+
+    }
+
     @NotNull
     public List<String> asList() {
         return this.asList(this.getLocalized());
